@@ -1,0 +1,53 @@
+
+<style>
+
+	:host {
+		display: 	none;
+		height:  	28px;
+		width: 	 	28px;
+		position: absolute;
+    right: 		4px;
+    bottom: 	4px;
+    padding: 	4px;
+    background-color: inherit;
+		color: 	 					var(--app-dark-color);
+		transition: 			transform 0.2s var(--custom-ease);
+		transform:  			scale(0, 0);
+	}
+
+	iron-icon {
+		height: 100%;
+		width: 	100%;
+	}
+
+	#gear {
+		position:  absolute;
+    top: 			 calc(50% + 1px);
+    left: 		 50%;
+    height: 	 12px;
+    width: 		 12px;
+    color: 		 var(--constant-light-text);
+    transform: translate(-50%, -50%);
+	}
+
+	.start {
+		animation-name: 					 rotate;
+		animation-duration: 			 2s;
+		animation-iteration-count: infinite;
+		animation-timing-function: var(--custom-ease);
+	}
+
+	@keyframes rotate {
+		0% {
+			transform: translate(-50%, -50%) rotate(0deg);
+		}
+		100% {
+			transform: translate(-50%, -50%) rotate(360deg);
+		}
+	}
+
+</style>
+
+
+<iron-icon icon="app-icons:cloud"></iron-icon>
+<iron-icon id="gear" icon="app-icons:settings"></iron-icon>
