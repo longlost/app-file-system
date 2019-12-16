@@ -1,0 +1,54 @@
+
+<style>
+
+  :host {
+    display:  block;   
+    height:   100%;
+    overflow: hidden;
+    --thumbnail-border-radius: inherit; /* Another Safari fix. */
+  }
+
+  .item {
+    width:  100%;
+    height: 100%; 
+  }
+
+  lazy-image {
+    display: flex;
+  }
+
+  lazy-video {
+    border-radius: var(--thumbnail-border-radius); /* Another Safari fix. */
+  }
+
+</style>
+
+
+<template is="dom-if"
+          if="[[__computeIronIconStamp(item.type)]]">
+  <iron-icon class="item"
+             icon="file-icons:audio">
+  </iron-icon>
+</template>
+
+<template is="dom-if"
+          if="[[__computeLazyImageStamp(item.type)]]">
+  <lazy-image class="item"
+              alt="[[item.displayName]]"
+              orientation="[[item.orientation]]"
+              placeholder="[[__computeImgPlaceholder(item)]]"
+              src="[[__computeImgSrc(item)]]"
+              sizing="[[sizing]]"
+              on-loaded-changed="__handleImageLoadedChanged">
+  </lazy-image>  
+</template>
+
+<template is="dom-if"
+          if="[[__computeLazyVideoStamp(item.type)]]">
+  <lazy-video class="item"
+              placeholder="[[__computeVideoPlaceholder(item)]]"
+              presentation="[[presentation]]"
+              src="[[__computeVideoSrc(item)]]"
+              on-lazy-vieo-metadata-loaded="__handleMetadataLoaded">
+  </lazy-video>
+</template>

@@ -1,0 +1,77 @@
+
+<style>  
+
+  strong {
+    color:     var(--app-primary-color);
+    font-size: 20px;
+  }
+
+  .rename-modal-images {
+    height:       64px;
+    width:        64px;
+    margin-right: 8px;
+  }
+
+  .card-actions {
+    display:         flex;
+    justify-content: flex-end;
+  }
+
+  .modal-call-to-action-btns {
+    background-color: var(--app-primary-color);
+    color:            var(--light-text-color);
+  }
+
+  #dismiss-btn {
+    color: var(--app-primary-color);
+  }
+
+  *[hidden] {
+    display: none;
+  }
+
+</style>
+
+
+<app-header-overlay id="overlay"
+                    header-size="1"
+                    prebuilt-animation="from-top"
+                    reveal-header
+                    title="File Preview">
+
+  <div id="container" 
+       slot="container">
+
+    <rearrange-list hide-dropzone="[[hideDropzone]]"></rearrange-list>
+
+    <camera-roll></camera-roll>
+
+  </div>
+
+</app-header-overlay>
+
+
+<app-modal id="deleteConfirmModal"
+           heading="Confirm Delete">
+
+  <div slot="card-content-slot">
+    <p>
+      Please confirm that you want to delete <strong>[[_itemToDelete.displayName]]</strong>
+    </p>
+    <p>
+      This action CANNOT be undone!
+    </p>
+  </div>
+  <div class="card-actions" 
+       slot="card-actions-slot">
+    <paper-button class="modal-dismiss-btns" 
+                  on-click="__dismissDeleteConfirmButtonClicked">
+      dismiss
+    </paper-button>   
+    <paper-button class="modal-call-to-action-btns" 
+                  on-click="__confirmDeleteButtonClicked">
+      delete
+    </paper-button>      
+  </div>
+
+</app-modal>

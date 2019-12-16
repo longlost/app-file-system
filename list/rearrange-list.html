@@ -1,0 +1,99 @@
+
+<style>
+	
+	.preview {
+    display:          inline-flex;
+    flex-direction:   column; 
+    position:         relative;
+    width:            20vmax;
+    height:           calc(20vmax + 36px);
+    min-width:        144px;
+    min-height:       180px;
+    max-width:        204px;
+    max-height:       240px;
+    margin:           4px;
+    border-radius:    3px;
+    overflow:         hidden;
+    background-color: var(--app-background-color);
+    --preview-thumbnail-border-radius: 3px 3px 0px 0px;
+  }
+
+  /* Maintain aspect ratio for video. */
+  .video {
+    height:     unset;
+    min-height: unset;
+    max-height: unset;
+    min-width:  236px; /* This size chosen to keep minimal controls and start time. */
+    max-width:  576px;
+  }
+
+  #icon-container {
+    display:         flex;
+    justify-content: center;
+    margin:          24px 0px;
+  }
+
+  #dropZone {
+    padding:    8px;
+    text-align: center;
+    border:     4px dashed var(--paper-grey-600);
+    color:      var(--app-error-color);
+    background-color: var(--divider-color);
+  }
+
+  #delete-icon {
+    width:  40px;
+    height: 40px;
+  }
+
+  *[hidden] {
+    display: none;
+  }
+
+</style>
+
+
+<drag-drop-list sortable=".sortable"
+                on-items-change="__handleChanges"
+                on-item-dropped="__handleDrop" 
+                on-sort-finish="__handleSort">                
+
+  <template id="sortListRepeater" 
+            is="dom-repeat" 
+            items="[[_previewItems]]">
+		<!-- 
+		    Outter div fixes a bug that causes drag-drop-list classes from being
+		    blown away whenever an item updates while user is dragging. Probably
+		    involving the Polymer dynamic 'class$' syntax. 
+		-->
+    <div class="sortable"
+         state-index="[[index]]">
+      <preview-item class$="preview [[__computeSortableClass(item.type)]]"
+                    coll="[[coll]]"
+                    doc="[[doc]]"
+                    field="[[field]]"
+                    file="[[item.file]]"
+                    item="[[item]]"
+                    on-click="__itemClicked">
+      </preview-item>
+    </div>
+
+  </template>
+
+</drag-drop-list>
+
+
+<div id="icon-container"
+     hidden="[[__computeHideIcons(_previewItems)]]">
+  <iron-icon icon="file-icons:touch-app"></iron-icon>
+  <iron-icon icon="file-icons:low-priority"></iron-icon>
+</div>
+
+
+<div id="dropZone"
+     hidden="[[hideDropzone]]">
+  <iron-icon id="delete-icon" 
+             icon="file-icons:delete">
+  </iron-icon>
+  <div>Drop here to delete</div>
+</div>

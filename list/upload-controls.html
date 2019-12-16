@@ -1,0 +1,71 @@
+
+<style include="app-shared-styles">
+
+  :host {
+    display:  flex;
+    position: absolute;
+    left:     0px;
+    bottom:   0px;
+    height:   40px;
+    width:    100%;
+    background-color: var(--app-dark-color);
+    color:            var(--constant-light-text);
+  }
+
+  #progress-container {
+    width:   100%;
+    padding: 4px 0px 0px 8px;
+  }
+
+  .secondary {
+    min-height:    18px;
+    margin-bottom: 4px;
+    font-size:     12px;
+    color:         currentColor;
+  }
+
+  paper-progress {
+    width: 100%;
+    --paper-progress-active-color: var(--app-accent-color);
+  }
+
+  #control-buttons {
+    position:  relative;
+    height:    40px;
+    width:     40px;
+    min-width: 40px;
+  }
+
+  .control-button {
+    display:  block;
+    position: absolute;
+    top:      0px;
+    left:     0px;
+    color:    currentColor;
+  }
+
+</style>
+
+
+<div id="progress-container">
+  <div class="secondary shared-single-line-truncate">
+    [[_state]]
+  </div>
+  <paper-progress value="[[_progress]]"></paper-progress>
+</div>
+
+<div id="control-buttons" 
+     hidden="[[_hideControlBtns]]">
+  <paper-icon-button class="control-button"
+                     hidden="[[_paused]]"
+                     icon="app-icons:pause" 
+                     alt="Pause file upload" 
+                     on-click="__pauseUploadButtonClicked">
+  </paper-icon-button>
+  <paper-icon-button class="control-button"
+                     hidden="[[!_paused]]"
+                     icon="app-icons:play-arrow" 
+                     alt="Resume file upload" 
+                     on-click="__resumeUploadButtonClicked">
+  </paper-icon-button>
+</div>

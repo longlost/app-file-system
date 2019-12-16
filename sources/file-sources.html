@@ -1,0 +1,121 @@
+
+<style include="app-shared-styles">
+
+  #container {
+    display:  block;
+    width:    100%;
+    position: relative;
+    margin:   16px;
+    --drop-zone-background-color: var(--app-light-color);
+  }
+
+  #dropZone {
+    background-color:   var(--drop-zone-background-color);
+    --dz-hover-bgcolor: var(--app-primary-color);
+  }
+
+  .file-name-inputs {
+    display:     flex;
+    align-items: center;
+  }
+
+  .rename-modal-images {
+    height:       64px;
+    width:        64px;
+    margin-right: 8px;
+  }
+
+  .card-actions {
+    display:         flex;
+    justify-content: flex-end;
+  }
+
+  #skip-btn {
+    color: var(--app-primary-color);
+  }
+
+  #save-name-btn {
+    background-color: var(--app-primary-color);
+    color:            var(--light-text-color);
+  }
+
+  *[hidden] {
+    display: none;
+  }
+
+</style>
+
+
+<app-header-overlay id="overlay"
+                    header-size="1"
+                    prebuilt-animation="from-top"
+                    reveal-header
+                    title="File Sources">
+
+	<div id="container" 
+			 slot="container">
+	 
+	  <drop-zone id="dropZone"
+	             accept="[[accept]]"
+	             hidden="[[hideDropzone]]"
+	             maxfiles="[[maxfiles]]"
+	             maxsize="[[maxsize]]"
+	             multiple="[[multiple]]"
+	             unit="[[unit]]"
+	             on-files-added="__dzFilesAdded">
+	  </drop-zone>
+
+		<app-spinner id="spinner"></app-spinner>
+
+	</div>
+
+</app-header-overlay>
+
+
+<app-modal id="renameFilesModal"
+           heading="[[__computeRenameModalHeading(multiple)]]">
+  <div id="content-div" 
+       slot="card-content-slot">
+    <p>
+      Do you want to rename [[__computeRenameModalPural(multiple)]]?
+    </p>
+    <p>
+      [[__computeRenameModalText(multiple)]]      
+    </p>
+
+    <template is="dom-repeat" 
+              items="[[_filesToRename]]"
+              as="file">
+      <div class="file-name-inputs">
+        <file-thumbnail class="rename-modal-images"
+                        item="[[file]]" 
+                        presentation 
+                        sizing="contain">
+        </file-thumbnail>
+        <paper-input class="shared-paper-input"
+                     allowed-pattern="[^/\f/\n/\r/\t/\v]"
+                     autocorrect
+                     autofocus
+                     autocomplete
+                     auto-validate
+                     label="File Name"
+                     on-value-changed="__renameInputChanged"
+                     placeholder="[[__computePlaceholderName(file.name)]]"
+                     tabindex="0">
+        </paper-input>
+      </div>
+    </template>
+
+  </div>
+  <div class="card-actions" 
+       slot="card-actions-slot">
+    <paper-button id="skip-btn"
+                  on-click="__dismissRenameFilesModalButtonClicked">
+      skip
+    </paper-button>   
+    <paper-button id="save-name-btn"               
+                  on-click="__saveNamesButtonClicked">
+      save name
+    </paper-button> 
+  </div>
+</app-modal>

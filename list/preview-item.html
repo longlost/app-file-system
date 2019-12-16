@@ -1,0 +1,80 @@
+
+<style include="app-shared-styles">
+
+  :host {
+    display:  block;
+    position: relative;
+    overflow: hidden;
+    --preview-thumbnail-border-radius: inherit; /* Another Safari fix. */
+  }
+
+  file-thumbnail {
+    /* Must calc for Safari. 80px = #label height. */
+    height: calc(100% - 80px);
+    --thumbnail-border-radius: var(--preview-thumbnail-border-radius);
+  }
+
+  #label {
+    position:         relative;
+    padding-bottom:   4px;
+    background-color: inherit; /* For <processing-icon> */
+  }
+
+  #label-name {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     center;
+    padding-left:    8px;
+    color:           var(--dark-text-color);
+  }
+
+  paper-icon-button {
+    min-width: 40px;
+  }
+
+  .label-stats {
+    padding:   0px 8px;
+    font-size: 12px;
+    color:     var(--secondary-text-color);
+  }
+
+  #uploadControls {
+    display:    none;
+    transition: transform 0.3s var(--custom-ease, ease-in);
+  }
+
+  .hide {
+    transform: translateY(100%);
+  }
+
+</style>
+
+
+<file-thumbnail item="[[item]]"></file-thumbnail>
+
+<div id="label">
+  <div id="label-name">
+    <div class="shared-single-line-truncate">
+      [[item.displayName]]
+    </div>
+    <paper-icon-button icon="app-icons:close" 
+                       alt="Remove file" 
+                       on-click="__removeFileButtonClicked">
+    </paper-icon-button>
+  </div>
+  <div class="label-stats shared-single-line-truncate">
+    [[__computeStatsLine1(item)]]
+  </div>
+  <div class="label-stats shared-single-line-truncate">
+    [[__computeStatsLine2(item)]]
+  </div>
+  <processing-icon item="[[item]]"></processing-icon>
+</div>
+
+<upload-controls id="uploadControls"
+                 class="hide"
+                 coll="[[coll]]"
+                 doc="[[doc]]"
+                 field="[[field]]"
+                 file="[[file]]">
+</upload-controls>

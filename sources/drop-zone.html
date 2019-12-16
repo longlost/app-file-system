@@ -1,0 +1,80 @@
+
+<style>
+
+  :host {
+    display: block;
+  }
+
+  :host([disabled]) {
+    cursor: not-allowed;
+  }
+
+  #label {
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    height:         calc(100% - 24px);
+    padding:        8px;
+    text-align:     center;
+    cursor:         pointer;
+    color:          var(--dz-color, var(--paper-grey-600));
+    border:         4px dashed var(--dz-color, var(--paper-grey-600));
+  }
+
+  :host([disabled]) #label {
+    pointer-events:  none;
+    text-decoration: line-through;
+    color:           var(--dz-disabled-color, var(--paper-grey-400));
+    border-color:    var(--dz-disabled-color, var(--paper-grey-400));
+  }
+
+  #label:hover {
+    color:            var(--dz-hover-color, var(--paper-grey-600));
+    border-color:     var(--dz-hover-color, var(--paper-grey-600));
+    background-color: var(--dz-hover-bgcolor, var(--paper-grey-50));
+  }
+
+  #label.highlight {
+    color:            var(--dz-active-color, var(--paper-indigo-600));
+    border-color:     var(--dz-active-color, var(--paper-indigo-600));
+    background-color: var(--dz-active-bgcolor, var(--paper-indigo-50));
+  }
+
+  #icon {
+    height: var(--dz-icon-height, 40px);
+    width:  var(--dz-icon-width, 40px);
+  }
+
+  #input {
+    display: none;
+  }
+
+  #feedback {
+    font-weight: bold;
+    color:       var(--dz-feedback-color, var(--paper-red-600));
+  }
+
+</style>
+
+
+<label id="label" 
+       for="input"
+       on-dragenter="__handleDragEnterAndOver"
+       on-dragleave="__handleDragLeave"
+       on-dragover="__handleDragEnterAndOver"
+       on-drop="__handleDrop">
+
+  <iron-icon id="icon" 
+             icon="file-icons:file-upload">
+  </iron-icon>
+
+  <input id="input" 
+         type="file" 
+         multiple$="[[multiple]]" 
+         accept$="[[__computeInputAccept(accept)]]"
+         on-change="__handleChange">
+
+  <span>[[_instructions]]</span>
+  <span id="feedback">[[_feedbackText]]</span>
+
+</label>
