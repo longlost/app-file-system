@@ -113,7 +113,7 @@ import htmlString from './rearrange-list.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';
 import './preview-item.js';
-import '../file-icons.js';
+import '../shared/file-icons.js';
 
 
 const dropIsOverDropZone = ({top, right, bottom, left, x, y}) => {
@@ -196,7 +196,7 @@ class RearrangeList extends AppElement {
       _previewItems: {
         type: Array,
         computed: '__computePreviewItems(items, files)'
-      }
+      },
 
       // When deleting an item with drag and drop,
       // this is used to temporary hide that element
