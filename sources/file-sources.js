@@ -4,11 +4,11 @@
   * `file-sources`
   * 
   *   An overlay that allows users to add files to an app
-  * 	from several different sources. 
+  *   from several different sources. 
   *   
-  * 	Button press to access native file picker.
-  * 	Drag and drop zone.
-  * 	File url input.
+  *   Button press to access native file picker.
+  *   Drag and drop zone.
+  *   File url input.
   *
   *
   *   @customElement
@@ -80,8 +80,8 @@ import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
+import '../shared/file-thumbnail.js';
 import './drop-zone.js';
-import './file-thumbnail.js';
 
 
 const KILOBYTE = 1024;
@@ -103,7 +103,7 @@ const formatFileSize = size => {
 const getName = basename => {
   const [ext, ...rest] = basename.split('.').reverse();
   return rest.join('.');
-};	
+};  
 
 // Read all jpg files to extract their orientation information.
 const addAdditionalData = async files => {
@@ -128,18 +128,18 @@ const addAdditionalData = async files => {
 
     return files.map((file, index) => {
       const {tag, uid} = data[index];
-			const words      = file.name.split('.');
+      const words      = file.name.split('.');
 
-			if (file.type.includes('image') || file.type.includes('video')) { 
+      if (file.type.includes('image') || file.type.includes('video')) { 
         file._tempUrl = window.URL.createObjectURL(file);
       }
 
-      file.basename 	 = file.name;
-      file.ext 				 = words[words.length - 1];
-      file.index 			 = index;
+      file.basename    = file.name;
+      file.ext         = words[words.length - 1];
+      file.index       = index;
       file.orientation = tag ? tag.value : null; // Firebase does not like undefined.
-      file.sizeStr 		 = formatFileSize(file.size);
-      file.timestamp 	 = Date.now();
+      file.sizeStr     = formatFileSize(file.size);
+      file.timestamp   = Date.now();
       file.uid         = uid;
 
       return file;
@@ -179,16 +179,32 @@ class FileSources extends AppElement {
 
       unit: String, // 'B', 'kB', 'MB' or 'GB'
 
+      _fetchFailedWarning: {
+        type: String,
+        value: 'An error occured while trying to download the file!'
+      },
+
       _files: {
-      	type: Object,
-      	value: () => ({})
+        type: Object,
+        value: () => ({})
       },
 
       _filesToRename: Array,
 
+      // _linkInputVal: String,
+
+
+      _linkInputVal: {
+        type: String,
+        value: 'https://app-layout-assets.appspot.com/assets/bg3.jpg'
+      },
+
+
+
+
       _maxbytes: {
-      	type: Number,
-      	computed: '__computeMaxBytes(maxsize, unit)'
+        type: Number,
+        computed: '__computeMaxBytes(maxsize, unit)'
       },
 
       // Cached rename modal input values.
@@ -202,21 +218,26 @@ class FileSources extends AppElement {
 
 
   static get opservers() {
-  	return [
-  		'__filesChanged(_files.*)'
-  	];
+    return [
+      '__filesChanged(_files.*)'
+    ];
+  }
+
+
+  __computeDownloadBtnDisabled(inputVal) {
+    return !Boolean(inputVal);
   }
 
 
   __computeMaxBytes(maxsize, unit) {
-  	if (!maxsize || !unit) { return; }
+    if (!maxsize || !unit) { return; }
 
-  	const mulipliers = {
-  		'b':  0,
-  		'kb': 1,
-  		'mb': 2,
-  		'gb': 3
-  	};
+    const mulipliers = {
+      'b':  0,
+      'kb': 1,
+      'mb': 2,
+      'gb': 3
+    };
 
     const muliplier = mulipliers[unit.toLowerCase()];
 
@@ -244,32 +265,89 @@ class FileSources extends AppElement {
   }
 
 
+  __linkInputValueChanged(event) {
+    // const {value}      = event.detail;
+    // this._linkInputVal = value.trim();
+  }
+
+
+  async __downloadBtnClicked() {
+    try {
+      await this.clicked();
+
+      const response = await fetch(this._linkInputVal);
+
+      console.log('response: ', response);
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const contentType = response.headers.get('content-type');
+
+
+      console.log('content-type: ', contentType);
+
+      if (contentType && contentType.includes('application/json')) {
+        const json = await response.json();
+
+        console.log('got json: ', json);
+
+        return;
+      }
+
+      const blob = await response.blob();
+
+      console.log('blob: ', blob);
+
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+      warn(this._fetchFailedWarning);
+    }
+  }
+
+
+  async __chooserBtnClicked() {
+    try {
+      await this.clicked();
+
+      this.$.dropZone.openChooser();
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
+
   __filesChanged(polymerObj) {
-  	if (!polymerObj) { return; }
+    if (!polymerObj) { return; }
 
-  	const getFiles = () => {
-  		// When a single item is deleted
-  		if (polymerObj.base) {
-  			return polymerObj.base;
-  		}
-  		// All other changes.
-  		return polymerObj;
-  	};
-  	
-  	const files = getFiles();
+    const getFiles = () => {
+      // When a single item is deleted
+      if (polymerObj.base) {
+        return polymerObj.base;
+      }
+      // All other changes.
+      return polymerObj;
+    };
+    
+    const files = getFiles();
 
-  	this.$.dropZone.clearFeedback();
-  	this.fire('files-changed', {value: files});
+    this.$.dropZone.clearFeedback();
+    this.fire('files-changed', {value: files});
   }
 
 
   __addNewFiles(files) {
-  	const newFiles = files.reduce((accum, file) => {
-  		accum[uid] = file;
-  		return accum;
-  	});
+    const newFiles = files.reduce((accum, file) => {
+      accum[uid] = file;
+      return accum;
+    });
 
-  	this._files = {...this._files, ...newFiles};
+    this._files = {...this._files, ...newFiles};
   }
 
 
@@ -352,7 +430,7 @@ class FileSources extends AppElement {
 
 
   async __filesAdded(files) {
-  	try {
+    try {
       await this.$.spinner.show('Reading files.');
 
       // Drives modal repeater.
@@ -399,7 +477,7 @@ class FileSources extends AppElement {
       this.$.dropZone.createFeedback('tooLarge');
     }
     else {
-    	this.__filesAdded([file]);
+      this.__filesAdded([file]);
     }
   }
 
@@ -418,18 +496,18 @@ class FileSources extends AppElement {
   
 
   delete(uid) {
-  	delete this._files[uid];
-  	this.notifyPath(`_files.${uid}`);
+    delete this._files[uid];
+    this.notifyPath(`_files.${uid}`);
   }
 
 
   deleteAll() {
-  	this._files = {};
+    this._files = {};
   }
 
 
   open() {
-  	return this.$.overlay.open();
+    return this.$.overlay.open();
   }
 
 }

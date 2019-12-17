@@ -665,7 +665,7 @@ class AppFileSystem extends AppElement {
   }
 
 
-  openList() {
+  async openList() {
     await import ('./list/preview-list.js');
     return this.$.list.open();
   }

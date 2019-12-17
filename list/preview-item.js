@@ -31,7 +31,7 @@ import {
 }                 from '@longlost/utils/utils.js';
 import htmlString from './preview-item.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
-import './file-thumbnail.js';
+import '../shared/file-thumbnail.js';
 import './processing-icon.js';
 import './upload-controls.js';
 

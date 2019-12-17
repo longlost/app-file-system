@@ -14,7 +14,7 @@ import {AppElement, html} from '@longlost/app-element/app-element.js';
 import {hijackEvent}      from '@longlost/utils/utils.js';
 import htmlString         from './drop-zone.html';
 import '@polymer/iron-icon/iron-icon.js';
-import '../file-icons.js';
+import '../shared/file-icons.js';
 
 
 class DropZone extends AppElement {
@@ -134,7 +134,12 @@ class DropZone extends AppElement {
 
 
   openChooser() {
+
+    // HACK:
+    //    Second call to click makes this more reliable.
+    
     this.$.input.click();
+    this.$.input.click(); 
   }
 
 }

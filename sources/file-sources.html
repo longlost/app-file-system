@@ -1,17 +1,53 @@
 
 <style include="app-shared-styles">
 
-  #container {
-    display:  block;
-    width:    100%;
-    position: relative;
-    margin:   16px;
-    --drop-zone-background-color: var(--app-light-color);
+  #content {
+    padding: 32px 16px;
+    height:  calc(100vh - 128px);
+    background-color: var(--app-body-color);
   }
 
-  #dropZone {
-    background-color:   var(--drop-zone-background-color);
-    --dz-hover-bgcolor: var(--app-primary-color);
+  #grid {
+    display:            grid;
+    grid-template-rows: min-content 24px 1fr;
+    grid-row-gap:       16px;
+    height:             100%;
+  }
+
+  .shared-card {
+    padding:          16px;
+    background-color: var(--app-background-color);
+  }
+
+  .full-width-btn {    
+    width: 100%;
+  }
+
+  #download-btn {
+    margin: 32px 0px 0px 0px;
+  }
+
+  #download-btn[disabled] {
+    background-color: var(--app-disabled-color);
+    color:            var(--disabled-text-color);
+  }
+
+  #or {
+    text-align: center;
+  }
+
+  #drop-zone-card {
+    display:        flex;
+    flex-direction: column;
+  }
+
+  #choose-btn {
+    margin: 0px 0px 32px 0px;
+  }
+
+  .cta-btn {
+    background-color: var(--app-primary-color);
+    color:            var(--constant-light-text);
   }
 
   .file-name-inputs {
@@ -34,11 +70,6 @@
     color: var(--app-primary-color);
   }
 
-  #save-name-btn {
-    background-color: var(--app-primary-color);
-    color:            var(--light-text-color);
-  }
-
   *[hidden] {
     display: none;
   }
@@ -49,25 +80,64 @@
 <app-header-overlay id="overlay"
                     header-size="1"
                     prebuilt-animation="from-top"
-                    reveal-header
+                    fixed-header
                     title="File Sources">
 
-	<div id="container" 
-			 slot="container">
-	 
-	  <drop-zone id="dropZone"
-	             accept="[[accept]]"
-	             hidden="[[hideDropzone]]"
-	             maxfiles="[[maxfiles]]"
-	             maxsize="[[maxsize]]"
-	             multiple="[[multiple]]"
-	             unit="[[unit]]"
-	             on-files-added="__dzFilesAdded">
-	  </drop-zone>
+  <div id="content" 
+       slot="content">
 
-		<app-spinner id="spinner"></app-spinner>
+    <div id="grid">
 
-	</div>
+      <div class="shared-card">
+        <paper-input id="linkInput"
+                     class="shared-paper-input"
+                     allowed-pattern="[^/\f/\n/\r/\t/\v]"
+                     autocapitalize
+                     autocomplete
+                     autocorrect
+                     auto-validate
+                     label="Link to File"
+                     placeholder="https://www.example.com/my-file.ext"
+                     tabindex="0"
+                     on-value-changed="__linkInputValueChanged">
+        </paper-input>
+
+        <paper-button id="download-btn"
+                      class="full-width-btn cta-btn"
+                      disabled="[[__computeDownloadBtnDisabled(_linkInputVal)]]"
+                      raised
+                      on-click="__downloadBtnClicked">
+          download file
+        </paper-button>
+      </div>
+
+      <div id="or">OR</div>
+
+      <div id="drop-zone-card" 
+           class="shared-card">
+        <paper-button id="choose-btn"
+                      class="full-width-btn cta-btn"
+                      raised
+                      on-click="__chooserBtnClicked">
+          choose files
+        </paper-button> 
+
+        <drop-zone id="dropZone"
+                   accept="[[accept]]"
+                   hidden="[[hideDropzone]]"
+                   maxfiles="[[maxfiles]]"
+                   maxsize="[[maxsize]]"
+                   multiple="[[multiple]]"
+                   unit="[[unit]]"
+                   on-files-added="__dzFilesAdded">
+        </drop-zone>
+      </div>
+
+    </div>
+
+    <app-spinner id="spinner"></app-spinner>
+
+  </div>
 
 </app-header-overlay>
 
@@ -113,7 +183,7 @@
                   on-click="__dismissRenameFilesModalButtonClicked">
       skip
     </paper-button>   
-    <paper-button id="save-name-btn"               
+    <paper-button class="cta-btn"               
                   on-click="__saveNamesButtonClicked">
       save name
     </paper-button> 
