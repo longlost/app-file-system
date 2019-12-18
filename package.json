@@ -24,7 +24,7 @@
     "@longlost/app-shared-styles": "^2.0.3",
     "@longlost/app-spinner": "^1.0.1",
     "@longlost/drag-drop-list": "^1.0.3",
-    "@longlost/lambda": "^2.0.3",
+    "@longlost/lambda": "^2.0.4",
     "@longlost/lazy-image": "^1.1.0",
     "@longlost/lazy-video": "^2.2.1",
     "@longlost/services": "^3.0.5",

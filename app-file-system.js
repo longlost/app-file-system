@@ -123,6 +123,12 @@ const arrayToDbObj = array => {
 };    
 
 
+
+
+// TODO:
+//      update to use node 'path' module here
+
+
 const getImageFileDeletePaths = path => {
   const words     = path.split('/');
   const base      = words.slice(0, words.length - 1).join('/');
@@ -136,6 +142,9 @@ const getImageFileDeletePaths = path => {
     thumbPath
   ];
 };
+
+
+
 
 
 const deleteStorageFiles = (data, path) => {
