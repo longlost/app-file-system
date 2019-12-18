@@ -1,5 +1,4 @@
 
-
 /**
   * `file-sources`
   * 
@@ -69,10 +68,14 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import {
+  blobToFile
+}                 from '@longlost/lambda/lambda.js';
+import {
   hijackEvent,
   schedule,
   warn
 }                 from '@longlost/utils/utils.js';
+import path       from 'path'; // webpack includes this by default!
 import htmlString from './file-sources.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 import '@longlost/app-modal/app-modal.js';
@@ -82,6 +85,69 @@ import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '../shared/file-thumbnail.js';
 import './drop-zone.js';
+
+
+
+
+
+
+
+const fetchFile = async (url, callback, options) => {
+
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const reader = response.body.getReader();
+
+  // Get total file length.
+  const total = response.headers.get('Content-Length');
+
+  // Get file type.
+  const type = response.headers.get('Content-Type');
+
+  const stream = new ReadableStream({
+    start(controller) {
+
+      // Read the data.
+      let loaded = 0;
+
+      const pump = async () => {
+
+        const {done, value} = await reader.read();
+
+        // When no more data needs to be consumed, close the stream
+        if (done) {
+          controller.close();
+          return;
+        }
+
+        loaded += value.length;
+
+        callback({loaded, total: total});
+        // Enqueue the next data chunk into our target stream
+        controller.enqueue(value);
+
+        return pump();
+      };
+
+      return pump();      
+    }
+  });
+
+  const streamResponse = await new Response(stream);
+  const blob           = await streamResponse.blob();
+
+  const name = path.basename(url);
+  const file = blobToFile(blob, name, type);
+
+  return file;
+};
+
+
+
 
 
 const KILOBYTE = 1024;
@@ -100,10 +166,8 @@ const formatFileSize = size => {
 };
 
 
-const getName = basename => {
-  const [ext, ...rest] = basename.split('.').reverse();
-  return rest.join('.');
-};  
+const getName = basename => 
+  path.basename(basename, path.extname(basename));
 
 // Read all jpg files to extract their orientation information.
 const addAdditionalData = async files => {
@@ -179,11 +243,6 @@ class FileSources extends AppElement {
 
       unit: String, // 'B', 'kB', 'MB' or 'GB'
 
-      _fetchFailedWarning: {
-        type: String,
-        value: 'An error occured while trying to download the file!'
-      },
-
       _files: {
         type: Object,
         value: () => ({})
@@ -194,11 +253,18 @@ class FileSources extends AppElement {
       // _linkInputVal: String,
 
 
+      // _linkInputVal: {
+      //   type: String,
+      //   value: 'https://app-layout-assets.appspot.com/assets/bg4.jpg'
+      // },
+
       _linkInputVal: {
         type: String,
-        value: 'https://app-layout-assets.appspot.com/assets/bg3.jpg'
+        value: 'https://fetch-progress.anthum.com/20kbps/images/sunrise-progressive.jpg'
       },
 
+
+      
 
 
 
@@ -265,6 +331,9 @@ class FileSources extends AppElement {
   }
 
 
+
+
+
   __linkInputValueChanged(event) {
     // const {value}      = event.detail;
     // this._linkInputVal = value.trim();
@@ -274,37 +343,23 @@ class FileSources extends AppElement {
   async __downloadBtnClicked() {
     try {
       await this.clicked();
+      await this.$.spinner.show('Downloading your file.');
 
-      const response = await fetch(this._linkInputVal);
+      const callback = status => {
+        const {loaded, total} = status;
 
-      console.log('response: ', response);
+        console.log(`Loaded ${loaded} of ${total}`);
+      };
 
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
+      const file = await fetchFile(this._linkInputVal, callback);
 
-      const contentType = response.headers.get('content-type');
-
-
-      console.log('content-type: ', contentType);
-
-      if (contentType && contentType.includes('application/json')) {
-        const json = await response.json();
-
-        console.log('got json: ', json);
-
-        return;
-      }
-
-      const blob = await response.blob();
-
-      console.log('blob: ', blob);
-
+      this.addFiles([file]);
     }
     catch (error) {
       if (error === 'click debounced') { return; }
       console.error(error);
-      warn(this._fetchFailedWarning);
+      await warn('An error occured while trying to download the file!');
+      this.$.spinner.hide();
     }
   }
 
@@ -442,7 +497,7 @@ class FileSources extends AppElement {
     }
     catch (error) {
       console.error(error);
-      warn('Sorry, an error occured while gathering these files.');
+      await warn('An error occured while gathering your files.');
     }
     finally {
       this.$.spinner.hide();
@@ -457,14 +512,21 @@ class FileSources extends AppElement {
   }
 
 
+  async __showFeedback(type) {
+    this.$.dropZone.createFeedback(type);
+    await warn('An error occured while adding files.');
+    return this.$.spinner.hide();
+  }
+
+
   __handleMultipleFiles(files) {
     const array = [...files];
 
     if (this.maxfiles && Object.keys(this._files).length + array.length > this.maxfiles) {
-      this.$.dropZone.createFeedback('tooMany');
+      this.__showFeedback('tooMany');
     }
     else if (array.some(file => this._maxbytes && file.size > this._maxbytes)) {
-      this.$.dropZone.createFeedback('tooLarge');
+      this.__showFeedback('tooLarge');
     }
     else {
       this.__filesAdded(array);
@@ -474,7 +536,7 @@ class FileSources extends AppElement {
 
   __handleSingleFile(file) {
     if (this._maxbytes && file.size > this._maxbytes) {
-      this.$.dropZone.createFeedback('tooLarge');
+      this.__showFeedback('tooLarge');
     }
     else {
       this.__filesAdded([file]);
@@ -490,7 +552,7 @@ class FileSources extends AppElement {
       this.__handleSingleFile(files[0]);
     }
     else {
-      this.$.dropZone.createFeedback('single');
+      this.__showFeedback('single');
     }
   }
   

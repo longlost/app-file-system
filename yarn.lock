@@ -341,10 +341,10 @@
   resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.0.2.tgz#ea7346d30cf359c660f85e74d62d7af4a713a725"
   integrity sha512-ymkTXjpCED0fTn9+5YKcRD8QGPATO0oFpX4C+vYMAApa7dFDRXEtAnSAY7GJj9JPo89eAnY2vFKPQ63VEmeOAg==
 
-"@longlost/lambda@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.0.3.tgz#27aaaf3d50b9613c39a79c0d0c6bfdbc78a994cb"
-  integrity sha512-kgfsnaSHFpOOMXzvC5HiML9gNXTS0NHSBoVW3NnhIxaCN2tjHhx/A3B0T75+YBuMzLXGJSviP/pdBysd/48yQg==
+"@longlost/lambda@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.0.4.tgz#a6c6279faa88668c44f5903032c5334d7dac0d51"
+  integrity sha512-4z/x0PvFcdc3Oxa3HXuf2r9LzUdBJoIt73HO0q8RSJpAZusJmNv+0AvX8TrRRaSyKhtT9om4RCXq/G9d4vCzBg==
 
 "@longlost/lazy-image@^1.1.0":
   version "1.1.0"
