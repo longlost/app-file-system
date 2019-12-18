@@ -14,35 +14,8 @@
     height:             100%;
   }
 
-  .shared-card {
-    padding:          16px;
-    background-color: var(--app-background-color);
-  }
-
-  .full-width-btn {    
-    width: 100%;
-  }
-
-  #download-btn {
-    margin: 32px 0px 0px 0px;
-  }
-
-  #download-btn[disabled] {
-    background-color: var(--app-disabled-color);
-    color:            var(--disabled-text-color);
-  }
-
   #or {
     text-align: center;
-  }
-
-  #drop-zone-card {
-    display:        flex;
-    flex-direction: column;
-  }
-
-  #choose-btn {
-    margin: 0px 0px 32px 0px;
   }
 
   .cta-btn {
@@ -70,10 +43,6 @@
     color: var(--app-primary-color);
   }
 
-  *[hidden] {
-    display: none;
-  }
-
 </style>
 
 
@@ -88,50 +57,19 @@
 
     <div id="grid">
 
-      <div class="shared-card">
-        <paper-input id="linkInput"
-                     class="shared-paper-input"
-                     allowed-pattern="[^/\f/\n/\r/\t/\v]"
-                     autocapitalize
-                     autocomplete
-                     autocorrect
-                     auto-validate
-                     label="Link to File"
-                     placeholder="https://www.example.com/my-file.ext"
-                     tabindex="0"
-                     on-value-changed="__linkInputValueChanged">
-        </paper-input>
-
-        <paper-button id="download-btn"
-                      class="full-width-btn cta-btn"
-                      disabled="[[__computeDownloadBtnDisabled(_linkInputVal)]]"
-                      raised
-                      on-click="__downloadBtnClicked">
-          download file
-        </paper-button>
-      </div>
+      <web-file-card on-file-added="__webFileAdded"></web-file-card>
 
       <div id="or">OR</div>
 
-      <div id="drop-zone-card" 
-           class="shared-card">
-        <paper-button id="choose-btn"
-                      class="full-width-btn cta-btn"
-                      raised
-                      on-click="__chooserBtnClicked">
-          choose files
-        </paper-button> 
-
-        <drop-zone id="dropZone"
-                   accept="[[accept]]"
-                   hidden="[[hideDropzone]]"
-                   maxfiles="[[maxfiles]]"
-                   maxsize="[[maxsize]]"
-                   multiple="[[multiple]]"
-                   unit="[[unit]]"
-                   on-files-added="__dzFilesAdded">
-        </drop-zone>
-      </div>
+      <device-file-card id="deviceFileCard"
+                        accept="[[accept]]"
+                        hide-dropzone="[[hideDropzone]]"
+                        maxfiles="[[maxfiles]]"
+                        maxsize="[[maxsize]]"
+                        multiple="[[multiple]]"
+                        unit="[[unit]]"
+                        on-files-added="__deviceFilesAdded">
+      </device-file-card>
 
     </div>
 

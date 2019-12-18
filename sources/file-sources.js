@@ -68,9 +68,6 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import {
-  blobToFile
-}                 from '@longlost/lambda/lambda.js';
-import {
   hijackEvent,
   schedule,
   warn
@@ -84,70 +81,8 @@ import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '../shared/file-thumbnail.js';
-import './drop-zone.js';
-
-
-
-
-
-
-
-const fetchFile = async (url, callback, options) => {
-
-  const response = await fetch(url, options);
-
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-
-  const reader = response.body.getReader();
-
-  // Get total file length.
-  const total = response.headers.get('Content-Length');
-
-  // Get file type.
-  const type = response.headers.get('Content-Type');
-
-  const stream = new ReadableStream({
-    start(controller) {
-
-      // Read the data.
-      let loaded = 0;
-
-      const pump = async () => {
-
-        const {done, value} = await reader.read();
-
-        // When no more data needs to be consumed, close the stream
-        if (done) {
-          controller.close();
-          return;
-        }
-
-        loaded += value.length;
-
-        callback({loaded, total: total});
-        // Enqueue the next data chunk into our target stream
-        controller.enqueue(value);
-
-        return pump();
-      };
-
-      return pump();      
-    }
-  });
-
-  const streamResponse = await new Response(stream);
-  const blob           = await streamResponse.blob();
-
-  const name = path.basename(url);
-  const file = blobToFile(blob, name, type);
-
-  return file;
-};
-
-
-
+import './web-file-card.js';
+import './device-file-card.js';
 
 
 const KILOBYTE = 1024;
@@ -250,24 +185,8 @@ class FileSources extends AppElement {
 
       _filesToRename: Array,
 
-      // _linkInputVal: String,
-
-
-      // _linkInputVal: {
-      //   type: String,
-      //   value: 'https://app-layout-assets.appspot.com/assets/bg4.jpg'
-      // },
-
-      _linkInputVal: {
-        type: String,
-        value: 'https://fetch-progress.anthum.com/20kbps/images/sunrise-progressive.jpg'
-      },
-
-
-      
-
-
-
+      // Using maxsize and unit to calculate the total allowed bytes
+      // any one file can have.
       _maxbytes: {
         type: Number,
         computed: '__computeMaxBytes(maxsize, unit)'
@@ -287,11 +206,6 @@ class FileSources extends AppElement {
     return [
       '__filesChanged(_files.*)'
     ];
-  }
-
-
-  __computeDownloadBtnDisabled(inputVal) {
-    return !Boolean(inputVal);
   }
 
 
@@ -331,52 +245,6 @@ class FileSources extends AppElement {
   }
 
 
-
-
-
-  __linkInputValueChanged(event) {
-    // const {value}      = event.detail;
-    // this._linkInputVal = value.trim();
-  }
-
-
-  async __downloadBtnClicked() {
-    try {
-      await this.clicked();
-      await this.$.spinner.show('Downloading your file.');
-
-      const callback = status => {
-        const {loaded, total} = status;
-
-        console.log(`Loaded ${loaded} of ${total}`);
-      };
-
-      const file = await fetchFile(this._linkInputVal, callback);
-
-      this.addFiles([file]);
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
-      await warn('An error occured while trying to download the file!');
-      this.$.spinner.hide();
-    }
-  }
-
-
-  async __chooserBtnClicked() {
-    try {
-      await this.clicked();
-
-      this.$.dropZone.openChooser();
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
-    }
-  }
-
-
   __filesChanged(polymerObj) {
     if (!polymerObj) { return; }
 
@@ -391,7 +259,7 @@ class FileSources extends AppElement {
     
     const files = getFiles();
 
-    this.$.dropZone.clearFeedback();
+    this.$.deviceFileCard.clearFeedback();
     this.fire('files-changed', {value: files});
   }
 
@@ -491,7 +359,7 @@ class FileSources extends AppElement {
       // Drives modal repeater.
       this._filesToRename = await addAdditionalData(files);
 
-      this.$.dropZone.clearFeedback();
+      this.$.deviceFileCard.clearFeedback();
       await schedule();
       await this.$.renameFilesModal.open();
     }
@@ -505,7 +373,14 @@ class FileSources extends AppElement {
   }
 
 
-  __dzFilesAdded(event) {    
+  __webFileAdded(event) {
+    hijackEvent(event);
+
+    this.__filesAdded([event.detail.file]);
+  }
+
+
+  __deviceFilesAdded(event) {    
     hijackEvent(event);
 
     this.__filesAdded(event.detail.files);
@@ -513,8 +388,8 @@ class FileSources extends AppElement {
 
 
   async __showFeedback(type) {
-    this.$.dropZone.createFeedback(type);
-    await warn('An error occured while adding files.');
+    this.$.deviceFileCard.createFeedback(type);
+    await warn('Could not add those files.');
     return this.$.spinner.hide();
   }
 

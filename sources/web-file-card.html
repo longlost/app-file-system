@@ -1,0 +1,100 @@
+
+<style include="app-shared-styles">
+
+	:host {
+		display: block;
+	}
+
+  .shared-card {
+    padding:          16px;
+    position:  				relative;
+    overflow: 				hidden;
+    background-color: var(--app-background-color);
+  }
+
+  #download-btn {
+  	width: 	100%;
+    margin: 32px 0px 0px 0px;
+    background-color: var(--app-primary-color);
+    color:            var(--constant-light-text);
+  }
+
+  #download-btn[disabled] {
+    background-color: var(--app-disabled-color);
+    color:            var(--disabled-text-color);
+  }
+
+  #progress {
+  	display: 					flex;
+  	flex-direction: 	column;
+  	justify-content:  space-between;
+  	position:  				absolute;
+  	top: 			 				0px;
+  	right: 						0px;
+  	bottom: 					0px;
+  	left: 		 				0px;
+  	padding: 	 				16px;
+  	transition: 			transform 0.3s var(--custom-ease);
+  	background-color: var(--app-background-color);
+  }
+
+  .progress {  	
+  	transform: translateY(100%);
+  }
+
+  .show {  	
+  	transform: none;
+  }
+
+  paper-progress {
+    width: 100%;
+    --paper-progress-active-color: var(--app-accent-color);
+  }
+
+  #cancel-btn {
+  	width: 			min-content;
+    align-self: center;
+    color: 			var(--app-primary-color);
+  }
+
+  #cancel-btn[disabled] {
+  	color: var(--disabled-text-color);
+  }
+
+</style>
+
+
+<div class="shared-card">
+	
+  <paper-input id="linkInput"
+               class="shared-paper-input"
+               allowed-pattern="[^/\f/\n/\r/\t/\v]"
+               autocapitalize
+               autocomplete
+               autocorrect
+               auto-validate
+               label="Link to File"
+               placeholder="https://example.com/my-file.ext"
+               tabindex="0"
+               on-value-changed="__linkInputValueChanged">
+  </paper-input>
+
+  <paper-button id="download-btn"
+                disabled="[[__computeDownloadBtnDisabled(_linkInputVal)]]"
+                raised
+                on-click="__downloadBtnClicked">
+    import from web
+  </paper-button>
+
+  <div id="progress" 
+  		 class="progress">
+  	<div>Importing from web.</div>
+  	<paper-progress value="[[_progress]]"></paper-progress>
+  	<paper-button id="cancel-btn"
+  								disabled="[[_cancelBtnDisabled]]"
+	                on-click="__cancelBtnClicked">
+	    cancel
+	  </paper-button>
+  </div>
+
+</div>
