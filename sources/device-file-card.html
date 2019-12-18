@@ -1,0 +1,46 @@
+
+<style include="app-shared-styles">
+
+	:host {
+		display: flex;
+	}
+
+  .shared-card {
+  	display:        	flex;
+    flex-direction: 	column;
+    width: 						100%;
+    padding:          16px;
+    background-color: var(--app-background-color);
+  }  
+
+  #choose-btn {
+  	width: 						100%;
+    margin: 					0px 0px 32px 0px;
+    background-color: var(--app-primary-color);
+    color:            var(--constant-light-text);
+  }
+
+  *[hidden] {
+    display: none;
+  }
+
+</style>
+
+
+<div class="shared-card">
+  <paper-button id="choose-btn"
+                raised
+                on-click="__chooserBtnClicked">
+    browse device
+  </paper-button> 
+
+  <drop-zone id="dropzone"
+             accept="[[accept]]"
+             hidden="[[hideDropzone]]"
+             maxfiles="[[maxfiles]]"
+             maxsize="[[maxsize]]"
+             multiple="[[multiple]]"
+             unit="[[unit]]"
+             on-files-added="__dzFilesAdded">
+  </drop-zone>
+</div>
