@@ -23,22 +23,22 @@
   *             default -> 'image'
   *
   *
-  * 	 hideDropzone - <Boolean> optional: undefined -> If true, do not display file dropzone.
+  *    hideDropzone - <Boolean> optional: undefined -> If true, do not display file dropzone.
   *
   *
-  *		 maxfiles - <Number> optional: undefined -> The maximum allowed number of files a user can have.
+  *    maxfiles - <Number> optional: undefined -> The maximum allowed number of files a user can have.
   *
   *
-  *		 maxsize - <Number> optional: undefined -> The maximum number of units a single file cannot exceed.
+  *    maxsize - <Number> optional: undefined -> The maximum number of units a single file cannot exceed.
   * 
   *
   *    multiple - <Boolean> optional: false -> Only accept one file at a time, 
-  * 							true -> Allow many files at the same time.
+  *               true -> Allow many files at the same time.
   *               false -> Only allow one file at a time. Each new file replaces the previous one.
   *
   *
-  * 	 unit - <String> optional: 'kB' -> Configures the order of magnitude of bytes to display, 
-  * 																		 and how to measure maxsize.
+  *    unit - <String> optional: 'kB' -> Configures the order of magnitude of bytes to display, 
+  *                                      and how to measure maxsize.
   *
   *
   *
@@ -70,6 +70,7 @@ import {
 import htmlString from './device-file-card.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/paper-button/paper-button.js';
+import '../shared/file-icons.js';
 import './drop-zone.js';
 
 
@@ -129,12 +130,12 @@ class DeviceFileCard extends AppElement {
 
 
   clearFeedback() {
-  	this.$.dropzone.clearFeedback();
+    this.$.dropzone.clearFeedback();
   }
 
 
   createFeedback(type) {
-  	this.$.dropzone.createFeedback(type);
+    this.$.dropzone.createFeedback(type);
   }
 
 }

@@ -286,10 +286,10 @@
     "@longlost/overlay-mixin" "^1.0.1"
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/app-shared-styles@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@longlost/app-shared-styles/-/app-shared-styles-2.0.3.tgz#333fae88b8a91161dab9c241d3c2981dcf53f6d0"
-  integrity sha512-bCIuKcBJwQl+uHZPwUnekNMOSL4g22Z2OPnvBE+zkVLg2HLn3Kp43oMALM+seT2KIABpG+Rbd56TGJB0hSgnIA==
+"@longlost/app-shared-styles@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@longlost/app-shared-styles/-/app-shared-styles-2.0.4.tgz#8efb7a9f58f8eb4006194067dbabd7534c07bec1"
+  integrity sha512-fr2jCCoilqX8t4r/th/VL710HFs3vw/7ktrL6HFUyOQM4GPgcqoo6SzjaBAW/YpyImSN7F9vi/KwGyOR9EFJ2g==
   dependencies:
     "@polymer/polymer" "^3.3.1"
 

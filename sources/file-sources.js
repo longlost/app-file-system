@@ -66,14 +66,23 @@
 import {
   AppElement, 
   html
-}                 from '@longlost/app-element/app-element.js';
+}                   from '@longlost/app-element/app-element.js';
+import {
+  capitalize,
+  compose,
+  head,
+  map,
+  split
+}                   from '@longlost/lambda/lambda.js';
 import {
   hijackEvent,
   schedule,
   warn
-}                 from '@longlost/utils/utils.js';
-import path       from 'path'; // webpack includes this by default!
-import htmlString from './file-sources.html';
+}                   from '@longlost/utils/utils.js';
+import path         from 'path'; // webpack includes this by default!
+import mime         from 'mime-types';
+import descriptions from './mime-descriptions.json';
+import htmlString   from './file-sources.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 import '@longlost/app-modal/app-modal.js';
 import '@longlost/app-shared-styles/app-shared-styles.js';
@@ -83,6 +92,15 @@ import '@polymer/paper-input/paper-input.js';
 import '../shared/file-thumbnail.js';
 import './web-file-card.js';
 import './device-file-card.js';
+
+
+// These helpers used to compute _mimes.
+const trim = str => str.trim();
+const getAcceptEntries = compose(split(','), map(trim));
+const removeWildCards  = compose(split('/*'), head);
+// Use arrow function here to block extra arguments 
+// that map passes in to the map function.
+const getMimeTypes = map(str => removeWildCards(str)); 
 
 
 const KILOBYTE = 1024;
@@ -178,6 +196,13 @@ class FileSources extends AppElement {
 
       unit: String, // 'B', 'kB', 'MB' or 'GB'
 
+      // Human-readable string of acceptable file types
+      // displayed at top of card as a hint for user.
+      _acceptableTypes: {
+        type: String,
+        computed: '__computeAcceptableTypes(_mimes)'
+      },
+
       _files: {
         type: Object,
         value: () => ({})
@@ -190,6 +215,14 @@ class FileSources extends AppElement {
       _maxbytes: {
         type: Number,
         computed: '__computeMaxBytes(maxsize, unit)'
+      },    
+
+      // This array containes mime types (ie. 'image/jpeg').
+      // It us used to check against fetch response 'content-type' in order
+      // to be sure we are only loading the desired types of files.
+      _mimes: {
+        type: Array,
+        computed: '__computeMimeTypes(accept)'
       },
 
       // Cached rename modal input values.
@@ -209,6 +242,23 @@ class FileSources extends AppElement {
   }
 
 
+  __computeAcceptableTypes(mimes) {
+    if (!mimes) { return ''; }
+
+    const description = mimes.reduce((accum, m) => {
+      const desc = descriptions[m];
+
+      if (desc) {
+        accum = accum ? `${accum}, ${desc}` : desc;
+      }
+      
+      return accum;
+    }, '');
+
+    return `${capitalize(description)}.`;
+  }
+
+
   __computeMaxBytes(maxsize, unit) {
     if (!maxsize || !unit) { return; }
 
@@ -222,6 +272,24 @@ class FileSources extends AppElement {
     const muliplier = mulipliers[unit.toLowerCase()];
 
     return maxsize * muliplier * 1024;
+  }
+
+
+  __computeMimeTypes(accept) {
+    if (!accept) { return; }
+
+    // The comma seperated accept entries.
+    const entries = getAcceptEntries(accept);
+
+    // Use the 'mime-types' library to lookup the 
+    // corresponding header content-type strings
+    // that align with the accept string.
+    const types = entries.map(mime.contentType);
+
+    // Take out wild cards. (ie. 'image/*' -> 'image')
+    const mimes = getMimeTypes(types);
+
+    return mimes;
   }
 
 
