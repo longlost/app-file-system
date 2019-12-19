@@ -42,27 +42,29 @@
 import {
   AppElement, 
   html
-}                 from '@longlost/app-element/app-element.js';
+}                   from '@longlost/app-element/app-element.js';
 import {
   blobToFile
-}                 from '@longlost/lambda/lambda.js';
+}                   from '@longlost/lambda/lambda.js';
 import {
   message,
   schedule,
   wait,
   warn
-}                 from '@longlost/utils/utils.js';
-import path       from 'path'; // webpack includes this by default!
-import htmlString from './web-file-card.html';
+}                   from '@longlost/utils/utils.js';
+import path         from 'path'; // webpack includes this by default!
+import mime         from 'mime-types';
+import htmlString   from './web-file-card.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-progress/paper-progress.js';
+import '../shared/file-icons.js';
 
 
 // 'callback' will be passed an object with the following properties:
 //
-// 		cancel, loaded, progress, total
+//    cancel, loaded, progress, total
 //
 // Calling 'cancel' will halt stream and throw an error
 // with error.message set to 'Failed to fetch'.
@@ -105,7 +107,7 @@ const fetchFile = async (url, callback, options) => {
 
         const progress = total ? (loaded / total) * 100 : 100;
 
-        callback({cancel, loaded, progress, total});
+        callback({cancel, loaded, progress, total, type});
         // Enqueue the next data chunk into our target stream
         controller.enqueue(value);
 
@@ -137,81 +139,107 @@ class WebFileCard extends AppElement {
   static get properties() {
     return {
 
-      // Any valid HTML5 input accept string or
-      // one of 3 shorthand values: 'image', 'video' or 'audio'.
-      accept: String,
+      // This array containes mime types (ie. 'image/jpeg').
+      // It us used to check against fetch response 'content-type' in order
+      // to be sure we are only loading the desired types of files.
+      mimes: Array,
 
       // Cancel method for ReadableStream instance from fetchFile function.
       _cancel: Object,
 
       // Data-bind to #cancel-btn disabled prop.
       _cancelBtnDisabled: {
-      	type: Boolean,
-      	value: true,
-      	computed: '__computeCancelBtnDisabled(_cancel)'
+        type: Boolean,
+        value: true,
+        computed: '__computeCancelBtnDisabled(_cancel)'
       },
 
 
 
-      _fetchContentType: {
-      	type: Object,
-      	computed: '__computeFetchContentType(accept)'
-      },
+      // _url: String
 
 
-
-      // _linkInputVal: String
-
-
-      // _linkInputVal: {
+      // _url: {
       //   type: String,
       //   value: 'https://app-layout-assets.appspot.com/assets/bg4.jpg'
       // }
 
-      _linkInputVal: {
+      _url: {
         type: String,
         value: 'https://fetch-progress.anthum.com/20kbps/images/sunrise-progressive.jpg'
       },
 
 
 
+
       // Data-bind to <paper-progress>
       _progress: {
-      	type: Number,
-      	value: 0
+        type: Number,
+        value: 0
+      },
+
+      // fetch response 'Content-Type' header string.
+      // We use this to check the incoming file type
+      // against the accept property to make sure
+      // the user is fetching the appropriate 
+      // type of file for a given application.
+      _type: String,
+
+      // Disable import button until url contains a valid mime type.
+      _valid: {
+        type: Boolean,
+        value: false,
+        computed: '__computeValid(_url, mimes)'
       }
 
     };
   }
 
 
-  __computeDownloadBtnDisabled(inputVal) {
-    return !Boolean(inputVal);
+  static get observers() {
+    return [
+      '__cancelMimesAndTypeChanged(_cancel, mimes, _type)'
+    ];
   }
 
 
   __computeCancelBtnDisabled(cancel) {
-  	return !Boolean(cancel);
+    return !Boolean(cancel);
   }
 
 
+  __computeValid(url, mimes) {
+    if (!url || !mimes) { return false; }
+
+    const type = mime.contentType(path.extname(url));
+
+    return mimes.some(m => type.includes(m));
+  }
 
 
+  async __cancelMimesAndTypeChanged(cancel, mimes, type) {
+    if (!cancel || !mimes || !type) { return; }
 
-  __computeFetchContentType(accept) {
-  	if (!accept) { return; }
+    const shouldNotCancel = mimes.some(m => 
+                              type.includes(m));
 
-  	
+    if (shouldNotCancel) { return; }
+
+    warn('This import is not an acceptable type of file.');
+    await schedule();
+    cancel();
   }
 
   
 
 
 
-  __linkInputValueChanged(event) {
+  __inputValueChanged(event) {
     // const {value}      = event.detail;
-    // this._linkInputVal = value.trim();
+    // this._url = value.trim();
   }
+
+
 
 
   async __downloadBtnClicked() {
@@ -221,42 +249,48 @@ class WebFileCard extends AppElement {
       await wait(350);
 
       const callback = status => {
-      	const {cancel, progress} = status;
-      	this._cancel 	 = cancel;
+        const {cancel, progress, type} = status;
+        this._cancel   = cancel;
         this._progress = progress;
+        this._type     = type;
       };
 
-      const file = await fetchFile(this._linkInputVal, callback);
+      const file = await fetchFile(this._url, callback);
 
       this.fire('file-added', {file});
     }
     catch (error) {
-      if (!error === 'click debounced' && !error.message === 'Failed to fetch') {
-      	console.error(error);
-      	await warn('Could not import the file.');
+      if (error === 'click debounced') {
+        return;
+      } else if (error.message === 'Failed to fetch') {
+        message('Import cancelled.');
+      } else {
+        console.error(error);
+        await warn('Could not import the file.');
       }
     }
-    finally {    	
+    finally {
+      await schedule();
       this.$.progress.classList.remove('show');
+      await wait(350);      
+      this._cancel   = undefined;
+      this._progress = 0;
+      this._type     = undefined;
     }
   }
 
 
   async __cancelBtnClicked() {
-  	try {
-  		await this.clicked();
-  		if (!this._cancel) { return; }
-
-  		this._cancel();
-
-  		this._cancel = undefined;
-  		await wait(350);		
-  		message('Import cancelled.');
-  	}
-  	catch (error) {
-  		if (error === 'click debounced') { return; }
-  		console.error(error);
-  	}
+    try {
+      await this.clicked();
+      if (this._cancel) {
+        this._cancel();
+      }
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
   }
 
 }

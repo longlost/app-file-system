@@ -111,7 +111,6 @@ import {
 }                 from '@longlost/utils/utils.js';
 import htmlString from './app-file-system.html';
 import services   from '@longlost/services/services.js';
-import './sources/file-sources.js';
 
 
 // From items array/collection back to a Firestore data obj.
@@ -680,7 +679,8 @@ class AppFileSystem extends AppElement {
   }
 
 
-  openSources() {
+  async openSources() {
+    await import ('./sources/file-sources.js');
     return this.$.sources.open();
   }
 

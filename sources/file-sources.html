@@ -9,13 +9,18 @@
 
   #grid {
     display:            grid;
-    grid-template-rows: min-content 24px 1fr;
+    grid-template-rows: min-content min-content 24px 1fr;
     grid-row-gap:       16px;
     height:             100%;
   }
 
   #or {
     text-align: center;
+  }
+
+  #modal-items {
+    max-height: calc(100vh - 292px);
+    overflow-y: auto;
   }
 
   .cta-btn {
@@ -57,7 +62,11 @@
 
     <div id="grid">
 
-      <web-file-card on-file-added="__webFileAdded"></web-file-card>
+      <div>[[_acceptableTypes]]</div>
+
+      <web-file-card mimes="[[_mimes]]"
+                     on-file-added="__webFileAdded">
+      </web-file-card>
 
       <div id="or">OR</div>
 
@@ -91,28 +100,30 @@
       [[__computeRenameModalText(multiple)]]      
     </p>
 
-    <template is="dom-repeat" 
-              items="[[_filesToRename]]"
-              as="file">
-      <div class="file-name-inputs">
-        <file-thumbnail class="rename-modal-images"
-                        item="[[file]]" 
-                        presentation 
-                        sizing="contain">
-        </file-thumbnail>
-        <paper-input class="shared-paper-input"
-                     allowed-pattern="[^/\f/\n/\r/\t/\v]"
-                     autocorrect
-                     autofocus
-                     autocomplete
-                     auto-validate
-                     label="File Name"
-                     on-value-changed="__renameInputChanged"
-                     placeholder="[[__computePlaceholderName(file.name)]]"
-                     tabindex="0">
-        </paper-input>
-      </div>
-    </template>
+    <div id="modal-items">
+      <template is="dom-repeat" 
+                items="[[_filesToRename]]"
+                as="file">
+        <div class="file-name-inputs">
+          <file-thumbnail class="rename-modal-images"
+                          item="[[file]]" 
+                          presentation 
+                          sizing="contain">
+          </file-thumbnail>
+          <paper-input class="shared-paper-input"
+                       allowed-pattern="[^/\f/\n/\r/\t/\v]"
+                       autocorrect
+                       autofocus
+                       autocomplete
+                       auto-validate
+                       label="File Name"
+                       on-value-changed="__renameInputChanged"
+                       placeholder="[[__computePlaceholderName(file.name)]]"
+                       tabindex="0">
+          </paper-input>
+        </div>
+      </template>
+    </div>
 
   </div>
   <div class="card-actions" 

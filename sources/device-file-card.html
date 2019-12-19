@@ -1,21 +1,21 @@
 
 <style include="app-shared-styles">
 
-	:host {
-		display: flex;
-	}
+  :host {
+    display: flex;
+  }
 
   .shared-card {
-  	display:        	flex;
-    flex-direction: 	column;
-    width: 						100%;
+    display:          flex;
+    flex-direction:   column;
+    width:            100%;
     padding:          16px;
     background-color: var(--app-background-color);
   }  
 
   #choose-btn {
-  	width: 						100%;
-    margin: 					0px 0px 32px 0px;
+    width:            100%;
+    margin:           0px 0px 32px 0px;
     background-color: var(--app-primary-color);
     color:            var(--constant-light-text);
   }
@@ -29,8 +29,12 @@
 
 <div class="shared-card">
   <paper-button id="choose-btn"
+                class="shared-paper-button-with-icon"
                 raised
                 on-click="__chooserBtnClicked">
+    <iron-icon class="shared-iron-icon-inside-paper-button" 
+               icon="file-icons:file-open">
+    </iron-icon>
     browse device
   </paper-button> 
 
