@@ -1,9 +1,9 @@
 
 
 /**
-  * `fullscreen-gallery`
+  * `fullscreen-carousel`
   * 
-  *   Fullscreen image viewer carousel.
+  *   Fullscreen image/photo/video viewer carousel.
   *
   *
   *   @customElement
@@ -36,13 +36,13 @@ import {
   AppElement, 
   html
 }                 from '@longlost/app-element/app-element.js';
-import htmlString from './fullscreen-gallery.html';
+import htmlString from './fullscreen-carousel.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 
 
 
-class FullscreenGallery extends AppElement {
-  static get is() { return 'fullscreen-gallery'; }
+class FullscreenCarousel extends AppElement {
+  static get is() { return 'fullscreen-carousel'; }
 
   static get template() {
     return html([htmlString]);
@@ -65,4 +65,4 @@ class FullscreenGallery extends AppElement {
 
 }
 
-window.customElements.define(FullscreenGallery.is, FullscreenGallery);
+window.customElements.define(FullscreenCarousel.is, FullscreenCarousel);

@@ -201,6 +201,12 @@ class AppFileSystem extends AppElement {
         value: false
       },
 
+      // Controls the type of file preview list to use.
+      list: {
+        type: String,
+        value: 'rearrange-list' // Or 'camera-roll'.
+      },
+
       maxfiles: Number,
 
       maxsize: Number,
