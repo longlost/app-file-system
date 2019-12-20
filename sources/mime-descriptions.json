@@ -1,6 +1,3 @@
-
-// Human-readable mappings for common web file mime types.
-
 {
 	"application/epub+zip": "Electronic Publication (EPUB)",
 	"application/gzip": "GZip Compressed Archive",

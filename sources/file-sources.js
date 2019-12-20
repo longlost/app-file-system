@@ -90,6 +90,7 @@ import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '../shared/file-thumbnail.js';
+import './list-icon-button.js';
 import './web-file-card.js';
 import './device-file-card.js';
 
@@ -186,6 +187,8 @@ class FileSources extends AppElement {
 
       // Set to true to hide the add and delete dropzones.
       hideDropzone: Boolean,
+
+      list: String, // 'rearrange-list' or 'camera-roll'.
 
       maxfiles: Number,
 

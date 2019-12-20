@@ -1,23 +1,23 @@
 
 /**
-  * `processing-icon`
-  * 
-  *  Animated icon that helps illustrate that a file is being processed in the cloud.
-  *
-  *
-  *  properites:
-  *
-  *  
-  *    item - file data object that drives animation timing
-  * 
-  *
-  *
-  * @customElement
-  * @polymer
-  * @demo demo/index.html
-  *
-  *
-  **/
+ 	* `list-icon-button`
+ 	* 
+ 	*  	Icon button with a badge that animates when files are being uploaded and processed in the cloud.
+ 	*
+ 	*
+ 	*  properites:
+ 	*
+ 	*  
+ 	*    items - Array of file data objects that drives animation timing.
+ 	* 
+ 	*
+ 	*
+ 	* @customElement
+ 	* @polymer
+ 	* @demo demo/index.html
+ 	*
+ 	*
+ 	**/
 
 import {
   AppElement, 
@@ -27,13 +27,14 @@ import {
   schedule,
   wait
 }                 from '@longlost/utils/utils.js';
-import htmlString from './processing-icon.html';
+import htmlString from './list-icon-button.html';
 import '@longlost/app-icons/app-icons.js';
-import '@polymer/iron-icon/iron-icon.js';
+import '@longlost/badged-icon-button/badged-icon-button.js';
+import '../shared/file-icons.js';
 
 
-class ProcessingIcon extends AppElement {
-  static get is() { return 'processing-icon'; }
+class ListIconButton extends AppElement {
+  static get is() { return 'list-icon-button'; }
 
   static get template() {
     return html([htmlString]);
@@ -45,10 +46,17 @@ class ProcessingIcon extends AppElement {
 
       item: Object,
 
-      _animate: {
-        type: Boolean,
-        value: false,
-        computed: '__computeAnimate(item)'
+      list: String,
+
+      // _animate: {
+      //   type: Boolean,
+      //   value: false,
+      //   computed: '__computeAnimate(item)'
+      // },
+
+      _icon: {
+      	type: String,
+      	computed: '__computeIcon(list)'
       }
 
     };
@@ -59,6 +67,18 @@ class ProcessingIcon extends AppElement {
     return [
       '__animateChanged(_animate)'
     ];
+  }
+
+
+  __computeIcon(list) {  	
+  	switch (list) {
+  		case 'rearrange-list':
+  			return 'file-icons:apps';
+			case 'camera-roll':
+				return 'file-icons:dashboard';
+			default:
+				return 'file-icons:apps';
+  	}
   }
 
   // animate from upload through final processing
@@ -99,6 +119,18 @@ class ProcessingIcon extends AppElement {
     await wait(250);
   }
 
+
+  async __btnClicked() {
+    try {
+      await this.clicked();
+      this.fire('list-icon-button-clicked');
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
 }
 
-window.customElements.define(ProcessingIcon.is, ProcessingIcon);
+window.customElements.define(ListIconButton.is, ListIconButton);
