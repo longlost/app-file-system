@@ -1,23 +1,23 @@
 
 /**
- 	* `list-icon-button`
- 	* 
- 	*  	Icon button with a badge that animates when files are being uploaded and processed in the cloud.
- 	*
- 	*
- 	*  properites:
- 	*
- 	*  
- 	*    items - Array of file data objects that drives animation timing.
- 	* 
- 	*
- 	*
- 	* @customElement
- 	* @polymer
- 	* @demo demo/index.html
- 	*
- 	*
- 	**/
+  * `list-icon-button`
+  * 
+  *   Icon button with a badge that animates when files are being uploaded and processed in the cloud.
+  *
+  *
+  *  properites:
+  *
+  *  
+  *    items - Array of file data objects that drives animation timing.
+  * 
+  *
+  *
+  * @customElement
+  * @polymer
+  * @demo demo/index.html
+  *
+  *
+  **/
 
 import {
   AppElement, 
@@ -48,6 +48,7 @@ class ListIconButton extends AppElement {
 
       list: String,
 
+
       // _animate: {
       //   type: Boolean,
       //   value: false,
@@ -55,8 +56,14 @@ class ListIconButton extends AppElement {
       // },
 
       _icon: {
-      	type: String,
-      	computed: '__computeIcon(list)'
+        type: String,
+        computed: '__computeIcon(list)'
+      },
+
+
+      _show: {
+        type: Boolean,
+        value: true, 
       }
 
     };
@@ -70,15 +77,15 @@ class ListIconButton extends AppElement {
   }
 
 
-  __computeIcon(list) {  	
-  	switch (list) {
-  		case 'rearrange-list':
-  			return 'file-icons:apps';
-			case 'camera-roll':
-				return 'file-icons:dashboard';
-			default:
-				return 'file-icons:apps';
-  	}
+  __computeIcon(list) {
+    switch (list) {
+      case 'rearrange-list':
+        return 'file-icons:apps';
+      case 'camera-roll':
+        return 'file-icons:dashboard-90';
+      default:
+        return 'file-icons:apps';
+    }
   }
 
   // animate from upload through final processing
@@ -123,6 +130,11 @@ class ListIconButton extends AppElement {
   async __btnClicked() {
     try {
       await this.clicked();
+
+
+      this._show = !this._show;
+
+
       this.fire('list-icon-button-clicked');
     }
     catch (error) {

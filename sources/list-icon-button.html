@@ -35,10 +35,22 @@
 </style>
 
 
-<badged-icon-button alt="List icon button."
+<!-- <badged-icon-button alt="List icon button."
 										icon="[[_icon]]"
 										on-click="__btnClicked">
+</badged-icon-button> -->
+
+<badged-icon-button alt="List icon button."
+										icon="[[_icon]]"
+										show-lower="[[_show]]"
+										show-upper="[[_show]]"
+										upper-label="15"
+										on-click="__btnClicked">
+	<div slot="upper-badge">28</div>
+	<div slot="lower-badge">$</div>
 </badged-icon-button>
+
+
 
 <!-- <iron-icon icon="app-icons:cloud"></iron-icon>
 <iron-icon id="gear" icon="app-icons:settings"></iron-icon> -->
