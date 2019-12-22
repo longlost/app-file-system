@@ -30,6 +30,7 @@ import {
 import htmlString from './list-icon-button.html';
 import '@longlost/app-icons/app-icons.js';
 import '@longlost/badged-icon-button/badged-icon-button.js';
+import '@polymer/iron-icon/iron-icon.js';
 import '../shared/file-icons.js';
 
 
@@ -44,26 +45,39 @@ class ListIconButton extends AppElement {
   static get properties() {
     return {
 
-      item: Object,
+      // File object collection.
+      items: Array,
 
+      // Determines which icon is shown for the <paper-icon-button>
       list: String,
 
+      // Uploading arrow animation state.
+      _animateArrow: {
+        type: Boolean,
+        value: false,
+        computed: '__computeAnimate(items)'
+      },
 
-      // _animate: {
-      //   type: Boolean,
-      //   value: false,
-      //   computed: '__computeAnimate(item)'
-      // },
+      // Cloud processing gear animation state.
+      _animateGear: {
+        type: Boolean,
+        value: false,
+        computed: '__computeAnimate(items)'
+      },
+
+      _count: {
+        type: Number,
+        computed: '__computeCount(items)'
+      },
 
       _icon: {
         type: String,
         computed: '__computeIcon(list)'
       },
 
-
       _show: {
         type: Boolean,
-        value: true, 
+        computed: '__computeShow(items)'
       }
 
     };
@@ -72,7 +86,8 @@ class ListIconButton extends AppElement {
 
   static get observers() {
     return [
-      '__animateChanged(_animate)'
+      '__animateArrowChanged(_animateArrow)',
+      '__animateGearChanged(_animateGear)'
     ];
   }
 
@@ -89,57 +104,84 @@ class ListIconButton extends AppElement {
   }
 
   // animate from upload through final processing
-  __computeAnimate(item) {
-    if (!item || 'type' in item === false) { return false; }
-    // animate during image processing as well
-    if (item.type.includes('image')) {
-      return 'original' in item && 'optimized' in item === false;
-    }
-    // Other file types don't have futher processing
-    // so we are done animating.  
-    return 'original' in item === false;
+  __computeAnimateArrow(items) {
+    if (!Array.isArray(items) || items.length === 0) { return false; }
+
+    const shouldAnimate = items.some(item => 
+      '_tempUrl' in item && 
+      'original' in item === false
+    );
+
+    return shouldAnimate;
+  }
+
+  // animate from upload through final processing
+  __computeAnimateGear(item) {
+    if (!Array.isArray(items) || items.length === 0) { return false; }
+
+    const shouldAnimate = items.some(item => 
+      item.type.includes('image') && 
+      'original'  in item && 
+      'optimized' in item === false
+    );
+
+    return shouldAnimate;
   }
 
 
-  async __animateChanged(animate) {
+  __computeCount(items) {
+    if (!Array.isArray(items)) { return; }
+    return items.length;
+  }
+
+
+  __computeShow(items) {
+    return Array.isArray(items) && items.length > 0;
+  }
+
+
+  __startArrowAnimation() {
+    this.$.arrow.classList.add('start-arrow');
+    this.$.count.classList.add('start-count');
+  }
+
+
+  __stopArrowAnimation() {
+    this.$.arrow.classList.remove('start-arrow');
+    this.$.count.classList.remove('start-count');
+  }
+
+
+  __animateArrowChanged(animate) {
     if (animate) {
-      this.style['display'] = 'block';
-      await wait(500); // Wait for <upload-controls> to hide.
-      this.__startAnimation();
+      this.__startArrowAnimation();
     }
     else {
-      await this.__stopAnimation();
-      this.style['display'] = 'none';
+      this.__stopArrowAnimation();
     }
   }
 
 
-  __startAnimation() {
-    this.style['transform'] = 'scale(1, 1)';
-    this.$.gear.classList.add('start');
+  async __startGearAnimation() {
+    this.$.gear.classList.add('show-gear');
+    await wait(450);
+    this.$.gear.classList.add('start-gear');
   }
 
 
-  async __stopAnimation() {
-    this.style['transform'] = 'scale(0, 0)';
-    this.$.gear.classList.remove('start');
-    await wait(250);
+  async __stopGearAnimation() {
+    this.$.gear.classList.remove('start-gear');
+    await schedule();
+    this.$.gear.classList.remove('show-gear');
   }
 
 
-  async __btnClicked() {
-    try {
-      await this.clicked();
-
-
-      this._show = !this._show;
-
-
-      this.fire('list-icon-button-clicked');
+  __animateGearChanged(animate) {
+    if (animate) {
+      this.__startGearAnimation();
     }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
+    else {
+      this.__stopGearAnimation();
     }
   }
 

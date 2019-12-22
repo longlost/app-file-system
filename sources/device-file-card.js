@@ -109,16 +109,9 @@ class DeviceFileCard extends AppElement {
   }
 
 
-  async __chooserBtnClicked() {
-    try {
-      await this.clicked();
-
-      this.$.dropzone.openChooser();
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
-    }
+  __chooserBtnClicked() {
+    // Cannot use 'await this.clicked()' here because of Safari.
+    this.$.dropzone.openChooser();
   }
 
 

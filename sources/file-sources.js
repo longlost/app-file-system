@@ -335,6 +335,18 @@ class FileSources extends AppElement {
   }
 
 
+  async __listBtnClicked() {
+    try {
+      await this.clicked();
+      this.fire('open-list');
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
+
   __addNewFiles(files) {
     const newFiles = files.reduce((accum, file) => {
       accum[uid] = file;

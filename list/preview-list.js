@@ -45,9 +45,9 @@ import {
 }                 from '@longlost/utils/utils.js';
 import htmlString from './preview-list.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
-import '@longlost/app-modal/app-modal.js';
-import '@polymer/paper-button/paper-button.js';
-import './rearrange-list.js';
+// import '@longlost/app-modal/app-modal.js';
+// import '@polymer/paper-button/paper-button.js';
+// import './rearrange-list.js';
 
 
 class PreviewList extends AppElement {
@@ -78,22 +78,22 @@ class PreviewList extends AppElement {
       items: Array,
 
 
-      // Drives <template is="dom-repeat">
-      _previewItems: {
-        type: Array,
-        computed: '__computePreviewItems(items, files)'
-      }
+      // // Drives <template is="dom-repeat">
+      // _previewItems: {
+      //   type: Array,
+      //   computed: '__computePreviewItems(items, files)'
+      // }
 
     };
   }
 
 
-  connectedCallback() {
-    super.connectedCallback();
+  // connectedCallback() {
+  //   super.connectedCallback();
 
-    listen(this, 'upload-complete', this.__fileUploadComplete.bind(this));
-    listen(this, 'remove-file',     this.__removeFile.bind(this));
-  }
+  //   listen(this, 'upload-complete', this.__fileUploadComplete.bind(this));
+  //   listen(this, 'remove-file',     this.__removeFile.bind(this));
+  // }
 
   // Combine incomming file obj with db item.
   // File obj is fed to <upload-controls>.

@@ -227,7 +227,7 @@ class WebFileCard extends AppElement {
 
     warn('This import is not an acceptable type of file.');
     await schedule();
-    cancel();
+    cancel('Failed to fetch');
   }
 
   
@@ -262,9 +262,11 @@ class WebFileCard extends AppElement {
     catch (error) {
       if (error === 'click debounced') {
         return;
-      } else if (error.message === 'Failed to fetch') {
+      } 
+      else if (error.message === 'Failed to fetch') {
         message('Import cancelled.');
-      } else {
+      } 
+      else {
         console.error(error);
         await warn('Could not import the file.');
       }
@@ -284,7 +286,7 @@ class WebFileCard extends AppElement {
     try {
       await this.clicked();
       if (this._cancel) {
-        this._cancel();
+        this._cancel('Failed to fetch');
       }
     }
     catch (error) {
