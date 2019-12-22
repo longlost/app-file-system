@@ -1,4 +1,14 @@
 
+<style>
+  
+  :host {
+    display: block;
+    position: relative;
+  }
+
+</style>
+
+
 <file-sources id="sources"
               accept="[[accept]]"
               hide-dropzone="[[hideDropzone]]"
@@ -7,11 +17,12 @@
               maxsize="[[maxsize]]"
               multiple="[[multiple]]"
               unit="[[unit]]"
-              on-files-changed="__sourcesFilesChanged">
+              on-files-changed="__sourcesFilesChanged"
+              on-open-list="openList">
 </file-sources>
 
 
-<preview-list id="list"
+<!-- <preview-list id="list"
               coll="[[coll]]"
               doc="[[doc]]"
               field="[[field]]"
@@ -25,10 +36,14 @@
               on-list-remove-file="__previewListRemoveFile"
               on-list-sort-finished="__previewListSortFinished"
               on-list-upload-complete="__previewListUploadComplete">
+</preview-list> -->
+
+
+<preview-list id="list">
 </preview-list>
 
 
-<fullscreen-carousel></fullscreen-carousel>
+<!-- <fullscreen-carousel></fullscreen-carousel>
 
 
-<image-editor id="editor"></image-editor>
+<image-editor id="editor"></image-editor> -->

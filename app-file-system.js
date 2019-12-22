@@ -548,6 +548,11 @@ class AppFileSystem extends AppElement {
   }
 
 
+  __previewListItemsChanged() {
+
+  }
+
+
   __previewListSortFinished(event) {
     hijackEvent(event);
 
@@ -691,8 +696,14 @@ class AppFileSystem extends AppElement {
   }
 
 
-  open() {
-    return this.openSources();
+  // open() {
+  //   return this.openSources();
+  // }
+
+  async open() {
+    await this.openSources();
+    await schedule();
+    return this.openList();
   }
 
 }
