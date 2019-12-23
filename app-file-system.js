@@ -696,14 +696,8 @@ class AppFileSystem extends AppElement {
   }
 
 
-  // open() {
-  //   return this.openSources();
-  // }
-
-  async open() {
-    await this.openSources();
-    await schedule();
-    return this.openList();
+  open() {
+    return this.openSources();
   }
 
 }
