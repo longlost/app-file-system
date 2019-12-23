@@ -188,6 +188,8 @@ class FileSources extends AppElement {
       // Set to true to hide the add and delete dropzones.
       hideDropzone: Boolean,
 
+      items: Array,
+
       list: String, // 'rearrange-list' or 'camera-roll'.
 
       maxfiles: Number,
