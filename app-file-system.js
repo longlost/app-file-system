@@ -227,7 +227,7 @@ class AppFileSystem extends AppElement {
       _dbData: Object,
 
       // From <file-sources>.
-      _files: Array,
+      _files: Object,
 
       // Drives <preview-list> repeater.
       _items: Array,
@@ -461,28 +461,39 @@ class AppFileSystem extends AppElement {
 
 
     // <preview-list>'s <drag-drop-list> elements.
-    const listItems = this.$.list.getListItems();
+    // const listItems = this.$.list.getListItems();
 
 
     // // Update index props based on the 
     // // <drag-drop-list> elements order (listItems).
     // const orderedData = addIndexes(data, listItems);
 
-
+    // return services.set({
+    //   coll: this.coll,
+    //   doc:  this.doc,
+    //   data: {
+    //     [this.field]: orderedData
+    //   }
+    // });
 
 
     return services.set({
       coll: this.coll,
       doc:  this.doc,
       data: {
-        [this.field]: orderedData
+        [this.field]: data
       }
     });
   }
 
+  // Strip out file obj data since it must be uploaded
+  // via Firebase storage and is not allowed in Firestore.
+  async __addNewFileItems(filesObj) {
 
-  async __addNewFileItems(files) {
-    const newItems = files.reduce((accum, file) => {
+    const files     = Object.values(filesObj);
+    const lastIndex = this._items ? this._items.length - 1 : 0;
+
+    const newItems = files.reduce((accum, file, index) => {
       const {        
         basename,
         displayName, 
@@ -503,6 +514,7 @@ class AppFileSystem extends AppElement {
         doc:      this.doc,
         ext,
         field:    this.field,
+        index:    index + lastIndex,
         orientation,
         size, 
         sizeStr,
@@ -515,7 +527,6 @@ class AppFileSystem extends AppElement {
       return accum;
     }, {});
 
-    this.$.dropZone.addFiles(files);
     this.fire('files-received', {files});
 
     if (!this.multiple) {
@@ -534,6 +545,7 @@ class AppFileSystem extends AppElement {
     hijackEvent(event);
 
     this._files = event.detail.value;
+    this.__addNewFileItems(this._files);
   }
 
 
@@ -685,13 +697,19 @@ class AppFileSystem extends AppElement {
 
 
   async openList() {
-    await import ('./list/preview-list.js');
+    await import (
+      /* webpackChunkName: 'app-file-system-preview-list' */ 
+      './list/preview-list.js'
+    );
     return this.$.list.open();
   }
 
 
   async openSources() {
-    await import ('./sources/file-sources.js');
+    await import (
+      /* webpackChunkName: 'app-file-system-file-sources' */ 
+      './sources/file-sources.js'
+    );
     return this.$.sources.open();
   }
 

@@ -1,10 +1,13 @@
 
 <style include="app-shared-styles">
 
+  #overlay {
+    --overlay-background-color: var(--app-body-color);
+  }
+
   #content {
     padding: 32px 16px;
     height:  calc(100vh - 128px);
-    background-color: var(--app-body-color);
   }
 
   #grid {
@@ -57,7 +60,8 @@
                     fixed-header
                     title="File Sources">
 
-  <list-icon-button list="[[list]]"
+  <list-icon-button items="[[items]]"
+                    list="[[list]]"
                     slot="top-toolbar-buttons-slot"
                     on-click="__listBtnClicked">
   </list-icon-button>

@@ -47,7 +47,6 @@ import htmlString from './preview-list.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 import '@longlost/app-modal/app-modal.js';
 import '@polymer/paper-button/paper-button.js';
-import './rearrange-list.js';
 
 
 class PreviewList extends AppElement {
@@ -69,25 +68,30 @@ class PreviewList extends AppElement {
       
       // Firestore document field to use for saving file data after processing.
       // ie. 'backgroundImg', 'catImages', ...
-      field: {
-        type: String,
-        value: 'files'
-      },
+      field: String,
 
-      files: Array,
+      files: Object,
 
       hideDropzone: Boolean,
 
       items: Array,
 
+      list: String,
 
-      // // Drives <template is="dom-repeat">
-      // _previewItems: {
-      //   type: Array,
-      //   computed: '__computePreviewItems(items, files)'
-      // }
+      // Drives <template is="dom-repeat">
+      _previewItems: {
+        type: Array,
+        computed: '__computePreviewItems(items, files)'
+      }
 
     };
+  }
+
+
+  static get observers() {
+    return [
+      '__listChanged(list)'
+    ];
   }
 
 
@@ -102,25 +106,38 @@ class PreviewList extends AppElement {
   // File obj is fed to <upload-controls>.
   __computePreviewItems(items, files) {
     if (!items || items.length === 0) { return; }
-    if (!files || files.length === 0) { return items; }
+    if (!files || Object.keys(files).length === 0) { return items; }
 
     const previewItems = items.map(item => {
-      const match = files.find(obj => {
-        const {file} = obj;
-        if (!file) { return false; }
-        return file.uid === item.uid;
-      });
 
-      if (!match || !match.file) {
+      const match = files[item.uid];
+
+      if (!match) {
         // Remove file prop.
         const {file, ...rest} = item; 
         return {...rest};
       }
       // Add file to item.
-      return {...item, file: match.file};
+      return {...item, file: match};
     });    
 
     return previewItems;
+  }
+
+
+  __listChanged(list) {
+    if (list === 'rearrange-list') {
+      import(
+        /* webpackChunkName: 'app-file-system-rearrange-list' */ 
+        './rearrange-list.js'
+      );
+    }
+    else if (list === 'camera-roll') {
+      import(
+        /* webpackChunkName: 'app-file-system-camera-roll' */ 
+        './camera-roll.js'
+      );
+    }
   }
 
 
@@ -149,6 +166,70 @@ class PreviewList extends AppElement {
     hijackEvent(event);
     
     this.fire('list-remove-file', event.detail);
+  }
+
+
+  async __setupForDelete(item, target) {
+    this._targetToDelete = target;
+    this._itemToDelete   = {...item};
+    await schedule();
+    this.$.deleteConfirmModal.open();
+  }
+
+
+  __previewListRemoveFile(event) {
+    hijackEvent(event);
+
+    const {item, target} = event.detail;
+    this.__setupForDelete(item, target);
+  }
+
+  // <drag-drop> delete area modal.
+  async __confirmDeleteButtonClicked(event) {
+    try {
+      hijackEvent(event);
+
+      await this.clicked();
+      await this.$.spinner.show('Deleting file data.');
+      const files = this.$.dropZone.getFiles();
+      const {uid} = this._itemToDelete;
+      const fileToDelete = files.find(file => 
+                             file.uid === uid);
+      
+      if (fileToDelete) { // Cancel upload and remove file from dropzone list.
+        this.$.dropZone.removeFile(fileToDelete);
+      }
+
+      await this.$.deleteConfirmModal.close(); 
+      await this.__delete(uid);
+    }
+    catch (error) {
+      if (error === 'click disabled') { return; }
+      console.error(error);
+    }
+    finally {
+      this._targetToDelete.style.opacity = '1';
+      this._targetToDelete = undefined;
+      this._itemToDelete   = undefined;
+      this.$.spinner.hide();
+    }
+  }
+
+
+  async __dismissDeleteConfirmButtonClicked(event) {
+    try {
+      hijackEvent(event);
+
+      await this.clicked();
+      this._targetToDelete.style.opacity = '1';
+      this._itemToDelete                 = undefined;
+      this._targetToDelete.resumeUpload();
+      this.$.deleteConfirmModal.close();
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
   }
 
   // Used to update indexes.

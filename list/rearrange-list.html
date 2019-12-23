@@ -1,7 +1,7 @@
 
 <style>
-	
-	.preview {
+  
+  .preview {
     display:          inline-flex;
     flex-direction:   column; 
     position:         relative;
@@ -58,14 +58,13 @@
                 on-item-dropped="__handleDrop" 
                 on-sort-finish="__handleSort">                
 
-  <template id="sortListRepeater" 
-            is="dom-repeat" 
-            items="[[_previewItems]]">
-		<!-- 
-		    Outter div fixes a bug that causes drag-drop-list classes from being
-		    blown away whenever an item updates while user is dragging. Probably
-		    involving the Polymer dynamic 'class$' syntax. 
-		-->
+  <template is="dom-repeat" 
+            items="[[items]]">
+    <!-- 
+        Outter div fixes a bug that causes drag-drop-list classes from being
+        blown away whenever an item updates while user is dragging. Probably
+        involving the Polymer dynamic 'class$' syntax. 
+    -->
     <div class="sortable"
          state-index="[[index]]">
       <preview-item class$="preview [[__computeSortableClass(item.type)]]"
@@ -84,7 +83,7 @@
 
 
 <div id="icon-container"
-     hidden="[[__computeHideIcons(_previewItems)]]">
+     hidden="[[__computeHideIcons(items)]]">
   <iron-icon icon="file-icons:touch-app"></iron-icon>
   <iron-icon icon="file-icons:low-priority"></iron-icon>
 </div>

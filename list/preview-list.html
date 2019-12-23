@@ -3,6 +3,11 @@
 
   #overlay {
     --overlay-toolbar-background-color: var(--app-primary-color);
+    --overlay-background-color:         var(--app-body-color);
+  }
+
+  #content {
+    padding: 16px;
   }
 
   strong {
@@ -40,14 +45,24 @@
 <app-header-overlay id="overlay"
                     header-size="1"
                     prebuilt-animation="from-right"
-                    fixed-header
+                    reveal-header
                     title="File Preview">
 
-  <div slot="content">
+  <div id="content" 
+       slot="content">
 
-    <rearrange-list hide-dropzone="[[hideDropzone]]"></rearrange-list>
+    <rearrange-list coll="[[coll]]"
+                    doc="[[doc]]"
+                    field="[[field]]"
+                    hide-dropzone="[[hideDropzone]]" 
+                    items="[[_previewItems]]">
+    </rearrange-list>
 
-    <camera-roll></camera-roll>
+    <camera-roll coll="[[coll]]"
+                 doc="[[doc]]"
+                 field="[[field]]"
+                 items="[[_previewItems]]">
+    </camera-roll>
 
   </div>
 

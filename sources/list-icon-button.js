@@ -55,14 +55,14 @@ class ListIconButton extends AppElement {
       _animateArrow: {
         type: Boolean,
         value: false,
-        computed: '__computeAnimate(items)'
+        computed: '__computeAnimateArrow(items)'
       },
 
       // Cloud processing gear animation state.
       _animateGear: {
         type: Boolean,
         value: false,
-        computed: '__computeAnimate(items)'
+        computed: '__computeAnimateGear(items)'
       },
 
       _count: {
@@ -116,7 +116,7 @@ class ListIconButton extends AppElement {
   }
 
   // animate from upload through final processing
-  __computeAnimateGear(item) {
+  __computeAnimateGear(items) {
     if (!Array.isArray(items) || items.length === 0) { return false; }
 
     const shouldAnimate = items.some(item => 

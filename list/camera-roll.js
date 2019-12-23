@@ -1,7 +1,7 @@
 
 
 /**
-  * `rearrange-list`
+  * `camera-roll`
   * 
   *   Accepts files from user and handles 
   *   uploading/saving/optimization/deleting/previewing/rearranging.
@@ -109,57 +109,16 @@ import {
   wait,
   warn
 }                 from '@longlost/utils/utils.js';
-import htmlString from './rearrange-list.html';
-import '@longlost/drag-drop-list/drag-drop-list.js';
+import htmlString from './camera-roll.html';
 import '@polymer/iron-icon/iron-icon.js';
 import './preview-item.js';
 import '../shared/file-icons.js';
 
 
-const dropIsOverDropZone = ({top, right, bottom, left, x, y}) => {
-  if (y < top  || y > bottom) { return false; }
-  if (x < left || x > right)  { return false; }
-  return true;
-};
-
-// From items array/collection back to a Firestore data obj.
-const arrayToDbObj = array => {
-  return array.reduce((accum, obj) => {
-    accum[obj.uid] = obj;
-    return accum;
-  }, {});
-}; 
-
-// Update index props based on the 
-// <drag-drop-list> elements order (listItems).
-const addIndexes = (data, listItems) => {
-  const values = Object.values(data);
-  // Use the position in the listItems array as new index.
-  const indexedData = values.map(obj => {
-    const index = listItems.findIndex(item => 
-                    item.uid === obj.uid);
-    return {...obj, index};
-  });
-  // Current items data.
-  const sorted   = indexedData.filter(obj => obj.index > -1);
-  // New items data.
-  const unsorted = indexedData.filter(obj => obj.index === -1);
-  // Add initial indexes for new data starting 
-  // where the current data leaves off.
-  const startIndex     = sorted.length;
-  const orderedNewData = unsorted.map((obj, index) => {
-    const newIndex = startIndex + index;
-    return {...obj, index: newIndex};
-  });
-  // Merge current and new data.
-  const ordered = [...sorted, ...orderedNewData];
-  // From array back to a data obj.
-  return arrayToDbObj(ordered);
-};
 
 
-class RearrangeList extends AppElement {
-  static get is() { return 'rearrange-list'; }
+class CameraRoll extends AppElement {
+  static get is() { return 'camera-roll'; }
 
   static get template() {
     return html([htmlString]);
@@ -179,24 +138,10 @@ class RearrangeList extends AppElement {
       // ie. 'backgroundImg', 'catImages', ...
       field: String,
 
-      // Set to true to hide the delete dropzone.
-      hideDropzone: Boolean,
-
       // Drives <preview-list> repeater.
       items: Array,
 
       _itemToDelete: Object,
-
-      // Cached order in which shuffled preview items 
-      // are ordered (translated by <drag-drop-list>
-      // and reused by <template is="dom-repeat">), so saves 
-      // by other devices can be correcly displayed locally.
-      _listOrderState: Array,
-
-      // Keep a snapshot of the items proper
-      // order in sequence to correct an
-      // issue with using <drag-drop-list>
-      _orderedUids: Array,
 
       // When deleting an item with drag and drop,
       // this is used to temporary hide that element
@@ -212,19 +157,6 @@ class RearrangeList extends AppElement {
   //     '__collDocFieldChanged(coll, doc, field)'
   //   ];
   // }
-
-
-  __computeSortableClass(type) {
-    if (type && type.includes('video')) {
-      return 'video';
-    }
-    return '';
-  }
-
-
-  __computeHideIcons(items) {
-    return !items || items.length < 2;
-  }
 
   // Start a subscription to file data changes.
   async __collDocFieldChanged(coll, doc, field) {
@@ -504,36 +436,6 @@ class RearrangeList extends AppElement {
     const {item, target} = event.detail;
     this.__setupForDelete(item, target);
   }
-  // See if item was dropped over the delete area
-  // compare pointer coordinates with area position.
-  __previewListDeleteDrop(event) {
-    hijackEvent(event);
-
-    const {data, target}             = event.detail;
-    const {x, y}                     = data;
-    const {top, right, bottom, left} = this.$.dropZone.getBoundingClientRect();
-    const measurements               = {top, right, bottom, left, x, y};
-
-    if (dropIsOverDropZone(measurements)) {
-      // Show a confirmation modal before deleting.
-      const {item}           = target;
-      const {height, width}  = target.getBoundingClientRect();
-      const xCenter          = x - (width / 2);
-      const yCenter          = y - (height / 2);
-      // Override transform to keep item over delete zone.
-      target.style.transform = `translate3d(${xCenter}px, ${yCenter}px, 1px)`;
-      this.__setupForDelete(item, target);
-    }
-  }
-
-  // Used to update indexes.
-  // Returns an array that is ordered exactly
-  // as represented in the ui.
-  getListItems() {
-    return this.selectAll('.preview').
-             filter(el => isDisplayed(el)).
-             map(el => el.item);
-  }
 
 
   reset() {
@@ -545,4 +447,4 @@ class RearrangeList extends AppElement {
 
 }
 
-window.customElements.define(RearrangeList.is, RearrangeList);
+window.customElements.define(CameraRoll.is, CameraRoll);
