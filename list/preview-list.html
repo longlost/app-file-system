@@ -2,7 +2,7 @@
 <style>
 
   #overlay {
-    --overlay-toolbar-background-color: var(--app-light-color);
+    --overlay-toolbar-background-color: var(--app-primary-color);
   }
 
   strong {
@@ -39,23 +39,22 @@
 
 <app-header-overlay id="overlay"
                     header-size="1"
-                    prebuilt-animation="from-top"
+                    prebuilt-animation="from-right"
                     fixed-header
                     title="File Preview">
 
-  <div id="container" 
-       slot="container">
+  <div slot="content">
 
-    <!-- <rearrange-list hide-dropzone="[[hideDropzone]]"></rearrange-list>
+    <rearrange-list hide-dropzone="[[hideDropzone]]"></rearrange-list>
 
-    <camera-roll></camera-roll> -->
+    <camera-roll></camera-roll>
 
   </div>
 
 </app-header-overlay>
 
 
-<!-- <app-modal id="deleteConfirmModal"
+<app-modal id="deleteConfirmModal"
            heading="Confirm Delete">
 
   <div slot="card-content-slot">
@@ -78,4 +77,4 @@
     </paper-button>      
   </div>
 
-</app-modal> -->
+</app-modal>
