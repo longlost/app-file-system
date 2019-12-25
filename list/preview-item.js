@@ -56,8 +56,6 @@ class PreviewItem extends AppElement {
         type: String,
         value: 'files'
       },
-
-      file: Object,
       // File item object.
       item: Object
 
@@ -67,7 +65,7 @@ class PreviewItem extends AppElement {
 
   static get observers() {
     return [
-      '__fileChanged(file)'
+      '__fileChanged(item.file)'
     ];
   }
 
@@ -96,8 +94,13 @@ class PreviewItem extends AppElement {
 
 
   async __fileChanged(file) {
+
     if (file) {
       await wait(800);
+
+      // If processing happens faster than animation timing, abort.
+      if (!file) { return; }
+
       this.$.uploadControls.style['display'] = 'flex';
       await schedule();
       this.$.uploadControls.classList.remove('hide');
@@ -113,8 +116,10 @@ class PreviewItem extends AppElement {
   async __removeFileButtonClicked() {
     try {
       await this.clicked();
+
       this.pauseUpload();
-      this.fire('remove-file', {item: this.item, target: this});
+
+      this.fire('request-delete-item', {item: this.item, target: this});
     }
     catch (error) { 
       if (error === 'click debounced') { return; }

@@ -109,8 +109,12 @@ import {
   wait,
   warn
 }                 from '@longlost/utils/utils.js';
-import htmlString from './app-file-system.html';
+import path       from 'path';
 import services   from '@longlost/services/services.js';
+import htmlString from './app-file-system.html';
+import '@longlost/app-spinner/app-spinner.js';
+import './sources/file-sources.js';
+import './list/preview-list.js';
 
 
 // From items array/collection back to a Firestore data obj.
@@ -122,46 +126,36 @@ const arrayToDbObj = array => {
 };    
 
 
+const getImageFileDeletePaths = storagePath => {
+  // const {base, dir} = path.parse(storagePath);
+  const base = path.basename(storagePath);
+  const dir  = path.dirname(storagePath);
 
 
-// TODO:
-//      update to use node 'path' module here
-
-
-const getImageFileDeletePaths = path => {
-  const words     = path.split('/');
-  const base      = words.slice(0, words.length - 1).join('/');
-  const fileName  = words[words.length - 1];
-  const optimPath = `${base}/optim_${fileName}`;
-  const thumbPath = `${base}/thumb_${fileName}`;
+  const optimPath   = `${dir}/optim_${base}`;
+  const thumbPath   = `${dir}/thumb_${base}`;
 
   return [
-    path,
+    storagePath,
     optimPath,
     thumbPath
   ];
 };
 
 
+const deleteStorageFiles = (storagePath, type) => {
 
-
-
-const deleteStorageFiles = (data, path) => {
-  // Lookup the file data item using path and get its type.
-  const {type} = 
-    Object.values(data).find(obj => 
-      obj.path === path);
   // Test the file type.
   // If its an image, 
   // then delete the optim_ and 
   // thumb_ files from storage as well.
   if (type && type.includes('image')) {
-    const paths    = getImageFileDeletePaths(path);
-    const promises = paths.map(path => services.deleteFile(path));
+    const paths    = getImageFileDeletePaths(storagePath);
+    const promises = paths.map(p => services.deleteFile(p));
     return Promise.all(promises);
   }
 
-  return services.deleteFile(path);
+  return services.deleteFile(storagePath);
 };
 
 
@@ -207,8 +201,12 @@ class AppFileSystem extends AppElement {
         value: 'rearrange-list' // Or 'camera-roll'.
       },
 
+      // Positive Int that represents the maximum
+      // number of files that can be saved.
       maxfiles: Number,
 
+      // Positive Float that, when multiplied by the
+      // 'unit', represent the maximum size of any given file.
       maxsize: Number,
 
       // One file upload or multiple files.
@@ -217,6 +215,7 @@ class AppFileSystem extends AppElement {
         value: false
       },
 
+      // Used as a multipier for 'maxsize'.
       unit: {
         type: String,
         value: 'kB' // or 'B', 'MB', 'GB'
@@ -233,7 +232,9 @@ class AppFileSystem extends AppElement {
       _items: Array,
 
       // Services/Firestore subscription unsubscribe function.
-      _unsubscribe: Object
+      _unsubscribe: Object,
+
+      _uploadListenerKey: Object
 
     };
   }
@@ -247,7 +248,29 @@ class AppFileSystem extends AppElement {
   }
 
 
+  connectedCallback() {
+    super.connectedCallback();
+
+    // Events from <upload-controls> which 
+    // are nested children of <preview-list>.
+    this._uploadListenerKey = listen(
+      this, 
+      'upload-complete', 
+      this.__fileUploadComplete.bind(this)
+    );
+
+    // Events from <rearrange-list> which is
+    // a child of <preview-list>
+    this._sortedListenerKey = listen(
+      this,
+      'rearrange-list-sorted',
+      this.__itemsSorted.bind(this)
+    );
+  }
+
+
   disconnectedCallback() {
+    unlisten(this._uploadListenerKey);
     this.__unsub();
   }
 
@@ -267,76 +290,12 @@ class AppFileSystem extends AppElement {
 
     const callback = docData => {
       this._dbData = docData[field];
+
       // Filter out orphaned data that may have been caused
       // by deletions prior to cloud processing completion.
-      const values = Object.values(this._dbData).
-                       filter(obj => obj.uid);
-
-      // First save after a local interaction with
-      // <drag-drop-list>.
-      // Use the snapshot of the current sequence 
-      // of items to correct an issue with 
-      // using a <template is="dom-repeat"> 
-      // inside <drag-drop-list>.
-      if (this._orderedUids) {
-        this._items = 
-          this._orderedUids.
-            map(uid => 
-              values.find(item => 
-                item.uid === uid)).
-            filter(item => item);
-
-        this._orderedUids = undefined; // This reset is why this is not a computed method.
-      }
-
-      // All other saves/deletes compensated for reused
-      // <template is="dom-repeat"> items that are now 
-      // ordered differently than simply sorting by item indexes.
-      // Saves made by another device after user has reordered items locally.
-      else if (
-        Array.isArray(this._listOrderState) && 
-        this._listOrderState.length > 0
-      ) {
-
-        // This is an optimization over doing an array find
-        // operation inside the state reduce function.
-        // Create an object keyed by item index
-        const indexed = values.reduce((accum, val) => {
-          accum[val.index] = val;
-          return accum;
-        }, {});
-
-        // State indexes correlate to the reused <template is="dom-repeat">
-        // elements that have been shuffled (translated) around by <drag-drop-list>.
-        // So use the incoming data expected order index and correct for
-        // the local shuffled, reused element order.
-        const found = 
-          this._listOrderState.
-            reduce((accum, stateIndex, index) => {
-              const match = indexed[index];
-              if (match) {
-                accum[stateIndex] = match;
-              }
-              return accum; 
-            }, []).
-            filter(item => item); // Remove any gaps of undefined values.
-
-        // Grab any new items, sort them by index
-        // and add them to the end of existing items.
-        const newItems = 
-          values.
-            sort((a, b) => a.index - b.index).
-            slice(found.length);
-
-        this._items = [...found, ...newItems];
-      }
-
-      // Fresh data, initial stamp, and no user 
-      // interaction with <drag-drop-list>.
-      // Simply sort by item index.
-      else {
-        this._items = values.sort((a, b) => a.index - b.index);
-      }
+      this._items = Object.values(this._dbData).
+                      filter(obj => obj.uid).
+                      sort((a, b) => a.index - b.index);
     };
 
     const errorCallback = error => {
@@ -367,6 +326,40 @@ class AppFileSystem extends AppElement {
 
   __dbDataChanged(data) {
     this.fire('data-changed', data);
+  }
+
+  // 'upload-complete' events from <upload-controls> 
+  // which are nested children of <preview-list>.
+  async __fileUploadComplete(event) {
+    hijackEvent(event);
+
+    const {uid, original, path: storagePath} = event.detail;
+
+    // Merge with existing file data.
+    const fileData = {...this._dbData[uid], original, path: storagePath}; 
+
+    await this.__saveFileData({[uid]: fileData});
+
+    this.$.sources.delete(uid);
+
+    this.fire('file-uploaded', fileData);
+  }
+
+
+  // 'rearrange-list-sorted' events from <rearrange-list>
+  // which is a child of <preview-list>
+  __itemsSorted(event) {
+
+    // An array of uid's ordered by user
+    // by drag and drop reordering.
+    const {sorted} = event.detail;
+
+    const newIndexes = sorted.reduce((accum, uid, index) => {
+      accum[uid] = {...this._dbData[uid], index};
+      return accum;
+    }, {});
+
+    this.__saveFileData(newIndexes);
   }
 
   // Listen for data changes.
@@ -401,15 +394,6 @@ class AppFileSystem extends AppElement {
     // From array back to a data obj.
     const orderedData = arrayToDbObj(ordered);
 
-    // Take out largest index since the <template is="dom-repeat">
-    // always removes the last item from the dom.
-    // Find the largest index in the state array 
-    // and remove it.
-    const index = this._listOrderState.findIndex(num => 
-                    num === this._listOrderState.length - 1);
-
-    this._listOrderState = removeOne(index, this._listOrderState);
-
     // Replace entire document entry with
     // item to delete removed (merge: false).
     return services.set({
@@ -424,20 +408,29 @@ class AppFileSystem extends AppElement {
 
 
   async __delete(uid) {
+
     // Clone to survive deletion and fire with event.
     const fileData = {...this._dbData[uid]}; 
-    const {optimized, original, path, type} = fileData;
+    const {
+      optimized, 
+      original, 
+      path: storagePath, 
+      type
+    } = fileData;
+
     // An image that has been uploaded but not yet optimized.
     if (type && type.includes('image') && original && !optimized) {
       await this.__waitForCloudProcessing(uid);
     }
-    if (path) {
+
+    if (storagePath) {
+
       // Use try catch here to safely delete
       // residual items that have been unsuccessfully
       // or incompletely deleted previously.
       // This sometimes happens with slow connections.
       try {
-        await deleteStorageFiles(this._dbData, path);
+        await deleteStorageFiles(storagePath, type);
       }
       catch (error) {
         if (error.message && error.message.includes('does not exist')) {
@@ -449,7 +442,11 @@ class AppFileSystem extends AppElement {
         }
       }
     }
+
     await this.__deleteDbFileData(uid);
+    this.$.sources.delete(uid);
+    this.$.list.delete(uid);
+
     this.fire('file-deleted', fileData);
   }
 
@@ -458,24 +455,6 @@ class AppFileSystem extends AppElement {
     const data = this._dbData ? 
                    {...this._dbData, ...obj} : // Merge with existing data.
                    obj; // Set new data.
-
-
-    // <preview-list>'s <drag-drop-list> elements.
-    // const listItems = this.$.list.getListItems();
-
-
-    // // Update index props based on the 
-    // // <drag-drop-list> elements order (listItems).
-    // const orderedData = addIndexes(data, listItems);
-
-    // return services.set({
-    //   coll: this.coll,
-    //   doc:  this.doc,
-    //   data: {
-    //     [this.field]: orderedData
-    //   }
-    // });
-
 
     return services.set({
       coll: this.coll,
@@ -530,6 +509,7 @@ class AppFileSystem extends AppElement {
     this.fire('files-received', {files});
 
     if (!this.multiple) {
+
       // Delete previous file and its data.
       if (this._items && this._items.length) {
         const {uid} = this._items[this._items.length - 1];
@@ -540,7 +520,7 @@ class AppFileSystem extends AppElement {
     return this.__saveFileData(newItems);
   }
 
-
+  // <file-sources> 'files-changed' event.
   __sourcesFilesChanged(event) {
     hijackEvent(event);
 
@@ -548,75 +528,9 @@ class AppFileSystem extends AppElement {
     this.__addNewFileItems(this._files);
   }
 
-
-  async __dzFileSaved(event) {
-    hijackEvent(event);
-
-    const {uid, original, path} = event.detail;
-    // Merge with existing file data.
-    const fileData = {...this._dbData[uid], original, path}; 
-    await this.__saveFileData({[uid]: fileData});
-    this.fire('file-uploaded', fileData);
-  }
-
-
-  __previewListItemsChanged() {
-
-  }
-
-
-  __previewListSortFinished(event) {
-    hijackEvent(event);
-
-    // Take a snapshot of current sequence 
-    // of items to correct an issue with 
-    // using a <template is="dom-repeat"> 
-    // inside <drag-drop-list>.
-    this._orderedUids = this._items.
-                           filter(item => item).
-                           map(item => item.uid);
-
-    if (this._itemToDelete) {
-      this._targetToDelete.style.opacity = '0';
-    }
-    this.__saveFileData(); // Save new indexes after re-sort.
-  }
-
-  // From <preview-item> 'X' button when the file
-  // has not been fully uploaded.
-  async __dzFileRemoved(event) {
-    try {
-      hijackEvent(event);
-
-      await this.$.spinner.show('Deleting file data.');      
-      const {uid} = event.detail;
-      // Fire a clone to survive deletion.
-      const fileData = {...this._dbData[uid]};
-
-      this.fire('upload-cancelled', fileData);
-      await this.__delete(uid);
-    }
-    catch (error) {
-      console.error(error);
-      await warn('An error occured while cancelling the upload.');
-    }
-    finally {
-      this.$.spinner.hide();
-    }
-  }
-
-
-  __previewListItemClicked(event) {
-    hijackEvent(event);
-
-    this.$.dropZone.itemClicked();
-  }
-
-
-  __previewListUploadComplete(event) {
-    hijackEvent(event);
-
-    this.$.dropZone.uploadComplete(event.detail);
+  // <preview-list> 'delete-item' event.
+  __deleteItemHandler(event) {
+    this.delete(event.detail.uid);
   }
 
 
@@ -625,15 +539,14 @@ class AppFileSystem extends AppElement {
     this.$.editor.open();
   }
 
-  // Add one File obj or an array of File objects.
+  // Add one HTML5 File object or an array of File objects.
   async add(files) {
     try {
       await this.$.spinner.show('Adding files.');
 
-      const array = Array.isArray(files) ? files : [files];
+      const array = Array.isArray(files) ? files : [files];   
+      this.$.sources.addFiles(array);
 
-      const filesWithIdsAndOrientation = await addUidAndOrientation(array);      
-      this.$.dropZone.addFiles(filesWithIdsAndOrientation);
       await schedule();
     }
     catch (error) {
@@ -650,8 +563,6 @@ class AppFileSystem extends AppElement {
     if (!uid) { 
       throw new Error(`<app-file-system> 'delete' method must have a uid argument present.`); 
     }
-    // Clone to survive deletion.
-    const fileData = {...this._dbData[uid]};
 
     try {
       await this.$.spinner.show('Deleting file data.');
@@ -663,7 +574,7 @@ class AppFileSystem extends AppElement {
     }
     finally {
       await this.$.spinner.hide();
-      return fileData;
+      return uid;
     }
   }
 
@@ -671,15 +582,16 @@ class AppFileSystem extends AppElement {
   async deleteAll() {
     try {
       await this.$.spinner.show('Deleting file data.');
+
       const uids     = Object.keys(this._dbData);
       const promises = uids.map(uid => this.__delete(uid));
-      this.$.list.reset();
+      this.$.list.cancelUploads();
+
       await Promise.all(promises);
       await services.deleteDocument({
         coll: this.coll,
         doc:  this.doc
       });
-      this.$.dropZone.reset();
     }
     catch (error) {
       console.error(error);
@@ -696,20 +608,12 @@ class AppFileSystem extends AppElement {
   }
 
 
-  async openList() {
-    await import (
-      /* webpackChunkName: 'app-file-system-preview-list' */ 
-      './list/preview-list.js'
-    );
+  openList() {
     return this.$.list.open();
   }
 
 
-  async openSources() {
-    await import (
-      /* webpackChunkName: 'app-file-system-file-sources' */ 
-      './sources/file-sources.js'
-    );
+  openSources() {
     return this.$.sources.open();
   }
 

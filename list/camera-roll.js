@@ -435,10 +435,10 @@ class CameraRoll extends AppElement {
 
     const {item, target} = event.detail;
     this.__setupForDelete(item, target);
-  }
+  }  
 
 
-  reset() {
+  cancelUploads() {
     const elements = this.selectAll('.preview');
     elements.forEach(element => {
       element.cancelUpload();

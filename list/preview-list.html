@@ -51,14 +51,16 @@
   <div id="content" 
        slot="content">
 
-    <rearrange-list coll="[[coll]]"
+    <rearrange-list id="rearrangeList"
+                    coll="[[coll]]"
                     doc="[[doc]]"
                     field="[[field]]"
                     hide-dropzone="[[hideDropzone]]" 
                     items="[[_previewItems]]">
     </rearrange-list>
 
-    <camera-roll coll="[[coll]]"
+    <camera-roll id="cameraRoll"
+                 coll="[[coll]]"
                  doc="[[doc]]"
                  field="[[field]]"
                  items="[[_previewItems]]">

@@ -188,6 +188,7 @@ class FileSources extends AppElement {
       // Set to true to hide the add and delete dropzones.
       hideDropzone: Boolean,
 
+      // Used for <list-icon-button> calculations.
       items: Array,
 
       list: String, // 'rearrange-list' or 'camera-roll'.
@@ -208,10 +209,7 @@ class FileSources extends AppElement {
         computed: '__computeAcceptableTypes(_mimes)'
       },
 
-      _files: {
-        type: Object,
-        value: () => ({})
-      },
+      _files: Object,
 
       _filesToRename: Array,
 
@@ -240,9 +238,9 @@ class FileSources extends AppElement {
   }
 
 
-  static get opservers() {
+  static get observers() {
     return [
-      '__filesChanged(_files.*)'
+      '__filesChanged(_files)'
     ];
   }
 
@@ -318,19 +316,8 @@ class FileSources extends AppElement {
   }
 
 
-  __filesChanged(polymerObj) {
-    if (!polymerObj) { return; }
-
-    const getFiles = () => {
-      // When a single item is deleted
-      if (polymerObj.base) {
-        return polymerObj.base;
-      }
-      // All other changes.
-      return polymerObj;
-    };
-    
-    const files = getFiles();
+  __filesChanged(files) {
+    if (!files) { return; }
 
     this.$.deviceFileCard.clearFeedback();
     this.fire('files-changed', {value: files});
@@ -351,11 +338,14 @@ class FileSources extends AppElement {
 
   __addNewFiles(files) {
     const newFiles = files.reduce((accum, file) => {
-      accum[uid] = file;
+      accum[file.uid] = file;
       return accum;
-    });
+    }, {});
 
-    this._files = {...this._files, ...newFiles};
+    const temp = this._files ? {...this._files, ...newFiles} : newFiles;
+
+    this._files = undefined;
+    this._files = temp;
   }
 
 
@@ -518,13 +508,14 @@ class FileSources extends AppElement {
   
 
   delete(uid) {
+    if (!this._files || !this._files[uid]) { return; }
+    
     delete this._files[uid];
-    this.notifyPath(`_files.${uid}`);
-  }
 
+    const temp = {...this.files};
 
-  deleteAll() {
-    this._files = {};
+    this._files = undefined;
+    this._files = temp;
   }
 
 
