@@ -1,4 +1,11 @@
 
+<style>
+
+  #spinner {
+    z-index: 2;
+  }
+
+</style>
 
 <file-sources id="sources"
               accept="[[accept]]"
@@ -22,12 +29,7 @@
               hide-dropzone="[[hideDropzone]]"
               items="[[_items]]"
               list="[[list]]"
-              on-list-items-changed="__previewListItemsChanged"
-              on-list-item-clicked="__previewListItemClicked"
-              on-list-item-dropped="__previewListDeleteDrop" 
-              on-list-remove-file="__previewListRemoveFile"
-              on-list-sort-finished="__previewListSortFinished"
-              on-list-upload-complete="__previewListUploadComplete">
+              on-delete-item="__deleteItemHandler">
 </preview-list>
 
 
@@ -35,3 +37,6 @@
 
 
 <image-editor id="editor"></image-editor>
+
+
+<app-spinner id="spinner" full-screen></app-spinner>

@@ -41,7 +41,8 @@ import {
 import {
   hijackEvent,
   isDisplayed, 
-  listen
+  listen,
+  schedule
 }                 from '@longlost/utils/utils.js';
 import htmlString from './preview-list.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
@@ -78,11 +79,18 @@ class PreviewList extends AppElement {
 
       list: String,
 
+      _itemToDelete: Object,
+
       // Drives <template is="dom-repeat">
       _previewItems: {
         type: Array,
         computed: '__computePreviewItems(items, files)'
-      }
+      },
+
+      // When deleting an item with drag and drop,
+      // this is used to temporary hide that element
+      // while the delete confirm modal is open.
+      _targetToDelete: Object
 
     };
   }
@@ -98,13 +106,16 @@ class PreviewList extends AppElement {
   connectedCallback() {
     super.connectedCallback();
 
-    listen(this, 'upload-complete', this.__fileUploadComplete.bind(this));
-    listen(this, 'remove-file',     this.__removeFile.bind(this));
+    // <rearrange-list> and <preview-item>
+    listen(this, 'request-delete-item', this.__requestDeleteItem.bind(this));
   }
 
   // Combine incomming file obj with db item.
   // File obj is fed to <upload-controls>.
   __computePreviewItems(items, files) {
+
+    console.log('items: ', items, ' files: ', files);
+
     if (!items || items.length === 0) { return; }
     if (!files || Object.keys(files).length === 0) { return items; }
 
@@ -119,7 +130,9 @@ class PreviewList extends AppElement {
       }
       // Add file to item.
       return {...item, file: match};
-    });    
+    });
+
+    console.log('previewItems: ', previewItems); 
 
     return previewItems;
   }
@@ -141,43 +154,17 @@ class PreviewList extends AppElement {
   }
 
 
-  async __itemClicked(event) {
-    try {
-      hijackEvent(event);
-
-      await this.clicked();
-      this.fire('list-item-clicked');
-    }
-    catch (error) { 
-      if (error === 'click debounced') { return; }
-      console.error(error); 
-    }
-  }
-
-  // Event handler from <upload-controls>.
-  __fileUploadComplete(event) {
-    hijackEvent(event);
-
-    this.fire('list-upload-complete', event.detail);
-  }
-
-  // <upload-controls> ui 'X' button clicked.
-  __removeFile(event) {
-    hijackEvent(event);
-    
-    this.fire('list-remove-file', event.detail);
-  }
-
-
   async __setupForDelete(item, target) {
     this._targetToDelete = target;
     this._itemToDelete   = {...item};
+
     await schedule();
+
     this.$.deleteConfirmModal.open();
   }
 
 
-  __previewListRemoveFile(event) {
+  __requestDeleteItem(event) {
     hijackEvent(event);
 
     const {item, target} = event.detail;
@@ -188,20 +175,13 @@ class PreviewList extends AppElement {
   async __confirmDeleteButtonClicked(event) {
     try {
       hijackEvent(event);
-
       await this.clicked();
-      await this.$.spinner.show('Deleting file data.');
-      const files = this.$.dropZone.getFiles();
-      const {uid} = this._itemToDelete;
-      const fileToDelete = files.find(file => 
-                             file.uid === uid);
-      
-      if (fileToDelete) { // Cancel upload and remove file from dropzone list.
-        this.$.dropZone.removeFile(fileToDelete);
-      }
 
-      await this.$.deleteConfirmModal.close(); 
-      await this.__delete(uid);
+      const {uid} = this._itemToDelete;
+
+      await this.$.deleteConfirmModal.close();
+
+      this.fire('delete-item', {uid});
     }
     catch (error) {
       if (error === 'click disabled') { return; }
@@ -211,7 +191,6 @@ class PreviewList extends AppElement {
       this._targetToDelete.style.opacity = '1';
       this._targetToDelete = undefined;
       this._itemToDelete   = undefined;
-      this.$.spinner.hide();
     }
   }
 
@@ -232,27 +211,28 @@ class PreviewList extends AppElement {
     }
   }
 
-  // Used to update indexes.
-  // Returns an array that is ordered exactly
-  // as represented in the ui.
-  getListItems() {
-    return this.selectAll('.preview').
-             filter(el => isDisplayed(el)).
-             map(el => el.item);
+
+  cancelUploads() {
+    if (this.$.rearrangeList.cancelUploads) {
+      this.$.rearrangeList.cancelUploads();
+    }
+
+    if (this.$.cameraRoll.cancelUploads) {
+      this.$.cameraRoll.cancelUploads();
+    }
+  }
+
+
+  delete(uid) {
+    if (this.$.rearrangeList.delete) {
+      this.$.rearrangeList.delete();
+    }
   }
 
 
   open() {
     return this.$.overlay.open();
-  }
-
-
-  reset() {
-    const elements = this.selectAll('.preview');
-    elements.forEach(element => {
-      element.cancelUpload();
-    });
-  }
+  }  
 
 }
 
