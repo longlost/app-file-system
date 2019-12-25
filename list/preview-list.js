@@ -40,9 +40,9 @@ import {
 }                 from '@longlost/app-element/app-element.js';
 import {
   hijackEvent,
-  isDisplayed, 
   listen,
-  schedule
+  schedule,
+  unlisten
 }                 from '@longlost/utils/utils.js';
 import htmlString from './preview-list.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
@@ -87,6 +87,9 @@ class PreviewList extends AppElement {
         computed: '__computePreviewItems(items, files)'
       },
 
+
+      _requestDeleteListenerKey: Object,
+
       // When deleting an item with drag and drop,
       // this is used to temporary hide that element
       // while the delete confirm modal is open.
@@ -107,14 +110,21 @@ class PreviewList extends AppElement {
     super.connectedCallback();
 
     // <rearrange-list> and <preview-item>
-    listen(this, 'request-delete-item', this.__requestDeleteItem.bind(this));
+    this._requestDeleteListenerKey = listen(
+      this, 
+      'request-delete-item', 
+      this.__requestDeleteItem.bind(this)
+    );
+  }
+
+
+  disconnectedCallback() {
+    unlisten(this._requestDeleteListenerKey);
   }
 
   // Combine incomming file obj with db item.
   // File obj is fed to <upload-controls>.
   __computePreviewItems(items, files) {
-
-    console.log('items: ', items, ' files: ', files);
 
     if (!items || items.length === 0) { return; }
     if (!files || Object.keys(files).length === 0) { return items; }
@@ -131,8 +141,6 @@ class PreviewList extends AppElement {
       // Add file to item.
       return {...item, file: match};
     });
-
-    console.log('previewItems: ', previewItems); 
 
     return previewItems;
   }

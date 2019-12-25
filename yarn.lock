@@ -301,7 +301,7 @@
   dependencies:
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/app-spinner@^1.0.0", "@longlost/app-spinner@^1.0.1":
+"@longlost/app-spinner@^1.0.0":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@longlost/app-spinner/-/app-spinner-1.0.1.tgz#beb66b82017c21b7c84d068b38e2f70ab607ba35"
   integrity sha512-bRrp1ujwoIFdWTaUTFvobItip4PyP0y5fg0xVgqksQwYSCgWXDrfaoKN+/cZO0eT/rlEZJPQXZmnbRyj2Zdf/w==
@@ -311,6 +311,17 @@
     "@polymer/paper-button" "^3.0.1"
     "@polymer/paper-spinner" "^3.0.2"
     "@polymer/polymer" "^3.3.0"
+
+"@longlost/app-spinner@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-spinner/-/app-spinner-1.1.0.tgz#170ad84c15ccafce5a5cd87226960e176076d558"
+  integrity sha512-rbo47IAiJCQlvRq1UBt56zM2g+Mk3monXR1dQYGO3B9h/NsXzYWAswprjPJgsFQEOlvly/FqAZKKXs3JVPjtVQ==
+  dependencies:
+    "@longlost/app-element" "^1.0.5"
+    "@longlost/utils" "^1.3.5"
+    "@polymer/paper-button" "^3.0.1"
+    "@polymer/paper-spinner" "^3.0.2"
+    "@polymer/polymer" "^3.3.1"
 
 "@longlost/badged-icon-button@^1.0.1":
   version "1.0.1"
