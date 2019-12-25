@@ -46,16 +46,20 @@ class PreviewItem extends AppElement {
 
   static get properties() {
     return {
+
       // Firestore coll path string.
       coll: String,
+
       // Firestore doc path string.
       doc: String,
+
       // Firestore document field to use for saving file data after processing.
       // ie. 'backgroundImg', 'catImages', ...
       field: {
         type: String,
         value: 'files'
       },
+      
       // File item object.
       item: Object
 

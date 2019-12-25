@@ -142,7 +142,7 @@ class UploadControls extends AppElement {
         this._controls        = undefined;
         this._hideControlBtns = true;
         this._state           = 'errored';
-        warn('Sorry, an error occured while uploading your file.');
+        warn('An error occured while uploading your file.');
         return;
       }
 

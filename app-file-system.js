@@ -97,13 +97,11 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import {
-  deepClone,
-  removeOne
+  deepClone
 }                 from '@longlost/lambda/lambda.js';
 import {
   hijackEvent,
-  listen, 
-  message, 
+  listen,  
   schedule,
   unlisten,
   wait,
@@ -127,13 +125,11 @@ const arrayToDbObj = array => {
 
 
 const getImageFileDeletePaths = storagePath => {
-  // const {base, dir} = path.parse(storagePath);
   const base = path.basename(storagePath);
   const dir  = path.dirname(storagePath);
 
-
-  const optimPath   = `${dir}/optim_${base}`;
-  const thumbPath   = `${dir}/thumb_${base}`;
+  const optimPath = `${dir}/optim_${base}`;
+  const thumbPath = `${dir}/thumb_${base}`;
 
   return [
     storagePath,
@@ -282,6 +278,7 @@ class AppFileSystem extends AppElement {
       this._unsub();
     }
     else { 
+
       // App is still initializing, 
       // so give <app-settings> time to call enablePersistence
       // on services before calling subscribe.
@@ -301,10 +298,12 @@ class AppFileSystem extends AppElement {
     const errorCallback = error => {
       this._dbData = undefined;
       this._items  = undefined;
+
       if (
         error.message && 
         error.message.includes('document does not exist')
       ) { return; }
+
       console.error(error);
     };
 
@@ -338,9 +337,9 @@ class AppFileSystem extends AppElement {
     // Merge with existing file data.
     const fileData = {...this._dbData[uid], original, path: storagePath}; 
 
-    await this.__saveFileData({[uid]: fileData});
-
     this.$.sources.delete(uid);
+
+    await this.__saveFileData({[uid]: fileData});
 
     this.fire('file-uploaded', fileData);
   }
@@ -379,6 +378,7 @@ class AppFileSystem extends AppElement {
 
 
   __deleteDbFileData(uid) { 
+
     // Filter out orphaned data that may have been caused
     // by deletions prior to cloud processing completion,
     // and filter out the item to be deleted by uid.
@@ -444,6 +444,7 @@ class AppFileSystem extends AppElement {
     }
 
     await this.__deleteDbFileData(uid);
+
     this.$.sources.delete(uid);
     this.$.list.delete(uid);
 
@@ -470,7 +471,7 @@ class AppFileSystem extends AppElement {
   async __addNewFileItems(filesObj) {
 
     const files     = Object.values(filesObj);
-    const lastIndex = this._items ? this._items.length - 1 : 0;
+    const lastIndex = this._items ? this._items.length : 0;
 
     const newItems = files.reduce((accum, file, index) => {
       const {        
@@ -585,6 +586,7 @@ class AppFileSystem extends AppElement {
 
       const uids     = Object.keys(this._dbData);
       const promises = uids.map(uid => this.__delete(uid));
+
       this.$.list.cancelUploads();
 
       await Promise.all(promises);
