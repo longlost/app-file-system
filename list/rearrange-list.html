@@ -1,16 +1,21 @@
 
 <style>
+
+  .sortable {
+    position: relative; /* For <drag-drop-list> correction with __correctForDragDropList() method. */
+    z-index:  1;
+  }
   
   .preview {
     display:          inline-flex;
     flex-direction:   column; 
     position:         relative;
-    width:            20vmax;
     height:           calc(20vmax + 36px);
-    min-width:        144px;
+    width:            20vmax;
     min-height:       180px;
-    max-width:        204px;
+    min-width:        144px;
     max-height:       240px;
+    max-width:        204px;
     margin:           4px;
     border-radius:    3px;
     overflow:         hidden;

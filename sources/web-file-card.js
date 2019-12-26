@@ -15,7 +15,10 @@
   *  Properites:
   *
   *
-  *    
+  *  
+  *   mimes: Array, This array containes mime types (ie. 'image/jpeg').
+  *                 It us used to check against fetch response 'content-type' in order
+  *                 to be sure we are only loading the desired types of files.
   *
   *
   *
@@ -27,14 +30,6 @@
   *                       detail -> {file: <JS File Object>}
   *
   *  
-  *
-  *  
-  *  Methods:
-  *
-  *
-  *    
-  *
-  *
   *
   **/
 
@@ -84,6 +79,7 @@ const fetchFile = async (url, callback, options) => {
   // Get file type.
   const type = response.headers.get('Content-Type');
 
+  // Using stream in order to show a progress bar ui.
   const stream = new ReadableStream({
     start(controller) {
 
@@ -159,11 +155,20 @@ class WebFileCard extends AppElement {
       // _url: String
 
 
+
+      //  !!!!TESTING ONLY!!!!
+      //  uncomment __inputValueChanged
+      //
       // _url: {
       //   type: String,
       //   value: 'https://app-layout-assets.appspot.com/assets/bg4.jpg'
       // }
 
+
+
+      //  !!!!TESTING ONLY!!!!
+      //  uncomment __inputValueChanged
+      //
       _url: {
         type: String,
         value: 'https://fetch-progress.anthum.com/20kbps/images/sunrise-progressive.jpg'
@@ -232,7 +237,7 @@ class WebFileCard extends AppElement {
 
   
 
-
+  // commented out for testing only.
 
   __inputValueChanged(event) {
     // const {value}      = event.detail;
@@ -263,7 +268,8 @@ class WebFileCard extends AppElement {
       if (error === 'click debounced') {
         return;
       } 
-      else if (error.message === 'Failed to fetch') {
+
+      if (error.message === 'Failed to fetch') {
         message('Import cancelled.');
       } 
       else {
@@ -285,6 +291,7 @@ class WebFileCard extends AppElement {
   async __cancelBtnClicked() {
     try {
       await this.clicked();
+
       if (this._cancel) {
         this._cancel('Failed to fetch');
       }

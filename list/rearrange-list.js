@@ -15,13 +15,6 @@
   *  Properites:
   *
   *
-  *    accept - <String> optional: file type to allow from user. 
-  *             Any valid HTML5 input accept string or one of 3 
-  *             shorthand values: 'image', 'video' or 'audio'.
-  *             ie. 'audio', 'video', 'audio,.jpg', '.doc', ... 
-  *             default -> 'image'
-  *
-  *
   *    coll - <String> required: firestore collection path to use when saving.
   *           ie. `cms/ui/programs`, 'images', `users`
   *           default -> undefined
@@ -37,55 +30,42 @@
   *            default -> 'files'
   *
   *
-  *    multiple - <Boolean> optional: false -> only accept one file at a time, true -> allow many files at the same time.
-  *               default -> false
+  *    hideDropzone - <Boolean> optional: undefined -> When true, hide delete dropzone.
+  *
+  *
+  *    items - <Array> required: Input items from Firestore db.
   *
   *
   *
   *  Events:
   *
   *
-  *    'data-changed' - Fired any time file(s) data changes.
-  *                     detail -> {[uid]: {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}, ...}
-  *                                _tempUrl - window.URL.createObjectURL
-  *                                index    - used for multiple files ordering
+  *    'rearrange-list-sorted' - Fired after <drag-drop-list> items are sorted by user drag action.
+  *                              detail -> {sorted} - array of item uid's
   *
   *
-  *    'files-received' - Fired after user interacts with renameFileModal and before the file upload process begins.
-  *                       detail -> {name, size, type, uid, <, _tempUrl>}
-  *                                   name     - 'filename' (name.ext)
-  *                                   _tempUrl - window.URL.createObjectURL
-  *
-  *  
-  *    'file-uploaded' - Fired after successful upload operation.
-  *                      detail -> {coll, doc, ext, field, name, original, path, size, sizeStr, type, uid, _tempUrl}
-  *                                 original - public download url for full size original
-  *
-  *
-  *    'file-deleted' - Fired after user deletes a file.
-  *                     detail -> {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}
-  *
-  *     
-  *    'upload-cancelled' - Fired if user cancels the upload process.
-  *                         detail -> {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl}          
-  *
+  *    'request-delete-item' - Fired when a user drags an item over the delete dropzone.
+  *                            detail -> {uid} - item uid
+  *                                   
   *
   *  
   *  Methods:
   *
   *
-  *    add() - Add one File obj or an array of File objects for upload to Firebase Firestore and Storage.
+  *    cancelDelete() - User dismisses the delete modal in <preview-list> parent element.
   *
   *
-  *    getData() - Returns file data {[uid]: {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}, ...}.
+  *    cancelUploads() - Cancels each item's active file upload.
   *              
   *
-  *    delete(uid) - uid  -> <String> required: file uid to target for delete operation.
-  *                            Returns Promise 
-  *                            resolves to {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}.
+  *    delete() - Removes the highest index found in the _domState correction array.
+  *               The reason for removing the highest index is because the <template is="dom-repeat">
+  *               element removes the last item in the array of dom elements no matter which item index
+  *               is actually removed.
   *
   *    
-  *    deleteAll() - Returns Promise that resolves when deletion finishes.
+  *    resetDeleteTarget() - Clears corrective styles applied to an element dragged onto the dropzone, 
+  *                          following a dismissed or confirmed delete action.
   *
   *
   *
@@ -252,9 +232,16 @@ class RearrangeList extends AppElement {
     this._domState = items.map(({stateIndex}) => stateIndex);
   }
 
+
+  __putTargetWhereDropped() {
+    const {target, x, y} = this._toDelete;
+
+    target.style['transform'] = `translate3d(${x}px, ${y}px, 1px)`;
+  }
+
   // See if item was dropped over the delete area
   // compare pointer coordinates with area position.
-  __handleDrop(event) {
+  async __handleDrop(event) {
     hijackEvent(event);
 
     const {data, target}             = event.detail;
@@ -264,26 +251,41 @@ class RearrangeList extends AppElement {
 
     if (dropIsOverDropZone(measurements)) {
 
-      // Show a confirmation modal before deleting.
-      const {item}           = target;
-      const {height, width}  = target.getBoundingClientRect();
-      const xCenter          = x - (width / 2);
-      const yCenter          = y - (height / 2);
+      const uploader                 = target.firstElementChild;
+      const {uid}                    = uploader.item;
+      const {x: targetX, y: targetY} = target.getBoundingClientRect();
+
+      uploader.pauseUpload();
 
       // Override transform to keep item over delete zone.
-      target.style.transform = `translate3d(${xCenter}px, ${yCenter}px, 1px)`;
-      target.pauseUpload();
+      this._toDelete = {target, uploader, x: targetX, y: targetY};
+      this.__putTargetWhereDropped();
 
-      this.fire('request-delete-item', {item, target});
+      // Show a confirmation modal before deleting.
+      this.fire('request-delete-item', {uid});
     }
   }
 
+  // <drag-drop-list> artifact that requires correction
+  // so placement does not change.
+  __correctForDragDropList() {
+    const {target, x, y}     = this._toDelete;
+    const {x: newX, y: newY} = target.getBoundingClientRect();
 
-  __handleSort(event) {
+    const xDiff = newX - x;
+    const yDiff = newY - y;
+    
+    target.style['right']  = `${xDiff}px`;      
+    target.style['bottom'] = `${yDiff}px`;
+  }
+
+
+  async __handleSort(event) {
     hijackEvent(event);
 
-    if (this._itemToDelete) {
-      this._targetToDelete.style.opacity = '0';
+    if (this._toDelete) {
+      this.__putTargetWhereDropped();
+      this.__correctForDragDropList();
     }
 
     // Take a snapshot of current sequence 
@@ -300,6 +302,16 @@ class RearrangeList extends AppElement {
   }
 
 
+  cancelDelete() {
+    if (!this._toDelete) { return; }
+
+    const {uploader} = this._toDelete;
+
+    uploader.resumeUpload();
+    this.resetDeleteTarget();
+  }
+
+
   cancelUploads() {
     const elements = this.selectAll('.preview');
     elements.forEach(element => {
@@ -308,7 +320,8 @@ class RearrangeList extends AppElement {
   }
 
 
-  delete() {    
+  delete() {  
+
     // Take out largest index since the <template is="dom-repeat">
     // always removes the last item from the dom.
     // Find the largest index in the state array 
@@ -317,6 +330,18 @@ class RearrangeList extends AppElement {
                     num === this._domState.length - 1);
 
     this._domState = removeOne(index, this._domState);
+  }
+
+
+  resetDeleteTarget() {
+    if (!this._toDelete) { return; }
+
+    const {target} = this._toDelete;
+
+    target.style['transform'] = '';
+    target.style['right']     = '0px';
+    target.style['bottom']    = '0px';
+    this._toDelete            = undefined;
   }
 
 }
