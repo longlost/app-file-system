@@ -1,26 +1,9 @@
 
 <style>
-	
-	.preview {
-    display:          inline-flex;
-    flex-direction:   column; 
-    position:         relative;
-    width:            20vmax;
-    height:           calc(20vmax + 36px);
-    min-width:        144px;
-    min-height:       180px;
-    max-width:        204px;
-    max-height:       240px;
-    margin:           4px;
-    border-radius:    3px;
-    overflow:         hidden;
-    background-color: var(--app-background-color);
-    --preview-thumbnail-border-radius: 3px 3px 0px 0px;
-  }
-
-  *[hidden] {
-    display: none;
-  }
+  
+  :host {
+    display: block;
+  } 
 
 </style>
 
@@ -28,13 +11,12 @@
 <template is="dom-repeat" 
           items="[[items]]">
 
-  <preview-item class="preview"
-                coll="[[coll]]"
-                doc="[[doc]]"
-                field="[[field]]"
-                file="[[item.file]]"
-                item="[[item]]"
-                on-click="__itemClicked">
-  </preview-item>
+  <roll-item coll="[[coll]]"
+             doc="[[doc]]"
+             field="[[field]]"
+             file="[[item.file]]"
+             item="[[item]]"
+             on-click="__itemClicked">
+  </roll-item>
 
 </template>

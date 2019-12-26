@@ -19,6 +19,9 @@ import {
   capitalize
 }                 from '@longlost/lambda/lambda.js';
 import {
+  isDisplayed,
+  schedule,
+  wait,
   warn
 }                 from '@longlost/utils/utils.js';
 import htmlString from './upload-controls.html';
@@ -92,19 +95,46 @@ class UploadControls extends AppElement {
   }
 
 
+  async __show() {
+    if (isDisplayed(this)) { return; }
+
+    await wait(800);
+
+    // If processing happens faster than animation timing, abort.
+    if (isDisplayed(this) || !this.file) { return; }
+
+    this.style['display'] = 'flex';
+    await schedule();
+    this.style['transform'] = 'unset';
+  }
+
+
+  async __hide() {
+    if (!isDisplayed(this)) { return; }
+
+    this.style['transform'] = 'translateY(100%)';
+    await wait(350);
+    this.style['display'] = 'none';
+  }
+
+
   __fileChanged(file, metadata) {
     if (
-      !file || 
+      !file ||
       !metadata || 
       !metadata.customMetadata.uid || 
       !metadata.customMetadata.field
-    ) { return; }
+    ) { 
+      this.__hide();
+      return; 
+    }
 
     if (!this.coll || !this.doc) { 
       throw new Error(`upload-controls must have both 'coll' and 'doc' set`); 
     }
 
     this.__uploadFile(file, metadata);
+    this.__show();
   } 
 
 
@@ -132,8 +162,6 @@ class UploadControls extends AppElement {
 
 
   __uploadFile(file, metadata) {
-
-    const dir  = `${this.coll}/${this.doc}`;
 
     const controlsCallback = controls => {
 
@@ -176,6 +204,8 @@ class UploadControls extends AppElement {
       this._state    = capitalize(state);
     };
 
+    const dir  = `${this.coll}/${this.doc}`;
+
     services.fileUpload({
       controlsCallback:     controlsCallback,
       dir, 
@@ -185,7 +215,7 @@ class UploadControls extends AppElement {
       metadata, 
       name:                 file.uid, 
       stateChangedCallback: stateChangedCallback
-    });    
+    });
   }
 
 

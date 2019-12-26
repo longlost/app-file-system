@@ -16,35 +16,24 @@
 
   #label {
     position:         relative;
-    padding-bottom:   4px;
+    padding:          8px 8px 4px 8px;
     background-color: inherit; /* For <processing-icon> */
   }
 
   #label-name {
     display:         flex;
-    justify-content: space-between;
     align-items:     center;
-    padding-left:    8px;
+    height:          32px;
     color:           var(--dark-text-color);
   }
 
-  paper-icon-button {
-    min-width: 40px;
+  #label-order {
+    margin-right: 8px;
   }
 
   .label-stats {
-    padding:   0px 8px;
     font-size: 12px;
     color:     var(--secondary-text-color);
-  }
-
-  #uploadControls {
-    display:    none;
-    transition: transform 0.3s var(--custom-ease, ease-in);
-  }
-
-  .hide {
-    transform: translateY(100%);
   }
 
 </style>
@@ -53,26 +42,28 @@
 <file-thumbnail item="[[item]]"></file-thumbnail>
 
 <div id="label">
+
   <div id="label-name">
+    <div id="label-order">
+      [[__computeOrder(item)]]
+    </div>
     <div class="shared-single-line-truncate">
       [[item.displayName]]
     </div>
-    <paper-icon-button icon="app-icons:close" 
-                       alt="Remove file" 
-                       on-click="__removeFileButtonClicked">
-    </paper-icon-button>
   </div>
+
   <div class="label-stats shared-single-line-truncate">
     [[__computeStatsLine1(item)]]
   </div>
+
   <div class="label-stats shared-single-line-truncate">
     [[__computeStatsLine2(item)]]
   </div>
+
   <processing-icon item="[[item]]"></processing-icon>
 </div>
 
 <upload-controls id="uploadControls"
-                 class="hide"
                  coll="[[coll]]"
                  doc="[[doc]]"
                  field="[[field]]"

@@ -1,6 +1,6 @@
 
 /**
-  * `preview-item`
+  * `roll-item`
   * 
   *   File preview item that displays a thumbnail, file stats and upload controls.
   *
@@ -53,21 +53,14 @@ import {
   AppElement, 
   html
 }                 from '@longlost/app-element/app-element.js';
-import {
-  formatTimestamp,
-  schedule,
-  wait
-}                 from '@longlost/utils/utils.js';
-import mime       from 'mime-types';
-import htmlString from './preview-item.html';
-import '@longlost/app-shared-styles/app-shared-styles.js';
+import htmlString from './roll-item.html';
 import '../shared/file-thumbnail.js';
 import './processing-icon.js';
 import './upload-controls.js';
 
 
-class PreviewItem extends AppElement {
-  static get is() { return 'preview-item'; }
+class RollItem extends AppElement {
+  static get is() { return 'roll-item'; }
 
   static get template() {
     return html([htmlString]);
@@ -96,71 +89,6 @@ class PreviewItem extends AppElement {
     };
   }
 
-
-  static get observers() {
-    return [
-      '__fileChanged(item.file)'
-    ];
-  }
-
-
-  __computeStatsLine1(item) {
-    if (!item) { return ''; }
-
-    const {index, timestamp} = item;
-    const order              = `#${index + 1}`;
-
-    if (!timestamp) { return order; }
-
-    return `${order} ● ${formatTimestamp(timestamp, 'short')}`;
-  }
-
-
-  __computeStatsLine2(item) {
-    if (!item) { return ''; }
-
-    const {type, sizeStr} = item;
-
-    if (!type) { return sizeStr; }
-
-    return `${mime.extension(type)} ● ${sizeStr}`;
-  }
-
-
-  async __fileChanged(file) {
-
-    if (file) {
-      await wait(800);
-
-      // If processing happens faster than animation timing, abort.
-      if (!file) { return; }
-
-      this.$.uploadControls.style['display'] = 'flex';
-      await schedule();
-      this.$.uploadControls.classList.remove('hide');
-    }
-    else {
-      this.$.uploadControls.classList.add('hide');
-      await wait(350);
-      this.$.uploadControls.style['display'] = 'none';
-    }
-  }
-
-  // file ui x button clicked
-  async __removeFileButtonClicked() {
-    try {
-      await this.clicked();
-
-      this.pauseUpload();
-
-      this.fire('request-delete-item', {uid: this.item.uid});
-    }
-    catch (error) { 
-      if (error === 'click debounced') { return; }
-      console.error(error); 
-    }
-  }
-
   // Used for app-file-system.js deleteAll() method.
   cancelUpload() {
     this.$.uploadControls.cancel();
@@ -178,4 +106,4 @@ class PreviewItem extends AppElement {
 
 }
 
-window.customElements.define(PreviewItem.is, PreviewItem);
+window.customElements.define(RollItem.is, RollItem);

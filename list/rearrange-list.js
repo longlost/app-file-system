@@ -80,12 +80,13 @@ import {
   removeOne
 }                 from '@longlost/lambda/lambda.js';
 import {
-  hijackEvent
+  hijackEvent,
+  wait
 }                 from '@longlost/utils/utils.js';
 import htmlString from './rearrange-list.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';
-import './preview-item.js';
+import './rearrange-item.js';
 import '../shared/file-icons.js';
 
 
@@ -272,11 +273,7 @@ class RearrangeList extends AppElement {
     const {target, x, y}     = this._toDelete;
     const {x: newX, y: newY} = target.getBoundingClientRect();
 
-    const xDiff = newX - x;
-    const yDiff = newY - y;
-    
-    target.style['right']  = `${xDiff}px`;      
-    target.style['bottom'] = `${yDiff}px`;
+    target.style['transform'] = `translate3d(${x - newX}px, ${y - newY}px, 1px)`;
   }
 
 
@@ -284,7 +281,6 @@ class RearrangeList extends AppElement {
     hijackEvent(event);
 
     if (this._toDelete) {
-      this.__putTargetWhereDropped();
       this.__correctForDragDropList();
     }
 
@@ -333,15 +329,18 @@ class RearrangeList extends AppElement {
   }
 
 
-  resetDeleteTarget() {
+  async resetDeleteTarget() {
     if (!this._toDelete) { return; }
 
     const {target} = this._toDelete;
 
-    target.style['transform'] = '';
-    target.style['right']     = '0px';
-    target.style['bottom']    = '0px';
-    this._toDelete            = undefined;
+    target.style['transition'] = 'transform 0.2s var(--custom-ease)';
+    target.style['transform']  = '';
+
+    await wait(250);
+
+    target.style['transition'] = 'unset';
+    this._toDelete             = undefined;
   }
 
 }

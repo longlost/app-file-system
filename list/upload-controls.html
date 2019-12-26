@@ -1,13 +1,15 @@
 
 <style include="app-shared-styles">
 
-  :host {
-    display:  flex;
-    position: absolute;
-    left:     0px;
-    bottom:   0px;
-    height:   40px;
-    width:    100%;
+  :host {    
+    display:          none;
+    position:         absolute;
+    left:             0px;
+    bottom:           0px;
+    height:           40px;
+    width:            100%;
+    transition:       transform 0.3s var(--custom-ease, ease-in);
+    transform:        translateY(100%);
     background-color: var(--app-dark-color);
     color:            var(--constant-light-text);
   }
