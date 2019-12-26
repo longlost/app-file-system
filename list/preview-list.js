@@ -13,6 +13,22 @@
   *
   *  Properites:
   *
+  *
+  *    coll - <String> required: firestore collection path to use when saving.
+  *           ie. `cms/ui/programs`, 'images', `users`
+  *           default -> undefined
+  *
+  *
+  *    doc - <String> required: firestore document path to use when saving.
+  *           ie. `${program}`, 'home', `${uid}`
+  *           default -> undefined
+  *
+  *
+  *    field - <String> optional: firestore document object field (prop) to save the file metadata/info.
+  *            ie. 'backgroundImg', 'carousel', 'profileImg'
+  *            default -> 'files'
+  *
+  *
   *  
   *    items - Collection of file data objects that drives the template repeater.
   *
@@ -22,10 +38,8 @@
   *  Events:
   *
   *
-  *    'list-item-dropped' - Fired any time an item is dropped.
-  *                            detail: {data (x, y coordinates), target} 
-  *
-  *    'list-sort-finished' - Fired any time the list is sorted.
+  *    'delete-item' - Fired after user confirms a delete action on a single item.
+  *                    detail: {uid} 
   *
   *
   *
@@ -79,7 +93,11 @@ class PreviewList extends AppElement {
 
       list: String,
 
-      _itemToDelete: Object,
+      // When deleting an item with drag and drop,
+      // or with item delete icon button,
+      // his is used to temporary cache the uid
+      // while the delete confirm modal is open.
+      _deleteUid: String,
 
       // Drives <template is="dom-repeat">
       _previewItems: {
@@ -87,13 +105,7 @@ class PreviewList extends AppElement {
         computed: '__computePreviewItems(items, files)'
       },
 
-
-      _requestDeleteListenerKey: Object,
-
-      // When deleting an item with drag and drop,
-      // this is used to temporary hide that element
-      // while the delete confirm modal is open.
-      _targetToDelete: Object
+      _requestDeleteListenerKey: Object
 
     };
   }
@@ -147,6 +159,7 @@ class PreviewList extends AppElement {
 
 
   __listChanged(list) {
+    
     if (list === 'rearrange-list') {
       import(
         /* webpackChunkName: 'app-file-system-rearrange-list' */ 
@@ -162,21 +175,14 @@ class PreviewList extends AppElement {
   }
 
 
-  async __setupForDelete(item, target) {
-    this._targetToDelete = target;
-    this._itemToDelete   = {...item};
+  async __requestDeleteItem(event) {
+    hijackEvent(event);
+
+    this._deleteUid = event.detail.uid;
 
     await schedule();
 
     this.$.deleteConfirmModal.open();
-  }
-
-
-  __requestDeleteItem(event) {
-    hijackEvent(event);
-
-    const {item, target} = event.detail;
-    this.__setupForDelete(item, target);
   }
 
   // <drag-drop> delete area modal.
@@ -185,20 +191,17 @@ class PreviewList extends AppElement {
       hijackEvent(event);
       await this.clicked();
 
-      const {uid} = this._itemToDelete;
-
       await this.$.deleteConfirmModal.close();
 
-      this.fire('delete-item', {uid});
+      if (this.$.rearrangeList.resetDeleteTarget) {
+        this.$.rearrangeList.resetDeleteTarget();
+      }
+
+      this.fire('delete-item', {uid: this._deleteUid});
     }
     catch (error) {
       if (error === 'click disabled') { return; }
       console.error(error);
-    }
-    finally {
-      this._targetToDelete.style.opacity = '1';
-      this._targetToDelete = undefined;
-      this._itemToDelete   = undefined;
     }
   }
 
@@ -208,10 +211,11 @@ class PreviewList extends AppElement {
       hijackEvent(event);
 
       await this.clicked();
-      this._targetToDelete.style.opacity = '1';
-      this._itemToDelete                 = undefined;
-      this._targetToDelete.resumeUpload();
-      this.$.deleteConfirmModal.close();
+      await this.$.deleteConfirmModal.close();
+
+      if (this.$.rearrangeList.cancelDelete) {
+        this.$.rearrangeList.cancelDelete();
+      }
     }
     catch (error) {
       if (error === 'click debounced') { return; }
@@ -221,6 +225,7 @@ class PreviewList extends AppElement {
 
 
   cancelUploads() {
+
     if (this.$.rearrangeList.cancelUploads) {
       this.$.rearrangeList.cancelUploads();
     }
@@ -232,6 +237,7 @@ class PreviewList extends AppElement {
 
 
   delete(uid) {
+
     if (this.$.rearrangeList.delete) {
       this.$.rearrangeList.delete();
     }

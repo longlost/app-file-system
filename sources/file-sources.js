@@ -99,6 +99,7 @@ import './device-file-card.js';
 const trim = str => str.trim();
 const getAcceptEntries = compose(split(','), map(trim));
 const removeWildCards  = compose(split('/*'), head);
+
 // Use arrow function here to block extra arguments 
 // that map passes in to the map function.
 const getMimeTypes = map(str => removeWildCards(str)); 
@@ -108,14 +109,17 @@ const KILOBYTE = 1024;
 const MEGABYTE = 1048576;
 
 const formatFileSize = size => {
+
   if (size < KILOBYTE) {
     return `${size}bytes`;
+  }
+
+  if (size >= KILOBYTE && size < MEGABYTE) {
+    return `${Number((size / KILOBYTE).toFixed(1))}KB`;
   } 
-  else if (size >= KILOBYTE && size < MEGABYTE) {
-    return `${(size / KILOBYTE).toFixed(1)}KB`;
-  } 
-  else if (size >= MEGABYTE) {
-    return `${(size / MEGABYTE).toFixed(1)}MB`;
+
+  if (size >= MEGABYTE) {
+    return `${Number((size / MEGABYTE).toFixed(1))}MB`;
   }
 };
 
@@ -133,11 +137,13 @@ const addAdditionalData = async files => {
     await init(Worker);
 
     const promises = files.map(file => {
+
       // Send jpg files to worker to read 
       // orientation and get a uid.
       if (file.type.includes('jpg') || file.type.includes('jpeg')) {
         return run('getUidAndOrientation', file, 'Orientation');
       }
+
       // Don't send file to worker, just get a uid.
       return run('getUidAndOrientation'); 
     });
@@ -355,6 +361,7 @@ class FileSources extends AppElement {
     const {value}     = event.detail;
     const {uid}       = event.model.file;
     const displayName = value.trim();
+
     // Don't save empty name values, 
     // use file name instead.
     if (!displayName) {
@@ -381,11 +388,14 @@ class FileSources extends AppElement {
       await this.clicked();
 
       const renamedFiles = this._filesToRename.map(file => {
+
         // Use user edits from modal input.
         if (this._newDisplayNames[file.uid]) {
+
           // Cannot use object spread notation on object-like File.
           file.displayName = this._newDisplayNames[file.uid];
         }
+
         // Fallback to existing filename if user has
         // not provided an alternative.
         else {
@@ -485,6 +495,7 @@ class FileSources extends AppElement {
 
 
   __handleSingleFile(file) {
+
     if (this._maxbytes && file.size > this._maxbytes) {
       this.__showFeedback('tooLarge');
     }
@@ -495,6 +506,7 @@ class FileSources extends AppElement {
 
   
   addFiles(files) {
+    
     if (this.multiple) {
       this.__handleMultipleFiles(files);
     }

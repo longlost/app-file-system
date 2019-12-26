@@ -15,7 +15,12 @@ import {
   AppElement, 
   html
 }                 from '@longlost/app-element/app-element.js';
-import {warn}     from '@longlost/utils/utils.js';
+import {
+  capitalize
+}                 from '@longlost/lambda/lambda.js';
+import {
+  warn
+}                 from '@longlost/utils/utils.js';
 import htmlString from './upload-controls.html';
 import services   from '@longlost/services/services.js';
 import '@longlost/app-icons/app-icons.js';
@@ -33,10 +38,13 @@ class UploadControls extends AppElement {
 
   static get properties() {
     return {
+
       // Firestore coll path string.
       coll: String,
+
       // Firestore doc path string.
       doc: String,
+
       // Firestore document field to use for saving file data after processing.
       // ie. 'backgroundImg', 'catImages', ...
       field: {
@@ -45,11 +53,14 @@ class UploadControls extends AppElement {
       },
 
       file: Object,
+
       // file upload controls
       // {cancel, pause, resume}
       _controls: Object,
+
       // hides pause/play button when upload is done or canceled
       _hideControlBtns: Boolean,
+
       // Custom metadata associated with file data.
       // Used in 'optimize' cloud function to 
       // properly save processed file urls to
@@ -58,6 +69,7 @@ class UploadControls extends AppElement {
         type: Object,
         computed: '__computeMetadata(field, file.uid)'
       },
+
       // upload progress
       _progress: Number,
 
@@ -65,6 +77,7 @@ class UploadControls extends AppElement {
         type: Boolean,
         value: false
       },
+
       // upload state
       _state: String
 
@@ -88,7 +101,7 @@ class UploadControls extends AppElement {
     ) { return; }
 
     if (!this.coll || !this.doc) { 
-      throw new Error(`drag-drop-files must have both 'coll' and 'doc' set`); 
+      throw new Error(`upload-controls must have both 'coll' and 'doc' set`); 
     }
 
     this.__uploadFile(file, metadata);
@@ -96,6 +109,7 @@ class UploadControls extends AppElement {
 
 
   __computeMetadata(field, uid) {
+
     // 'metadata.customMetadata' in client sdk, 
     // 'metadata.metadata' in cloud functions.
     return {customMetadata: {field, uid}}; 
@@ -106,7 +120,7 @@ class UploadControls extends AppElement {
     const {url, path}     = data;
     const {uid}           = this.file;
     this._controls        = undefined;
-    this._state           = 'done';
+    this._state           = 'Done';
     this._hideControlBtns = true;
 
     this.fire('upload-complete', {
@@ -122,6 +136,7 @@ class UploadControls extends AppElement {
     const dir  = `${this.coll}/${this.doc}`;
 
     const controlsCallback = controls => {
+
       // controls === {cancel, pause, resume}
       this._controls = controls;
     };
@@ -131,17 +146,18 @@ class UploadControls extends AppElement {
     };
 
     const errorCallback = error => {
+      
       if (error.code_ && error.code_ === 'storage/canceled') {
         this._controls        = undefined;
         this._hideControlBtns = true;
-        this._state           = 'canceled';
+        this._state           = 'Canceled';
         return;
       }
 
       if (error.code_ && error.code_ === 'storage/unknown') {
         this._controls        = undefined;
         this._hideControlBtns = true;
-        this._state           = 'errored';
+        this._state           = 'Error';
         warn('An error occured while uploading your file.');
         return;
       }
@@ -150,14 +166,14 @@ class UploadControls extends AppElement {
       //      show error feedback ui
 
 
-      console.error('upload error: ', error.code_);
+      console.error('Upload error: ', error.code_);
 
     };
 
     const stateChangedCallback = data => {
       const {progress, state} = data;
       this._progress = progress;
-      this._state    = state
+      this._state    = capitalize(state);
     };
 
     services.fileUpload({

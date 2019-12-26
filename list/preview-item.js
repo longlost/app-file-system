@@ -13,8 +13,37 @@
   *
   *  Properites:
   *
+  *
+  *    coll - <String> required: Firestore collection path to use when saving.
+  *           ie. `cms/ui/programs`, 'images', `users`
+  *           default -> undefined
+  *
+  *
+  *    doc - <String> required: Firestore document path to use when saving.
+  *           ie. `${program}`, 'home', `${uid}`
+  *           default -> undefined
+  *
+  *
+  *    field - <String> optional: Firestore document object field (prop) to save the file metadata/info.
+  *            ie. 'backgroundImg', 'carousel', 'profileImg'
+  *            default -> 'files'
+  *
   *  
-  *    item - File data object.
+  *    item - <Object> required: File item data object.
+  *
+  *
+  *
+  *
+  *  Methods: 
+  *
+  *   
+  *   cancelUpload - Cancel an item upload mid-stream. Used when an item is deleted early.
+  *
+  *
+  *   pauseUpload - Pause incomplete uploads when user is deciding to delete an item.
+  *
+  *
+  *   resumeUpload - Resume an incomplete upload when a user dismisses the delete modal.
   *
   *
   **/
@@ -29,6 +58,7 @@ import {
   schedule,
   wait
 }                 from '@longlost/utils/utils.js';
+import mime       from 'mime-types';
 import htmlString from './preview-item.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '../shared/file-thumbnail.js';
@@ -93,7 +123,7 @@ class PreviewItem extends AppElement {
 
     if (!type) { return sizeStr; }
 
-    return `${type} ● ${sizeStr}`;
+    return `${mime.extension(type)} ● ${sizeStr}`;
   }
 
 
@@ -123,7 +153,7 @@ class PreviewItem extends AppElement {
 
       this.pauseUpload();
 
-      this.fire('request-delete-item', {item: this.item, target: this});
+      this.fire('request-delete-item', {uid: this.item.uid});
     }
     catch (error) { 
       if (error === 'click debounced') { return; }
@@ -131,7 +161,7 @@ class PreviewItem extends AppElement {
     }
   }
 
-  // <file-uploader> deleteAll.
+  // Used for app-file-system.js deleteAll() method.
   cancelUpload() {
     this.$.uploadControls.cancel();
   }
