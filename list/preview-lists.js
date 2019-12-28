@@ -1,13 +1,9 @@
 
 /**
-  * `preview-list`
+  * `preview-lists`
   * 
-  *   Shows file items in a rearrangeable list.
+  *   Shows file items in a rearrangeable list or photos in a camera-roll.
   *
-  *
-  * @customElement
-  * @polymer
-  * @demo demo/index.html
   *
   *
   *
@@ -43,6 +39,10 @@
   *
   *
   *
+  * @customElement
+  * @polymer
+  * @demo demo/index.html
+  *
   *
   *
   **/
@@ -58,14 +58,13 @@ import {
   schedule,
   unlisten
 }                 from '@longlost/utils/utils.js';
-import htmlString from './preview-list.html';
-import '@longlost/app-header-overlay/app-header-overlay.js';
+import htmlString from './preview-lists.html';
 import '@longlost/app-modal/app-modal.js';
 import '@polymer/paper-button/paper-button.js';
 
 
 class PreviewList extends AppElement {
-  static get is() { return 'preview-list'; }
+  static get is() { return 'preview-lists'; }
 
   static get template() {
     return html([htmlString]);
@@ -92,6 +91,12 @@ class PreviewList extends AppElement {
       items: Array,
 
       list: String,
+
+      // Displayed name in delete modal.
+      _deleteName: {
+        type: String,
+        computed: '__computeDeleteItemDisplayName(items, _deleteUid)'
+      },
 
       // When deleting an item with drag and drop,
       // or with item delete icon button,
@@ -121,7 +126,7 @@ class PreviewList extends AppElement {
   connectedCallback() {
     super.connectedCallback();
 
-    // <rearrange-list> and <preview-item>
+    // <file-items> and <file-item>
     this._requestDeleteListenerKey = listen(
       this, 
       'request-delete-item', 
@@ -131,6 +136,8 @@ class PreviewList extends AppElement {
 
 
   disconnectedCallback() {
+    super.disconnectedCallback();
+    
     unlisten(this._requestDeleteListenerKey);
   }
 
@@ -158,12 +165,21 @@ class PreviewList extends AppElement {
   }
 
 
+  __computeDeleteItemDisplayName(items, uid) {
+    if (!items || !uid) { return; }
+
+    const {displayName} = items.find(item => item.uid === uid);
+
+    return displayName;
+  }
+
+
   __listChanged(list) {
     
-    if (list === 'rearrange-list') {
+    if (list === 'file-list') {
       import(
-        /* webpackChunkName: 'app-file-system-rearrange-list' */ 
-        './rearrange-list.js'
+        /* webpackChunkName: 'app-file-system-file-list' */ 
+        './file-list.js'
       );
     }
     else if (list === 'camera-roll') {
@@ -193,8 +209,8 @@ class PreviewList extends AppElement {
 
       await this.$.deleteConfirmModal.close();
 
-      if (this.$.rearrangeList.resetDeleteTarget) {
-        this.$.rearrangeList.resetDeleteTarget();
+      if (this.$.fileList.resetDeleteTarget) {
+        this.$.fileList.resetDeleteTarget();
       }
 
       this.fire('delete-item', {uid: this._deleteUid});
@@ -213,8 +229,8 @@ class PreviewList extends AppElement {
       await this.clicked();
       await this.$.deleteConfirmModal.close();
 
-      if (this.$.rearrangeList.cancelDelete) {
-        this.$.rearrangeList.cancelDelete();
+      if (this.$.fileList.cancelDelete) {
+        this.$.fileList.cancelDelete();
       }
     }
     catch (error) {
@@ -226,8 +242,8 @@ class PreviewList extends AppElement {
 
   cancelUploads() {
 
-    if (this.$.rearrangeList.cancelUploads) {
-      this.$.rearrangeList.cancelUploads();
+    if (this.$.fileList.cancelUploads) {
+      this.$.fileList.cancelUploads();
     }
 
     if (this.$.cameraRoll.cancelUploads) {
@@ -236,16 +252,24 @@ class PreviewList extends AppElement {
   }
 
 
-  delete(uid) {
+  delete() {
 
-    if (this.$.rearrangeList.delete) {
-      this.$.rearrangeList.delete();
+    if (this.$.fileList.delete) {
+      this.$.fileList.delete();
     }
   }
 
 
   open() {
-    return this.$.overlay.open();
+
+    if (this.list === 'file-list') {
+      return this.$.fileList.open();
+    }
+    else if (this.list === 'camera-roll') {
+      return this.$.cameraRoll.open();
+    }
+
+    throw new Error('Cannot open the overlay without the list property being properly set.');
   }  
 
 }

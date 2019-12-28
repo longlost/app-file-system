@@ -7,9 +7,6 @@
   *   uploading/saving/optimization/deleting/previewing/rearranging.
   *
   *
-  *   @customElement
-  *   @polymer
-  *   @demo demo/index.html
   *
   *
   *  Properites:
@@ -88,6 +85,9 @@
   *    deleteAll() - Returns Promise that resolves when deletion finishes.
   *
   *
+  *   @customElement
+  *   @polymer
+  *   @demo demo/index.html
   *
   **/
 
@@ -112,7 +112,7 @@ import services   from '@longlost/services/services.js';
 import htmlString from './app-file-system.html';
 import '@longlost/app-spinner/app-spinner.js';
 import './sources/file-sources.js';
-import './list/preview-list.js';
+import './list/preview-lists.js';
 
 
 // From items array/collection back to a Firestore data obj.
@@ -194,7 +194,7 @@ class AppFileSystem extends AppElement {
       // Controls the type of file preview list to use.
       list: {
         type: String,
-        value: 'rearrange-list' // Or 'camera-roll'.
+        value: 'file-list' // Or 'camera-roll'.
       },
 
       // Positive Int that represents the maximum
@@ -224,7 +224,7 @@ class AppFileSystem extends AppElement {
       // From <file-sources>.
       _files: Object,
 
-      // Drives <preview-list> repeater.
+      // Drives <preview-lists> repeater.
       _items: Array,
 
       // Services/Firestore subscription unsubscribe function.
@@ -248,24 +248,26 @@ class AppFileSystem extends AppElement {
     super.connectedCallback();
 
     // Events from <upload-controls> which 
-    // are nested children of <preview-list>.
+    // are nested children of <preview-lists>.
     this._uploadListenerKey = listen(
       this, 
       'upload-complete', 
       this.__fileUploadComplete.bind(this)
     );
 
-    // Events from <rearrange-list> which is
-    // a child of <preview-list>
+    // Events from <file-items> which is
+    // a child of <file-list>
     this._sortedListenerKey = listen(
       this,
-      'rearrange-list-sorted',
+      'file-items-sorted',
       this.__itemsSorted.bind(this)
     );
   }
 
 
   disconnectedCallback() {
+    super.disconnectedCallback();
+    
     unlisten(this._uploadListenerKey);
     this.__unsub();
   }
@@ -328,7 +330,7 @@ class AppFileSystem extends AppElement {
   }
 
   // 'upload-complete' events from <upload-controls> 
-  // which are nested children of <preview-list>.
+  // which are nested children of <preview-lists>.
   async __fileUploadComplete(event) {
     hijackEvent(event);
 
@@ -345,8 +347,8 @@ class AppFileSystem extends AppElement {
   }
 
 
-  // 'rearrange-list-sorted' events from <rearrange-list>
-  // which is a child of <preview-list>
+  // 'file-items-sorted' events from <file-items>
+  // which is a child of <preview-lists>
   __itemsSorted(event) {
 
     // An array of uid's ordered by user
@@ -446,7 +448,7 @@ class AppFileSystem extends AppElement {
     await this.__deleteDbFileData(uid);
 
     this.$.sources.delete(uid);
-    this.$.list.delete(uid);
+    this.$.lists.delete();
 
     this.fire('file-deleted', fileData);
   }
@@ -529,7 +531,7 @@ class AppFileSystem extends AppElement {
     this.__addNewFileItems(this._files);
   }
 
-  // <preview-list> 'delete-item' event.
+  // <preview-lists> 'delete-item' event.
   __deleteItemHandler(event) {
     this.delete(event.detail.uid);
   }
@@ -587,7 +589,7 @@ class AppFileSystem extends AppElement {
       const uids     = Object.keys(this._dbData);
       const promises = uids.map(uid => this.__delete(uid));
 
-      this.$.list.cancelUploads();
+      this.$.lists.cancelUploads();
 
       await Promise.all(promises);
       await services.deleteDocument({
@@ -611,7 +613,7 @@ class AppFileSystem extends AppElement {
 
 
   openList() {
-    return this.$.list.open();
+    return this.$.lists.open();
   }
 
 

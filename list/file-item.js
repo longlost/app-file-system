@@ -1,13 +1,8 @@
 
 /**
-  * `rearrange-item`
+  * `file-item`
   * 
   *   File preview item that displays a thumbnail, file stats and upload controls.
-  *
-  *
-  * @customElement
-  * @polymer
-  * @demo demo/index.html
   *
   *
   *
@@ -46,21 +41,27 @@
   *   resumeUpload - Resume an incomplete upload when a user dismisses the delete modal.
   *
   *
+  *
+  * @customElement
+  * @polymer
+  * @demo demo/index.html
+  *
   **/
 
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
 import {formatTimestamp}  from '@longlost/utils/utils.js';
 import mime               from 'mime-types';
-import htmlString         from './rearrange-item.html';
+import htmlString         from './file-item.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '../shared/file-thumbnail.js';
 import './processing-icon.js';
+import './select-checkbox.js';
 import './upload-controls.js';
 
 
-class RearrangeItem extends AppElement {
-  static get is() { return 'rearrange-item'; }
+class FileItem extends AppElement {
+  static get is() { return 'file-item'; }
 
   static get template() {
     return html([htmlString]);
@@ -82,11 +83,33 @@ class RearrangeItem extends AppElement {
         type: String,
         value: 'files'
       },
+
+      hideCheckbox: Boolean,
       
       // File item object.
-      item: Object
+      item: Object,
+
+      // Selected/checked state.
+      _selected: {
+        type: Boolean,
+        value: false
+      },
+
+      // Style file-thumbnail, label and upload-controls
+      // when the item is selected.
+      _selectedClass: {
+        type: String,
+        computed: '__computeSelectedClass(_selected)'
+      }
 
     };
+  }
+
+
+  static get observers() {
+    return [
+      '__hideCheckboxChanged(hideCheckbox)'
+    ];
   }
 
 
@@ -112,6 +135,59 @@ class RearrangeItem extends AppElement {
     if (!type) { return sizeStr; }
 
     return `${mime.extension(type)} ● ${sizeStr}`;
+  }
+
+
+  __computeSelectedClass(selected) {
+    return selected ? 'selected' : '';
+  }
+
+
+  __hideCheckboxChanged(hide) {
+    if (hide) {
+      this._selected = false;
+    }
+  }
+
+
+  async __itemClicked(event) {
+    try {
+      await this.clicked();
+
+      if (this.hideCheckbox) {
+
+        const {type} = this.item;
+
+        if (type.includes('image') || type.includes('video')) {
+
+          // TODO:
+          //      pass click x, y coords for expand animation
+          //      not doing animation here because image won't
+          //      render above the header.
+
+          this.fire('open-carousel', {item: this.item});
+        }
+        else {
+
+          // TODO:
+          //      show quick selections overlay (delete, download, print)
+          //      only show print button for images, pdf's and json files
+
+        }
+      }
+      else {
+        this._selected = !this._selected;
+
+        this.fire('item-selected', {
+          item:     this.item, 
+          selected: this._selected
+        });
+      }
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
   }
 
 
@@ -152,4 +228,4 @@ class RearrangeItem extends AppElement {
 
 }
 
-window.customElements.define(RearrangeItem.is, RearrangeItem);
+window.customElements.define(FileItem.is, FileItem);

@@ -1,0 +1,64 @@
+
+<style>
+
+  #overlay {
+    --overlay-toolbar-background-color: var(--app-primary-color);
+    --overlay-background-color:         var(--app-body-color);
+  }
+
+  #select-btn {
+    border-radius: 50%;
+  }
+
+  #select-btn[active] {
+    background-color: var(--constant-light-text);
+    color:            var(--app-primary-color);
+  }
+
+</style>
+
+
+<app-header-overlay id="overlay"
+                    header-size="1"
+                    prebuilt-animation="from-right"
+                    reveal-header
+                    title="My Files">
+
+
+  <paper-icon-button id="delete-btn"
+                     icon="file-icons:delete"
+                     slot="top-toolbar-buttons-slot"
+                     on-click="__deleteBtnClicked">
+  </paper-icon-button>
+
+  <paper-icon-button id="download-btn"
+                     icon="file-icons:file-download"
+                     slot="top-toolbar-buttons-slot"
+                     on-click="__downloadBtnClicked">
+  </paper-icon-button>
+
+  <paper-icon-button id="print-btn"
+                     icon="file-icons:print"
+                     slot="top-toolbar-buttons-slot"
+                     on-click="__printBtnClicked">
+  </paper-icon-button>
+
+  <paper-icon-button id="select-btn"
+                     icon="app-icons:check"
+                     slot="top-toolbar-buttons-slot"
+                     toggles
+                     on-active-changed="__selectBtnActiveChanged">
+  </paper-icon-button>
+
+
+  <file-items id="fileItems"
+              coll="[[coll]]"
+              doc="[[doc]]"
+              field="[[field]]"
+              hide-checkboxes="[[_hideCheckboxes]]"
+              hide-dropzone="[[hideDropzone]]" 
+              items="[[items]]"
+              slot="content">
+  </file-items>
+
+</app-header-overlay>
