@@ -5,13 +5,13 @@
     display:  block;
     position: relative;
     overflow: hidden;
-    --preview-thumbnail-border-radius: inherit; /* Another Safari fix. */
+    --file-item-thumbnail-border-radius: inherit; /* Another Safari fix. */
   }
 
   file-thumbnail {
     /* Must calc for Safari. 80px = #label height. */
     height: calc(100% - 80px);
-    --thumbnail-border-radius: var(--preview-thumbnail-border-radius);
+    --thumbnail-border-radius: var(--file-item-thumbnail-border-radius);
   }
 
   #label {
@@ -36,12 +36,26 @@
     color:     var(--secondary-text-color);
   }
 
+  select-checkbox[hidden] {
+    display: none;
+  }
+
+  .selected {
+    opacity: 0.7;
+  }
+
 </style>
 
 
-<file-thumbnail item="[[item]]"></file-thumbnail>
+<file-thumbnail class$="[[_selectedClass]]"
+                item="[[item]]"
+                on-click="__itemClicked">
+</file-thumbnail>
 
-<div id="label">
+
+<div id="label"
+     class$="[[_selectedClass]]"                
+     on-click="__itemClicked">
 
   <div id="label-name">
     <div id="label-order">
@@ -63,9 +77,20 @@
   <processing-icon item="[[item]]"></processing-icon>
 </div>
 
+
+<select-checkbox checked="[[_selected]]"
+                 hidden="[[hideCheckbox]]"
+                 on-click="__itemClicked">
+</select-checkbox>
+
+
 <upload-controls id="uploadControls"
+                 class$="[[_selectedClass]]"
                  coll="[[coll]]"
                  doc="[[doc]]"
                  field="[[field]]"
                  file="[[item.file]]">
 </upload-controls>
+
+
+

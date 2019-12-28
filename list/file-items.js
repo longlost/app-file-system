@@ -1,15 +1,11 @@
 
 
 /**
-  * `rearrange-list`
+  * `file-items`
   * 
   *   Accepts files from user and handles 
   *   uploading/saving/optimization/deleting/previewing/rearranging.
   *
-  *
-  *   @customElement
-  *   @polymer
-  *   @demo demo/index.html
   *
   *
   *  Properites:
@@ -40,7 +36,7 @@
   *  Events:
   *
   *
-  *    'rearrange-list-sorted' - Fired after <drag-drop-list> items are sorted by user drag action.
+  *    'file-items-sorted' - Fired after <drag-drop-list> items are sorted by user drag action.
   *                              detail -> {sorted} - array of item uid's
   *
   *
@@ -52,7 +48,7 @@
   *  Methods:
   *
   *
-  *    cancelDelete() - User dismisses the delete modal in <preview-list> parent element.
+  *    cancelDelete() - User dismisses the delete modal in <file-list> parent element.
   *
   *
   *    cancelUploads() - Cancels each item's active file upload.
@@ -67,6 +63,10 @@
   *    resetDeleteTarget() - Clears corrective styles applied to an element dragged onto the dropzone, 
   *                          following a dismissed or confirmed delete action.
   *
+  *
+  *   @customElement
+  *   @polymer
+  *   @demo demo/index.html
   *
   *
   **/
@@ -83,10 +83,10 @@ import {
   hijackEvent,
   wait
 }                 from '@longlost/utils/utils.js';
-import htmlString from './rearrange-list.html';
+import htmlString from './file-items.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';
-import './rearrange-item.js';
+import './file-item.js';
 import '../shared/file-icons.js';
 
 
@@ -97,8 +97,8 @@ const dropIsOverDropZone = ({top, right, bottom, left, x, y}) => {
 };
 
 
-class RearrangeList extends AppElement {
-  static get is() { return 'rearrange-list'; }
+class FileItems extends AppElement {
+  static get is() { return 'file-items'; }
 
   static get template() {
     return html([htmlString]);
@@ -118,13 +118,16 @@ class RearrangeList extends AppElement {
       // ie. 'backgroundImg', 'catImages', ...
       field: String,
 
+      // Set to true to hide <file-item> <select-checkbox>'s
+      hideCheckboxes: Boolean,
+
       // Set to true to hide the delete dropzone.
       hideDropzone: Boolean,
 
       // Input items from db.
       items: Array,
 
-      // Cached order in which shuffled preview items 
+      // Cached order in which shuffled file items 
       // are ordered (translated by <drag-drop-list>
       // and reused by <template is="dom-repeat">), so saves 
       // by other devices can be correcly displayed locally.
@@ -224,7 +227,7 @@ class RearrangeList extends AppElement {
   }
 
   // Cache the order in which shuffled (translated by <drag-drop-list>)
-  // and reused preview items are ordered, so saves 
+  // and reused file items are ordered, so saves 
   // by other devices can be correcly displayed locally.
   __handleChanges(event) {
     hijackEvent(event);
@@ -237,6 +240,8 @@ class RearrangeList extends AppElement {
   __putTargetWhereDropped() {
     const {target, x, y} = this._toDelete;
 
+    // Make sure item covers, or layers over, the dropzone.
+    target.style['z-index']   = '1';
     target.style['transform'] = `translate3d(${x}px, ${y}px, 1px)`;
   }
 
@@ -292,9 +297,9 @@ class RearrangeList extends AppElement {
                            filter(item => item).
                            map(item => item.uid);
 
-    const sorted = this.selectAll('.preview').map(el => el.item.uid);
+    const sorted = this.selectAll('.file-item').map(el => el.item.uid);
 
-    this.fire('rearrange-list-sorted', {sorted});
+    this.fire('file-items-sorted', {sorted});
   }
 
 
@@ -309,7 +314,7 @@ class RearrangeList extends AppElement {
 
 
   cancelUploads() {
-    const elements = this.selectAll('.preview');
+    const elements = this.selectAll('.file-item');
     elements.forEach(element => {
       element.cancelUpload();
     });
@@ -339,10 +344,14 @@ class RearrangeList extends AppElement {
 
     await wait(250);
 
+    // Set z-index to an unrecognized value
+    // so <drag-drop-list> can control
+    // with css classes.
+    target.style['z-index']    = '';
     target.style['transition'] = 'unset';
     this._toDelete             = undefined;
   }
 
 }
 
-window.customElements.define(RearrangeList.is, RearrangeList);
+window.customElements.define(FileItems.is, FileItems);

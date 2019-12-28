@@ -5,25 +5,19 @@
   *   This checkbox is used to select multiple preview items.
   *
   *
-  * @customElement
-  * @polymer
-  * @demo demo/index.html
-  *
   *
   *
   *  Properites:
   *
   *
-  *   
+  *   checked: Boolean - <paper-checkbox> checked state.
   *
   *
-  *
-  *
-  *  Methods: 
   *
   *   
-  *   
-  *
+  * @customElement
+  * @polymer
+  * @demo demo/index.html
   *
   **/
 
@@ -31,7 +25,7 @@
 import {AppElement, html} from '@longlost/app-element/app-element.js';
 import htmlString         from './select-checkbox.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
-import '@longlost/paper-checkbox/paper-checkbox.js';
+import '@polymer/paper-checkbox/paper-checkbox.js';
 
 
 class SelectCheckbox extends AppElement {
@@ -45,17 +39,9 @@ class SelectCheckbox extends AppElement {
   static get properties() {
     return {
 
-    	uid: String
+      checked: Boolean
 
     };
-  }
-
-
-  __checkedChanged(event) {
-  	this.fire('select-checkbox-selected', {
-  		selected: event.detail.value, 
-  		uid: 			this.uid
-  	});
   }
 
 

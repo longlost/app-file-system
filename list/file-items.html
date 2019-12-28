@@ -1,12 +1,12 @@
 
 <style>
 
-  .sortable {
-    position: relative; /* For <drag-drop-list> correction with __correctForDragDropList() method. */
-    z-index:  1;
+  :host {
+    display: block;
+    padding: 16px;
   }
   
-  .preview {
+  .file-item {
     display:          inline-flex;
     flex-direction:   column; 
     position:         relative;
@@ -19,8 +19,9 @@
     margin:           4px;
     border-radius:    3px;
     overflow:         hidden;
+    z-index:          1;
     background-color: var(--app-background-color);
-    --preview-thumbnail-border-radius: 3px 3px 0px 0px;
+    --file-item-thumbnail-border-radius: 3px 3px 0px 0px;
   }
 
   /* Maintain aspect ratio for video. */
@@ -80,7 +81,8 @@
 </style>
 
 
-<drag-drop-list sortable=".sortable"
+<drag-drop-list disabled="[[!hideCheckboxes]]"
+                sortable=".sortable"
                 on-items-change="__handleChanges"
                 on-item-dropped="__handleDrop" 
                 on-sort-finish="__handleSort">                
@@ -94,12 +96,13 @@
     -->
     <div class="sortable"
          state-index="[[index]]">
-      <rearrange-item class$="preview [[__computeSortableClass(item.type)]]"
-                      coll="[[coll]]"
-                      doc="[[doc]]"
-                      field="[[field]]"
-                      item="[[item]]">
-      </rearrange-item>
+      <file-item class$="file-item [[__computeSortableClass(item.type)]]"
+                 coll="[[coll]]"
+                 doc="[[doc]]"
+                 field="[[field]]"
+                 hide-checkbox="[[hideCheckboxes]]"
+                 item="[[item]]">
+      </file-item>
 
 
 

@@ -254,6 +254,14 @@
     "@longlost/element-mixin" "^1.0.8"
     "@polymer/polymer" "^3.3.1"
 
+"@longlost/app-element@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@longlost/app-element/-/app-element-1.0.6.tgz#b3492eea81d87b683821e130b304f49c5ada5bb0"
+  integrity sha512-E4oHLGGI5RCvKfrsGizzDEsxI5CeOslYUEKxMrw67tFw+GvrOZM13OV8FbUv41kokQDGhCqeE/QIbJ/vZq7/KQ==
+  dependencies:
+    "@longlost/element-mixin" "^1.0.9"
+    "@polymer/polymer" "^3.3.1"
+
 "@longlost/app-header-overlay@^1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@longlost/app-header-overlay/-/app-header-overlay-1.0.7.tgz#a0f39e1b654d0d429b3db2182584a2631234d90f"
@@ -344,10 +352,10 @@
     web-animations-js "^2.3.2"
     workbox-window "^4.3.1"
 
-"@longlost/drag-drop-list@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@longlost/drag-drop-list/-/drag-drop-list-1.0.3.tgz#652918c2602186efdeb5da6d2f6a714dc6cfd7a8"
-  integrity sha512-00i1TaCDOaeCETe2SFHm+dO4+yywQg+UtBuCCBhig1oDU7xHuKQmdW00hoRoNXu1MXJtQa4rRvQZC7kiCgRe3A==
+"@longlost/drag-drop-list@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@longlost/drag-drop-list/-/drag-drop-list-1.1.0.tgz#adc20c6a1ff69fffbc6699aad9e931e9c2637361"
+  integrity sha512-TOZd6DRq99RoEmtVcPMvR+o0zZ3a8neuSoVHsOEWy3Hj4r0hue9nM6WjMqOChiNikF20z7yHl/vcc07mgnXioA==
   dependencies:
     "@longlost/utils" "^1.3.5"
     "@polymer/polymer" "^3.3.1"
@@ -363,6 +371,13 @@
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/@longlost/element-mixin/-/element-mixin-1.0.8.tgz#186ace90088c101dda09b9f4de2972880cd6682b"
   integrity sha512-mvSKyfvO8C9UBXHpovvxtfaxdAopxneVcmrZy4bvbO5suC2qDTjUN003rfbgAbQhM2mwQ5NBR7+sLKvLBOcMcQ==
+  dependencies:
+    "@longlost/utils" "^1.3.5"
+
+"@longlost/element-mixin@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@longlost/element-mixin/-/element-mixin-1.0.9.tgz#72b10e99569a6668a4ce0f7b5d698d8b0ea658de"
+  integrity sha512-pAJ2s1v5+rQfF3C3kOEFU++kHp4axnu/7MtFZwvmLK/xOhkHw+xsE9sZGtiMnpayE8EJt+bJUlkW+aRcrCsC3Q==
   dependencies:
     "@longlost/utils" "^1.3.5"
 

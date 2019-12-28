@@ -2,12 +2,21 @@
 <style include="app-shared-styles">
 
   :host {
-    display: block;
+    display: 			 flex;
+    position: 		 absolute;
+    top: 					 8px;
+    right: 				 8px;
+    border: 			 2px solid var(--light-text-color);
+    border-radius: 2px;
+  }
+
+  .shared-paper-checkbox {
+  	--paper-checkbox-label-spacing: 0px;
   }
 
 </style>
 
 
 <paper-checkbox class="shared-paper-checkbox"
-								on-checked-changed="__checkedChanged">
+								checked="[[checked]]">
 </paper-checkbox>

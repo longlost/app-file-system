@@ -1,6 +1,6 @@
 {
   "name": "@longlost/app-file-system",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "This custom element handles all aspects of handling files for an app. Processing, uploading, viewing and editing.",
   "main": "app-file-system.js",
   "scripts": {
@@ -17,14 +17,14 @@
   },
   "homepage": "https://github.com/longlost/app-file-system#readme",
   "dependencies": {
-    "@longlost/app-element": "^1.0.5",
+    "@longlost/app-element": "^1.0.6",
     "@longlost/app-header-overlay": "^1.0.7",
     "@longlost/app-icons": "^1.0.11",
     "@longlost/app-modal": "^1.0.2",
     "@longlost/app-shared-styles": "^2.0.5",
     "@longlost/app-spinner": "^1.1.0",
     "@longlost/badged-icon-button": "^1.0.1",
-    "@longlost/drag-drop-list": "^1.0.3",
+    "@longlost/drag-drop-list": "^1.1.0",
     "@longlost/lambda": "^2.0.4",
     "@longlost/lazy-image": "^1.1.0",
     "@longlost/lazy-video": "^2.2.1",
