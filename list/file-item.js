@@ -155,6 +155,7 @@ class FileItem extends AppElement {
 
 
 
+
   // TESTING
   async __itemClicked(event) {
     try {

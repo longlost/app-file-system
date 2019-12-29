@@ -320,8 +320,13 @@ class FileItems extends AppElement {
     });
   }
 
+  // Must setup the right correction technique BEFORE
+  // the items change handler is triggered by next db save
+  // that occurs during a delete operation.
+  delete() { 
 
-  delete() {  
+    // Use _domState instead of _previousSort after a delete.
+    this._previousSort = undefined;
 
     // Take out largest index since the <template is="dom-repeat">
     // always removes the last item from the dom.
