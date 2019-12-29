@@ -348,10 +348,7 @@ class FileSources extends AppElement {
       return accum;
     }, {});
 
-    const temp = this._files ? {...this._files, ...newFiles} : newFiles;
-
-    this._files = undefined;
-    this._files = temp;
+    this._files = this._files ? {...this._files, ...newFiles} : newFiles;
   }
 
 
@@ -523,11 +520,6 @@ class FileSources extends AppElement {
     if (!this._files || !this._files[uid]) { return; }
     
     delete this._files[uid];
-
-    const temp = {...this.files};
-
-    this._files = undefined;
-    this._files = temp;
   }
 
 

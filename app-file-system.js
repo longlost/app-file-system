@@ -445,10 +445,13 @@ class AppFileSystem extends AppElement {
       }
     }
 
+    // Adjust <file-items>'s <drag-drop-list> state correction.
+    this.$.lists.delete();  
+
     await this.__deleteDbFileData(uid);
 
+    // Garbage collect file data.
     this.$.sources.delete(uid);
-    this.$.lists.delete();
 
     this.fire('file-deleted', fileData);
   }

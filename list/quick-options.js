@@ -3,9 +3,9 @@
   * `quick-options`
   * 
   *   Convienient options for file types that are not image/video.
-  * 	
-  * 	Quickly delete/download/print files after clicking on the file item.
-  * 	Print will only be displayed for pdf and json files.
+  *   
+  *   Quickly delete/download/print files after clicking on the file item.
+  *   Print will only be displayed for pdf and json files.
   *
   *
   *
@@ -26,14 +26,14 @@
 
 
 import {
-	AppElement, 
-	html
-} 								from '@longlost/app-element/app-element.js';
+  AppElement, 
+  html
+}                 from '@longlost/app-element/app-element.js';
 import {
-	isDisplayed, 
-	schedule, 
-	wait
-} 								from '@longlost/utils/utils.js';
+  isDisplayed, 
+  schedule, 
+  wait
+}                 from '@longlost/utils/utils.js';
 import htmlString from './quick-options.html';
 import '@longlost/app-icons/app-icons.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
@@ -58,14 +58,30 @@ class QuickOptions extends AppElement {
   }
 
 
-  __computePrintBtnHidden(type) {
-  	const isPrintable = type && (
-  												type.includes('image') ||
-  												type.includes('pdf') ||
-  												type.includes('json')
-  											);
+  static get observers() {
+    return [
+      '__itemChanged(item)'
+    ];
+  }
 
-  	return !isPrintable;
+
+  __computePrintBtnHidden(type) {
+    const isPrintable = type && (
+                          type.includes('image') ||
+                          type.includes('pdf') ||
+                          type.includes('json')
+                        );
+
+    return !isPrintable;
+  }
+
+  // Since the parent <template is="dom-repeat">
+  // reuses elements, close when the data changes.
+  // This happens during a delete or adding new files.
+  __itemChanged(item) {
+    if (!item) { return; }
+
+    this.close();
   }
 
 
@@ -123,25 +139,25 @@ class QuickOptions extends AppElement {
 
   async close() {
 
-  	if (!isDisplayed(this)) { return; }
+    if (!isDisplayed(this)) { return; }
 
-  	this.$.background.style['opacity'] = '0';
-  	this.style['opacity'] 						 = '0';
-  	this.style['transform'] 					 = 'scale(0, 0)';
-  	await wait(350);
-  	this.style['display'] = 'none';
+    this.$.background.style['opacity'] = '0';
+    this.style['opacity']              = '0';
+    this.style['transform']            = 'scale(0, 0)';
+    await wait(350);
+    this.style['display'] = 'none';
   }
 
 
   async open() { 
 
-  	if (isDisplayed(this)) { return; }
+    if (isDisplayed(this)) { return; }
 
-  	this.style['display'] = 'flex';
-  	await schedule();
-  	this.$.background.style['opacity'] = '0.9';
-  	this.style['opacity'] 						 = '1';
-  	this.style['transform'] 					 = 'scale(1, 1)';
+    this.style['display'] = 'flex';
+    await schedule();
+    this.$.background.style['opacity'] = '0.9';
+    this.style['opacity']              = '1';
+    this.style['transform']            = 'scale(1, 1)';
   }
 
 }
