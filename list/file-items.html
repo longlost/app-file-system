@@ -36,7 +36,23 @@
   #icon-container {
     display:         flex;
     justify-content: center;
+    align-items:     center;
     margin:          24px 0px;
+  }
+
+  #sort-icons-container {
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
+    position:        relative;
+    height:          40px;
+    width:           40px;
+  }
+
+  #block-icon {
+    position: absolute;
+    height:   100%;
+    width:    100%;
   }
 
   #dropZone {
@@ -121,7 +137,13 @@
 <div id="icon-container"
      hidden="[[__computeHideIcons(items)]]">
   <iron-icon icon="file-icons:touch-app"></iron-icon>
-  <iron-icon icon="file-icons:low-priority"></iron-icon>
+  <div id="sort-icons-container">
+    <iron-icon icon="file-icons:low-priority"></iron-icon>
+    <iron-icon id="block-icon"
+               hidden="[[hideCheckboxes]]" 
+               icon="file-icons:block">
+    </iron-icon>
+  </div>
 </div>
 
 
