@@ -17,13 +17,13 @@
     justify-content: flex-end;
   }
 
-  .modal-call-to-action-btns {
-    background-color: var(--app-primary-color);
-    color:            var(--light-text-color);
-  }
-
   #dismiss-btn {
     color: var(--app-primary-color);
+  }
+
+  #delete-btn {
+    background-color: var(--app-error-color, red);
+    color:            var(--constant-light-text);
   }
 
 </style>
@@ -59,11 +59,11 @@
   </div>
   <div class="card-actions" 
        slot="card-actions-slot">
-    <paper-button class="modal-dismiss-btns" 
+    <paper-button id="dismiss-btn" 
                   on-click="__dismissDeleteConfirmButtonClicked">
       dismiss
     </paper-button>   
-    <paper-button class="modal-call-to-action-btns" 
+    <paper-button id="delete-btn" 
                   on-click="__confirmDeleteButtonClicked">
       delete
     </paper-button>      

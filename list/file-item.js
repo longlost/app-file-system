@@ -58,6 +58,7 @@ import '../shared/file-thumbnail.js';
 import './processing-icon.js';
 import './select-checkbox.js';
 import './upload-controls.js';
+import './quick-options.js';
 
 
 class FileItem extends AppElement {
@@ -147,33 +148,24 @@ class FileItem extends AppElement {
     if (hide) {
       this._selected = false;
     }
+    else {
+      this.$.options.close();
+    }
   }
 
 
+
+  // TESTING
   async __itemClicked(event) {
     try {
       await this.clicked();
 
       if (this.hideCheckbox) {
 
-        const {type} = this.item;
-
-        if (type.includes('image') || type.includes('video')) {
-
           // TODO:
-          //      pass click x, y coords for expand animation
-          //      not doing animation here because image won't
-          //      render above the header.
+          //      test donwload and print functionality
 
-          this.fire('open-carousel', {item: this.item});
-        }
-        else {
-
-          // TODO:
-          //      show quick selections overlay (delete, download, print)
-          //      only show print button for images, pdf's and json files
-
-        }
+          this.$.options.open();
       }
       else {
         this._selected = !this._selected;
@@ -191,24 +183,41 @@ class FileItem extends AppElement {
   }
 
 
-
-  // // file ui x button clicked
-  // async __removeFileButtonClicked() {
+  // async __itemClicked(event) {
   //   try {
   //     await this.clicked();
 
-  //     this.pauseUpload();
+  //     if (this.hideCheckbox) {
 
-  //     this.fire('request-delete-item', {uid: this.item.uid});
+  //       const {type} = this.item;
+
+  //       if (type.includes('image') || type.includes('video')) {
+
+  //         // TODO:
+  //         //      pass click x, y coords for expand animation
+  //         //      not doing animation here because image won't
+  //         //      render above the header.
+
+  //         this.fire('open-carousel', {item: this.item});
+  //       }
+  //       else {
+  //         this.$.options.open();
+  //       }
+  //     }
+  //     else {
+  //       this._selected = !this._selected;
+
+  //       this.fire('item-selected', {
+  //         item:     this.item, 
+  //         selected: this._selected
+  //       });
+  //     }
   //   }
-  //   catch (error) { 
+  //   catch (error) {
   //     if (error === 'click debounced') { return; }
-  //     console.error(error); 
+  //     console.error(error);
   //   }
   // }
-
-
-
 
 
   // Used for app-file-system.js deleteAll() method.

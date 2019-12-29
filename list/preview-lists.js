@@ -104,11 +104,15 @@ class PreviewList extends AppElement {
       // while the delete confirm modal is open.
       _deleteUid: String,
 
+      _downloadListenerKey: Object,
+
       // Drives <template is="dom-repeat">
       _previewItems: {
         type: Array,
         computed: '__computePreviewItems(items, files)'
       },
+
+      _printListenerKey: Object,
 
       _requestDeleteListenerKey: Object
 
@@ -126,6 +130,20 @@ class PreviewList extends AppElement {
   connectedCallback() {
     super.connectedCallback();
 
+    // <quick-options>
+    this._downloadListenerKey = listen(
+      this, 
+      'download-item', 
+      this.__downloadItem.bind(this)
+    );
+
+    // <quick-options>
+    this._printListenerKey = listen(
+      this, 
+      'print-item', 
+      this.__printItem.bind(this)
+    );
+
     // <file-items> and <file-item>
     this._requestDeleteListenerKey = listen(
       this, 
@@ -139,6 +157,8 @@ class PreviewList extends AppElement {
     super.disconnectedCallback();
     
     unlisten(this._requestDeleteListenerKey);
+    unlisten(this._downloadListenerKey);
+    unlisten(this._printListenerKey);
   }
 
   // Combine incomming file obj with db item.
@@ -168,9 +188,9 @@ class PreviewList extends AppElement {
   __computeDeleteItemDisplayName(items, uid) {
     if (!items || !uid) { return; }
 
-    const {displayName} = items.find(item => item.uid === uid);
+    const match = items.find(item => item.uid === uid);
 
-    return displayName;
+    return match ? match.displayName : '';
   }
 
 
@@ -188,6 +208,18 @@ class PreviewList extends AppElement {
         './camera-roll.js'
       );
     }
+  }
+
+
+  __downloadItem(event) {
+    // const {item} = event.detail;
+    console.log('__downloadItem');
+  }
+
+
+  __printItem(event) {
+    // const {item} = event.detail;
+    console.log('__printItem');
   }
 
 
