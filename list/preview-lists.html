@@ -1,34 +1,4 @@
 
-<style>
-
-  strong {
-    color:     var(--app-primary-color);
-    font-size: 20px;
-  }
-
-  .rename-modal-images {
-    height:       64px;
-    width:        64px;
-    margin-right: 8px;
-  }
-
-  .card-actions {
-    display:         flex;
-    justify-content: flex-end;
-  }
-
-  #dismiss-btn {
-    color: var(--app-primary-color);
-  }
-
-  #delete-btn {
-    background-color: var(--app-error-color, red);
-    color:            var(--constant-light-text);
-  }
-
-</style>
-
-
 <file-list id="fileList"
            coll="[[coll]]"
            doc="[[doc]]"
@@ -44,29 +14,3 @@
              field="[[field]]"
              items="[[_previewItems]]">
 </camera-roll>
-
-
-<app-modal id="deleteConfirmModal"
-           heading="Confirm Delete">
-
-  <div slot="card-content-slot">
-    <p>
-      Please confirm that you want to delete <strong>[[_deleteName]]</strong>
-    </p>
-    <p>
-      This action CANNOT be undone!
-    </p>
-  </div>
-  <div class="card-actions" 
-       slot="card-actions-slot">
-    <paper-button id="dismiss-btn" 
-                  on-click="__dismissDeleteConfirmButtonClicked">
-      dismiss
-    </paper-button>   
-    <paper-button id="delete-btn" 
-                  on-click="__confirmDeleteButtonClicked">
-      delete
-    </paper-button>      
-  </div>
-
-</app-modal>

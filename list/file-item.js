@@ -184,41 +184,38 @@ class FileItem extends AppElement {
   }
 
 
-  // async __itemClicked(event) {
-  //   try {
-  //     await this.clicked();
+  async __itemClicked(event) {
+    try {
+      await this.clicked();
 
-  //     if (this.hideCheckbox) {
+      if (this.hideCheckbox) {
 
-  //       const {type} = this.item;
+        const {type} = this.item;
 
-  //       if (type.includes('image') || type.includes('video')) {
+        if (type.includes('image') || type.includes('video')) {
+          
+          const measurements = this.getBoundingClientRect()
 
-  //         // TODO:
-  //         //      pass click x, y coords for expand animation
-  //         //      not doing animation here because image won't
-  //         //      render above the header.
+          this.fire('open-carousel', {item: this.item, measurements});
+        }
+        else {
+          this.$.options.open();
+        }
+      }
+      else {
+        this._selected = !this._selected;
 
-  //         this.fire('open-carousel', {item: this.item});
-  //       }
-  //       else {
-  //         this.$.options.open();
-  //       }
-  //     }
-  //     else {
-  //       this._selected = !this._selected;
-
-  //       this.fire('item-selected', {
-  //         item:     this.item, 
-  //         selected: this._selected
-  //       });
-  //     }
-  //   }
-  //   catch (error) {
-  //     if (error === 'click debounced') { return; }
-  //     console.error(error);
-  //   }
-  // }
+        this.fire('item-selected', {
+          item:     this.item, 
+          selected: this._selected
+        });
+      }
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
 
 
   // Used for app-file-system.js deleteAll() method.

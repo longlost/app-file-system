@@ -54,6 +54,12 @@ class QuickOptions extends AppElement {
       // File item object.
       item: Object,
 
+
+      _downloadUrl: {
+        type: String,
+        computed: '__computeDownloadUrl(item)'
+      }
+
     };
   }
 
@@ -62,6 +68,15 @@ class QuickOptions extends AppElement {
     return [
       '__itemChanged(item)'
     ];
+  }
+
+
+  __computeDownloadUrl(item) {
+    if (!item) { return '#'}
+
+    const {original, _tempUrl} = item;
+
+    return original ? original : _tempUrl;
   }
 
 
@@ -103,19 +118,6 @@ class QuickOptions extends AppElement {
       await this.clicked();
 
       this.fire('request-delete-item', {uid: this.item.uid});
-    }
-    catch (error) { 
-      if (error === 'click debounced') { return; }
-      console.error(error); 
-    }
-  }
-
-
-  async __downloadBtnClicked() {
-    try {
-      await this.clicked();
-
-      this.fire('download-item', {item: this.item});
     }
     catch (error) { 
       if (error === 'click debounced') { return; }
