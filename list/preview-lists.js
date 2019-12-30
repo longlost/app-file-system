@@ -31,14 +31,6 @@
   *  
   *
   *
-  *  Events:
-  *
-  *
-  *    'delete-item' - Fired after user confirms a delete action on a single item.
-  *                    detail: {uid} 
-  *
-  *
-  *
   * @customElement
   * @polymer
   * @demo demo/index.html
@@ -52,12 +44,6 @@ import {
   AppElement, 
   html
 }                 from '@longlost/app-element/app-element.js';
-import {
-  hijackEvent,
-  listen,
-  schedule,
-  unlisten
-}                 from '@longlost/utils/utils.js';
 import htmlString from './preview-lists.html';
 import '@longlost/app-modal/app-modal.js';
 import '@polymer/paper-button/paper-button.js';
@@ -92,29 +78,11 @@ class PreviewList extends AppElement {
 
       list: String,
 
-      // Displayed name in delete modal.
-      _deleteName: {
-        type: String,
-        computed: '__computeDeleteItemDisplayName(items, _deleteUid)'
-      },
-
-      // When deleting an item with drag and drop,
-      // or with item delete icon button,
-      // his is used to temporary cache the uid
-      // while the delete confirm modal is open.
-      _deleteUid: String,
-
-      _downloadListenerKey: Object,
-
       // Drives <template is="dom-repeat">
       _previewItems: {
         type: Array,
         computed: '__computePreviewItems(items, files)'
-      },
-
-      _printListenerKey: Object,
-
-      _requestDeleteListenerKey: Object
+      }
 
     };
   }
@@ -124,41 +92,6 @@ class PreviewList extends AppElement {
     return [
       '__listChanged(list)'
     ];
-  }
-
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    // <quick-options>
-    this._downloadListenerKey = listen(
-      this, 
-      'download-item', 
-      this.__downloadItem.bind(this)
-    );
-
-    // <quick-options>
-    this._printListenerKey = listen(
-      this, 
-      'print-item', 
-      this.__printItem.bind(this)
-    );
-
-    // <file-items> and <file-item>
-    this._requestDeleteListenerKey = listen(
-      this, 
-      'request-delete-item', 
-      this.__requestDeleteItem.bind(this)
-    );
-  }
-
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    
-    unlisten(this._requestDeleteListenerKey);
-    unlisten(this._downloadListenerKey);
-    unlisten(this._printListenerKey);
   }
 
   // Combine incomming file obj with db item.
@@ -185,15 +118,6 @@ class PreviewList extends AppElement {
   }
 
 
-  __computeDeleteItemDisplayName(items, uid) {
-    if (!items || !uid) { return; }
-
-    const match = items.find(item => item.uid === uid);
-
-    return match ? match.displayName : '';
-  }
-
-
   __listChanged(list) {
     
     if (list === 'file-list') {
@@ -211,63 +135,10 @@ class PreviewList extends AppElement {
   }
 
 
-  __downloadItem(event) {
-    // const {item} = event.detail;
-    console.log('__downloadItem');
-  }
+  cancelDelete() {
 
-
-  __printItem(event) {
-    // const {item} = event.detail;
-    console.log('__printItem');
-  }
-
-
-  async __requestDeleteItem(event) {
-    hijackEvent(event);
-
-    this._deleteUid = event.detail.uid;
-
-    await schedule();
-
-    this.$.deleteConfirmModal.open();
-  }
-
-  // <drag-drop> delete area modal.
-  async __confirmDeleteButtonClicked(event) {
-    try {
-      hijackEvent(event);
-      await this.clicked();
-
-      await this.$.deleteConfirmModal.close();
-
-      if (this.$.fileList.resetDeleteTarget) {
-        this.$.fileList.resetDeleteTarget();
-      }
-
-      this.fire('delete-item', {uid: this._deleteUid});
-    }
-    catch (error) {
-      if (error === 'click disabled') { return; }
-      console.error(error);
-    }
-  }
-
-
-  async __dismissDeleteConfirmButtonClicked(event) {
-    try {
-      hijackEvent(event);
-
-      await this.clicked();
-      await this.$.deleteConfirmModal.close();
-
-      if (this.$.fileList.cancelDelete) {
-        this.$.fileList.cancelDelete();
-      }
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
+    if (this.$.fileList.cancelDelete) {
+      this.$.fileList.cancelDelete();
     }
   }
 
@@ -302,7 +173,15 @@ class PreviewList extends AppElement {
     }
 
     throw new Error('Cannot open the overlay without the list property being properly set.');
-  }  
+  }
+
+
+  resetDeleteTarget() {
+    
+    if (this.$.fileList.resetDeleteTarget) {
+      this.$.fileList.resetDeleteTarget();
+    }
+  }
 
 }
 

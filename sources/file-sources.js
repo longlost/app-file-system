@@ -10,11 +10,6 @@
   *   File url input.
   *
   *
-  *   @customElement
-  *   @polymer
-  *   @demo demo/index.html
-  *
-  *
   *  Properites:
   *
   *
@@ -58,6 +53,11 @@
   *    
   *    deleteAll() - Returns Promise that resolves when deletion finishes.
   *
+  *
+  *
+  *   @customElement
+  *   @polymer
+  *   @demo demo/index.html
   *
   *
   **/
@@ -156,6 +156,9 @@ const addAdditionalData = async files => {
 
       if (file.type.includes('image') || file.type.includes('video')) { 
         file._tempUrl = window.URL.createObjectURL(file);
+      }
+      else {
+        file._tempUrl = null; // Firestore does not accept undefined vals;
       }
 
       file.basename    = file.name;

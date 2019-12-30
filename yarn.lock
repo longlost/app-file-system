@@ -1809,6 +1809,11 @@ pathval@^1.1.0:
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.0.tgz#b942e6d4bde653005ef6b71361def8727d0645e0"
   integrity sha1-uULm1L3mUwBe9rcTYd74cn0GReA=
 
+print-js@^1.0.63:
+  version "1.0.63"
+  resolved "https://registry.yarnpkg.com/print-js/-/print-js-1.0.63.tgz#de9258c3dfbf273ed8c02113d09240f09c31416d"
+  integrity sha512-WKf79bFeqJpwx5vcjvEuL0J1bRVA5QlKQY+usFksOx0WOApSJwQGgMlgM2PVub/R1uUMF4onc2SWRWPNz4R40g==
+
 prismjs@^1.11.0:
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.17.1.tgz#e669fcbd4cdd873c35102881c33b14d0d68519be"

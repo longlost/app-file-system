@@ -100,13 +100,15 @@ import {
   deepClone
 }                 from '@longlost/lambda/lambda.js';
 import {
-  hijackEvent,
   listen,  
   schedule,
   unlisten,
   wait,
   warn
 }                 from '@longlost/utils/utils.js';
+import {
+  EventsMixin
+}                 from './events-mixin.js';
 import path       from 'path';
 import services   from '@longlost/services/services.js';
 import htmlString from './app-file-system.html';
@@ -155,7 +157,7 @@ const deleteStorageFiles = (storagePath, type) => {
 };
 
 
-class AppFileSystem extends AppElement {
+class AppFileSystem extends EventsMixin(AppElement) {
   static get is() { return 'app-file-system'; }
 
   static get template() {
@@ -221,16 +223,11 @@ class AppFileSystem extends AppElement {
       // at field (docData[this.field]).
       _dbData: Object,
 
-      // From <file-sources>.
-      _files: Object,
-
       // Drives <preview-lists> repeater.
       _items: Array,
 
       // Services/Firestore subscription unsubscribe function.
-      _unsubscribe: Object,
-
-      _uploadListenerKey: Object
+      _unsubscribe: Object
 
     };
   }
@@ -241,35 +238,6 @@ class AppFileSystem extends AppElement {
       '__collDocFieldChanged(coll, doc, field)',
       '__dbDataChanged(_dbData)'
     ];
-  }
-
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    // Events from <upload-controls> which 
-    // are nested children of <preview-lists>.
-    this._uploadListenerKey = listen(
-      this, 
-      'upload-complete', 
-      this.__fileUploadComplete.bind(this)
-    );
-
-    // Events from <file-items> which is
-    // a child of <file-list>
-    this._sortedListenerKey = listen(
-      this,
-      'file-items-sorted',
-      this.__itemsSorted.bind(this)
-    );
-  }
-
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    
-    unlisten(this._uploadListenerKey);
-    this.__unsub();
   }
 
   // Start a subscription to file data changes.
@@ -327,40 +295,6 @@ class AppFileSystem extends AppElement {
 
   __dbDataChanged(data) {
     this.fire('data-changed', data);
-  }
-
-  // 'upload-complete' events from <upload-controls> 
-  // which are nested children of <preview-lists>.
-  async __fileUploadComplete(event) {
-    hijackEvent(event);
-
-    const {uid, original, path: storagePath} = event.detail;
-
-    // Merge with existing file data.
-    const fileData = {...this._dbData[uid], original, path: storagePath}; 
-
-    this.$.sources.delete(uid);
-
-    await this.__saveFileData({[uid]: fileData});
-
-    this.fire('file-uploaded', fileData);
-  }
-
-
-  // 'file-items-sorted' events from <file-items>
-  // which is a child of <preview-lists>
-  __itemsSorted(event) {
-
-    // An array of uid's ordered by user
-    // by drag and drop reordering.
-    const {sorted} = event.detail;
-
-    const newIndexes = sorted.reduce((accum, uid, index) => {
-      accum[uid] = {...this._dbData[uid], index};
-      return accum;
-    }, {});
-
-    this.__saveFileData(newIndexes);
   }
 
   // Listen for data changes.
@@ -524,25 +458,6 @@ class AppFileSystem extends AppElement {
     }
 
     return this.__saveFileData(newItems);
-  }
-
-  // <file-sources> 'files-changed' event.
-  __sourcesFilesChanged(event) {
-    hijackEvent(event);
-
-    this._files = event.detail.value;
-    this.__addNewFileItems(this._files);
-  }
-
-  // <preview-lists> 'delete-item' event.
-  __deleteItemHandler(event) {
-    this.delete(event.detail.uid);
-  }
-
-
-  async __openEditor() {
-    await import('./editor/image-editor.js');
-    this.$.editor.open();
   }
 
   // Add one HTML5 File object or an array of File objects.
