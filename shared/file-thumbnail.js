@@ -5,11 +5,6 @@
   *   File item thumbnail.
   *
   *
-  *   @customElement
-  *   @polymer
-  *   @demo demo/index.html
-  *
-  *
   *
   *  Properites:
   *
@@ -17,6 +12,12 @@
   *   item - File data object.
   *
   *   sizing - Passed into <lazy-image> sizing prop.
+  *
+  *
+  *
+  *   @customElement
+  *   @polymer
+  *   @demo demo/index.html
   *
   *
   **/
@@ -41,13 +42,16 @@ class FileThumbnail extends AppElement {
 
   static get properties() {
     return {
+
       // File item.
       item: Object,
+
       // Passed into <lazy-video>.
       presentation: {
         type: Boolean,
         value: false
       },
+
       // Passed into <lazy-image>.
       sizing: {
         type: String,
@@ -60,7 +64,22 @@ class FileThumbnail extends AppElement {
 
   __computeIronIconStamp(type) {
     if (!type) { return false; }
-    return type.includes('audio');
+    return !type.includes('image') && !type.includes('video');
+  }
+
+
+  __computeIcon(type) {
+    if (!type) { return false; }
+
+    if (type.includes('audio')) {
+      return 'file-icons:audio';
+    }
+
+    if (type.includes('pdf')) {
+      return 'file-icons:description';
+    }
+
+    return 'file-icons:storage';
   }
 
 

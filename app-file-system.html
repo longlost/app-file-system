@@ -5,6 +5,21 @@
     z-index: 2;
   }
 
+  paper-progress {
+    width: 100%;
+    --paper-progress-active-color: var(--app-accent-color);
+  }
+
+  #print-btn {
+    background-color: var(--app-primary-color);
+    color:            var(--constant-light-text);
+  }
+
+  #print-btn[disabled] {
+    background-color: var(--app-disabled-color);
+    color:            var(--disabled-text-color);
+  }
+
   strong {
     color:     var(--app-primary-color);
     font-size: 20px;
@@ -21,7 +36,7 @@
     justify-content: flex-end;
   }
 
-  #dismiss-btn {
+  .dismiss-btn {
     color: var(--app-primary-color);
   }
 
@@ -70,6 +85,32 @@
 </app-spinner>
 
 
+
+<app-modal id="printModal"
+           heading="Preparing Prints">
+
+  <div slot="card-content-slot">
+    <paper-progress value="[[_progress]]"></paper-progress>
+  </div>
+  <div class="card-actions" 
+       slot="card-actions-slot">
+
+    <paper-button class="dismiss-btn" 
+                  on-click="__cancelPrintBtnClicked">
+      cancel
+    </paper-button>
+
+    <paper-button id="print-btn"
+                  disabled="[[_disablePrintBtn]]" 
+                  on-click="__printBtnClicked">
+      print
+    </paper-button>    
+         
+  </div>
+
+</app-modal>
+
+
 <app-modal id="deleteConfirmModal"
            heading="Confirm Delete">
 
@@ -83,14 +124,17 @@
   </div>
   <div class="card-actions" 
        slot="card-actions-slot">
-    <paper-button id="dismiss-btn" 
-                  on-click="__dismissDeleteConfirmButtonClicked">
+
+    <paper-button class="dismiss-btn" 
+                  on-click="__dismissDeleteBtnClicked">
       dismiss
-    </paper-button>   
+    </paper-button> 
+
     <paper-button id="delete-btn" 
-                  on-click="__confirmDeleteButtonClicked">
+                  on-click="__confirmDeleteBtnClicked">
       delete
-    </paper-button>      
+    </paper-button> 
+
   </div>
 
 </app-modal>
