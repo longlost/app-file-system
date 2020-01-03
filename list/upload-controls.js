@@ -70,7 +70,7 @@ class UploadControls extends AppElement {
       // the correct place in Firestore.
       _metadata: {
         type: Object,
-        computed: '__computeMetadata(field, file.uid)'
+        computed: '__computeMetadata(field, file)'
       },
 
       // upload progress
@@ -138,11 +138,22 @@ class UploadControls extends AppElement {
   } 
 
 
-  __computeMetadata(field, uid) {
+  __computeMetadata(field, file) {
+    if (!field || !file) { return; }
 
-    // 'metadata.customMetadata' in client sdk, 
-    // 'metadata.metadata' in cloud functions.
-    return {customMetadata: {field, uid}}; 
+    const {displayName, ext, uid} = file;
+    
+    return {
+
+      // Force 'original' file link to be 
+      // downloadable when used in an anchor tag.
+      // ie. <a download href="http://original-file-url.ext">Download Me</a>.
+      contentDisposition: `attachment; filename="${displayName}${ext}"`,
+
+      // 'metadata.customMetadata' in client sdk, 
+      // 'metadata.metadata' in cloud functions.
+      customMetadata: {field, uid}
+    }; 
   }
 
 

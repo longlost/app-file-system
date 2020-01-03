@@ -7,6 +7,19 @@
   *   uploading/saving/optimization/deleting/previewing/rearranging.
   *
   *
+  *   Setup Firebase Storage for downloads:
+  *
+  *     Must configure CORS for each seperate storage bucket - 
+  *
+  *       https://firebase.google.com/docs/storage/web/download-files?authuser=0#cors_configuration
+  *
+  *       The gcloud cli install instructions failed, 
+  *       but there is a google cloud console available.
+  *       
+  *       The web based console has a terminal and file editor built in.
+  *       The editor has gcloud and gsutil pre-installed and authenticated.
+  *
+  *
   *
   *
   *  Properites:
@@ -112,9 +125,9 @@ import {
 import path       from 'path';
 import services   from '@longlost/services/services.js';
 import htmlString from './app-file-system.html';
-import '@longlost/app-spinner/app-spinner.js';
 import './sources/file-sources.js';
 import './list/preview-lists.js';
+// app-modal, app-spinner, paper-progress imports in events-mixin.js.
 
 
 // From items array/collection back to a Firestore data obj.

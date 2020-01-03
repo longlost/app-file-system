@@ -282,21 +282,21 @@
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
 
-"@longlost/app-modal@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@longlost/app-modal/-/app-modal-1.0.2.tgz#531236631ab96b17512e3e0a963459fef8d3f2f9"
-  integrity sha512-7YgwXDyWE6dH3Q7GM9tqW3dbhwA2a9R7D4iJLTCGXezDbALNLaCZCS76YY9wR5xWdj3dx1uZutMvT1D4/UD7qg==
+"@longlost/app-modal@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@longlost/app-modal/-/app-modal-1.0.3.tgz#f53bfa7d3dc738885eeeb82cdee3beb6b59130cc"
+  integrity sha512-Z5Dycsu3q302k0LzUimNGwfPBFvGD53lerHOLZzqR2asiaiaLLF3MfEooId+lIzAERJeISYbsQRH1rVWFfAhdg==
   dependencies:
-    "@longlost/app-element" "^1.0.4"
-    "@longlost/app-overlay" "^1.0.2"
+    "@longlost/app-element" "^1.0.6"
+    "@longlost/app-overlay" "^1.0.3"
     "@longlost/utils" "^1.3.5"
     "@polymer/paper-card" "^3.0.1"
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/app-overlay@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@longlost/app-overlay/-/app-overlay-1.0.2.tgz#8614455073789308548bc62daa2534b3131249c8"
-  integrity sha512-4vcVmHvTMPlgUMSIycrUfFXyUXHPVk7BaCVt0FmkKJTMvmTc1vUslSdBbKbM0SoA6esVD3eubSYVovdN1A6H6Q==
+"@longlost/app-overlay@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@longlost/app-overlay/-/app-overlay-1.0.3.tgz#e5bbf4324f3585b753d0d225c078433798d95108"
+  integrity sha512-Z6zXUmHp4oB26c6Hjlh/blqHXVPZVGBJf504ZPQMBXLOisHV3ouD5SpS2XC7N7Vo+zYvgFIP3qKJ86jPwfxNqw==
   dependencies:
     "@longlost/app-element" "^1.0.4"
     "@longlost/overlay-mixin" "^1.0.1"

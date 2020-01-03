@@ -39,14 +39,12 @@ import {
   html
 }                   from '@longlost/app-element/app-element.js';
 import {
-  blobToFile
-}                   from '@longlost/lambda/lambda.js';
-import {
   message,
   schedule,
   wait,
   warn
 }                   from '@longlost/utils/utils.js';
+import {fetchFile}  from '../shared/utils.js';
 import path         from 'path'; // webpack includes this by default!
 import mime         from 'mime-types';
 import htmlString   from './web-file-card.html';
@@ -56,72 +54,6 @@ import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-progress/paper-progress.js';
 import '../shared/file-icons.js';
 
-
-// 'callback' will be passed an object with the following properties:
-//
-//    cancel, loaded, progress, total
-//
-// Calling 'cancel' will halt stream and throw an error
-// with error.message set to 'Failed to fetch'.
-const fetchFile = async (url, callback, options) => {
-
-  const response = await fetch(url, options);
-
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-
-  const reader = response.body.getReader();
-
-  // Get total file length.
-  const total = response.headers.get('Content-Length');
-
-  // Get file type.
-  const type = response.headers.get('Content-Type');
-
-  // Using stream in order to show a progress bar ui.
-  const stream = new ReadableStream({
-    start(controller) {
-
-      // Read the data.
-      let loaded = 0;
-      // Calling cancel will halt stream and throw an error
-      // with error.message set to 'Failed to fetch'.
-      const cancel = controller.error.bind(controller);
-
-      const pump = async () => {
-
-        const {done, value} = await reader.read();
-
-        // When no more data needs to be consumed, close the stream
-        if (done) {
-          controller.close();
-          return;
-        }
-
-        loaded += value.length;
-
-        const progress = total ? (loaded / total) * 100 : 100;
-
-        callback({cancel, loaded, progress, total, type});
-        // Enqueue the next data chunk into our target stream
-        controller.enqueue(value);
-
-        return pump();
-      };
-
-      return pump();      
-    }
-  });
-
-  const streamResponse = await new Response(stream);
-  const blob           = await streamResponse.blob();
-
-  const name = path.basename(url);
-  const file = blobToFile(blob, name, type);
-
-  return file;
-};
 
 
 class WebFileCard extends AppElement {

@@ -52,13 +52,7 @@ class QuickOptions extends AppElement {
     return {
       
       // File item object.
-      item: Object,
-
-
-      _downloadUrl: {
-        type: String,
-        computed: '__computeDownloadUrl(item)'
-      }
+      item: Object
 
     };
   }
@@ -71,12 +65,13 @@ class QuickOptions extends AppElement {
   }
 
 
-  __computeDownloadUrl(item) {
-    if (!item) { return '#'}
+  __computeDownloadBtnDisabledClass(item) {
+    return !item || !item.original ? 'disabled' : '';
+  }
 
-    const {original, _tempUrl} = item;
 
-    return original ? original : _tempUrl;
+  __computeDownloadUrl(original) {
+    return original ? original : '#';
   }
 
 

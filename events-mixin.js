@@ -1,12 +1,17 @@
 
+
 import {
   hijackEvent,
   listen,  
   schedule,
   unlisten,
   warn
-}              from '@longlost/utils/utils.js';
-import printJS from 'print-js';
+}               from '@longlost/utils/utils.js';
+import printJS  from 'print-js';
+import services from '@longlost/services/services.js';
+import '@longlost/app-modal/app-modal.js';
+import '@longlost/app-spinner/app-spinner.js';
+import '@polymer/paper-progress/paper-progress.js';
 
 
 const getPrintType = type => {
@@ -94,7 +99,7 @@ export const EventsMixin = superClass => {
       	_uploadListenerKey: Object
 
       };
-    }    
+    }
 
 
 	  __computeDeleteItemDisplayName(items, uid) {
@@ -164,11 +169,11 @@ export const EventsMixin = superClass => {
 	  disconnectedCallback() {
 	    super.disconnectedCallback();
 	    
-	    unlisten(this._uploadListenerKey);
 	    unlisten(this._downloadsListenerKey);
 	    unlisten(this._printListenerKey);    
 	    unlisten(this._printsListenerKey);
 	    unlisten(this._requestDeleteListenerKey);
+	    unlisten(this._uploadListenerKey);
 	    this.__unsub();
 	  }
 
@@ -272,7 +277,7 @@ export const EventsMixin = superClass => {
 	  }
 
 	  // <drag-drop> delete area modal.
-	  async __confirmDeleteButtonClicked(event) {
+	  async __confirmDeleteBtnClicked(event) {
 	    try {
 	      hijackEvent(event);
 	      await this.clicked();
@@ -290,7 +295,7 @@ export const EventsMixin = superClass => {
 	  }
 
 
-	  async __dismissDeleteConfirmButtonClicked(event) {
+	  async __dismissDeleteBtnClicked(event) {
 	    try {
 	      hijackEvent(event);
 

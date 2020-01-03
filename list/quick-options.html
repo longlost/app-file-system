@@ -42,6 +42,11 @@
     color:           currentColor;
   }
 
+  a.disabled {
+    pointer-events: none;
+    color:          var(--disabled-text-color);
+  }
+
 </style>
 
 
@@ -57,21 +62,11 @@
                    on-click="__deleteBtnClicked">
 </paper-icon-button>
 
-
-
-<a download 
-   href="[[_downloadUrl]]"
-   rel="noreferrer"
-   target="_blank">  
+<a class$="[[__computeDownloadBtnDisabledClass(item)]]"
+   download
+   href="[[__computeDownloadUrl(item.original)]]">  
   <paper-icon-button icon="file-icons:file-download"></paper-icon-button>
 </a>
-
-<!-- <a download 
-   href="[[_downloadUrl]]">  
-  <paper-icon-button icon="file-icons:file-download"></paper-icon-button>
-</a> -->
-
-
 
 <paper-icon-button hidden="[[__computePrintBtnHidden(item.type)]]"
                    icon="file-icons:print"
