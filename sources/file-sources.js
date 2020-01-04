@@ -152,7 +152,6 @@ const addAdditionalData = async files => {
 
     return files.map((file, index) => {
       const {tag, uid} = data[index];
-      const words      = file.name.split('.');
 
       if (file.type.includes('image') || file.type.includes('video')) { 
         file._tempUrl = window.URL.createObjectURL(file);
@@ -162,7 +161,7 @@ const addAdditionalData = async files => {
       }
 
       file.basename    = file.name;
-      file.ext         = words[words.length - 1];
+      file.ext         = path.extname(file.name);
       file.index       = index;
       file.orientation = tag ? tag.value : null; // Firebase does not like undefined.
       file.sizeStr     = formatFileSize(file.size);

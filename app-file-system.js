@@ -425,11 +425,12 @@ class AppFileSystem extends EventsMixin(AppElement) {
     const files     = Object.values(filesObj);
     const lastIndex = this._items ? this._items.length : 0;
 
-    const newItems = files.reduce((accum, file, index) => {
+    const newItems = files.reduce((accum, file) => {
       const {        
         basename,
         displayName, 
         ext,
+        index,
         orientation,
         size,  
         sizeStr,
