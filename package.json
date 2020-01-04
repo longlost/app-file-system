@@ -20,7 +20,7 @@
     "@longlost/app-element": "^1.0.6",
     "@longlost/app-header-overlay": "^1.0.7",
     "@longlost/app-icons": "^1.0.11",
-    "@longlost/app-modal": "^1.0.3",
+    "@longlost/app-modal": "^1.0.4",
     "@longlost/app-shared-styles": "^2.0.5",
     "@longlost/app-spinner": "^1.1.0",
     "@longlost/badged-icon-button": "^1.0.1",
@@ -51,7 +51,7 @@
     "@polymer/test-fixture": "^4.0.2",
     "@webcomponents/webcomponentsjs": "^2.4.0",
     "chai": "^4.2.0",
-    "mocha": "^6.2.2",
+    "mocha": "^7.0.0",
     "wct-mocha": "^1.0.1"
   }
 }

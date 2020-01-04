@@ -5,13 +5,16 @@ import {
   listen,  
   schedule,
   unlisten,
+  wait,
   warn
 }               from '@longlost/utils/utils.js';
-import printJS  from 'print-js';
-import services from '@longlost/services/services.js';
+import printJS  from 'print-js'; // Will NOT print pdf's in Chrome when dev tools is open!!
 import '@longlost/app-modal/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/paper-progress/paper-progress.js';
+
+
+import path from 'path';
 
 
 const getPrintType = type => {
@@ -30,15 +33,23 @@ const getPrintType = type => {
 };
 
 
-const printItem = item => {
-  const {original, _tempUrl, displayName, type} = item;
+const printItem = async item => {
+  const {displayName, original, type, _tempUrl} = item;
 
   const printable = original ? original : _tempUrl;
   const printType = getPrintType(type);
 
+
+  // TODO:
+  // 			Create a more custom styled header that matches
+  // 			the app's theme.
+  // 			Will need to convert css color var into hex val.
+
   // header: '<h3 class="custom-h3">My custom header</h3>',
   // style: '.custom-h3 { color: red; }'
+  
 
+  // Will NOT print pdf's in Chrome when dev tools is open!!
   return printJS({
     header: displayName,
     printable, 
@@ -58,6 +69,7 @@ const printImages = items => {
   const urls = items.map(({original, _tempUrl}) => 
     original ? original : _tempUrl);
 
+  // Will NOT print pdf's in Chrome when dev tools is open!!
   return printJS({
     printable:   urls,
     type:       'image',
@@ -215,11 +227,13 @@ export const EventsMixin = superClass => {
 
 	  async __printItem(event) {
 	    try {
-	      await this.$.spinner.show('Getting file ready for printing.');
+	      await this.$.spinner.show('Preparing file for printing.');
 
 	      const {item} = event.detail;
 
-	      await printItem(item);
+	      // Show the spinner for at least 1sec, 
+	      // but longer if printing large files.
+	      await Promise.all([printItem(item), wait(1000)]);
 	    }
 	    catch (error) {
 	      console.error(error);
@@ -233,11 +247,13 @@ export const EventsMixin = superClass => {
 
 	  async __printImages(event) {
 	    try {
-	      await this.$.spinner.show('Getting images ready for printing.');
+	      await this.$.spinner.show('Preparing images for printing.');
 
 	      const {items} = event.detail;
 
-	      await printImages(items);
+	      // Show the spinner for at least 1sec, 
+	      // but longer if printing large files.
+	      await Promise.all([printImages(items), wait(1000)]);
 	    }
 	    catch (error) {
 	      console.error(error);

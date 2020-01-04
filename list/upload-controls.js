@@ -95,6 +95,25 @@ class UploadControls extends AppElement {
   }
 
 
+  __computeMetadata(field, file) {
+    if (!field || !file) { return; }
+
+    const {displayName, ext, uid} = file;
+    
+    return {
+
+      // Force 'original' file link to be 
+      // downloadable when used in an anchor tag.
+      // ie. <a download href="http://original-file-url.ext">Download Me</a>.
+      contentDisposition: `attachment; filename="${displayName}${ext}"`,
+
+      // 'metadata.customMetadata' in client sdk, 
+      // 'metadata.metadata' in cloud functions.
+      customMetadata: {field, uid}
+    }; 
+  }
+
+
   async __show() {
     if (isDisplayed(this)) { return; }
 
@@ -136,25 +155,6 @@ class UploadControls extends AppElement {
     this.__uploadFile(file, metadata);
     this.__show();
   } 
-
-
-  __computeMetadata(field, file) {
-    if (!field || !file) { return; }
-
-    const {displayName, ext, uid} = file;
-    
-    return {
-
-      // Force 'original' file link to be 
-      // downloadable when used in an anchor tag.
-      // ie. <a download href="http://original-file-url.ext">Download Me</a>.
-      contentDisposition: `attachment; filename="${displayName}${ext}"`,
-
-      // 'metadata.customMetadata' in client sdk, 
-      // 'metadata.metadata' in cloud functions.
-      customMetadata: {field, uid}
-    }; 
-  }
 
 
   __uploadFinished(data) {
@@ -232,6 +232,7 @@ class UploadControls extends AppElement {
 
   async __pauseUploadButtonClicked() {
     if (!this._controls) { return; }
+
     try {
       await this.clicked();
       this.pause();
@@ -245,6 +246,7 @@ class UploadControls extends AppElement {
 
   async __resumeUploadButtonClicked() {
     if (!this._controls) { return; }
+    
     try {
       await this.clicked();
       this.resume();

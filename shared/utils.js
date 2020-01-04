@@ -1,6 +1,6 @@
 
 import {blobToFile} from '@longlost/lambda/lambda.js';
-import path 				from 'path';
+import path         from 'path';
 
 
 // 'callback' will be passed an object with the following properties:
@@ -48,9 +48,12 @@ const fetchBlob = async (url, callback, options) => {
 
         loaded += value.length;
 
-        const progress = total ? (loaded / total) * 100 : 100;
+        if (callback) {
+          const progress = total ? (loaded / total) * 100 : 100;
 
-        callback({cancel, loaded, progress, total, type});
+          callback({cancel, loaded, progress, total, type});
+        }
+
         // Enqueue the next data chunk into our target stream
         controller.enqueue(value);
 
@@ -63,7 +66,7 @@ const fetchBlob = async (url, callback, options) => {
 
   const streamResponse = await new Response(stream);
   const blob           = await streamResponse.blob();
-  const name 					 = path.basename(url);
+  const name           = path.basename(url);
 
   return {blob, name, type};
 };
@@ -85,6 +88,6 @@ const fetchFile = async (url, callback, options) => {
 
 
 export {
-	fetchBlob,
-	fetchFile
+  fetchBlob,
+  fetchFile
 };
