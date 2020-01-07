@@ -1,15 +1,11 @@
 
 
 /**
-  * `image-editor`
+  * `file-editor`
   * 
-  *   Easily edit images/photos.
-  * 	Crop, rotate, brightness, contrast, effects/filters and add rich text.
+  *   Update file displayName, add notes and keywords.
   *
   *
-  *   @customElement
-  *   @polymer
-  *   @demo demo/index.html
   *
   *
   *  Properites:
@@ -30,6 +26,10 @@
   *    open()
   *
   *
+  *   @customElement
+  *   @polymer
+  *   @demo demo/index.html
+  *
   **/
 
 
@@ -37,13 +37,13 @@ import {
   AppElement, 
   html
 }                 from '@longlost/app-element/app-element.js';
-import htmlString from './image-editor.html';
+import htmlString from './file-editor.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 
 
 
-class ImageEditor extends AppElement {
-  static get is() { return 'image-editor'; }
+class FileEditor extends AppElement {
+  static get is() { return 'file-editor'; }
 
   static get template() {
     return html([htmlString]);
@@ -66,4 +66,4 @@ class ImageEditor extends AppElement {
 
 }
 
-window.customElements.define(ImageEditor.is, ImageEditor);
+window.customElements.define(FileEditor.is, FileEditor);

@@ -11,10 +11,6 @@ import {
 import printJS  from 'print-js'; // Will NOT print pdf's in Chrome when dev tools is open!!
 import '@longlost/app-modal/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';
-import '@polymer/paper-progress/paper-progress.js';
-
-
-import path from 'path';
 
 
 const getPrintType = type => {
@@ -30,50 +26,52 @@ const getPrintType = type => {
   if (type.includes('html')) {
     return 'html';
   }
+
+  // printJS cannot handle all file types.
+  // The print button should be disabled
+  // to not allow this type of file.
+  throw new Error(`Cannot print this type of file. Type - ${type}`);
 };
 
-
+// Will NOT print pdf's in Chrome when dev tools is open!!
 const printItem = async item => {
   const {displayName, original, type, _tempUrl} = item;
 
+  const style = `.custom-h3 { 
+		font-family: 'Roboto', 'Noto', Arial, Helvetica, sans-serif; 
+	}`;
+
+	const header = `<h3 class="custom-h3">${displayName}</h3>`;
+
+	// Use temporary reference for files that are not done uploading.
   const printable = original ? original : _tempUrl;
   const printType = getPrintType(type);
-
-
-  // TODO:
-  // 			Create a more custom styled header that matches
-  // 			the app's theme.
-  // 			Will need to convert css color var into hex val.
-
-  // header: '<h3 class="custom-h3">My custom header</h3>',
-  // style: '.custom-h3 { color: red; }'
-  
-
-  // Will NOT print pdf's in Chrome when dev tools is open!!
+ 
   return printJS({
-    header: displayName,
-    printable, 
+    header,
+    printable,
+    style,
     type: printType
   });
 };
 
-
+// Will NOT print pdf's in Chrome when dev tools is open!!
 const printImages = items => {
   const someAreNotImages = items.some(item => !
     item.type.includes('image'));
 
   if (someAreNotImages) {
-    throw new Error('printImages only accepts image files!');
+    throw new Error('Can only print multiple image files.');
   }
 
+  // Use temporary file reference until file has been uploaded.
   const urls = items.map(({original, _tempUrl}) => 
     original ? original : _tempUrl);
-
-  // Will NOT print pdf's in Chrome when dev tools is open!!
+  
   return printJS({
+    imageStyle: 'width: calc(50% - 16px); margin: 8px;',
     printable:   urls,
-    type:       'image',
-    imageStyle: 'width:calc(50% - 16px);margin:8px;'
+    type:       'image'
   });
 };
 
@@ -83,24 +81,24 @@ export const EventsMixin = superClass => {
 
 
     static get properties() {
-      return {        
-
-	      // Displayed name in delete modal.
-	      _deleteName: {
-	        type: String,
-	        computed: '__computeDeleteItemDisplayName(_items, _deleteUid)'
-	      },
+      return { 
 
 	      // When deleting an item with drag and drop,
 	      // or with item delete icon button,
-	      // his is used to temporary cache the uid
+	      // this is used to temporary cache the item
 	      // while the delete confirm modal is open.
-	      _deleteUid: String,
+	      _deleteItem: String,
 
 	      _downloadsListenerKey: Object,
 
+	      _editFileListenerKey: Object,
+
+	      _editImageListenerKey: Object,
+
 	      // From <file-sources>.
 	      _files: Object,
+
+	      _openCarouselListenerKey: Object,
 
 	      _printListenerKey: Object,
 
@@ -108,19 +106,14 @@ export const EventsMixin = superClass => {
 
 	      _requestDeleteListenerKey: Object,
 
+	      _shareListenerKey: Object,
+
+	      _sortedListenerKey: Object,
+
       	_uploadListenerKey: Object
 
       };
     }
-
-
-	  __computeDeleteItemDisplayName(items, uid) {
-	    if (!items || !uid) { return; }
-
-	    const match = items.find(item => item.uid === uid);
-
-	    return match ? match.displayName : '';
-	  }
 
 
 	  connectedCallback() {
@@ -131,6 +124,20 @@ export const EventsMixin = superClass => {
 	      this, 
 	      'download-items', 
 	      this.__downloadItems.bind(this)
+	    );
+
+	    // <quick-options>
+	    this._editFileListenerKey = listen(
+	      this, 
+	      'edit-file', 
+	      this.__editFile.bind(this)
+	    );
+
+	    // <file-item>, <photo-carousel>
+	    this._editImageListenerKey = listen(
+	      this, 
+	      'edit-image', 
+	      this.__editImage.bind(this)
 	    );
 
 	    // Events from <file-items> which is
@@ -168,6 +175,13 @@ export const EventsMixin = superClass => {
 	      this.__requestDeleteItem.bind(this)
 	    );
 
+	    // <quick-options>, <file-editor>, <photo-carousel>
+	    this._shareListenerKey = listen(
+	      this, 
+	      'share-item', 
+	      this.__shareItem.bind(this)
+	    );
+
 	    // Events from <upload-controls> which 
 	    // are nested children of <preview-lists>.
 	    this._uploadListenerKey = listen(
@@ -182,9 +196,14 @@ export const EventsMixin = superClass => {
 	    super.disconnectedCallback();
 	    
 	    unlisten(this._downloadsListenerKey);
+	    unlisten(this._editFileListenerKey);
+	    unlisten(this._editImageListenerKey);
+	    unlisten(this._openCarouselListenerKey);
 	    unlisten(this._printListenerKey);    
 	    unlisten(this._printsListenerKey);
 	    unlisten(this._requestDeleteListenerKey);
+	    unlisten(this._shareListenerKey);
+	    unlisten(this._sortedListenerKey);
 	    unlisten(this._uploadListenerKey);
 	    this.__unsub();
 	  }
@@ -194,7 +213,6 @@ export const EventsMixin = superClass => {
 	    // const {items} = event.detail;
 	    console.log('__downloadItems');
 	  }
-
 
 	  // 'file-items-sorted' events from <file-items>
 	  // which is a child of <preview-lists>
@@ -212,16 +230,30 @@ export const EventsMixin = superClass => {
 	    this.__saveFileData(newIndexes);
 	  }
 
-
+	  // From <file-item> (image files only) and <roll-item>
 	  async __openCarousel(event) {
+
+	  	// const {item, measurements} = event.detail;
+
+	  	// TODO:
+	  	// 			use measurements to create an expanding 
+	  	//			animation from current item location into fullscreen.
+
+
 	    await import('./carousel/photo-carousel.js');
 	    this.$.carousel.open(event.detail);
 	  }
 
+	  // From <quick-options>, <file-item>
+	  async __editFile(event) {
+	    await import('./editors/file-editor.js');
+	    this.$.fileEditor.open(event.detail);
+	  }
 
-	  async __openEditor() {
-	    await import('./editor/image-editor.js');
-	    this.$.editor.open();
+	  // From <photo-carousel>
+	  async __editImage(event) {
+	    await import('./editors/image-editor.js');
+	    this.$.imageEditor.open(event.detail);
 	  }
 
 
@@ -257,7 +289,7 @@ export const EventsMixin = superClass => {
 	    }
 	    catch (error) {
 	      console.error(error);
-	      await warn('An error occured while trying to print your files.');
+	      await warn('An error occured while trying to print your images.');
 	    }
 	    finally {
 	      this.$.spinner.hide();
@@ -269,10 +301,10 @@ export const EventsMixin = superClass => {
 	  async __fileUploadComplete(event) {
 	    hijackEvent(event);
 
-	    const {uid, original, path: storagePath} = event.detail;
+	    const {uid, original, path} = event.detail;
 
 	    // Merge with existing file data.
-	    const fileData = {...this._dbData[uid], original, path: storagePath}; 
+	    const fileData = {...this._dbData[uid], original, path}; 
 
 	    this.$.sources.delete(uid);
 
@@ -285,7 +317,7 @@ export const EventsMixin = superClass => {
 	  async __requestDeleteItem(event) {
 	    hijackEvent(event);
 
-	    this._deleteUid = event.detail.uid;
+	    this._deleteItem = event.detail.item;
 
 	    await schedule();
 
@@ -302,7 +334,7 @@ export const EventsMixin = superClass => {
 
 	      this.$.lists.resetDeleteTarget();
 
-	      this.delete(this._deleteUid);
+	      this.delete(this._deleteItem.uid);
 	    }
 	    catch (error) {
 	      if (error === 'click disabled') { return; }
@@ -324,6 +356,31 @@ export const EventsMixin = superClass => {
 	      if (error === 'click debounced') { return; }
 	      console.error(error);
 	    }
+	  }
+
+
+	  async __shareItem(event) {
+	  	try {
+
+	  		// const {item} = event.detail;
+
+	  		// await this.$.shareModal.open();
+
+	  		// if (!item.share) {
+	  		// 	await services.cloudFunction({name: 'makeFileShareable', item});
+	  		// }
+
+	  		// this._shareUrl = await services.getDownloadUrl(item.share);
+
+	  		console.log('__shareItem');
+
+
+	  	}
+	  	catch (error) {
+	  		console.error(error);
+	  		await warn('An error occured while creating the link.');
+	  		this.$.shareModal.close();
+	  	}
 	  }
 
 	  // <file-sources> 'files-changed' event.

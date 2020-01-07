@@ -129,8 +129,6 @@ class UploadControls extends AppElement {
 
 
   async __hide() {
-    if (!isDisplayed(this)) { return; }
-
     this.style['transform'] = 'translateY(100%)';
     await wait(350);
     this.style['display'] = 'none';
