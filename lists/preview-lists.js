@@ -143,14 +143,14 @@ class PreviewList extends AppElement {
   }
 
 
-  cancelUploads() {
+  cancelUploads(uids) {
 
     if (this.$.fileList.cancelUploads) {
-      this.$.fileList.cancelUploads();
+      this.$.fileList.cancelUploads(uids);
     }
 
     if (this.$.cameraRoll.cancelUploads) {
-      this.$.cameraRoll.cancelUploads();
+      this.$.cameraRoll.cancelUploads(uids);
     }
   }
 

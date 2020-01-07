@@ -7,8 +7,11 @@ import {
   unlisten,
   wait,
   warn
-}               from '@longlost/utils/utils.js';
-import printJS  from 'print-js'; // Will NOT print pdf's in Chrome when dev tools is open!!
+}               		 from '@longlost/utils/utils.js';
+// Will NOT download multiple files in Chrome when dev tools is open!!
+import multiDownload from 'multi-download';
+// Will NOT print pdf's in Chrome when dev tools is open!!
+import printJS  		 from 'print-js'; 
 import '@longlost/app-modal/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';
 
@@ -69,7 +72,7 @@ const printImages = items => {
     original ? original : _tempUrl);
   
   return printJS({
-    imageStyle: 'width: calc(50% - 16px); margin: 8px;',
+    imageStyle: 'display: inline-block; float: left; width: calc(50% - 16px); margin: 8px;',
     printable:   urls,
     type:       'image'
   });
@@ -85,9 +88,9 @@ export const EventsMixin = superClass => {
 
 	      // When deleting an item with drag and drop,
 	      // or with item delete icon button,
-	      // this is used to temporary cache the item
+	      // this is used to temporary cache the item(s)
 	      // while the delete confirm modal is open.
-	      _deleteItem: String,
+	      _deleteItems: Array,
 
 	      _downloadsListenerKey: Object,
 
@@ -105,6 +108,8 @@ export const EventsMixin = superClass => {
 	      _printsListenerKey: Object,
 
 	      _requestDeleteListenerKey: Object,
+
+	      _requestDeletesListenerKey: Object,
 
 	      _shareListenerKey: Object,
 
@@ -175,6 +180,13 @@ export const EventsMixin = superClass => {
 	      this.__requestDeleteItem.bind(this)
 	    );
 
+	    // <file-items> and <file-item>
+	    this._requestDeletesListenerKey = listen(
+	      this, 
+	      'request-delete-items', 
+	      this.__requestDeleteItems.bind(this)
+	    );
+
 	    // <quick-options>, <file-editor>, <photo-carousel>
 	    this._shareListenerKey = listen(
 	      this, 
@@ -202,16 +214,34 @@ export const EventsMixin = superClass => {
 	    unlisten(this._printListenerKey);    
 	    unlisten(this._printsListenerKey);
 	    unlisten(this._requestDeleteListenerKey);
+	    unlisten(this._requestDeletesListenerKey);
 	    unlisten(this._shareListenerKey);
 	    unlisten(this._sortedListenerKey);
 	    unlisten(this._uploadListenerKey);
 	    this.__unsub();
 	  }
 
+	  // Will NOT download multiple files in Chrome when dev tools is open!!
+	  async __downloadItems(event) {
+	  	try {
+	      await this.$.spinner.show('Preparing downloads.');
 
-	  __downloadItems(event) {
-	    // const {items} = event.detail;
-	    console.log('__downloadItems');
+	      const {items} = event.detail;
+
+	    	const urls = items.map(({original, _tempUrl}) => 
+	    							 	 original ? original : _tempUrl);
+
+	      // Show the spinner for at least 1sec, 
+	      // but longer if downloading several files.
+	      await Promise.all([multiDownload(urls), wait(1000)]);
+	    }
+	    catch (error) {
+	      console.error(error);
+	      await warn('An error occured while trying to download your files.');
+	    }
+	    finally {
+	      this.$.spinner.hide();
+	    }	    
 	  }
 
 	  // 'file-items-sorted' events from <file-items>
@@ -317,7 +347,18 @@ export const EventsMixin = superClass => {
 	  async __requestDeleteItem(event) {
 	    hijackEvent(event);
 
-	    this._deleteItem = event.detail.item;
+	    this._deleteItems = [event.detail.item];
+
+	    await schedule();
+
+	    this.$.deleteConfirmModal.open();
+	  }
+
+
+	  async __requestDeleteItems(event) {
+	    hijackEvent(event);
+
+	    this._deleteItems = event.detail.items;
 
 	    await schedule();
 
@@ -332,13 +373,26 @@ export const EventsMixin = superClass => {
 
 	      await this.$.deleteConfirmModal.close();
 
+	      // Reset drag-drop delete if applicable.
 	      this.$.lists.resetDeleteTarget();
 
-	      this.delete(this._deleteItem.uid);
+	      // Delete methods show different spinner messages.
+	      if (this._deleteItems.length > 1) {
+
+	      	const uids = this._deleteItems.map(item => item.uid);
+
+	      	await this.deleteMultiple(uids);
+	      }
+	      else {
+	      	await this.delete(this._deleteItems[0].uid);
+	      }
 	    }
 	    catch (error) {
 	      if (error === 'click disabled') { return; }
 	      console.error(error);
+	    }
+	    finally {
+	      this._deleteItems = undefined;
 	    }
 	  }
 
@@ -350,11 +404,15 @@ export const EventsMixin = superClass => {
 	      await this.clicked();
 	      await this.$.deleteConfirmModal.close();
 
+	      // Reset drag-drop delete if applicable.
 	      this.$.lists.cancelDelete();
 	    }
 	    catch (error) {
 	      if (error === 'click debounced') { return; }
 	      console.error(error);
+	    }
+	    finally {
+	      this._deleteItems = undefined;
 	    }
 	  }
 

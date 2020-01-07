@@ -500,12 +500,15 @@ class AppFileSystem extends EventsMixin(AppElement) {
     }
 
     try {
-      await this.$.spinner.show('Deleting file data.');
+      await this.$.spinner.show('Deleting file.');
+
+      this.$.lists.cancelUploads([uid]);
+
       await this.__delete(uid);
     }
     catch (error) {
       console.error(error);
-      await warn('Sorry, an error occured while trying to delete the file!');
+      await warn('An error occured while trying to delete the file!');
     }
     finally {
       await this.$.spinner.hide();
@@ -516,7 +519,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   async deleteAll() {
     try {
-      await this.$.spinner.show('Deleting file data.');
+      await this.$.spinner.show('Deleting files.');
 
       const uids     = Object.keys(this._dbData);
       const promises = uids.map(uid => this.__delete(uid));
@@ -531,10 +534,35 @@ class AppFileSystem extends EventsMixin(AppElement) {
     }
     catch (error) {
       console.error(error);
-      await warn('Sorry, an error occured while trying to delete the files!');
+      await warn('An error occured while trying to delete the files!');
     }
     finally {
       return this.$.spinner.hide();
+    }
+  }
+
+
+  async deleteMultiple(uids) {
+    if (!uids || uids.length === 0) { 
+      throw new Error(`<app-file-system> 'deleteMultiple' method must have an array of file uids.`); 
+    }
+
+    try {
+      await this.$.spinner.show('Deleting files.');
+
+      const promises = uids.map(uid => this.__delete(uid));
+
+      this.$.lists.cancelUploads(uids);
+
+      await Promise.all(promises);
+    }
+    catch (error) {
+      console.error(error);
+      await warn('An error occured while trying to delete these files!');
+    }
+    finally {
+      await this.$.spinner.hide();
+      return uids;
     }
   }
 

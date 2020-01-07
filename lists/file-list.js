@@ -52,6 +52,10 @@ import {
   AppElement, 
   html
 }                 from '@longlost/app-element/app-element.js';
+import {
+  listen,
+  unlisten
+}                 from '@longlost/utils/utils.js';
 import htmlString from './file-list.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 import '@longlost/app-icons/app-icons.js';
@@ -79,7 +83,12 @@ class FileList extends AppElement {
       
       // Firestore document field to use for saving file data after processing.
       // ie. 'backgroundImg', 'catImages', ...
-      field: String,      
+      field: String, 
+
+      hideDropzone: Boolean,
+
+      // Drives <template is="dom-repeat">
+      items: Array,     
 
       // Set to true to hide <select-checkbox>'s
       _hideCheckboxes: {
@@ -87,25 +96,56 @@ class FileList extends AppElement {
         value: true
       },
 
-      hideDropzone: Boolean,
-
-      // Drives <template is="dom-repeat">
-      items: Array
+      // A cache of multi-selected items.
+      _selectedItems: {
+        type: Object,
+        value: () => ({})
+      }
 
     };
   }
 
 
-  async __deleteBtnClicked() {
+  connectedCallback() {
+    super.connectedCallback();
+
+    this._itemsSelectedListenerKey = listen(
+      this,
+      'item-selected',
+      this.__itemSelected.bind(this)
+    );
+  }
+
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    unlisten(this._itemsSelectedListenerKey);
+  }
+
+
+  __itemSelected(event) {
+    const {item, selected} = event.detail;
+    const {uid} = item;
+
+    if (selected) {
+      this._selectedItems[uid] = item;
+    }
+    else {
+      delete this._selectedItems[uid];
+    }
+  }
+
+
+  async __btnClicked(name) {
     try {
       await this.clicked();
 
-      this.fire('file-list-delete-items');
+      const items = Object.
+                      values(this._selectedItems).
+                      sort((a, b) => a.index - b.index);
 
-
-      console.log('delete btn');
-
-
+      this.fire(name, {items});
     }
     catch (error) {
       if (error === 'click debounced') { return; }
@@ -114,39 +154,18 @@ class FileList extends AppElement {
   }
 
 
-  async __downloadBtnClicked() {
-    try {
-      await this.clicked();
-
-      this.fire('file-list-download-items');
-      
-
-      console.log('download btn');
-
-
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
-    }
+  __deleteBtnClicked() {
+    this.__btnClicked('request-delete-items');
   }
 
 
-  async __printBtnClicked() {
-    try {
-      await this.clicked();
-
-      this.fire('file-list-print-items');
-      
-
-      console.log('print btn');
+  __downloadBtnClicked() {
+    this.__btnClicked('download-items');
+  }
 
 
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
-    }
+  __printBtnClicked() {
+    this.__btnClicked('print-images');
   }
 
 
@@ -162,8 +181,8 @@ class FileList extends AppElement {
   }
 
 
-  cancelUploads() {
-    this.$.fileItems.cancelUploads();
+  cancelUploads(uids) {
+    this.$.fileItems.cancelUploads(uids);
   }
 
 

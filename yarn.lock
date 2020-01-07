@@ -282,10 +282,10 @@
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
 
-"@longlost/app-modal@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@longlost/app-modal/-/app-modal-1.0.5.tgz#ab9e7be0e22f57d386ff1090d8739203587885fc"
-  integrity sha512-qAeCUlpKNoIsWlJdtf5KYtscj++K3DcyXNIrZdEZeO8GYsZXcmyGv+5PR4Qh+qn44GJhE4XLSL2oC5LAdgyuRg==
+"@longlost/app-modal@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@longlost/app-modal/-/app-modal-1.0.6.tgz#9636d271443d5e8440d7988750dc540ae49766b3"
+  integrity sha512-0go3w3uxcJ8R1zHVii5PvoP/3yhwnJ0akG4IuOQAtDt+WJKZZDSQ+qPXSt3+BHEQPGkyP+ngywzzWfI9MgjCvw==
   dependencies:
     "@longlost/app-element" "^1.0.6"
     "@longlost/app-overlay" "^1.0.4"
@@ -1686,15 +1686,20 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
+multi-download@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/multi-download/-/multi-download-3.0.0.tgz#c169bcdb723d9c568856593a158a32d3d205d36a"
+  integrity sha512-AXumytZ+JGdwxWSNrOqNa2ATAQHb1u/K1kfWXoTkaOs0zL6rcy+QJJrYFRLe+T2jLtlTxM+8fx/qKXQS7+E6XQ==
+
 nan@^2.13.2:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
 
-nanoid@^2.1.8:
-  version "2.1.8"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-2.1.8.tgz#2dbb0224231b246e3b4c819de7bfea6384dabf08"
-  integrity sha512-g1z+n5s26w0TGKh7gjn7HCqurNKMZWzH08elXzh/gM/csQHd/UqDV6uxMghQYg9IvqRPm1QpeMk50YMofHvEjQ==
+nanoid@^2.1.9:
+  version "2.1.9"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-2.1.9.tgz#edc71de7b16fc367bbb447c7a638ccebe07a17a1"
+  integrity sha512-J2X7aUpdmTlkAuSe9WaQ5DsTZZPW1r/zmEWKsGhbADO6Gm9FMd2ZzJ8NhsmP4OtA9oFhXfxNqPlreHEDOGB4sg==
 
 needle@^2.2.1:
   version "2.4.0"

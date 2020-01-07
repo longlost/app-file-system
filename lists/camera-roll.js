@@ -100,12 +100,18 @@ class CameraRoll extends AppElement {
     const {uploader} = this._toDelete;
 
     uploader.resumeUpload();
-  }
+  }  
 
 
-  cancelUploads() {
+  cancelUploads(uids) {
     const elements = this.selectAll('roll-item');
-    elements.forEach(element => {
+
+    // 'uids' is optional.
+    const elsToCancel = uids ? 
+      uids.map(uid => elements.find(el => el.item.uid === uid)) : 
+      elements;
+
+    elsToCancel.forEach(element => {
       element.cancelUpload();
     });
   }
