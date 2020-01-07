@@ -20,7 +20,7 @@
     "@longlost/app-element": "^1.0.6",
     "@longlost/app-header-overlay": "^1.0.7",
     "@longlost/app-icons": "^1.0.11",
-    "@longlost/app-modal": "^1.0.5",
+    "@longlost/app-modal": "^1.0.6",
     "@longlost/app-shared-styles": "^2.0.7",
     "@longlost/app-spinner": "^1.1.0",
     "@longlost/badged-icon-button": "^1.0.1",
@@ -43,7 +43,8 @@
     "comlink": "^4.2.0",
     "mime-types": "^2.1.26",
     "mkdirp-promise": "^5.0.1",
-    "nanoid": "^2.1.8",
+    "multi-download": "^3.0.0",
+    "nanoid": "^2.1.9",
     "print-js": "^1.0.63"
   },
   "devDependencies": {

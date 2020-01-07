@@ -77,9 +77,13 @@
            heading="Confirm Delete">
 
   <div slot="card-content-slot">
-    <p>
-      <strong>[[_deleteItem.displayName]]</strong>
-    </p>
+    <template is="dom-repeat"
+              items="[[_deleteItems]]">
+      <p>
+        <strong>[[item.displayName]]</strong>
+      </p>
+    </template>
+    
     <p>
       This action CANNOT be undone!
     </p>

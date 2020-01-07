@@ -6,10 +6,6 @@
     --overlay-background-color:         var(--app-body-color);
   }
 
-  #delete-btn {
-    color: var(--app-error-color, red);
-  }
-
   #select-btn {
     border-radius: 50%;
   }
@@ -29,8 +25,7 @@
                     title="My Files">
 
 
-  <paper-icon-button id="delete-btn"
-                     icon="file-icons:delete"
+  <paper-icon-button icon="file-icons:delete"
                      slot="top-toolbar-buttons-slot"
                      on-click="__deleteBtnClicked">
   </paper-icon-button>

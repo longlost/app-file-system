@@ -313,9 +313,15 @@ class FileItems extends AppElement {
   }
 
 
-  cancelUploads() {
+  cancelUploads(uids) {
     const elements = this.selectAll('.file-item');
-    elements.forEach(element => {
+
+    // 'uids' is optional.
+    const elsToCancel = uids ? 
+      uids.map(uid => elements.find(el => el.item.uid === uid)) : 
+      elements;
+
+    elsToCancel.forEach(element => {
       element.cancelUpload();
     });
   }
