@@ -126,8 +126,8 @@ import path       from 'path';
 import services   from '@longlost/services/services.js';
 import htmlString from './app-file-system.html';
 import './sources/file-sources.js';
-import './list/preview-lists.js';
-// app-modal, app-spinner, paper-progress imports in events-mixin.js.
+import './lists/preview-lists.js';
+// app-modal, app-spinner imports in events-mixin.js.
 
 
 // From items array/collection back to a Firestore data obj.

@@ -77,9 +77,10 @@ class QuickOptions extends AppElement {
 
   __computePrintBtnHidden(type) {
     const isPrintable = type && (
+                          type.includes('html') ||
                           type.includes('image') ||
-                          type.includes('pdf') ||
-                          type.includes('json')
+                          type.includes('json') ||
+                          type.includes('pdf')
                         );
 
     return !isPrintable;
@@ -108,11 +109,11 @@ class QuickOptions extends AppElement {
   }
 
 
-  async __deleteBtnClicked() {
+  async __optionBtnClicked(name) {
     try {
       await this.clicked();
 
-      this.fire('request-delete-item', {uid: this.item.uid});
+      this.fire(name, {item: this.item});
     }
     catch (error) { 
       if (error === 'click debounced') { return; }
@@ -121,16 +122,23 @@ class QuickOptions extends AppElement {
   }
 
 
-  async __printBtnClicked() {
-    try {
-      await this.clicked();
+  __deleteBtnClicked() {
+    this.__optionBtnClicked('request-delete-item');
+  }
 
-      this.fire('print-item', {item: this.item});
-    }
-    catch (error) { 
-      if (error === 'click debounced') { return; }
-      console.error(error); 
-    }
+
+  __printBtnClicked() {
+    this.__optionBtnClicked('print-item');
+  }
+
+
+  __shareBtnClicked() {
+    this.__optionBtnClicked('share-item');
+  }
+
+
+  __editBtnClicked() {
+    this.__optionBtnClicked('edit-file');
   }
 
 

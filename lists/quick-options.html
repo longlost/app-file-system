@@ -3,8 +3,13 @@
 
   :host {
     display:          none;
+    flex-wrap:        wrap;
     justify-content:  center;
-    align-items:      center;
+    /* 
+      'align-content' instead of 'align-items' 
+      to push buttons together in middle.
+    */
+    align-content:    center; 
     position:         absolute;
     top:              0px;
     right:            0px;
@@ -24,17 +29,13 @@
     left:             0px;
     transition:       opacity 0.15s linear 0.05s;
     opacity:          0;
-    background-color: var(--constant-dark-text);
+    background-color: var(--app-background-color);
   }
 
   #close-btn {
     position: absolute;
     top:      0px;
     right:    0px;
-  }
-
-  #delete-btn {
-    color: var(--app-error-color, red);
   }
 
   a {
@@ -57,8 +58,7 @@
                    on-click="__closeBtnClicked">
 </paper-icon-button>
 
-<paper-icon-button id="delete-btn"
-                   icon="file-icons:delete"
+<paper-icon-button icon="file-icons:delete"
                    on-click="__deleteBtnClicked">
 </paper-icon-button>
 
@@ -71,4 +71,12 @@
 <paper-icon-button hidden="[[__computePrintBtnHidden(item.type)]]"
                    icon="file-icons:print"
                    on-click="__printBtnClicked">
+</paper-icon-button>
+
+<paper-icon-button icon="file-icons:share"
+                   on-click="__shareBtnClicked">
+</paper-icon-button>
+
+<paper-icon-button icon="file-icons:build"
+                   on-click="__editBtnClicked">
 </paper-icon-button>
