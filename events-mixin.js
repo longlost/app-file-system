@@ -418,27 +418,8 @@ export const EventsMixin = superClass => {
 
 
 	  async __shareItem(event) {
-	  	try {
-
-	  		// const {item} = event.detail;
-
-	  		// await this.$.shareModal.open();
-
-	  		// if (!item.share) {
-	  		// 	await services.cloudFunction({name: 'makeFileShareable', item});
-	  		// }
-
-	  		// this._shareUrl = await services.getDownloadUrl(item.share);
-
-	  		console.log('__shareItem');
-
-
-	  	}
-	  	catch (error) {
-	  		console.error(error);
-	  		await warn('An error occured while creating the link.');
-	  		this.$.shareModal.close();
-	  	}
+	  	await import('./share-modal.js');
+	  	this.$.shareModal.open(event.detail.item);
 	  }
 
 	  // <file-sources> 'files-changed' event.

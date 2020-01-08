@@ -42,11 +42,6 @@
     margin-right: 8px;
   }
 
-  .card-actions {
-    display:         flex;
-    justify-content: flex-end;
-  }
-
   #skip-btn {
     color: var(--app-primary-color);
   }
@@ -135,8 +130,8 @@
     </div>
 
   </div>
-  <div class="card-actions" 
-       slot="card-actions-slot">
+  
+  <div slot="card-actions-slot">
     <paper-button id="skip-btn"
                   on-click="__dismissRenameFilesModalButtonClicked">
       skip
