@@ -6,11 +6,37 @@
     --overlay-background-color:         var(--app-body-color);
   }
 
-  #select-btn {
-    border-radius: 50%;
+  .btn {
+    opacity:    0;
+    transform:  translateX(100%);
+    transition: transform 0.3s var(--custom-ease),
+                opacity 0.2s ease-out;
   }
 
-  #select-btn[active] {
+  .btn[disabled] {
+    color: currentColor;
+  }
+
+  .delay-2nd {
+    transition-delay: 0.05s; 
+  }
+
+  .delay-3rd {
+    transition-delay: 0.1s;
+  }
+
+  .enter {
+    opacity:   1;
+    transform: none;
+  }
+
+  #selectBtn {
+    border-radius:      50%;
+    --badge-right:     -2px;
+    --upper-badge-top: -2px;
+  }
+
+  #selectBtn[active] {
     background-color: var(--constant-light-text);
     color:            var(--app-primary-color);
   }
@@ -25,29 +51,37 @@
                     title="My Files">
 
 
-  <paper-icon-button icon="file-icons:delete"
+  <paper-icon-button class$="btn [[_btnEnterClass]]"
+                     disabled="[[_btnDisabled]]"
+                     icon="file-icons:delete"
                      slot="top-toolbar-buttons-slot"
                      on-click="__deleteBtnClicked">
   </paper-icon-button>
 
-  <paper-icon-button id="download-btn"
+  <paper-icon-button class$="btn delay-2nd [[_btnEnterClass]]"
+                     disabled="[[_btnDisabled]]"
                      icon="file-icons:file-download"
                      slot="top-toolbar-buttons-slot"
                      on-click="__downloadBtnClicked">
   </paper-icon-button>
 
-  <paper-icon-button id="print-btn"
+  <paper-icon-button class$="btn delay-3rd [[_btnEnterClass]]"
+                     disabled="[[_btnDisabled]]"
+                     hidden="[[_hidePrintBtn]]"
                      icon="file-icons:print"
                      slot="top-toolbar-buttons-slot"
                      on-click="__printBtnClicked">
   </paper-icon-button>
 
-  <paper-icon-button id="select-btn"
-                     icon="app-icons:check"
-                     slot="top-toolbar-buttons-slot"
-                     toggles
-                     on-active-changed="__selectBtnActiveChanged">
-  </paper-icon-button>
+  <badged-icon-button id="selectBtn"
+                      active$="[[!_hideCheckboxes]]"
+                      alt="Multi-select"
+                      icon="app-icons:check"
+                      show-upper="[[_showBadge]]"
+                      slot="top-toolbar-buttons-slot"
+                      toggles
+                      upper-label="[[_selectedCount]]">
+  </badged-icon-button>
 
 
   <file-items id="fileItems"

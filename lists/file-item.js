@@ -53,7 +53,9 @@ import {AppElement, html} from '@longlost/app-element/app-element.js';
 import {formatTimestamp}  from '@longlost/utils/utils.js';
 import mime               from 'mime-types';
 import htmlString         from './file-item.html';
+import '@longlost/app-icons/app-icons.js';
 import '@longlost/app-shared-styles/app-shared-styles.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/file-thumbnail.js';
 import './processing-icon.js';
 import './select-checkbox.js';
@@ -109,7 +111,9 @@ class FileItem extends AppElement {
 
   static get observers() {
     return [
-      '__hideCheckboxChanged(hideCheckbox)'
+      '__hideCheckboxChanged(hideCheckbox)',
+      '__itemChanged(item)',
+      '__selectedChanged(_selected)'
     ];
   }
 
@@ -154,28 +158,26 @@ class FileItem extends AppElement {
   }
 
 
+  __itemChanged() {
+    this._selected = false;
+  }
 
 
-  // TESTING
-  async __itemClicked(event) {
+  __selectedChanged(selected) {
+    this.fire('item-selected', {
+      item: this.item, 
+      selected
+    });
+  }
+
+  
+  async __moreBtnClicked(event) {
     try {
+      if (!this.hideCheckbox) { return; }
+
       await this.clicked();
 
-      if (this.hideCheckbox) {
-
-          // TODO:
-          //      test donwload and print functionality
-
-          this.$.options.open();
-      }
-      else {
-        this._selected = !this._selected;
-
-        this.fire('item-selected', {
-          item:     this.item, 
-          selected: this._selected
-        });
-      }
+      this.$.options.open();
     }
     catch (error) {
       if (error === 'click debounced') { return; }
@@ -184,39 +186,19 @@ class FileItem extends AppElement {
   }
 
 
-  // async __itemClicked(event) {
-  //   try {
-  //     await this.clicked();
+  async __itemClicked(event) {
+    try {
+      if (this.hideCheckbox) { return; }
 
-  //     if (this.hideCheckbox) {
-
-  //       const {type} = this.item;
-
-  //       if (type.includes('image') || type.includes('video')) {
-          
-  //         const measurements = this.getBoundingClientRect()
-
-  //         this.fire('open-carousel', {item: this.item, measurements});
-  //       }
-  //       else {
-  //         this.$.options.open();
-  //       }
-  //     }
-  //     else {
-  //       this._selected = !this._selected;
-
-  //       this.fire('item-selected', {
-  //         item:     this.item, 
-  //         selected: this._selected
-  //       });
-  //     }
-  //   }
-  //   catch (error) {
-  //     if (error === 'click debounced') { return; }
-  //     console.error(error);
-  //   }
-  // }
-
+      await this.clicked();
+      
+      this._selected = !this._selected;
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
 
   // Used for app-file-system.js deleteAll() method.
   cancelUpload() {

@@ -59,6 +59,7 @@ import {
 import htmlString from './file-list.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 import '@longlost/app-icons/app-icons.js';
+import '@longlost/badged-icon-button/badged-icon-button.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/file-icons.js';
 import './file-items.js';
@@ -88,7 +89,23 @@ class FileList extends AppElement {
       hideDropzone: Boolean,
 
       // Drives <template is="dom-repeat">
-      items: Array,     
+      items: Array,
+
+      // Disable multi-select action buttons when
+      // no items are selected.
+      _btnDisabled: {
+        type: Boolean,
+        value: true,
+        computed: '__computeBtnDisabled(_selectedCount)'
+      },
+
+      // Enter multi-select action buttons when one
+      // or more items are selected.
+      _btnEnterClass: {
+        type: String,
+        value: '',
+        computed: '__computeBtnEnterClass(_selectedCount)'
+      },   
 
       // Set to true to hide <select-checkbox>'s
       _hideCheckboxes: {
@@ -96,10 +113,35 @@ class FileList extends AppElement {
         value: true
       },
 
+      // Do no show print icon button unless
+      // all items are image files since
+      // printJS can only print multiple images
+      // on one print job.
+      _hidePrintBtn: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHidePrintBtn(items)'
+      },
+
+      _selectActiveListenerKey: Object,
+
+      // Display a badge with the selected item count.
+      _selectedCount: {
+        type: Number,
+        value: 0,
+        computed: '__computeSelectedCount(_selectedItems)'
+      },
+
       // A cache of multi-selected items.
       _selectedItems: {
         type: Object,
         value: () => ({})
+      },
+
+      _showBadge: {
+        type: Boolean,
+        value: false,
+        computed: '__computeShowBadge(_selectedCount)'
       }
 
     };
@@ -108,6 +150,12 @@ class FileList extends AppElement {
 
   connectedCallback() {
     super.connectedCallback();
+
+    this._selectActiveListenerKey = listen(
+      this.select('paper-icon-button', this.$.selectBtn),
+      'active-changed',
+      this.__selectBtnActiveChanged.bind(this)
+    );
 
     this._itemsSelectedListenerKey = listen(
       this,
@@ -120,7 +168,35 @@ class FileList extends AppElement {
   disconnectedCallback() {
     super.disconnectedCallback();
 
+    unlisten(this._selectActiveListenerKey);
     unlisten(this._itemsSelectedListenerKey);
+  }
+
+
+  __computeBtnDisabled(count) {
+    return count < 1;
+  }
+
+
+  __computeBtnEnterClass(count) {
+    return count > 0 ? 'enter' : '';
+  }
+
+
+  __computeHidePrintBtn(items) {
+    if (!items || !Array.isArray(items)) { return true; }
+
+    return items.some(item => !item.type.includes('image'));
+  }
+
+
+  __computeSelectedCount(selected) {
+    return Object.keys(selected).length;
+  }
+
+
+  __computeShowBadge(count) {
+    return count > 0;
   }
 
 
@@ -129,10 +205,11 @@ class FileList extends AppElement {
     const {uid} = item;
 
     if (selected) {
-      this._selectedItems[uid] = item;
+      this._selectedItems = {...this._selectedItems, [uid]: item};
     }
     else {
       delete this._selectedItems[uid];
+      this._selectedItems = {...this._selectedItems};
     }
   }
 
@@ -187,6 +264,7 @@ class FileList extends AppElement {
 
 
   delete() {
+    this._selectedItems = {};
     this.$.fileItems.delete();
   }
 

@@ -332,12 +332,12 @@
     "@polymer/paper-spinner" "^3.0.2"
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/badged-icon-button@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@longlost/badged-icon-button/-/badged-icon-button-1.0.1.tgz#aabb8303789004b93bd453e2df3ae472ee05bb2b"
-  integrity sha512-HyffvejygNlaGOuUczswQyae21HjCWmgUXc1cjx9hrqRWaOCRS7WprTutL2Sw/MSOCdz8HZSHMNjhi6Hmho3yA==
+"@longlost/badged-icon-button@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@longlost/badged-icon-button/-/badged-icon-button-1.1.0.tgz#dc9f15a9bad9c0d728ced5dea85a4f6a28e48ad8"
+  integrity sha512-CwjCmMoG7S7BteG9ljDP9zr9Rst5hz0iJU7HiQ7oPkrE2V+OU+ZawAnLinL194DlhylTWyGC40JiV+Vdq6xV7w==
   dependencies:
-    "@longlost/app-element" "^1.0.4"
+    "@longlost/app-element" "^1.0.6"
     "@polymer/paper-icon-button" "^3.0.2"
     "@polymer/polymer" "^3.3.1"
 
