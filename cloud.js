@@ -71,9 +71,15 @@ exports.init = (admin, functions) => {
         const fileName = path.basename(filePath);
         const fileExt  = path.extname(filePath);
 
-        // Exit if the image is already a thumbnail or already optimized.
-        if (fileName.startsWith(THUMB_PREFIX) || fileName.startsWith(OPTIM_PREFIX)) {
-          console.log('Exiting. Already processed.');
+        // Exit if the image is already a thumbnail.
+        if (fileName.startsWith(THUMB_PREFIX)) {
+          console.log('Exiting. Already a thumbnail.');
+          return null;
+        }
+
+        // Exit if the image is already already optimized.
+        if (fileName.startsWith(OPTIM_PREFIX)) {
+          console.log('Exiting. Already an optimized version.');
           return null;
         }
 
@@ -168,7 +174,12 @@ exports.init = (admin, functions) => {
         // Get a download url.
         const getUrl = async toFilePath => {
           const ref  = bucket.file(toFilePath);
-          const meta = await ref.getMetadata();
+          // const meta = await ref.getMetadata();
+
+          const meta = await ref.setMetadata(newMetadata);
+
+
+
           return meta[0].mediaLink;
         };
 
