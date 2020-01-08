@@ -1,23 +1,6 @@
 'use strict';
 
 
-// After an image is uploaded to the 
-// Storage bucket:
-//
-// 1. Make it publicly downloadable.
-//
-// 2. Create an optimized version.
-//
-// 3. Create a thumbnail version.
-//
-// 4. Save the public download urls for 
-//    all three versions into Firestore.
-//
-// Uses ImageMagick to process images.
-// Dynamically merges the url data into 
-// the appropriate coll, doc and field.
-
-
 const os     = require('os');
 const fs     = require('fs');
 const path   = require('path');
@@ -40,6 +23,23 @@ const getNewFilePath    = (dir, prefix, name) =>
 
 exports.init = (admin, functions) => {
 
+  // After an image is uploaded to the 
+  // Storage bucket:
+  //
+  // 1. Make it publicly downloadable.
+  //
+  // 2. Create an optimized version.
+  //
+  // 3. Create a thumbnail version.
+  //
+  // 4. Save the public download urls for 
+  //    new versions into Firestore.
+  //
+  //
+  // Uses ImageMagick to process images.
+  //
+  // Dynamically merges the url data into 
+  // the appropriate coll, doc and field.
   const optimizeStorageImages = functions.
     runWith({timeoutSeconds: 300}). // Extended runtime of 5 min. for large files (default 60 sec).
     storage.
@@ -134,6 +134,10 @@ exports.init = (admin, functions) => {
         ]);
         
         const newMetadata = {
+
+          contentDisposition: 'inline',
+
+
           metadata: {
             'field':         metadata.field,
             'processed':    'true',
@@ -157,24 +161,21 @@ exports.init = (admin, functions) => {
         ]);
 
         // Delete the local files to free up disk space.
+        fs.unlinkSync(tempLocalFile); 
         fs.unlinkSync(tempLocalOptimFile);
         fs.unlinkSync(tempLocalThumbFile);
-        fs.unlinkSync(tempLocalFile); 
 
-        // Get a url that is secured with a
-        // revocable access token.
+        // Get a download url.
         const getUrl = async toFilePath => {
-          const ref = bucket.file(toFilePath);
+          const ref  = bucket.file(toFilePath);
           const meta = await ref.getMetadata();
           return meta[0].mediaLink;
         };
 
         const [
-          original, 
           optimized, 
           thumbnail
         ] = await Promise.all([
-          getUrl(filePath), 
           getUrl(optimFilePath), 
           getUrl(thumbFilePath)
         ]);        
@@ -189,7 +190,6 @@ exports.init = (admin, functions) => {
             [metadata.field]: { // <app-file-system> custom element 'field' prop on client.
               [metadata.uid]: {
                 optimized,
-                original,
                 thumbnail
               }
             }
