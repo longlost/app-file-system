@@ -23,7 +23,7 @@
     "@longlost/app-modal": "^1.0.6",
     "@longlost/app-shared-styles": "^2.0.7",
     "@longlost/app-spinner": "^1.1.0",
-    "@longlost/badged-icon-button": "^1.0.1",
+    "@longlost/badged-icon-button": "^1.1.0",
     "@longlost/drag-drop-list": "^1.1.0",
     "@longlost/lambda": "^2.0.4",
     "@longlost/lazy-image": "^1.1.0",

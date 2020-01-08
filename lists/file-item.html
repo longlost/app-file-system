@@ -36,6 +36,12 @@
     color:     var(--secondary-text-color);
   }
 
+  paper-icon-button {
+    position: absolute;
+    right:    0px;
+    bottom:   0px;
+  }
+
   select-checkbox[hidden] {
     display: none;
   }
@@ -74,14 +80,13 @@
     [[__computeStatsLine2(item)]]
   </div>
 
+  <paper-icon-button hidden="[[!hideCheckbox]]"
+                     icon="app-icons:more-vert"
+                     on-click="__moreBtnClicked">
+  </paper-icon-button>
+
   <processing-icon item="[[item]]"></processing-icon>
 </div>
-
-
-<select-checkbox checked="[[_selected]]"
-                 hidden="[[hideCheckbox]]"
-                 on-click="__itemClicked">
-</select-checkbox>
 
 
 <upload-controls id="uploadControls"
@@ -91,6 +96,12 @@
                  field="[[field]]"
                  file="[[item.file]]">
 </upload-controls>
+
+
+<select-checkbox checked="[[_selected]]"
+                 hidden="[[hideCheckbox]]"
+                 on-click="__itemClicked">
+</select-checkbox>
 
 
 <quick-options id="options" 
