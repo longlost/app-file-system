@@ -70,6 +70,13 @@ exports.init = (admin, functions) => {
         const fileDir  = path.dirname(filePath);
         const fileName = path.basename(filePath);
         const fileExt  = path.extname(filePath);
+
+        // Exit if the image is already a thumbnail or already optimized.
+        if (fileName.startsWith(THUMB_PREFIX) || fileName.startsWith(OPTIM_PREFIX)) {
+          console.log('Exiting. Already processed.');
+          return null;
+        }
+
         // Create random filenames with same extension as uploaded file.
         const randomFileName     = getRandomFileName(fileExt);
         const randomFileName2    = getRandomFileName(fileExt);
@@ -82,13 +89,15 @@ exports.init = (admin, functions) => {
         const thumbFilePath      = getNewFilePath(fileDir, THUMB_PREFIX, fileName);
         const bucket             = admin.storage().bucket(object.bucket);
         const fileRef            = bucket.file(filePath);
-        // Create the temp directory where the storage file will be downloaded.
-        await mkdirp(tempLocalDir); 
 
-        await Promise.all([
-          fileRef.makePublic(), // Allow the original to be downloaded publicly.
-          fileRef.download({destination: tempLocalFile}) // Download file from bucket.
-        ]);
+        // Create the temp directory where the storage file will be downloaded.
+        await mkdirp(tempLocalDir);
+
+        // Allow the original to be downloaded publicly.
+        await fileRef.makePublic();
+
+        // Download file from bucket.
+        await fileRef.download({destination: tempLocalFile}); 
 
         // Best attempt at a happy medium of size/quality.
         const optimOptions = [
@@ -150,43 +159,34 @@ exports.init = (admin, functions) => {
         // Delete the local files to free up disk space.
         fs.unlinkSync(tempLocalOptimFile);
         fs.unlinkSync(tempLocalThumbFile);
-        fs.unlinkSync(tempLocalFile);  
+        fs.unlinkSync(tempLocalFile); 
 
+        // Get a url that is secured with a
+        // revocable access token.
+        const getUrl = async toFilePath => {
+          const ref = bucket.file(toFilePath);
+          const meta = await ref.getMetadata();
+          return meta[0].mediaLink;
+        };
 
-        // !!!!!!!!!!!!!!!! Code sample below does not work as of 11/6/2018 !!!!!!!!!!!!!!!!!!!!!!
-        //    This would be the perfered best practice way to get a 
-        //    new download url for the processed image, but
-        //    it becomes invalid after 10/12 days because of gcs service 
-        //    account keys getting renewed in their backend.  
-        //    see: https://github.com/googleapis/nodejs-storage/issues/244
-        // Get the Signed URLs for the thumbnail and original image.
-        // const config = {
-        //   action:  'read',
-        //   expires: '03-01-2500',
-        // };
-        // const file  = bucket.file(filePath);
-        // // Go to your project's Cloud Console > IAM & admin > IAM, 
-        // // Find the App Engine default service account and ADD
-        // // the Service Account Token Creator ROLE to that member. 
-        // // This will allow your app to create signed public URLs to the images.
-        // const [url]      = await file.getSignedUrl(config);
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-        const getUrl = path => 
-          `https://storage.googleapis.com/${object.bucket}/${path}`; // Short term workaround/hack.
+        const [
+          original, 
+          optimized, 
+          thumbnail
+        ] = await Promise.all([
+          getUrl(filePath), 
+          getUrl(optimFilePath), 
+          getUrl(thumbFilePath)
+        ]);        
         
-        const words     = fileDir.split('/');
-        const coll      = words.slice(0, words.length - 1).join('/');
-        const doc       = words[words.length - 1];
-        const original  = getUrl(filePath); 
-        const optimized = getUrl(optimFilePath);
-        const thumbnail = getUrl(thumbFilePath);
+        const words = fileDir.split('/');
+        const coll  = words.slice(0, words.length - 1).join('/');
+        const doc   = words[words.length - 1];
 
         // Fully dynamic save to firestore doc.
         await admin.firestore().collection(coll).doc(doc).set(
           {
-            [metadata.field]: { // <file-uploader> custom element field prop on client.
+            [metadata.field]: { // <app-file-system> custom element 'field' prop on client.
               [metadata.uid]: {
                 optimized,
                 original,

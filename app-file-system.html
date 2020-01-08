@@ -10,18 +10,7 @@
     font-size: 20px;
   }
 
-  .rename-modal-images {
-    height:       64px;
-    width:        64px;
-    margin-right: 8px;
-  }
-
-  .card-actions {
-    display:         flex;
-    justify-content: flex-end;
-  }
-
-  .dismiss-btn {
+  #dismiss-btn {
     color: var(--app-primary-color);
   }
 
@@ -73,6 +62,9 @@
 </app-spinner>
 
 
+<share-modal id="shareModal"></share-modal>
+
+
 <app-modal id="deleteConfirmModal"
            heading="Confirm Delete">
 
@@ -89,10 +81,9 @@
     </p>
   </div>
 
-  <div class="card-actions" 
-       slot="card-actions-slot">
+  <div slot="card-actions-slot">
 
-    <paper-button class="dismiss-btn" 
+    <paper-button id="dismiss-btn" 
                   on-click="__dismissDeleteBtnClicked">
       dismiss
     </paper-button> 
