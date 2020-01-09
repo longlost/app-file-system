@@ -12,6 +12,7 @@ const spawn  = require('child-process-promise').spawn;
 const OPTIM_MAX_WIDTH = 1024;
 const THUMB_MAX_WIDTH = 256;
 const OPTIM_PREFIX    = 'optim_';
+const SHARE_PREFIX    = 'share_';
 const THUMB_PREFIX    = 'thumb_';
 
 
@@ -19,6 +20,13 @@ const getRandomFileName = ext => `${crypto.randomBytes(20).toString('hex')}${ext
 const getTempLocalFile  = name => path.join(os.tmpdir(), name);
 const getNewFilePath    = (dir, prefix, name) => 
                             path.normalize(path.join(dir, `${prefix}${name}`));
+
+const getCollAndDoc = dir => {
+  const segments = dir.split('/');
+  const coll     = path.join(segments.slice(0, segments.length - 1));
+  const doc      = segments[segments.length - 1];
+  return {coll, doc};
+};
 
 
 exports.init = (admin, functions) => {
@@ -40,7 +48,7 @@ exports.init = (admin, functions) => {
   //
   // Dynamically merges the url data into 
   // the appropriate coll, doc and field.
-  const optimizeStorageImages = functions.
+  const optimize = functions.
     runWith({timeoutSeconds: 300}). // Extended runtime of 5 min. for large files (default 60 sec).
     storage.
     object().
@@ -91,8 +99,8 @@ exports.init = (admin, functions) => {
         const tempLocalDir       = path.dirname(tempLocalFile);
         const tempLocalOptimFile = getTempLocalFile(randomFileName2);    
         const tempLocalThumbFile = getTempLocalFile(randomFileName3);
-        const optimFilePath      = getNewFilePath(fileDir, OPTIM_PREFIX, fileName);
-        const thumbFilePath      = getNewFilePath(fileDir, THUMB_PREFIX, fileName);
+        const optimPath          = getNewFilePath(fileDir, OPTIM_PREFIX, fileName);
+        const thumbPath          = getNewFilePath(fileDir, THUMB_PREFIX, fileName);
         const bucket             = admin.storage().bucket(object.bucket);
         const fileRef            = bucket.file(filePath);
 
@@ -140,10 +148,8 @@ exports.init = (admin, functions) => {
         ]);
         
         const newMetadata = {
-
-          contentDisposition: null,
-
-
+          // Setting new contentDisposition here has no effect.
+          // Can only be done on client with Storage SDK.
           metadata: {
             'field':         metadata.field,
             'processed':    'true',
@@ -155,12 +161,12 @@ exports.init = (admin, functions) => {
         // Upload new images.
         await Promise.all([
           bucket.upload(tempLocalOptimFile, {
-            destination:    optimFilePath, 
+            destination:    optimPath, 
             predefinedAcl: 'publicRead', 
             metadata:       newMetadata
           }),
           bucket.upload(tempLocalThumbFile, {
-            destination:    thumbFilePath, 
+            destination:    thumbPath, 
             predefinedAcl: 'publicRead', 
             metadata:       newMetadata
           })
@@ -178,17 +184,10 @@ exports.init = (admin, functions) => {
           return meta[0].mediaLink;
         };
 
-        const [
-          optimized, 
-          thumbnail
-        ] = await Promise.all([
-          getUrl(optimFilePath), 
-          getUrl(thumbFilePath)
-        ]);        
-        
-        const words = fileDir.split('/');
-        const coll  = words.slice(0, words.length - 1).join('/');
-        const doc   = words[words.length - 1];
+        const [optimized, thumbnail] = 
+          await Promise.all([getUrl(optimPath), getUrl(thumbPath)]); 
+
+        const {coll, doc} = getCollAndDoc(fileDir);
 
         // Fully dynamic save to firestore doc.
         await admin.firestore().collection(coll).doc(doc).set(
@@ -196,6 +195,7 @@ exports.init = (admin, functions) => {
             [metadata.field]: { // <app-file-system> custom element 'field' prop on client.
               [metadata.uid]: {
                 optimized,
+                sharePath: optimPath, // Used to get a shareable link.
                 thumbnail
               }
             }
@@ -211,5 +211,54 @@ exports.init = (admin, functions) => {
       }
     });
 
-  return optimizeStorageImages;
+  // Create a copy of the original file so that the client
+  // can update the metadata of the shareable copy to better
+  // suit viewing in a browser rather than dowloading.
+  const createShareable = functions.https.onCall(async data => {
+    try {
+
+      // Can pass a bucketName to use a different bucket than the default.
+      const {bucketName, field, path: filePath, type, uid} = data;
+
+      if (!field || !filePath || !type || !uid) {
+        throw new functions.https.HttpsError('unknown', 'createShareable missing args.');
+      }
+
+      // Exit if this is triggered on a file that is an image.
+      if (type.startsWith('image/')) {
+        console.log('This file is an image. Not copying.');
+        return null;
+      }
+
+      const fileDir   = path.dirname(filePath);
+      const fileName  = path.basename(filePath);
+      const sharePath = getNewFilePath(fileDir, SHARE_PREFIX, fileName);      
+      const bucket    = admin.storage().bucket(bucketName); // 'bucketName' optional.
+      const original  = bucket.file(filePath);
+
+      await original.copy(sharePath);
+      
+      const {coll, doc} = getCollAndDoc(fileDir);
+
+      // Fully dynamic save to firestore doc.
+      await admin.firestore().collection(coll).doc(doc).set(
+        {
+          [field]: { // <app-file-system> custom element 'field' prop on client.
+            [uid]: {
+              sharePath // Used to get a shareable link.
+            }
+          }
+        }, 
+        {merge: true}
+      );
+
+      return null;
+    }
+    catch (error) {
+      console.error(error);
+      throw new functions.https.HttpsError('unknown', 'createShareable error', error);
+    }
+  });
+
+  return {createShareable, optimize};
 };
