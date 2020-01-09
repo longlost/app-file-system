@@ -41,6 +41,11 @@
     tslib "1.10.0"
     xmlhttprequest "1.8.0"
 
+"@firebase/auth-interop-types@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@firebase/auth-interop-types/-/auth-interop-types-0.1.1.tgz#b3e1bc5ea8b2df1c376b5fc14aae8a3572dbcace"
+  integrity sha512-rNpCOyCspZvNDoQVQLQQgWAGBMB2ClCWKN1c8cEFgLNFgnMJrjVB+tcL7KW2q2UjKa7l8Mxgwys7szTiEDAcvA==
+
 "@firebase/auth-types@0.9.3":
   version "0.9.3"
   resolved "https://registry.yarnpkg.com/@firebase/auth-types/-/auth-types-0.9.3.tgz#c2e719a9911486177c31fb0c25a857e82c455e0d"
@@ -80,6 +85,19 @@
     faye-websocket "0.11.3"
     tslib "1.10.0"
 
+"@firebase/database@0.5.17":
+  version "0.5.17"
+  resolved "https://registry.yarnpkg.com/@firebase/database/-/database-0.5.17.tgz#67631f57b1f809bea4c5c528cd951e8a502882f6"
+  integrity sha512-nufRBK1p2adTEDvUQ1lEfa0nd2BvBe6tlDbO0q9zMQaTMg9dDjTomKRsc3byyRDhhTwDNwX4oUCFCTNTOHoKaA==
+  dependencies:
+    "@firebase/auth-interop-types" "0.1.1"
+    "@firebase/component" "0.1.1"
+    "@firebase/database-types" "0.4.10"
+    "@firebase/logger" "0.1.33"
+    "@firebase/util" "0.2.36"
+    faye-websocket "0.11.3"
+    tslib "1.10.0"
+
 "@firebase/firestore-types@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@firebase/firestore-types/-/firestore-types-1.9.0.tgz#078ebb2728eb7d3d87ff5785b1fbcda07a183d39"
@@ -89,6 +107,20 @@
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-1.9.0.tgz#ee6727d7c670500ce22016956ac3d87494c58b57"
   integrity sha512-bcVfzGmj5qweUD1eYcezoCYeVl6oNlkc+s47EJBoNrmvWuvKeaiUy+RhB6hFblJCXUmecCuYUT2UA7CKipbEIQ==
+  dependencies:
+    "@firebase/component" "0.1.1"
+    "@firebase/firestore-types" "1.9.0"
+    "@firebase/logger" "0.1.33"
+    "@firebase/util" "0.2.36"
+    "@firebase/webchannel-wrapper" "0.2.34"
+    "@grpc/proto-loader" "^0.5.0"
+    grpc "1.24.2"
+    tslib "1.10.0"
+
+"@firebase/firestore@1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-1.9.1.tgz#bef0f8617aed7416de5ac842583a2ffafea07eeb"
+  integrity sha512-b3MsfyXxE65HirKdR9R/EI++1esyU4Mg8UN5LA+3Kbov7qMAPqHpXdrZy1v4Ng3+ZA2NC7Y08boaIgudr98sGA==
   dependencies:
     "@firebase/component" "0.1.1"
     "@firebase/firestore-types" "1.9.0"
@@ -341,14 +373,14 @@
     "@polymer/paper-icon-button" "^3.0.2"
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/boot@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@longlost/boot/-/boot-1.2.2.tgz#dbd5a34be988da879c2ccdb8001ef19ad17f833f"
-  integrity sha512-jlaMP0SOwerus4325cULMPPHkVGvI6Wa7OW6yjeuXRyDEN9srZeFboO+JnHw4HX+DUbYeTbQGuOzU7ICxe/D2g==
+"@longlost/boot@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@longlost/boot/-/boot-1.2.3.tgz#d2b11ec0974b14219bac2aa2aea732e8fcf56cb8"
+  integrity sha512-ukK83J4dygE8IXaje2mXGO05wAMxQEBXCthZ4dFtKrewtRi+ZvZxdHlct+HHWDH61pdXL64u+sw+cb6/xylTdQ==
   dependencies:
     "@longlost/utils" "^1.3.5"
     "@polymer/paper-styles" "^3.0.1"
-    firebase "^7.6.0"
+    firebase "^7.6.1"
     scroll-behavior-polyfill "^2.0.13"
     web-animations-js "^2.3.2"
     workbox-window "^4.3.1"
@@ -433,15 +465,15 @@
   dependencies:
     "@longlost/utils" "^1.1.6"
 
-"@longlost/services@^3.0.5":
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/@longlost/services/-/services-3.0.5.tgz#9d7c6f04fcefe7e389afa03f353732716bcd4ea3"
-  integrity sha512-eYIk/LaJrnOE4E23In/oX5yk2so0O4JTZQq+OZ0ItbU8IPlv6pAddwcGNyDHSDjFxnRlWWJXGshh9Dk+M0Docg==
+"@longlost/services@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@longlost/services/-/services-3.1.0.tgz#c9b34a55046984eb13368bd0d4c0f13aef191cca"
+  integrity sha512-1ywDRoigyYK0J7iHxebjiG+2YemSq78uLLKYz6d/vqH1KMOpfgnrWVpLZGEFdvXDE5CMCMxg8DxKDpNMczWX0w==
   dependencies:
     "@firebase/app-types" "^0.5.0"
     "@firebase/util" "^0.2.36"
-    "@longlost/boot" "^1.2.2"
-    firebase "^7.6.0"
+    "@longlost/boot" "^1.2.3"
+    firebase "^7.6.1"
 
 "@longlost/utils@^1.1.6", "@longlost/utils@^1.2.4", "@longlost/utils@^1.3.5":
   version "1.3.5"
@@ -835,10 +867,10 @@
   resolved "https://registry.yarnpkg.com/@webcomponents/shadycss/-/shadycss-1.9.3.tgz#74ee4be13f5374724aecb3d2c2de77523e01ada9"
   integrity sha512-fRuET+UGrH84hG0UF4iHbFqWZKUoan4/ki+iCOJ/vnKltPSHv/ZVbcA6sT/pRreznt8aKEGqN2KdHvgRxn4xjA==
 
-"@webcomponents/webcomponentsjs@^2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-2.4.0.tgz#e9dd031d24c234eff8824f7560e5c0c605d3d6a0"
-  integrity sha512-kEClEz2nu9/i6SvyBJTV4pCc6CyCzMhK7zEeJ6QhiJoulBp4YZ06Zfj2E2HUXfWfHJIjtKriJYMtfhettKEjEg==
+"@webcomponents/webcomponentsjs@^2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-2.4.1.tgz#7baadec56ed2fd79b94ddfd509132d8c0c295c5c"
+  integrity sha512-7jxBb+KoWncKb/JGFyTY40PjV4yRx2zd35ZLuvRP+6WndJDL7X32ZIZ7bN3sSQIl+NzJkCo7chfXJyzn+6WZaQ==
 
 abbrev@1:
   version "1.1.1"
@@ -1230,7 +1262,7 @@ find-up@3.0.0, find-up@^3.0.0:
   dependencies:
     locate-path "^3.0.0"
 
-firebase@^7.2.3, firebase@^7.6.0:
+firebase@^7.2.3:
   version "7.6.0"
   resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.6.0.tgz#63fbbf9b878f85e670db919e3e189152c2cda7df"
   integrity sha512-4hjPrcNDF3E3vvoe+IDcnxu+Z4w7xxDBHZAmLjTAPPmtc8Ifb6vJ99tESGIb0Ncx+5Bl1nZK9um6qTf9fgGtqA==
@@ -1241,6 +1273,26 @@ firebase@^7.2.3, firebase@^7.6.0:
     "@firebase/auth" "0.13.3"
     "@firebase/database" "0.5.16"
     "@firebase/firestore" "1.9.0"
+    "@firebase/functions" "0.4.28"
+    "@firebase/installations" "0.3.8"
+    "@firebase/messaging" "0.6.0"
+    "@firebase/performance" "0.2.28"
+    "@firebase/polyfill" "0.3.30"
+    "@firebase/remote-config" "0.1.9"
+    "@firebase/storage" "0.3.22"
+    "@firebase/util" "0.2.36"
+
+firebase@^7.6.1:
+  version "7.6.1"
+  resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.6.1.tgz#ef9bf74d9d0d9fc2b3ac5945769c3d62ca076458"
+  integrity sha512-rrKp2cWmrH3gdxr+3t97t6eGye4VJTOYo6U98jvGi+OA4ZSKTSrCMXN6nZkAVOkSCvn/fgw//oHV+7VsJskB/Q==
+  dependencies:
+    "@firebase/analytics" "0.2.9"
+    "@firebase/app" "0.5.0"
+    "@firebase/app-types" "0.5.0"
+    "@firebase/auth" "0.13.3"
+    "@firebase/database" "0.5.17"
+    "@firebase/firestore" "1.9.1"
     "@firebase/functions" "0.4.28"
     "@firebase/installations" "0.3.8"
     "@firebase/messaging" "0.6.0"

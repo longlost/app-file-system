@@ -155,8 +155,7 @@ class UploadControls extends AppElement {
   } 
 
 
-  __uploadFinished(data) {
-    const {url, path}     = data;
+  __uploadFinished({path, url}) {
     const {uid}           = this.file;
     this._controls        = undefined;
     this._state           = 'Done';
@@ -213,16 +212,16 @@ class UploadControls extends AppElement {
       this._state    = capitalize(state);
     };
 
-    const dir  = `${this.coll}/${this.doc}`;
+    const name = `${file.uid}${file.ext}`;
+    const path = `${this.coll}/${this.doc}/${name}`;
 
     services.fileUpload({
       controlsCallback:     controlsCallback,
-      dir, 
       doneCallback:         doneCallback,
       errorCallback:        errorCallback, 
       file,
-      metadata, 
-      name:                 file.uid, 
+      metadata,
+      path,
       stateChangedCallback: stateChangedCallback
     });
   }

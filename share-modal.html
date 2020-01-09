@@ -1,29 +1,29 @@
 
 <style>
 
-	#content {
-		display: 		 flex;
-		align-items: center;
-	}
+  #content {
+    display:     flex;
+    align-items: center;
+  }
 
-	iron-icon {
-		min-height: 24px;
-		min-width:  24px;
-		margin-right: 8px;
-	}
+  iron-icon {
+    min-height: 24px;
+    min-width:  24px;
+    margin-right: 8px;
+  }
 
-	p {
-		width: 			 100%;
-    max-width: 	 calc(100vw - 138px);
-		overflow-y:  auto;
-		white-space: nowrap;
-	}
+  p {
+    width:       100%;
+    max-width:   calc(100vw - 138px);
+    overflow-y:  auto;
+    white-space: nowrap;
+  }
 
-	paper-icon-button {
-		min-width: 40px;
-	}
+  paper-icon-button {
+    min-width: 40px;
+  }
 
-	paper-icon-button,
+  paper-icon-button,
   #dismiss-btn {
     color: var(--app-primary-color);
   }
@@ -35,12 +35,12 @@
            heading="Here's Your Link">
 
   <div id="content" 
-  		 slot="card-content-slot">
-  	<iron-icon icon="file-icons:link"></iron-icon>
+       slot="card-content-slot">
+    <iron-icon icon="file-icons:link"></iron-icon>
     <p>[[_shareLink]]</p>
     <paper-icon-button hidden="[[_hideCopyBtn]]"
-    									 icon="file-icons:content-copy"
-    									 on-click="__copyBtnClicked">
+                       icon="file-icons:content-copy"
+                       on-click="__copyBtnClicked">
     </paper-icon-button>
   </div>
 
@@ -54,7 +54,7 @@
   </div>
 
   <app-spinner id="spinner" 
-  						 slot="card-overlay-slot">
+               slot="card-overlay-slot">
   </app-spinner>
 
 </app-modal>

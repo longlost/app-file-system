@@ -62,7 +62,10 @@
 </app-spinner>
 
 
-<share-modal id="shareModal"></share-modal>
+<share-modal id="shareModal"
+             item="[[_shareItem]]"
+             on-is-shareable="__updateShareable">
+</share-modal>
 
 
 <app-modal id="deleteConfirmModal"

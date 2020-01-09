@@ -113,6 +113,17 @@ export const EventsMixin = superClass => {
 
 	      _shareListenerKey: Object,
 
+	      // Using a seperate data-binding here
+	      // so the <share-modal> can receive updates
+	      // dynamically to item if it's still being 
+	      // uploaded or processing in the cloud.
+	      _shareItem: {
+	      	type: Object,
+	      	computed: '__computeShareItem(_shareUid, _items)'
+	      },
+
+	      _shareUid: String,
+
 	      _sortedListenerKey: Object,
 
       	_uploadListenerKey: Object
@@ -219,6 +230,13 @@ export const EventsMixin = superClass => {
 	    unlisten(this._sortedListenerKey);
 	    unlisten(this._uploadListenerKey);
 	    this.__unsub();
+	  }
+
+	  // So <share-modal can receive real-time updates to item.
+	  __computeShareItem(uid, items) {
+	  	if (!uid || !Array.isArray(items) || items.length === 0) { return; }
+
+	  	return items.find(item => item.uid === uid);
 	  }
 
 	  // Will NOT download multiple files in Chrome when dev tools is open!!
@@ -418,8 +436,17 @@ export const EventsMixin = superClass => {
 
 
 	  async __shareItem(event) {
+	  	const {item} 	 = event.detail;
+	  	this._shareUid = item.uid;
+	  	await schedule();
 	  	await import('./share-modal.js');
-	  	this.$.shareModal.open(event.detail.item);
+	  	this.$.shareModal.open();
+	  }
+
+	  // From <share-modal> 'is-shareable' event.
+	  __updateShareable(event) {
+	  	const {item} = event.detail;
+	  	this.__saveFileData({[item.uid]: item});
 	  }
 
 	  // <file-sources> 'files-changed' event.
