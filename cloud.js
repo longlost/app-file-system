@@ -141,7 +141,7 @@ exports.init = (admin, functions) => {
         
         const newMetadata = {
 
-          contentDisposition: 'inline',
+          contentDisposition: null,
 
 
           metadata: {
@@ -173,13 +173,8 @@ exports.init = (admin, functions) => {
 
         // Get a download url.
         const getUrl = async toFilePath => {
-          const ref  = bucket.file(toFilePath);
-          // const meta = await ref.getMetadata();
-
-          const meta = await ref.setMetadata(newMetadata);
-
-
-
+          const f    = bucket.file(toFilePath);
+          const meta = await f.getMetadata();
           return meta[0].mediaLink;
         };
 
