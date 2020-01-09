@@ -23,7 +23,7 @@ const getNewFilePath    = (dir, prefix, name) =>
 
 const getCollAndDoc = dir => {
   const segments = dir.split('/');
-  const coll     = path.join(segments.slice(0, segments.length - 1));
+  const coll     = path.join(...segments.slice(0, segments.length - 1));
   const doc      = segments[segments.length - 1];
   return {coll, doc};
 };

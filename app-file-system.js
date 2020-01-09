@@ -550,11 +550,29 @@ class AppFileSystem extends EventsMixin(AppElement) {
     try {
       await this.$.spinner.show('Deleting files.');
 
+      // const promises = uids.map(uid => this.__delete(uid));
+
+      // this.$.lists.cancelUploads(uids);
+
+      // await Promise.all(promises);
+
+
       const promises = uids.map(uid => this.__delete(uid));
 
       this.$.lists.cancelUploads(uids);
 
-      await Promise.all(promises);
+      const iterate = promises => {
+        const run = async index => {
+          if (index === promises.length) { return; }
+          await promises[index]();
+          run(index + 1);
+        };
+
+        return run(0);
+      };
+
+      // One at a time to avoid races with 'services.set()'.
+      await iterate(promises);
     }
     catch (error) {
       console.error(error);
