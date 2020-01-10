@@ -321,18 +321,17 @@ class FileSources extends AppElement {
   }
 
 
-  __computeRenameModalHeading(multiple) {
-    return multiple ? 'Rename Files' : 'Rename File';
+  __computeRenameModalHeading(files) {
+    if (!Array.isArray(files)) { return ''; }
+
+    return files.length > 1 ? 'Rename Files' : 'Rename File';
   }
 
 
-  __computeRenameModalPural(multiple) {
-    return multiple ? 'these files' : 'this file';
-  }
+  __computeRenameModalPural(files) {    
+    if (!Array.isArray(files)) { return ''; }
 
-
-  __computeRenameModalText(multiple) {
-    return multiple ? 'File names MUST be unique.' : 'The name MUST be unique.';
+    return files.length > 1 ? 'these files' : 'this file';
   }
 
 

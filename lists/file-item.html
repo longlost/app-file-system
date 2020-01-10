@@ -31,12 +31,20 @@
     margin-right: 8px;
   }
 
-  #label-stats {
+  #label-body {
     display:         flex;
     justify-content: space-between;
     align-items:     flex-end;
     height:          40px;
     padding:         0px 0px 4px 8px;
+  }
+
+  #label-stats {
+    /* 
+      Truncate text and don't push 
+      more-vert icon-button out of view. 
+    */
+    width: calc(100% - 40px);
   }
 
   .label-stat {
@@ -74,8 +82,8 @@
     </div>
   </div>
 
-  <div id="label-stats">
-    <div>
+  <div id="label-body">
+    <div id="label-stats">
       <div class="label-stat shared-single-line-truncate">
         [[__computeStatsLine1(item)]]
       </div>

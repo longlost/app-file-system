@@ -562,12 +562,12 @@
   resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.0.4.tgz#a6c6279faa88668c44f5903032c5334d7dac0d51"
   integrity sha512-4z/x0PvFcdc3Oxa3HXuf2r9LzUdBJoIt73HO0q8RSJpAZusJmNv+0AvX8TrRRaSyKhtT9om4RCXq/G9d4vCzBg==
 
-"@longlost/lazy-image@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@longlost/lazy-image/-/lazy-image-1.1.0.tgz#16b20aadc9dc925c7d893ddfd053be71a563cf8a"
-  integrity sha512-FOluaDt4PP3Ki/gPJRceqCZVygfYnknrH5/WEkKgqqC4qWEuHSiGXDRnaznb9YWyzs2wTD1fuP+r1qGrto17zA==
+"@longlost/lazy-image@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@longlost/lazy-image/-/lazy-image-1.1.1.tgz#2b3dae44c61a4e0a65af0e37216bd1dd78b8f3fa"
+  integrity sha512-3S0Vg0sTmS6YBPaxfeIBKBOwY3ocqtADMToj1iI8Q4CO06WPL1qAP2vCq6PsYS2+e+9ICy9KCiqjoub4Vva4hQ==
   dependencies:
-    "@longlost/app-element" "^1.0.4"
+    "@longlost/app-element" "^1.0.6"
     "@longlost/utils" "^1.3.5"
     "@polymer/iron-image" "^3.0.2"
     "@polymer/polymer" "^3.3.1"

@@ -94,14 +94,14 @@
 
 
 <app-modal id="renameFilesModal"
-           heading="[[__computeRenameModalHeading(multiple)]]">
+           heading="[[__computeRenameModalHeading(_filesToRename)]]">
   <div id="content-div" 
        slot="card-content-slot">
     <p>
-      Do you want to rename [[__computeRenameModalPural(multiple)]]?
+      Do you want to rename [[__computeRenameModalPural(_filesToRename)]] now?
     </p>
     <p>
-      [[__computeRenameModalText(multiple)]]      
+      You can also rename your files anytime in the file editor.
     </p>
 
     <div id="modal-items">
