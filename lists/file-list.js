@@ -53,6 +53,7 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import {
+  hijackEvent,
   listen,
   unlisten
 }                 from '@longlost/utils/utils.js';
@@ -110,7 +111,8 @@ class FileList extends AppElement {
       // Set to true to hide <select-checkbox>'s
       _hideCheckboxes: {
         type: Boolean,
-        value: true
+        value: true,
+        computed: '__computeHideCheckboxes(_selectState)'
       },
 
       // Do no show print icon button unless
@@ -123,7 +125,12 @@ class FileList extends AppElement {
         computed: '__computeHidePrintBtn(items)'
       },
 
-      _selectActiveListenerKey: Object,
+      // Do not show multi-select icon button when there are no items.
+      _hideSelectBtn: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideSelectBtn(items)'
+      },
 
       // Display a badge with the selected item count.
       _selectedCount: {
@@ -138,10 +145,30 @@ class FileList extends AppElement {
         value: () => ({})
       },
 
-      _showBadge: {
+      // Data-bound to <file-items>.
+      // All item checkboxes selected when true.
+      _selectAll: {
         type: Boolean,
         value: false,
-        computed: '__computeShowBadge(_selectedCount)'
+        computed: '__computeSelectAll(_selectState)'
+      },
+
+      // Select icon button tri-state.
+      _selectState: {
+        type: String,
+        value: 'none' // Or 'multi', or 'all'.
+      },
+
+      _showAllBadge: {
+        type: Boolean,
+        value: false,
+        computed: '__computeShowAllBadge(_selectedCount, items)'
+      },
+
+      _showCountBadge: {
+        type: Boolean,
+        value: false,
+        computed: '__computeShowCountBadge(_selectedCount)'
       }
 
     };
@@ -150,12 +177,6 @@ class FileList extends AppElement {
 
   connectedCallback() {
     super.connectedCallback();
-
-    this._selectActiveListenerKey = listen(
-      this.select('paper-icon-button', this.$.selectBtn),
-      'active-changed',
-      this.__selectBtnActiveChanged.bind(this)
-    );
 
     this._itemsSelectedListenerKey = listen(
       this,
@@ -168,7 +189,6 @@ class FileList extends AppElement {
   disconnectedCallback() {
     super.disconnectedCallback();
 
-    unlisten(this._selectActiveListenerKey);
     unlisten(this._itemsSelectedListenerKey);
   }
 
@@ -183,10 +203,25 @@ class FileList extends AppElement {
   }
 
 
+  __computeHideCheckboxes(selectState) {
+    return selectState === 'none';
+  }
+
+
   __computeHidePrintBtn(items) {
-    if (!items || !Array.isArray(items)) { return true; }
+    if (!Array.isArray(items)) { return true; }
 
     return items.some(item => !item.type.includes('image'));
+  }
+
+
+  __computeHideSelectBtn(items) {
+    return !Array.isArray(items) || items.length === 0;
+  }
+
+
+  __computeSelectAll(selectState) {
+    return selectState === 'all';
   }
 
 
@@ -195,12 +230,21 @@ class FileList extends AppElement {
   }
 
 
-  __computeShowBadge(count) {
+  __computeShowAllBadge(count, items) {
+    if (!Array.isArray(items)) { return false; }
+
+    return count === items.length;
+  }
+
+
+  __computeShowCountBadge(count) {
     return count > 0;
   }
 
 
   __itemSelected(event) {
+    hijackEvent(event);
+
     const {item, selected} = event.detail;
     const {uid} = item;
 
@@ -246,10 +290,28 @@ class FileList extends AppElement {
   }
 
 
-  __selectBtnActiveChanged(event) {
-    const {value} = event.detail;
+  async __selectBtnClicked() {
+    try {
+      await this.clicked();
 
-    this._hideCheckboxes = !value;
+      switch (this._selectState) {
+        case 'none':
+          this._selectState = 'multi';
+          break;
+        case 'multi':
+          this._selectState = 'all';
+          break;
+        case 'all':
+          this._selectState = 'none';
+          break;
+        default:
+          throw new Error('_selectState does not have a valid value.');
+      }
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
   }
 
 

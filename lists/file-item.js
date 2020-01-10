@@ -93,7 +93,7 @@ class FileItem extends AppElement {
       item: Object,
 
       // Selected/checked state.
-      _selected: {
+      selected: {
         type: Boolean,
         value: false
       },
@@ -102,7 +102,7 @@ class FileItem extends AppElement {
       // when the item is selected.
       _selectedClass: {
         type: String,
-        computed: '__computeSelectedClass(_selected)'
+        computed: '__computeSelectedClass(selected)'
       }
 
     };
@@ -113,7 +113,7 @@ class FileItem extends AppElement {
     return [
       '__hideCheckboxChanged(hideCheckbox)',
       '__itemChanged(item)',
-      '__selectedChanged(_selected)'
+      '__selectedChanged(selected)'
     ];
   }
 
@@ -150,7 +150,7 @@ class FileItem extends AppElement {
 
   __hideCheckboxChanged(hide) {
     if (hide) {
-      this._selected = false;
+      this.selected = false;
     }
     else {
       this.$.options.close();
@@ -159,7 +159,7 @@ class FileItem extends AppElement {
 
 
   __itemChanged() {
-    this._selected = false;
+    this.selected = false;
   }
 
 
@@ -192,7 +192,7 @@ class FileItem extends AppElement {
 
       await this.clicked();
       
-      this._selected = !this._selected;
+      this.selected = !this.selected;
     }
     catch (error) {
       if (error === 'click debounced') { return; }
