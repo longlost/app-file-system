@@ -119,7 +119,7 @@ export const EventsMixin = superClass => {
 	      // uploaded or processing in the cloud.
 	      _shareItem: {
 	      	type: Object,
-	      	computed: '__computeShareItem(_shareUid, _items)'
+	      	computed: '__computeShareItem(_shareUid, _dbData)'
 	      },
 
 	      _shareUid: String,
@@ -233,10 +233,10 @@ export const EventsMixin = superClass => {
 	  }
 
 	  // So <share-modal can receive real-time updates to item.
-	  __computeShareItem(uid, items) {
-	  	if (!uid || !Array.isArray(items) || items.length === 0) { return; }
+	  __computeShareItem(uid, data) {
+	  	if (!uid || !data) { return; }
 
-	  	return items.find(item => item.uid === uid);
+	  	return data[uid];
 	  }
 
 	  // Will NOT download multiple files in Chrome when dev tools is open!!

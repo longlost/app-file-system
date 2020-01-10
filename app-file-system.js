@@ -72,7 +72,7 @@
   *                                 original - public download url for full size original
   *
   *
-  *    'file-deleted' - Fired after user deletes a file.
+  *    'items-deleted' - Fired after user deletes a file item.
   *                     detail -> {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}
   *
   *     
@@ -154,19 +154,51 @@ const getImageFileDeletePaths = storagePath => {
 };
 
 
-const deleteStorageFiles = (storagePath, type) => {
+// Fails gracefully.
+const deleteStorageFiles = async item => {
 
-  // Test the file type.
-  // If its an image, 
-  // then delete the optim_ and 
-  // thumb_ files from storage as well.
-  if (type && type.includes('image')) {
-    const paths    = getImageFileDeletePaths(storagePath);
-    const promises = paths.map(p => services.deleteFile(p));
-    return Promise.all(promises);
+  // Use try catches here to safely delete
+  // residual items that have been unsuccessfully
+  // or incompletely deleted previously.
+  // This sometimes happens with slow connections.
+  try {
+
+    const {sharePath, path: storagePath, type} = item;
+
+    if (storagePath) {    
+      // Test the file type.
+      // If its an image, 
+      // then delete the optim_ and 
+      // thumb_ files from storage as well.
+      if (type && type.includes('image')) {
+        const paths    = getImageFileDeletePaths(storagePath);
+        const promises = paths.map(p => services.deleteFile(p));
+
+        // 'await' here to catch errors and fail gracefully.
+        await Promise.all(promises);
+        return;
+      }
+
+      if (sharePath) {
+        await Promise.all([
+          services.deleteFile(sharePath),
+          services.deleteFile(storagePath)
+        ]);
+        return;
+      }
+
+      await services.deleteFile(storagePath);
+    }
   }
-
-  return services.deleteFile(storagePath);
+  catch (error) {
+    if (error.message && error.message.includes('does not exist')) {
+      console.warn(`Storage Object already deleted. 
+        Continuing with Firestore data delete.`);
+    } 
+    else {
+      throw error;
+    }
+  }
 };
 
 
@@ -307,36 +339,54 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   __dbDataChanged(data) {
-    this.fire('data-changed', data);
+    this.fire('data-changed', {data});
   }
 
   // Listen for data changes.
   // Resolve the promise when the 
   // file item has an optimized prop.
-  __waitForCloudProcessing(uid) {
-    return new Promise(resolve => {
-      listen(this, 'data-changed', (event, key) => { // Local event.
-        const {optimized} = event.detail[uid];
-        if (optimized) { // Only present after processing.
-          unlisten(key);
-          resolve();
-        }
-      });
-    });    
+  __waitForCloudProcessing(item) {
+    const {optimized, original, type, uid} = item;
+
+    // An image that has been uploaded but not yet optimized.
+    if (type && type.includes('image') && original && !optimized) {
+
+      return new Promise(resolve => {
+
+        listen(this, 'data-changed', (event, key) => { // Local event.
+          const {optimized} = event.detail.data[uid];
+
+          if (optimized) { // Only present after processing.
+            unlisten(key);
+            resolve();
+          }
+        });
+      });    
+    }
+
+    return Promise.resolve();
   }
 
 
-  __deleteDbFileData(uid) { 
+  __deleteDbFileData(uids) { 
 
     // Filter out orphaned data that may have been caused
     // by deletions prior to cloud processing completion,
     // and filter out the item to be deleted by uid.
-    const values = Object.
-                     values(this._dbData).
-                     filter(obj => obj.uid && obj.uid !== uid);
+    const remainingItems = uids.reduce((accum, uid) => {
+
+      if (accum[uid]) {
+        delete accum[uid];
+      }
+
+      return accum;
+    }, {...this._dbData});
+
 
     // Cleanup indexes from items deleted from middle of list.
-    const ordered = values.
+    const ordered = Object.
+                      values(remainingItems).
+                      filter(item => item.uid).
                       sort((a, b) => a.index - b.index).
                       map((item, index) => ({...item, index}));
 
@@ -356,51 +406,39 @@ class AppFileSystem extends EventsMixin(AppElement) {
   }
 
 
-  async __delete(uid) {
+  async __delete(uids) {
 
     // Clone to survive deletion and fire with event.
-    const fileData = {...this._dbData[uid]}; 
-    const {
-      optimized, 
-      original, 
-      path: storagePath, 
-      type
-    } = fileData;
+    const items = uids.map(uid => ({...this._dbData[uid]}));
 
-    // An image that has been uploaded but not yet optimized.
-    if (type && type.includes('image') && original && !optimized) {
-      await this.__waitForCloudProcessing(uid);
-    }
+    // Make sure these two operations run synchronously
+    // for each item, but allow parallel at the items level.
+    const deleteFromStorage = async item => {
 
-    if (storagePath) {
+      // An image that has been uploaded but not yet optimized.
+      await this.__waitForCloudProcessing(item);
 
-      // Use try catch here to safely delete
-      // residual items that have been unsuccessfully
-      // or incompletely deleted previously.
-      // This sometimes happens with slow connections.
-      try {
-        await deleteStorageFiles(storagePath, type);
-      }
-      catch (error) {
-        if (error.message && error.message.includes('does not exist')) {
-          console.warn(`Storage Object already deleted. 
-            Continuing with Firestore data delete.`);
-        } 
-        else {
-          throw error;
-        }
-      }
-    }
+      // Fails gracefully.
+      return deleteStorageFiles(item);
+    };
+
+    const promises = items.map(item => deleteFromStorage(item));
+
+    await Promise.all(promises);
 
     // Adjust <file-items>'s <drag-drop-list> state correction.
-    this.$.lists.delete();  
+    uids.forEach(() => {
+      this.$.lists.delete();  
+    });
 
-    await this.__deleteDbFileData(uid);
+    await this.__deleteDbFileData(uids);
 
     // Garbage collect file data.
-    this.$.sources.delete(uid);
+    uids.forEach(uid => {
+      this.$.sources.delete(uid);
+    });
 
-    this.fire('file-deleted', fileData);
+    this.fire('items-deleted', {items});
   }
 
 
@@ -467,7 +505,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
       // Delete previous file and its data.
       if (this._items && this._items.length) {
         const {uid} = this._items[this._items.length - 1];
-        await this.__delete(uid);        
+        await this.__delete([uid]);        
       }
     }
 
@@ -504,7 +542,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
       this.$.lists.cancelUploads([uid]);
 
-      await this.__delete(uid);
+      await this.__delete([uid]);
     }
     catch (error) {
       console.error(error);
@@ -521,12 +559,11 @@ class AppFileSystem extends EventsMixin(AppElement) {
     try {
       await this.$.spinner.show('Deleting files.');
 
-      const uids     = Object.keys(this._dbData);
-      const promises = uids.map(uid => this.__delete(uid));
+      const uids = Object.keys(this._dbData);
 
       this.$.lists.cancelUploads();
 
-      await Promise.all(promises);
+      await this.__delete(uids);
       await services.deleteDocument({
         coll: this.coll,
         doc:  this.doc
@@ -550,29 +587,9 @@ class AppFileSystem extends EventsMixin(AppElement) {
     try {
       await this.$.spinner.show('Deleting files.');
 
-      // const promises = uids.map(uid => this.__delete(uid));
-
-      // this.$.lists.cancelUploads(uids);
-
-      // await Promise.all(promises);
-
-
-      const promises = uids.map(uid => this.__delete(uid));
-
       this.$.lists.cancelUploads(uids);
 
-      const iterate = promises => {
-        const run = async index => {
-          if (index === promises.length) { return; }
-          await promises[index]();
-          run(index + 1);
-        };
-
-        return run(0);
-      };
-
-      // One at a time to avoid races with 'services.set()'.
-      await iterate(promises);
+      await this.__delete(uids);
     }
     catch (error) {
       console.error(error);
