@@ -126,11 +126,13 @@ class ShareModal extends AppElement {
       }
       else {
         services.cloudFunction({
-          field,
-          name: 'createShareable', 
-          path, 
-          type,
-          uid
+          data: {
+            field,
+            path, 
+            type,
+            uid
+          },
+          name: 'createShareable'
         });
       }
     }
@@ -176,7 +178,7 @@ class ShareModal extends AppElement {
   __close() {
     this._isOpen = false;
     this.$.spinner.hide();
-    this.$.shareModal.close();
+    this.$.modal.close();
   }
 
 
