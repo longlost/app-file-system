@@ -40,7 +40,7 @@
           if="[[__computeLazyImageStamp(item.type)]]">
   <lazy-image class="item"
               alt="[[item.displayName]]"
-              orientation="[[item.orientation]]"
+              orientation="[[__computeOrientation(item.exif)]]"
               placeholder="[[__computeImgPlaceholder(item)]]"
               src="[[__computeImgSrc(item)]]"
               sizing="[[sizing]]"

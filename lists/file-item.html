@@ -16,30 +16,32 @@
 
   #label {
     position:         relative;
-    padding:          8px 8px 4px 8px;
     background-color: inherit; /* For <processing-icon> */
   }
 
   #label-name {
-    display:         flex;
-    align-items:     center;
-    height:          32px;
-    color:           var(--dark-text-color);
+    display:     flex;
+    align-items: center;
+    height:      32px;
+    padding:     8px 8px 0px 8px;
+    color:       var(--dark-text-color);
   }
 
   #label-order {
     margin-right: 8px;
   }
 
-  .label-stats {
-    font-size: 12px;
-    color:     var(--secondary-text-color);
+  #label-stats {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     flex-end;
+    height:          40px;
+    padding:         0px 0px 4px 8px;
   }
 
-  paper-icon-button {
-    position: absolute;
-    right:    0px;
-    bottom:   0px;
+  .label-stat {
+    font-size: 12px;
+    color:     var(--secondary-text-color);
   }
 
   select-checkbox[hidden] {
@@ -72,18 +74,22 @@
     </div>
   </div>
 
-  <div class="label-stats shared-single-line-truncate">
-    [[__computeStatsLine1(item)]]
-  </div>
+  <div id="label-stats">
+    <div>
+      <div class="label-stat shared-single-line-truncate">
+        [[__computeStatsLine1(item)]]
+      </div>
 
-  <div class="label-stats shared-single-line-truncate">
-    [[__computeStatsLine2(item)]]
-  </div>
+      <div class="label-stat shared-single-line-truncate">
+        [[__computeStatsLine2(item)]]
+      </div>
+    </div>
 
-  <paper-icon-button hidden="[[!hideCheckbox]]"
-                     icon="app-icons:more-vert"
-                     on-click="__moreBtnClicked">
-  </paper-icon-button>
+    <paper-icon-button hidden="[[!hideCheckbox]]"
+                       icon="app-icons:more-vert"
+                       on-click="__moreBtnClicked">
+    </paper-icon-button>
+  </div>
 
   <processing-icon item="[[item]]"></processing-icon>
 </div>
@@ -98,7 +104,7 @@
 </upload-controls>
 
 
-<select-checkbox checked="[[_selected]]"
+<select-checkbox checked="[[selected]]"
                  hidden="[[hideCheckbox]]"
                  on-click="__itemClicked">
 </select-checkbox>

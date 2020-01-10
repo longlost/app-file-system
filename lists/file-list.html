@@ -31,14 +31,29 @@
   }
 
   #selectBtn {
-    border-radius:      50%;
-    --badge-right:     -2px;
-    --upper-badge-top: -2px;
+    border-radius:        50%;    
+    --lower-badge-right: -50%;
+    --lower-badge-background-color: var(--app-accent-color); 
+    --upper-badge-right: -2px;
+    --upper-badge-top:   -2px;
   }
 
   #selectBtn[active] {
     background-color: var(--constant-light-text);
     color:            var(--app-primary-color);
+  }
+
+  #all-badge {
+    right:            6px;
+    top:              28px;
+    width:            24px;
+    height:           14px;
+    padding:          2px;
+    border-radius:    4px;
+    font-size:        12px;
+    pointer-events:   none;
+    background-color: var(--app-dark-color);
+    color:            var(--constant-light-text);
   }
 
 </style>
@@ -76,15 +91,22 @@
   <badged-icon-button id="selectBtn"
                       active$="[[!_hideCheckboxes]]"
                       alt="Multi-select"
+                      hidden="[[_hideSelectBtn]]"
                       icon="app-icons:check"
-                      show-upper="[[_showBadge]]"
+                      show-lower="[[_showAllBadge]]"
+                      show-upper="[[_showCountBadge]]"
                       slot="top-toolbar-buttons-slot"
-                      toggles
-                      upper-label="[[_selectedCount]]">
+                      upper-label="[[_selectedCount]]"
+                      on-click="__selectBtnClicked">
+    <div id="all-badge" 
+         slot="lower-badge">
+      All
+    </div>
   </badged-icon-button>
 
 
   <file-items id="fileItems"
+              all="[[_selectAll]]"
               coll="[[coll]]"
               doc="[[doc]]"
               field="[[field]]"

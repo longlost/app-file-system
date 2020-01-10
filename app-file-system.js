@@ -464,35 +464,40 @@ class AppFileSystem extends EventsMixin(AppElement) {
     const lastIndex = this._items ? this._items.length : 0;
 
     const newItems = files.reduce((accum, file) => {
-      const {        
+
+      // Cannot destructure the File object since it
+      // is not a true iterable JS object.
+      const {
+        _tempUrl,      
         basename,
-        displayName, 
+        displayName,
+        exif,
         ext,
         index,
-        orientation,
+        lastModified,
         size,  
         sizeStr,
         timestamp,
         type,
         uid,
-        _tempUrl
       } = file;
 
       accum[uid] = {
+        _tempUrl,
         basename,
         coll:     this.coll,
         displayName,
         doc:      this.doc,
+        exif,
         ext,
         field:    this.field,
         index:    index + lastIndex,
-        orientation,
+        lastModified,
         size, 
         sizeStr,
         timestamp,
         type,
-        uid,
-        _tempUrl
+        uid
       };
 
       return accum;

@@ -95,6 +95,26 @@ import './web-file-card.js';
 import './device-file-card.js';
 
 
+const KILOBYTE = 1024;
+const MEGABYTE = 1048576;
+
+const EXIF_TAGS = [
+  'DateTimeOriginal',   // Date and time string when image was originally created.
+  'GPSAltitude',        // Meters.
+  'GPSAltitudeRef',     // '0' - above sea level, '1' - below sea level.
+  'GPSDateStamp',       // UTC. 'YYYY:MM:DD'.
+  'GPSImgDirection',    // 'T' true north, or 'M' for magnetic north.
+  'GPSImgDirectionRef', // 0 - 359.99, degrees of rotation from north.
+  'GPSLatitude',        // Degrees, minutes, and seconds (ie. With secs - dd/1,mm/1,ss/1, or without secs dd/1,mmmm/100,0/1).
+  'GPSLatitudeRef',     // 'N' for north latitudes, 'S' for south latitudes.
+  'GPSLongitude',       // Degrees, minutes, and seconds (ie. With secs - dd/1,mm/1,ss/1, or without secs dd/1,mmmm/100,0/1).
+  'GPSLongitudeRef',    // 'E' for east longitudes, 'W' for west longitudes.
+  'GPSTimeStamp',       // UTC. hour, minute, sec.
+  'ImageDescription',   // User generated string for image (ie. 'Company picnic').
+  'Orientation'         // One of 8 values, most common are 1, 3, 6 and 8 since other are 'flipped' versions.
+];
+
+
 // These helpers used to compute _mimes.
 const trim = str => str.trim();
 const getAcceptEntries = compose(split(','), map(trim));
@@ -102,12 +122,9 @@ const removeWildCards  = compose(split('/*'), head);
 
 // Use arrow function here to block extra arguments 
 // that map passes in to the map function.
-const getMimeTypes = map(str => removeWildCards(str)); 
+const getMimeTypes = map(str => removeWildCards(str));
 
-
-const KILOBYTE = 1024;
-const MEGABYTE = 1048576;
-
+// Create a human-readable file size display string.
 const formatFileSize = size => {
 
   if (size < KILOBYTE) {
@@ -127,7 +144,7 @@ const formatFileSize = size => {
 const getName = basename => 
   path.basename(basename, path.extname(basename));
 
-// Read all jpg files to extract their orientation information.
+// Read all jpg files to extract their exif information.
 const addAdditionalData = async files => {
   try { 
 
@@ -139,19 +156,19 @@ const addAdditionalData = async files => {
     const promises = files.map(file => {
 
       // Send jpg files to worker to read 
-      // orientation and get a uid.
+      // exif data and get a uid.
       if (file.type.includes('jpg') || file.type.includes('jpeg')) {
-        return run('getUidAndOrientation', file, 'Orientation');
+        return run('getUidAndTags', file, EXIF_TAGS);
       }
 
       // Don't send file to worker, just get a uid.
-      return run('getUidAndOrientation'); 
+      return run('getUidAndTags'); 
     });
     
     const data = await Promise.all(promises);
 
     return files.map((file, index) => {
-      const {tag, uid} = data[index];
+      const {tags, uid} = data[index];
 
       if (file.type.includes('image') || file.type.includes('video')) { 
         file._tempUrl = window.URL.createObjectURL(file);
@@ -159,14 +176,14 @@ const addAdditionalData = async files => {
       else {
         file._tempUrl = null; // Firestore does not accept undefined vals;
       }
-
-      file.basename    = file.name;
-      file.ext         = path.extname(file.name);
-      file.index       = index;
-      file.orientation = tag ? tag.value : null; // Firebase does not like undefined.
-      file.sizeStr     = formatFileSize(file.size);
-      file.timestamp   = Date.now();
-      file.uid         = uid;
+    
+      file.basename  = file.name;
+      file.exif      = tags ? tags : null; // Firestore does not accept undefined vals;
+      file.ext       = path.extname(file.name);
+      file.index     = index;
+      file.sizeStr   = formatFileSize(file.size);
+      file.timestamp = Date.now();
+      file.uid       = uid;
 
       return file;
     });

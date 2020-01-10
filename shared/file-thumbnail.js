@@ -119,6 +119,11 @@ class FileThumbnail extends AppElement {
   }
 
 
+  __computeOrientation(exif) {
+    return exif ? exif['Orientation'] : undefined;
+  }
+
+
   __computeVideoPlaceholder(item) {
     if (!item) { return; }
 

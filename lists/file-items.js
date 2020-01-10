@@ -108,6 +108,10 @@ class FileItems extends AppElement {
   static get properties() {
     return {
 
+      // From <file-list> tri-state multi select icon button.
+      // Select all item checkboxes when true.
+      all: Boolean,
+
       // Firestore coll path string.
       coll: String,
 
