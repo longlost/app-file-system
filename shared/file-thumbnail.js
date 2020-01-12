@@ -23,16 +23,14 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {schedule}         from '@longlost/utils/utils.js';
-import htmlString         from './file-thumbnail.html';
-import '@longlost/lazy-image/lazy-image.js';
-import '@longlost/lazy-video/lazy-video.js';
+import {AppElement, html}  from '@longlost/app-element/app-element.js';
+import {PhotoElementMixin} from '../shared/photo-element-mixin.js';
+import htmlString          from './file-thumbnail.html';
 import '@polymer/iron-icon/iron-icon.js';
 import './file-icons.js';
 
 
-class FileThumbnail extends AppElement {
+class FileThumbnail extends PhotoElementMixin(AppElement) {
   static get is() { return 'file-thumbnail'; }
 
   static get template() {
@@ -41,21 +39,12 @@ class FileThumbnail extends AppElement {
 
 
   static get properties() {
-    return {
+    return {    
 
-      // File item.
-      item: Object,
-
-      // Passed into <lazy-video>.
-      presentation: {
+      // Overwrite PhotoElementMixin prop.
+      _isThumbnail: {
         type: Boolean,
-        value: false
-      },
-
-      // Passed into <lazy-image>.
-      sizing: {
-        type: String,
-        value: 'cover' // Or 'contain'.
+        value: true
       }
 
     };
@@ -80,89 +69,6 @@ class FileThumbnail extends AppElement {
     }
 
     return 'file-icons:storage';
-  }
-
-
-  __computeLazyImageStamp(type) {
-    if (!type) { return false; }
-    return type.includes('image');
-  }
-
-
-  __computeLazyVideoStamp(type) {    
-    if (!type) { return false; }
-    return type.includes('video');
-  }
-
-
-  __computeImgPlaceholder(item) {
-    if (!item) { return; }
-
-    const {original, _tempUrl} = item;
-
-    if (original) { return; }
-
-    return _tempUrl;
-  }
-
-
-  __computeImgSrc(item) {
-    if (!item) { return; }
-
-    const {original, thumbnail} = item;
-
-    if (thumbnail) { return thumbnail; }
-
-    if (original)  { return original; }
-
-    return;
-  }
-
-
-  __computeOrientation(exif) {
-    return exif ? exif['Orientation'] : undefined;
-  }
-
-
-  __computeVideoPlaceholder(item) {
-    if (!item) { return; }
-
-    const {original, _tempUrl} = item;
-
-    if (original) { return; }
-
-    return _tempUrl;
-  }
-
-
-  __computeVideoSrc(item) {
-    if (!item) { return; }
-
-    const {original} = item;
-
-    if (original) { return original; }
-
-    return;
-  }
-
-  // <lazy-image> 'on-loaded-changed' event handler.
-  async __handleImageLoadedChanged(event) {
-    if (!this.item) { return; }
-    const {value: loaded}      = event.detail;
-    const {original, _tempUrl} = this.item;
-
-    if (loaded && _tempUrl && !original) {
-      await schedule(); // <lazy-image> workaround.
-      window.URL.revokeObjectURL(_tempUrl);
-    }
-  }
-
-  // <lazy-video> 'lazy-video-metadata-loaded' event handler.
-  __handleMetadataLoaded() {
-    const {original, _tempUrl} = this.item;
-    if (_tempUrl && !original) {
-      window.URL.revokeObjectURL(_tempUrl);
-    }
   }
 
 }

@@ -38,6 +38,7 @@ import htmlString from './quick-options.html';
 import '@longlost/app-icons/app-icons.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/file-icons.js';
+import '../shared/action-buttons.js';
 
 
 class QuickOptions extends AppElement {
@@ -64,28 +65,6 @@ class QuickOptions extends AppElement {
     ];
   }
 
-
-  __computeDownloadBtnDisabledClass(item) {
-    return !item || !item.original ? 'disabled' : '';
-  }
-
-
-  __computeDownloadUrl(original) {
-    return original ? original : '#';
-  }
-
-
-  __computePrintBtnHidden(type) {
-    const isPrintable = type && (
-                          type.includes('html') ||
-                          type.includes('image') ||
-                          type.includes('json') ||
-                          type.includes('pdf')
-                        );
-
-    return !isPrintable;
-  }
-
   // Since the parent <template is="dom-repeat">
   // reuses elements, close when the data changes.
   // This happens during a delete or adding new files.
@@ -109,36 +88,16 @@ class QuickOptions extends AppElement {
   }
 
 
-  async __optionBtnClicked(name) {
+  async __editBtnClicked() {
     try {
       await this.clicked();
 
-      this.fire(name, {item: this.item});
+      this.fire('edit-file', {item: this.item});
     }
     catch (error) { 
       if (error === 'click debounced') { return; }
       console.error(error); 
     }
-  }
-
-
-  __deleteBtnClicked() {
-    this.__optionBtnClicked('request-delete-item');
-  }
-
-
-  __printBtnClicked() {
-    this.__optionBtnClicked('print-item');
-  }
-
-
-  __shareBtnClicked() {
-    this.__optionBtnClicked('share-item');
-  }
-
-
-  __editBtnClicked() {
-    this.__optionBtnClicked('edit-file');
   }
 
 
