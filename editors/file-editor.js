@@ -37,12 +37,19 @@ import {
   AppElement, 
   html
 }                 from '@longlost/app-element/app-element.js';
+import {
+  PhotoElementMixin
+}                 from '../shared/photo-element-mixin.js';
+import {schedule} from '@longlost/utils/utils.js';
 import htmlString from './file-editor.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-fab/paper-fab.js';
+import '../shared/file-icons.js';
+import '../shared/action-buttons.js';
 
 
-
-class FileEditor extends AppElement {
+class FileEditor extends PhotoElementMixin(AppElement) {
   static get is() { return 'file-editor'; }
 
   static get template() {
@@ -53,14 +60,14 @@ class FileEditor extends AppElement {
   static get properties() {
     return {
 
-      
-
     };
   }
 
 
 
-  open() {
+  async open(item) {
+    this.item = item;
+    await schedule();
     return this.$.overlay.open();
   }
 

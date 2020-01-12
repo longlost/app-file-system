@@ -1,5 +1,11 @@
 
-<style> 
+<style>
+
+	lazy-image,
+	lazy-video {
+		height: 100%;
+		width:  100%;
+	}
 
   *[hidden] {
     display: none;
@@ -9,9 +15,28 @@
 
 
 <app-header-overlay id="overlay"
-                    header-size="3"
+                    header-size="5"
                     prebuilt-animation="from-right"
-                    title="File Editor">
+                    title="[[item.displayName]]">
+
+  <lazy-image alt="[[item.displayName]]"
+  						hidden="[[!_isImg]]"
+  						orientation="[[_orientation]]"
+  						placeholder="[[_imgPlaceholder]]"
+              src="[[_imgSrc]]"
+  						sizing="cover"
+  						slot="header-background-slot">
+  </lazy-image>
+
+  <lazy-video hidden="[[!_isVid]]" 
+              placeholder="[[_vidPlaceholder]]"
+  						slot="header-background-slot"
+              src="[[_vidSrc]]">
+  </lazy-video>
+
+  <action-buttons item="[[item]]"
+  								slot="top-toolbar-buttons-slot">
+  </action-buttons>
 
   <div slot="content">
 

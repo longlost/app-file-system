@@ -295,13 +295,13 @@ export const EventsMixin = superClass => {
 	  // From <quick-options>, <file-item>
 	  async __editFile(event) {
 	    await import('./editors/file-editor.js');
-	    this.$.fileEditor.open(event.detail);
+	    this.$.fileEditor.open(event.detail.item);
 	  }
 
 	  // From <photo-carousel>
 	  async __editImage(event) {
 	    await import('./editors/image-editor.js');
-	    this.$.imageEditor.open(event.detail);
+	    this.$.imageEditor.open(event.detail.item);
 	  }
 
 

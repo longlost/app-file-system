@@ -38,14 +38,11 @@
     right:    0px;
   }
 
-  a {
-    text-decoration: none;
-    color:           currentColor;
-  }
-
-  a.disabled {
-    pointer-events: none;
-    color:          var(--disabled-text-color);
+  action-buttons {
+    display:         flex;
+    flex-wrap:       wrap;
+    justify-content: center;
+    align-items:     center;
   }
 
 </style>
@@ -58,25 +55,8 @@
                    on-click="__closeBtnClicked">
 </paper-icon-button>
 
-<paper-icon-button icon="file-icons:delete"
-                   on-click="__deleteBtnClicked">
-</paper-icon-button>
-
-<a class$="[[__computeDownloadBtnDisabledClass(item)]]"
-   download
-   href="[[__computeDownloadUrl(item.original)]]">  
-  <paper-icon-button icon="file-icons:file-download"></paper-icon-button>
-</a>
-
-<paper-icon-button hidden="[[__computePrintBtnHidden(item.type)]]"
-                   icon="file-icons:print"
-                   on-click="__printBtnClicked">
-</paper-icon-button>
-
-<paper-icon-button icon="file-icons:share"
-                   on-click="__shareBtnClicked">
-</paper-icon-button>
-
-<paper-icon-button icon="file-icons:build"
-                   on-click="__editBtnClicked">
-</paper-icon-button>
+<action-buttons item="[[item]]">
+  <paper-icon-button icon="file-icons:build"
+                     on-click="__editBtnClicked">
+  </paper-icon-button>
+</action-buttons>

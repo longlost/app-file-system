@@ -37,23 +37,21 @@
 </template>
 
 <template is="dom-if"
-          if="[[__computeLazyImageStamp(item.type)]]">
+          if="[[_isImg]]">
   <lazy-image class="item"
               alt="[[item.displayName]]"
-              orientation="[[__computeOrientation(item.exif)]]"
-              placeholder="[[__computeImgPlaceholder(item)]]"
-              src="[[__computeImgSrc(item)]]"
-              sizing="[[sizing]]"
-              on-loaded-changed="__handleImageLoadedChanged">
+              orientation="[[_orientation]]"
+              placeholder="[[_imgPlaceholder]]"
+              src="[[_imgSrc]]"
+              sizing="[[sizing]]">
   </lazy-image>  
 </template>
 
 <template is="dom-if"
-          if="[[__computeLazyVideoStamp(item.type)]]">
+          if="[[_isVid]]">
   <lazy-video class="item"
-              placeholder="[[__computeVideoPlaceholder(item)]]"
+              placeholder="[[_vidPlaceholder]]"
               presentation="[[presentation]]"
-              src="[[__computeVideoSrc(item)]]"
-              on-lazy-vieo-metadata-loaded="__handleMetadataLoaded">
+              src="[[_vidSrc]]">
   </lazy-video>
 </template>
