@@ -39,7 +39,10 @@ class FileThumbnail extends PhotoElementMixin(AppElement) {
 
 
   static get properties() {
-    return {    
+    return {  
+
+      // Lazy-video controls.
+      controls: Boolean,  
 
       // Overwrite PhotoElementMixin prop.
       _isThumbnail: {

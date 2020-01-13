@@ -36,12 +36,12 @@ export const PhotoElementMixin = superClass => {
 
 	      _imgPlaceholder: {
 	      	type: String,
-	      	computed: '__computeImgPlaceholder(item)'
+	      	computed: '__computeImgPlaceholder(item, _isImg)'
 	      },
 
 	      _imgSrc: {
 	      	type: String,
-	      	computed: '__computeImgSrc(item, _isThumbnail)'
+	      	computed: '__computeImgSrc(item, _isImg, _isThumbnail)'
 	      },
 
 	      _isImg: {
@@ -69,12 +69,12 @@ export const PhotoElementMixin = superClass => {
 
 	      _vidPlaceholder: {
 	      	type: String,
-	      	computed: '__computeVidPlaceholder(item)'
+	      	computed: '__computeVidPlaceholder(item, _isVid)'
 	      },
 
 	      _vidSrc: {
 	      	type: String,
-	      	computed: '__computeVidSrc(item)'
+	      	computed: '__computeVidSrc(item, _isVid)'
 	      }
 
 	    };
@@ -115,8 +115,8 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeImgPlaceholder(item) {
-	    if (!item) { return; }
+	  __computeImgPlaceholder(item, isImg) {
+	    if (!item || !isImg) { return; }
 
 	    const {original, _tempUrl} = item;
 
@@ -126,8 +126,8 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeImgSrc(item, isThumbnail) {
-	    if (!item) { return; }
+	  __computeImgSrc(item, isImg, isThumbnail) {
+	    if (!item || !isImg) { return; }
 
 	    const {optimized, original, thumbnail} = item;
 
@@ -146,8 +146,8 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeVidPlaceholder(item) {
-	    if (!item) { return; }
+	  __computeVidPlaceholder(item, isVid) {
+	    if (!item || !isVid) { return; }
 
 	    const {original, _tempUrl} = item;
 
@@ -157,8 +157,8 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeVidSrc(item) {
-	    if (!item) { return; }
+	  __computeVidSrc(item, isVid) {
+	    if (!item || !isVid) { return; }
 
 	    const {original} = item;
 
@@ -183,7 +183,7 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 	  // <lazy-video> 'lazy-video-metadata-loaded' event handler.
-	  __handleMetadataLoaded() {
+	  __handleMetadataLoaded(event) {
 	  	hijackEvent(event);
 	  	
 	    const {original, _tempUrl} = this.item;

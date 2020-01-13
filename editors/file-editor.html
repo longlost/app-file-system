@@ -1,11 +1,19 @@
 
 <style>
 
-	lazy-image,
-	lazy-video {
-		height: 100%;
-		width:  100%;
-	}
+  lazy-image,
+  lazy-video {
+    height: 100%;
+    width:  100%;
+  }
+
+  paper-fab {
+    position: fixed;
+    right:    16px;
+    bottom:   16px;
+    background-color: var(--app-accent-color);
+    color:            var(--constant-light-text);
+  }
 
   *[hidden] {
     display: none;
@@ -15,32 +23,46 @@
 
 
 <app-header-overlay id="overlay"
-                    header-size="5"
+                    header-size="[[__computeHeaderSize(_isImg, _isVid)]]"
                     prebuilt-animation="from-right"
-                    title="[[item.displayName]]">
+                    title="[[item.displayName]]"
+                    on-overlay-reset="__reset">
 
   <lazy-image alt="[[item.displayName]]"
-  						hidden="[[!_isImg]]"
-  						orientation="[[_orientation]]"
-  						placeholder="[[_imgPlaceholder]]"
+              hidden="[[!_isImg]]"
+              orientation="[[_orientation]]"
+              placeholder="[[_imgPlaceholder]]"
               src="[[_imgSrc]]"
-  						sizing="cover"
-  						slot="header-background-slot">
+              sizing="cover"
+              slot="header-background-slot">
   </lazy-image>
 
-  <lazy-video hidden="[[!_isVid]]" 
+  <lazy-video aspect-ratio="fill"
+              controls="[[_controls]]"
+              hidden="[[!_isVid]]" 
               placeholder="[[_vidPlaceholder]]"
-  						slot="header-background-slot"
+              slot="header-background-slot"
               src="[[_vidSrc]]">
   </lazy-video>
 
   <action-buttons item="[[item]]"
-  								slot="top-toolbar-buttons-slot">
+                  slot="top-toolbar-buttons-slot">
   </action-buttons>
+
+  <paper-icon-button hidden="[[__computeHideLaunchBtn(_isImg, _isVid)]]"
+                     icon="file-icons:launch"
+                     slot="bottom-toolbar-buttons-slot"
+                     on-click="__launchBtnClicked">
+  </paper-icon-button>
 
   <div slot="content">
 
     Hello
+
+    <paper-fab hidden="[[!_isImg]]"
+               icon="file-icons:tune"
+               on-click="__fabClicked">
+    </paper-fab>
 
   </div>
 

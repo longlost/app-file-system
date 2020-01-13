@@ -403,14 +403,6 @@
     "@longlost/lambda" "^1.3.9"
     "@longlost/utils" "^1.2.4"
 
-"@longlost/app-element@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@longlost/app-element/-/app-element-1.0.4.tgz#abf9de249fe2759fa2cc305effe4a090599845d8"
-  integrity sha512-cGVVMKCtOOdofCxBwdpCCROT3zqQFUxBuU3Qh1q1nMXKr+t+kmvo3l66KmYvOEl+Dyj4wG7H0siCJ324zJumkw==
-  dependencies:
-    "@longlost/element-mixin" "^1.0.7"
-    "@polymer/polymer" "^3.3.0"
-
 "@longlost/app-element@^1.0.5":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@longlost/app-element/-/app-element-1.0.5.tgz#f583be822b14ca8a76c254486488b803e04ca5cb"
@@ -475,17 +467,6 @@
   dependencies:
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/app-spinner@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@longlost/app-spinner/-/app-spinner-1.0.1.tgz#beb66b82017c21b7c84d068b38e2f70ab607ba35"
-  integrity sha512-bRrp1ujwoIFdWTaUTFvobItip4PyP0y5fg0xVgqksQwYSCgWXDrfaoKN+/cZO0eT/rlEZJPQXZmnbRyj2Zdf/w==
-  dependencies:
-    "@longlost/app-element" "^1.0.4"
-    "@longlost/utils" "^1.2.4"
-    "@polymer/paper-button" "^3.0.1"
-    "@polymer/paper-spinner" "^3.0.2"
-    "@polymer/polymer" "^3.3.0"
-
 "@longlost/app-spinner@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@longlost/app-spinner/-/app-spinner-1.1.0.tgz#170ad84c15ccafce5a5cd87226960e176076d558"
@@ -526,13 +507,6 @@
     "@longlost/utils" "^1.3.5"
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/element-mixin@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@longlost/element-mixin/-/element-mixin-1.0.7.tgz#c8b4fdb78030c3dd27e9d6592aabf75df9840188"
-  integrity sha512-m6QppdPPGyALsXorC+ucbToMJGtyYyu4mn/51jyKmTnBdB93PCeiugwPtXCETr2VWLk09hMnBMflugzLx19iFg==
-  dependencies:
-    "@longlost/utils" "^1.1.6"
-
 "@longlost/element-mixin@^1.0.8":
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/@longlost/element-mixin/-/element-mixin-1.0.8.tgz#186ace90088c101dda09b9f4de2972880cd6682b"
@@ -562,23 +536,23 @@
   resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.0.4.tgz#a6c6279faa88668c44f5903032c5334d7dac0d51"
   integrity sha512-4z/x0PvFcdc3Oxa3HXuf2r9LzUdBJoIt73HO0q8RSJpAZusJmNv+0AvX8TrRRaSyKhtT9om4RCXq/G9d4vCzBg==
 
-"@longlost/lazy-image@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@longlost/lazy-image/-/lazy-image-1.1.1.tgz#2b3dae44c61a4e0a65af0e37216bd1dd78b8f3fa"
-  integrity sha512-3S0Vg0sTmS6YBPaxfeIBKBOwY3ocqtADMToj1iI8Q4CO06WPL1qAP2vCq6PsYS2+e+9ICy9KCiqjoub4Vva4hQ==
+"@longlost/lazy-image@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@longlost/lazy-image/-/lazy-image-1.1.2.tgz#009c7ff488bf74a0e2e49114e5c4c4c0d8f0630e"
+  integrity sha512-+4H198SILo+W2Zr8n6X2o8wnk20hk+UikhlEE1PeWuONl6vNz1UapzkbY3bd4+5nCPUTHIuDBJONKf2/ptEu5w==
   dependencies:
     "@longlost/app-element" "^1.0.6"
     "@longlost/utils" "^1.3.5"
     "@polymer/iron-image" "^3.0.2"
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/lazy-video@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.2.1.tgz#8c9d9b2ab9fac9fea2804269d0cf7dabf2f3e2bf"
-  integrity sha512-OchEuaQMGFlXPtwq8phjR0MbvOTIcq4FsTgdxZ3OLPMBFZymnTtgPGBPg2KUpdDfEp+1Ae53xkFDQwc6S9O9lg==
+"@longlost/lazy-video@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.3.0.tgz#078da0e7e65e48d1b1c0d105ec3092f450a04c37"
+  integrity sha512-JBXdk7YcYBarU6jGtgxJp/EhLjI2TgHaQXf7bWloNAIy/R3xnD89Dxi9sfnMIplMmUYgzuHa1X7noYRhWlk9Nw==
   dependencies:
-    "@longlost/app-element" "^1.0.4"
-    "@longlost/app-spinner" "^1.0.0"
+    "@longlost/app-element" "^1.0.6"
+    "@longlost/app-spinner" "^1.1.0"
     "@longlost/utils" "^1.3.5"
     "@polymer/polymer" "^3.3.1"
 
@@ -910,7 +884,7 @@
     "@polymer/iron-flex-layout" "^3.0.0-pre.26"
     "@polymer/polymer" "^3.0.0"
 
-"@polymer/polymer@^3.0.0", "@polymer/polymer@^3.3.0", "@polymer/polymer@^3.3.1":
+"@polymer/polymer@^3.0.0", "@polymer/polymer@^3.3.1":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@polymer/polymer/-/polymer-3.3.1.tgz#9ad48992d2a96775f80b0673f3a615d6df8a3dfc"
   integrity sha512-8KaB48tzyMjdsHdxo5KvCAaqmTe7rYDzQAoj/pyEfq9Fp4YfUaS+/xqwYj0GbiDAUNzwkmEQ7dw9cgnRNdKO8A==
