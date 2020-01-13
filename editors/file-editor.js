@@ -40,7 +40,7 @@ import {
 import {
   PhotoElementMixin
 }                 from '../shared/photo-element-mixin.js';
-import {schedule} from '@longlost/utils/utils.js';
+import {schedule, wait} from '@longlost/utils/utils.js';
 import htmlString from './file-editor.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
@@ -60,15 +60,59 @@ class FileEditor extends PhotoElementMixin(AppElement) {
   static get properties() {
     return {
 
+      _controls: {
+        type: Boolean,
+        value: false
+      }
+
     };
   }
 
 
+  __computeHeaderSize(isImg, isVid) {
+    return isImg || isVid ? 5 : 2;
+  }
+
+
+  __computeHideLaunchBtn(isImg, isVid) {
+    return !isImg && !isVid;
+  }
+
+
+  async __launchBtnClicked() {
+    try {
+      await this.clicked();
+
+      this.fire('open-carousel', {item: this.item});
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
+
+  async __fabClicked() {
+    try {
+      await this.clicked();
+
+      this.fire('edit-image', {item: this.item});
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
+
+  __reset() {
+    this.item = undefined;
+  }
+
 
   async open(item) {
     this.item = item;
-    await schedule();
-    return this.$.overlay.open();
+    await this.$.overlay.open();
   }
 
 }

@@ -98,6 +98,12 @@ class FileItem extends AppElement {
         value: false
       },
 
+      // Lazy-video controls.
+      _controls: {
+        type: Boolean,
+        value: false
+      },
+
       // Style file-thumbnail, label and upload-controls
       // when the item is selected.
       _selectedClass: {
