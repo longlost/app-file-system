@@ -1,6 +1,11 @@
 
 <style>
 
+  #overlay {
+    --overlay-toolbar-background-parallax-height: 120%;
+    --overlay-toolbar-vignette-opacity:           0.5;
+  }
+
   lazy-image,
   lazy-video {
     height: 100%;
@@ -25,7 +30,7 @@
 <app-header-overlay id="overlay"
                     header-size="[[__computeHeaderSize(_isImg, _isVid)]]"
                     prebuilt-animation="from-right"
-                    title="[[item.displayName]]"
+                    title="[[_title]]"
                     on-overlay-reset="__reset">
 
   <lazy-image alt="[[item.displayName]]"
@@ -57,7 +62,10 @@
 
   <div slot="content">
 
-    Hello
+    <metadata-editor is-img="[[_isImg]]"
+                     item="[[item]]"
+                     on-display-name-changed="__displayNameChanged">
+    </metadata-editor>
 
     <paper-fab hidden="[[!_isImg]]"
                icon="file-icons:tune"

@@ -118,7 +118,7 @@ class ShareModal extends AppElement {
 
           await services.updateMetadata(sharePath, newMetadata);
 
-          this.fire('is-shareable', {item: {...item, shareable: true}});
+          this.fire('update-item', {item: {...item, shareable: true}});
         }
       }
       else if (type.includes('image')) {

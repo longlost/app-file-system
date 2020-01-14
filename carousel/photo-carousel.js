@@ -40,7 +40,6 @@ import htmlString from './photo-carousel.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 
 
-
 class PhotoCarousel extends AppElement {
   static get is() { return 'photo-carousel'; }
 
@@ -52,15 +51,16 @@ class PhotoCarousel extends AppElement {
   static get properties() {
     return {
 
-      
+      currentItem: Object,
+
+      items: Array
 
     };
   }
 
 
 
-  open(photo) {
-    const {item, measurements} = photo;
+  open(measurements) {
 
     // TODO:
     //      run an expand animation using the item and measurements

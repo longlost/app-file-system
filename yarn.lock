@@ -467,6 +467,13 @@
   dependencies:
     "@polymer/polymer" "^3.3.1"
 
+"@longlost/app-shared-styles@^2.0.9":
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/@longlost/app-shared-styles/-/app-shared-styles-2.0.9.tgz#55b855c694cb638cc35ccb4ec101747ac1430262"
+  integrity sha512-uy3q5QqUjSx5ORbtDX7XTfMpdqoDzAyYoO07/tB20x/Ci+dWOCIicqahPeamE+VR3CwOemdDacKsRHgKuHDMuw==
+  dependencies:
+    "@polymer/polymer" "^3.3.1"
+
 "@longlost/app-spinner@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@longlost/app-spinner/-/app-spinner-1.1.0.tgz#170ad84c15ccafce5a5cd87226960e176076d558"
@@ -536,20 +543,20 @@
   resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.0.4.tgz#a6c6279faa88668c44f5903032c5334d7dac0d51"
   integrity sha512-4z/x0PvFcdc3Oxa3HXuf2r9LzUdBJoIt73HO0q8RSJpAZusJmNv+0AvX8TrRRaSyKhtT9om4RCXq/G9d4vCzBg==
 
-"@longlost/lazy-image@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@longlost/lazy-image/-/lazy-image-1.1.2.tgz#009c7ff488bf74a0e2e49114e5c4c4c0d8f0630e"
-  integrity sha512-+4H198SILo+W2Zr8n6X2o8wnk20hk+UikhlEE1PeWuONl6vNz1UapzkbY3bd4+5nCPUTHIuDBJONKf2/ptEu5w==
+"@longlost/lazy-image@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@longlost/lazy-image/-/lazy-image-1.1.3.tgz#4c7f444fc7c83158549374637a13f5e637a36543"
+  integrity sha512-1X0EIdZFjrdbQDTx8kSbrDMVqck2FZisEedesuENzd8g1hVsMc97k6IzRZ7wjOCapJb/qLXaTR18ZWvi2pjJFQ==
   dependencies:
     "@longlost/app-element" "^1.0.6"
     "@longlost/utils" "^1.3.5"
     "@polymer/iron-image" "^3.0.2"
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/lazy-video@^2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.3.0.tgz#078da0e7e65e48d1b1c0d105ec3092f450a04c37"
-  integrity sha512-JBXdk7YcYBarU6jGtgxJp/EhLjI2TgHaQXf7bWloNAIy/R3xnD89Dxi9sfnMIplMmUYgzuHa1X7noYRhWlk9Nw==
+"@longlost/lazy-video@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.3.1.tgz#5e2292908be8a19daea42c7215b13ffe690b58a4"
+  integrity sha512-ggn+uzpwJL2FVLoZxwLy11m+Qf8hLVXiGM7/JfKmmktgo/EbUY1XqghcLs9Gip6uDV0yB0/t97CCe6TnueXlzA==
   dependencies:
     "@longlost/app-element" "^1.0.6"
     "@longlost/app-spinner" "^1.1.0"

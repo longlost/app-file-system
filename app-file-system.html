@@ -48,13 +48,20 @@
 </preview-lists>
 
 
-<file-editor id="fileEditor"></file-editor>
+<file-editor id="fileEditor" 
+             item="[[_liveItem]]">
+</file-editor>
 
 
-<photo-carousel id="carousel"></photo-carousel>
+<photo-carousel id="carousel"
+                currentItem="[[_liveItem]]"
+                item="[[_items]]">
+</photo-carousel>
 
 
-<image-editor id="imageEditor"></image-editor>
+<image-editor id="imageEditor"
+              item="[[_liveItem]]">
+</image-editor>
 
 
 <app-spinner id="spinner"
@@ -63,8 +70,7 @@
 
 
 <share-modal id="shareModal"
-             item="[[_shareItem]]"
-             on-is-shareable="__updateShareable">
+             item="[[_liveItem]]">
 </share-modal>
 
 

@@ -1,0 +1,68 @@
+
+<style include="app-shared-styles">
+
+  :host {
+  	display: flex;
+  }
+
+  iron-icon {
+  	min-height: 24px;
+  	min-width:  24px;
+  	margin: 		28px 4px 0px 0px;
+  }
+
+  iron-icon[focused] {
+  	color: var(--app-primary-color);
+  }
+
+  paper-textarea {
+  	width: calc(100% - 28px);
+  	--paper-input-container: {
+  		position: relative;
+  	};
+  	/*
+	  	Must set this here to counteract a bug 
+	  	in paper-input and paper-textarea.
+
+	  	This value is also set in metadata-editor
+	  	to apply the fix.
+
+	  	When this is only set on this	paper-textarea, 
+	  	it interferes with the styles 
+	  	of metadata-editor's paper-inputs.
+
+	  	This is why this is separate custom element.
+	  */
+  	--paper-input-container-label-floating: {
+  		left: -28px;
+  	};
+  	--paper-input-container-underline: {
+  		position: absolute;
+	    bottom: 	6px;
+	    left:  	 -28px;
+	    right:  	0px;
+  	};
+  	--paper-input-container-underline-focus: {
+  		position: absolute;
+	    bottom: 	6px;
+	    left:  	 -28px;
+	    right:  	0px;
+  	};
+  }
+
+</style>
+
+
+<iron-icon focused$="[[_focused]]" 
+					 icon="file-icons:subject">
+</iron-icon>
+
+<paper-textarea class="shared-paper-input"
+								autocapitalize
+								autocomplete
+								autocorrect
+								label="Notes"
+                value="[[item.notes]]"
+                on-focused-changed="__focusedChanged"
+                on-value-changed="__valueChanged">
+</paper-textarea>

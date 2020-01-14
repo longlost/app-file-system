@@ -114,17 +114,19 @@ export const EventsMixin = superClass => {
 	      _shareListenerKey: Object,
 
 	      // Using a seperate data-binding here
-	      // so the <share-modal> can receive updates
-	      // dynamically to item if it's still being 
-	      // uploaded or processing in the cloud.
-	      _shareItem: {
+	      // so top level elements can receive updates
+	      // dynamically to item if it's being 
+	      // processed in the cloud or worked on collaboratively.
+	      _liveItem: {
 	      	type: Object,
-	      	computed: '__computeShareItem(_shareUid, _dbData)'
+	      	computed: '__computeLiveItem(_liveUid, _dbData)'
 	      },
 
-	      _shareUid: String,
+	      _liveUid: String,
 
 	      _sortedListenerKey: Object,
+
+	      _updateListenerKey: Object,
 
       	_uploadListenerKey: Object
 
@@ -205,6 +207,13 @@ export const EventsMixin = superClass => {
 	      this.__shareItem.bind(this)
 	    );
 
+	    // <file-editor>, <image-editor>
+	    this._updateListenerKey = listen(
+	      this, 
+	      'update-item', 
+	      this.__updateItem.bind(this)
+	    );
+
 	    // Events from <upload-controls> which 
 	    // are nested children of <preview-lists>.
 	    this._uploadListenerKey = listen(
@@ -228,12 +237,13 @@ export const EventsMixin = superClass => {
 	    unlisten(this._requestDeletesListenerKey);
 	    unlisten(this._shareListenerKey);
 	    unlisten(this._sortedListenerKey);
+	    unlisten(this._updateListenerKey);
 	    unlisten(this._uploadListenerKey);
 	    this.__unsub();
 	  }
 
-	  // So <share-modal can receive real-time updates to item.
-	  __computeShareItem(uid, data) {
+	  // So top level elements can receive real-time updates to item.
+	  __computeLiveItem(uid, data) {
 	  	if (!uid || !data) { return; }
 
 	  	return data[uid];
@@ -281,27 +291,39 @@ export const EventsMixin = superClass => {
 	  // From <file-item> (image files only) and <roll-item>
 	  async __openCarousel(event) {
 
-	  	// const {item, measurements} = event.detail;
+	  	const {item, measurements} = event.detail;
 
 	  	// TODO:
 	  	// 			use measurements to create an expanding 
 	  	//			animation from current item location into fullscreen.
 
 
+	  	this._liveUid = item.uid;
+	  	await schedule();
 	    await import('./carousel/photo-carousel.js');
-	    this.$.carousel.open(event.detail);
+	    this.$.carousel.open(measurements);
 	  }
 
 	  // From <quick-options>, <file-item>
 	  async __editFile(event) {
+	  	const {item} 	= event.detail;
+	  	this._liveUid = item.uid;
+
+	  	await schedule();
 	    await import('./editors/file-editor.js');
-	    this.$.fileEditor.open(event.detail.item);
+
+	    this.$.fileEditor.open();
 	  }
 
 	  // From <photo-carousel>
 	  async __editImage(event) {
+	  	const {item} 	= event.detail;
+	  	this._liveUid = item.uid;
+
+	  	await schedule();
 	    await import('./editors/image-editor.js');
-	    this.$.imageEditor.open(event.detail.item);
+
+	    this.$.imageEditor.open();
 	  }
 
 
@@ -436,15 +458,17 @@ export const EventsMixin = superClass => {
 
 
 	  async __shareItem(event) {
-	  	const {item} 	 = event.detail;
-	  	this._shareUid = item.uid;
+	  	const {item} 	= event.detail;
+	  	this._liveUid = item.uid;
+
 	  	await schedule();
 	  	await import('./share-modal.js');
+
 	  	this.$.shareModal.open();
 	  }
 
-	  // From <share-modal> 'is-shareable' event.
-	  __updateShareable(event) {
+	  // From <share-modal>, <metadata-editor> and <image-editor>.
+	  __updateItem(event) {
 	  	const {item} = event.detail;
 	  	this.__saveFileData({[item.uid]: item});
 	  }
