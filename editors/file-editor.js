@@ -47,6 +47,7 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-fab/paper-fab.js';
 import '../shared/file-icons.js';
 import '../shared/action-buttons.js';
+import '../shared/metadata-editor.js';
 
 
 class FileEditor extends PhotoElementMixin(AppElement) {
@@ -63,6 +64,13 @@ class FileEditor extends PhotoElementMixin(AppElement) {
       _controls: {
         type: Boolean,
         value: false
+      },
+
+      _editedDisplayName: String,
+
+      _title: {
+        type: String,
+        computed: '__computeTitle(item.displayName, _editedDisplayName)'
       }
 
     };
@@ -71,6 +79,11 @@ class FileEditor extends PhotoElementMixin(AppElement) {
 
   __computeHeaderSize(isImg, isVid) {
     return isImg || isVid ? 5 : 2;
+  }
+
+
+  __computeTitle(displayName, editedDisplayName) {
+    return editedDisplayName ? editedDisplayName : displayName;
   }
 
 
@@ -92,6 +105,11 @@ class FileEditor extends PhotoElementMixin(AppElement) {
   }
 
 
+  __displayNameChanged(event) {
+    this._editedDisplayName = event.detail.value;
+  }
+
+
   async __fabClicked() {
     try {
       await this.clicked();
@@ -110,8 +128,7 @@ class FileEditor extends PhotoElementMixin(AppElement) {
   }
 
 
-  async open(item) {
-    this.item = item;
+  async open() {
     await this.$.overlay.open();
   }
 

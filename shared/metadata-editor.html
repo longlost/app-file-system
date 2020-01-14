@@ -1,0 +1,113 @@
+
+<style include="app-shared-styles">
+
+  :host {
+    display: 				flex;
+    flex-direction: column;
+    margin-top: 		32px;
+    padding: 				16px;
+  }
+
+  paper-input {
+  	/*
+	  	Must set this here to counteract a bug 
+	  	in paper-input and paper-textarea.
+
+	  	This value is set in notes-textarea in 
+	  	order to match the styles of a paper-input
+	  	with a prefix iron-icon.
+
+	  	When this is only set on the note-textarea's
+	  	paper-textarea, it interferes with the styles 
+	  	of these paper-inputs.
+	  */
+  	--paper-input-container-label-floating: {
+  		left: 0px;
+  	};
+  }
+
+  iron-icon {
+  	min-height: 24px;
+  	min-width:  24px;
+  }
+
+  paper-input[focused] iron-icon,
+  iron-icon[focused] {
+  	color: var(--app-primary-color);
+  }
+
+  .explainer {
+  	font-size: 12px;
+  	color: 		 var(--secondary-text-color);
+  }
+
+  .save-btn {
+  	position: -webkit-sticky;
+  	position: sticky;
+  	bottom: 	16px;
+  	width: 		100%;
+  	margin: 	32px auto;
+  	background-color: var(--app-primary-color);
+  	color: 						var(--constant-light-text);
+  }
+
+  .save-btn.is-img {
+  	width: unset;
+  }
+
+  .save-btn[disabled] {
+  	position: 				static;
+  	background-color: var(--app-disabled-color);
+  	color: 						var(--disabled-text-color);
+  }
+
+</style>
+
+
+<paper-input class="shared-paper-input"
+             allowed-pattern="[^/\f/\n/\r/\t/\v]"
+             autocapitalize
+             autocomplete
+             autocorrect
+             auto-validate
+             label="Display name"
+             tabindex="0"
+             value="[[_displayName]]"
+             on-value-changed="__displayNameInputValueChanged">
+  <iron-icon icon="app-icons:label" 
+             slot="prefix">
+  </iron-icon>
+</paper-input>
+
+<paper-input class="shared-paper-input"
+             allowed-pattern="[a-zA-Z0-9\s]"
+             autocomplete
+             autocorrect
+             auto-validate
+             label="Keywords"
+             tabindex="0"
+             value="[[_rawKeywords]]"
+             on-value-changed="__keywordsInputValueChanged">
+  <iron-icon icon="file-icons:find-in-page" 
+             slot="prefix">
+  </iron-icon>
+</paper-input>
+
+<p class="explainer">
+	<strong>Keywords</strong>, also called <strong>tags</strong>, allow for powerful database searches.  These should be single words that are highly relevant to the file subject matter.
+</p>
+<p class="explainer">
+	Seperate keywords with a space. Do not use punctuation. Common words, such as 'a', 'and', 'is', 'or', 'very', etc., are ignored.
+</p>
+
+
+<notes-textarea notes="[[_notes]]" 
+								on-notes-changed="__notesChanged">
+</notes-textarea>
+
+<paper-button class$="save-btn [[__computeSaveBtnClass(isImg)]]"
+							disabled="[[!_changes]]" 
+							raised 
+							on-click="__saveBtnClicked">
+	Save
+</paper-button>

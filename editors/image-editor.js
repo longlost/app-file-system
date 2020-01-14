@@ -4,7 +4,7 @@
   * `image-editor`
   * 
   *   Easily edit images/photos.
-  * 	Crop, rotate, brightness, contrast, effects/filters and add rich text.
+  *   Crop, rotate, brightness, contrast, effects/filters and add rich text.
   *
   *
   *
@@ -41,7 +41,6 @@ import htmlString from './image-editor.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 
 
-
 class ImageEditor extends AppElement {
   static get is() { return 'image-editor'; }
 
@@ -53,7 +52,7 @@ class ImageEditor extends AppElement {
   static get properties() {
     return {
 
-      
+      items: Array
 
     };
   }

@@ -2,23 +2,18 @@
 <style>
 
   :host {
-    display:          none;
-    flex-wrap:        wrap;
-    justify-content:  center;
-    /* 
-      'align-content' instead of 'align-items' 
-      to push buttons together in middle.
-    */
-    align-content:    center; 
-    position:         absolute;
-    top:              0px;
-    right:            0px;
-    bottom:           0px;
-    left:             0px;
-    opacity:          0px;
-    transition:       transform 0.2s var(--custom-ease, ease-in),
-                      opacity 0.15s linear 0.05s;
-    transform:        scale(0, 0);
+    display:         none;
+    justify-content: center;
+    align-items:     center;
+    position:        absolute;
+    top:             0px;
+    right:           0px;
+    bottom:          0px;
+    left:            0px;
+    opacity:         0px;
+    transition:      transform 0.2s var(--custom-ease, ease-in),
+                     opacity 0.15s linear 0.05s;
+    transform:       scale(0, 0);
   }
 
   #background {
@@ -42,7 +37,11 @@
     display:         flex;
     flex-wrap:       wrap;
     justify-content: center;
-    align-items:     center;
+    /*
+      Using 'align-content' instead of 'align-items'
+      here to push buttons together in middle.
+    */
+    align-content:   center;
   }
 
 </style>
