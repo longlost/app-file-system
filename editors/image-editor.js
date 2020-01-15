@@ -58,9 +58,13 @@ class ImageEditor extends AppElement {
   }
 
 
-
   open() {
     return this.$.overlay.open();
+  }
+
+  // Used for confirmed delete actions.
+  reset() {
+    return this.$.overlay.reset();
   }
 
 }

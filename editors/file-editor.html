@@ -30,8 +30,8 @@
 <app-header-overlay id="overlay"
                     header-size="[[__computeHeaderSize(_isImg, _isVid)]]"
                     prebuilt-animation="from-right"
-                    title="[[_title]]"
-                    on-overlay-reset="__reset">
+                    reveal-header
+                    title="[[_title]]">
 
   <lazy-image alt="[[item.displayName]]"
               hidden="[[!_isImg]]"
@@ -64,6 +64,7 @@
 
     <metadata-editor is-img="[[_isImg]]"
                      item="[[item]]"
+                     list="[[list]]"
                      on-display-name-changed="__displayNameChanged">
     </metadata-editor>
 

@@ -40,14 +40,13 @@ import {
 import {
   PhotoElementMixin
 }                 from '../shared/photo-element-mixin.js';
-import {schedule, wait} from '@longlost/utils/utils.js';
 import htmlString from './file-editor.html';
 import '@longlost/app-header-overlay/app-header-overlay.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-fab/paper-fab.js';
 import '../shared/file-icons.js';
 import '../shared/action-buttons.js';
-import '../shared/metadata-editor.js';
+import './metadata-editor.js';
 
 
 class FileEditor extends PhotoElementMixin(AppElement) {
@@ -60,6 +59,9 @@ class FileEditor extends PhotoElementMixin(AppElement) {
 
   static get properties() {
     return {
+
+      // Pass through to <metadata-editor>
+      list: String,
 
       _controls: {
         type: Boolean,
@@ -123,13 +125,13 @@ class FileEditor extends PhotoElementMixin(AppElement) {
   }
 
 
-  __reset() {
-    this.item = undefined;
+  open() {
+    return this.$.overlay.open();
   }
 
-
-  async open() {
-    await this.$.overlay.open();
+  // Used for confirmed delete actions.
+  reset() {
+    return this.$.overlay.reset();
   }
 
 }

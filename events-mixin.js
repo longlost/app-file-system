@@ -8,6 +8,7 @@ import {
   wait,
   warn
 }               		 from '@longlost/utils/utils.js';
+import services 		 from '@longlost/services/services.js';
 // Will NOT download multiple files in Chrome when dev tools is open!!
 import multiDownload from 'multi-download';
 // Will NOT print pdf's in Chrome when dev tools is open!!
@@ -416,6 +417,17 @@ export const EventsMixin = superClass => {
 	      // Reset drag-drop delete if applicable.
 	      this.$.lists.resetDeleteTarget();
 
+	      // Close editors since their item is now gone.
+	      // Test for close method since these elements
+	      // are lazy loaded and may not yet exist.
+	      if (this.$.fileEditor.reset) {
+	      	this.$.fileEditor.reset();
+	      }
+
+	      if (this.$.imageEditor.reset) {
+	      	this.$.imageEditor.reset();
+	      }
+
 	      // Delete methods show different spinner messages.
 	      if (this._deleteItems.length > 1) {
 
@@ -467,10 +479,46 @@ export const EventsMixin = superClass => {
 	  	this.$.shareModal.open();
 	  }
 
+	  // Issue new file metadata so download 
+	  // filename reflects new displayName.
+	  async __updateContentDisposition(item) {
+	  	const {displayName, ext, path, uid} = item;
+	  	const currentItem = this._dbData[uid];
+
+	  	// Only need to run this if there is 
+	  	// an update to display name.
+	  	if (displayName !== currentItem.displayName) {
+
+	  		await this.$.spinner.show('Updating file.');
+
+	  		const metadata = await services.getMetadata(path);
+
+        const newMetadata = {
+        	...metadata, 
+        	contentDisposition: `attachment; filename="${displayName}${ext}"`
+        };
+
+        await services.updateMetadata(path, newMetadata);
+	  	}
+	  }
+
 	  // From <share-modal>, <metadata-editor> and <image-editor>.
-	  __updateItem(event) {
-	  	const {item} = event.detail;
-	  	this.__saveFileData({[item.uid]: item});
+	  async __updateItem(event) {
+	  	try {
+
+		  	const {item} = event.detail;
+		  	
+		  	await this.__updateContentDisposition(item);
+
+		  	await this.__saveFileData({[item.uid]: item});
+	  	}
+	  	catch (error) {
+	  		console.error(error);
+	  		await warn('An error occured while updating the file.');
+	  	}
+	  	finally {
+	  		this.$.spinner.hide();	  		
+	  	}
 	  }
 
 	  // <file-sources> 'files-changed' event.
