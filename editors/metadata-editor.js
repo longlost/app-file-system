@@ -28,6 +28,9 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import {
+  FileInfoMixin
+}                 from '../shared/file-info-mixin.js';
+import {
 	compose,
 	map,
 	split
@@ -38,7 +41,7 @@ import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
-import './file-icons.js';
+import '../shared/file-icons.js';
 import './notes-textarea.js';
 
 
@@ -46,7 +49,7 @@ const normalize 			= x => x.trim().toLowerCase();
 const toKeywordsArray = compose(split(' '), map(normalize));
 
 
-class MetadataEditor extends AppElement {
+class MetadataEditor extends FileInfoMixin(AppElement) {
   static get is() { return 'metadata-editor'; }
 
   static get template() {
@@ -58,9 +61,8 @@ class MetadataEditor extends AppElement {
     return {
 
     	isImg: Boolean,
-      
-      // File item object.
-      item: Object,
+
+      list: String,
 
       // State of interaction with inputs.
       _changes: {
@@ -80,13 +82,19 @@ class MetadataEditor extends AppElement {
 
   static get observers() {
   	return [
-  		'__itemChanged(item)'
+  		'__itemChanged(item)',
+      '__displayNameChanged(_displayName)'
   	];
   }
 
 
   __computeSaveBtnClass(isImg) {
   	return isImg ? 'is-img' : '';
+  }
+
+
+  __computeHideOrder(list) {
+    return list !== 'file-list';
   }
 
 
@@ -97,19 +105,23 @@ class MetadataEditor extends AppElement {
 
   	this._displayName = displayName;
   	this._rawKeywords = keywords ? keywords.join(' ') : '';
-  	this._notes 			= notes;
-  	this._changes 		= false;
+
+    // No undefined values for Firestore.
+  	this._notes 	= notes ? notes : null;
+  	this._changes = false;
+  }
+
+
+  __displayNameChanged(name) {
+
+    // For consumption by parent element.
+    this.fire('display-name-changed', {value: name});
   }
 
 
   __displayNameInputValueChanged(event) {
     this._displayName = event.detail.value.trim();
     this._changes 		= true;
-
-    // For consumption by parent element.
-    this.fire('display-name-changed', {
-    	value: this._displayName
-    });
   }
 
 

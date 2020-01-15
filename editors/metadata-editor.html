@@ -27,8 +27,9 @@
   }
 
   iron-icon {
-  	min-height: 24px;
-  	min-width:  24px;
+  	min-height:   24px;
+  	min-width:    24px;
+    margin-right: 4px;
   }
 
   paper-input[focused] iron-icon,
@@ -59,6 +60,14 @@
   	position: 				static;
   	background-color: var(--app-disabled-color);
   	color: 						var(--disabled-text-color);
+  }
+
+  #info {
+    padding-top: 16px;
+  }
+
+  .info-item {
+    margin: 16px 0px;
   }
 
 </style>
@@ -94,7 +103,7 @@
 </paper-input>
 
 <p class="explainer">
-	<strong>Keywords</strong>, also called <strong>tags</strong>, allow for powerful database searches.  These should be single words that are highly relevant to the file subject matter.
+	<strong>Keywords</strong>, also called <strong>tags</strong>, allow for powerful database searches.  These should be single words that are highly relevant to the file subject matter. Example - 'coffee whole rich roasted bold arabica'
 </p>
 <p class="explainer">
 	Seperate keywords with a space. Do not use punctuation. Common words, such as 'a', 'and', 'is', 'or', 'very', etc., are ignored.
@@ -105,9 +114,69 @@
 								on-notes-changed="__notesChanged">
 </notes-textarea>
 
+
 <paper-button class$="save-btn [[__computeSaveBtnClass(isImg)]]"
 							disabled="[[!_changes]]" 
 							raised 
 							on-click="__saveBtnClicked">
 	Save
 </paper-button>
+
+<div id="info" class="shared-divider">
+
+  <div class="info-item" 
+       hidden="[[__computeHideOrder(list)]]">
+    <iron-icon icon="file-icons:format-list-numbered"></iron-icon>
+    <span>[[_order]]</span>
+    <div class="explainer">
+      Reorder file items by dragging them in the 'list' view. (previous screen)
+    </div>
+  </div>
+
+  <div class="info-item">
+    <iron-icon icon="app-icons:event"></iron-icon>
+    <span>[[_dateTime]]</span>
+  </div>
+
+  <div class="info-item">
+    <iron-icon icon="file-icons:local-offer"></iron-icon>
+    <span>[[_mimeExt]]</span>
+  </div>
+
+  <div class="info-item">
+    <iron-icon icon="file-icons:sd-card"></iron-icon>
+    <span>[[item.sizeStr]]</span>
+  </div>
+
+  <div class="info-item">
+    <iron-icon icon="file-icons:folder"></iron-icon>
+    <span>[[_dirName]]</span>
+  </div>
+
+  <div class="info-item">
+    <iron-icon icon="app-icons:fingerprint"></iron-icon>
+    <span>[[item.uid]]</span>
+  </div>
+
+  <div class="info-item"
+       hidden="[[!_gps]]">
+    <iron-icon icon="file-icons:place"></iron-icon>
+    <span>[[_gps]]</span>
+  </div>
+
+
+  <!-- 
+  	- Future feature - 
+
+  	The ability to add a gps location to a file.
+  	
+  	Use an address lookup input, interactive map 
+  	with pin drop, or use geolocation api.
+   -->
+  <!-- <div class="info-item"
+            hidden="[[_gps]]">
+    <paper-icon-button icon="file-icons:add-location"></paper-icon-button>
+    <span>Add file location.</span>
+  </div> -->
+
+</div>

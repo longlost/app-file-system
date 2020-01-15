@@ -50,8 +50,7 @@
 
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {formatTimestamp}  from '@longlost/utils/utils.js';
-import mime               from 'mime-types';
+import {FileInfoMixin}    from '../shared/file-info-mixin.js';
 import htmlString         from './file-item.html';
 import '@longlost/app-icons/app-icons.js';
 import '@longlost/app-shared-styles/app-shared-styles.js';
@@ -63,7 +62,7 @@ import './upload-controls.js';
 import './quick-options.js';
 
 
-class FileItem extends AppElement {
+class FileItem extends FileInfoMixin(AppElement) {
   static get is() { return 'file-item'; }
 
   static get template() {
@@ -88,9 +87,6 @@ class FileItem extends AppElement {
       },
 
       hideCheckbox: Boolean,
-      
-      // File item object.
-      item: Object,
 
       // Selected/checked state.
       selected: {
@@ -124,28 +120,10 @@ class FileItem extends AppElement {
   }
 
 
-  __computeOrder(item) {
-    if (!item) { return ''; }
+  __computeStatsLine2(mimeExt, sizeStr) {
+    if (!mimeExt) { return sizeStr; }
 
-    return `${item.index + 1}`;
-  }
-
-
-  __computeStatsLine1(item) {
-    if (!item || !item.timestamp) { return ''; }
-
-    return `${formatTimestamp(item.timestamp, 'short')}`;
-  }
-
-
-  __computeStatsLine2(item) {
-    if (!item) { return ''; }
-
-    const {type, sizeStr} = item;
-
-    if (!type) { return sizeStr; }
-
-    return `${mime.extension(type)} ● ${sizeStr}`;
+    return `${mimeExt} ● ${sizeStr}`;
   }
 
 

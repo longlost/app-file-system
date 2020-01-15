@@ -76,7 +76,7 @@
 
   <div id="label-name">
     <div id="label-order">
-      [[__computeOrder(item)]]
+      [[_order]]
     </div>
     <div class="shared-single-line-truncate">
       [[item.displayName]]
@@ -86,11 +86,11 @@
   <div id="label-body">
     <div id="label-stats">
       <div class="label-stat shared-single-line-truncate">
-        [[__computeStatsLine1(item)]]
+        [[_dateTime]]
       </div>
 
       <div class="label-stat shared-single-line-truncate">
-        [[__computeStatsLine2(item)]]
+        [[__computeStatsLine2(_mimeExt, item.sizeStr)]]
       </div>
     </div>
 
