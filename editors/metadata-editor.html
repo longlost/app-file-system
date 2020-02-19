@@ -2,64 +2,46 @@
 <style include="app-shared-styles">
 
   :host {
-    display: 				flex;
+    display:        flex;
     flex-direction: column;
-    margin-top: 		32px;
-    padding: 				16px;
-  }
-
-  paper-input {
-  	/*
-	  	Must set this here to counteract a bug 
-	  	in paper-input and paper-textarea.
-
-	  	This value is set in notes-textarea in 
-	  	order to match the styles of a paper-input
-	  	with a prefix iron-icon.
-
-	  	When this is only set on the note-textarea's
-	  	paper-textarea, it interferes with the styles 
-	  	of these paper-inputs.
-	  */
-  	--paper-input-container-label-floating: {
-  		left: 0px;
-  	};
+    margin-top:     32px;
+    padding:        16px;
   }
 
   iron-icon {
-  	min-height:   24px;
-  	min-width:    24px;
+    min-height:   24px;
+    min-width:    24px;
     margin-right: 4px;
   }
 
   paper-input[focused] iron-icon,
   iron-icon[focused] {
-  	color: var(--app-primary-color);
+    color: var(--app-primary-color);
   }
 
   .explainer {
-  	font-size: 12px;
-  	color: 		 var(--secondary-text-color);
+    font-size: 12px;
+    color:     var(--secondary-text-color);
   }
 
   .save-btn {
-  	position: -webkit-sticky;
-  	position: sticky;
-  	bottom: 	16px;
-  	width: 		100%;
-  	margin: 	32px auto;
-  	background-color: var(--app-primary-color);
-  	color: 						var(--constant-light-text);
+    position: -webkit-sticky;
+    position: sticky;
+    bottom:   16px;
+    width:    100%;
+    margin:   32px auto;
+    background-color: var(--app-primary-color);
+    color:            var(--constant-light-text);
   }
 
   .save-btn.is-img {
-  	width: unset;
+    width: unset;
   }
 
   .save-btn[disabled] {
-  	position: 				static;
-  	background-color: var(--app-disabled-color);
-  	color: 						var(--disabled-text-color);
+    position:         static;
+    background-color: var(--app-disabled-color);
+    color:            var(--disabled-text-color);
   }
 
   #info {
@@ -103,23 +85,23 @@
 </paper-input>
 
 <p class="explainer">
-	<strong>Keywords</strong>, also called <strong>tags</strong>, allow for powerful database searches.  These should be single words that are highly relevant to the file subject matter. Example - 'coffee whole rich roasted bold arabica'
+  <strong>Keywords</strong>, also called <strong>tags</strong>, allow for powerful database searches.  These should be single words that are highly relevant to the file subject matter. Example - 'coffee whole rich roasted bold arabica'
 </p>
 <p class="explainer">
-	Seperate keywords with a space. Do not use punctuation. Common words, such as 'a', 'and', 'is', 'or', 'very', etc., are ignored.
+  Seperate keywords with a space. Do not use punctuation. Common words, such as 'a', 'and', 'is', 'or', 'very', etc., are ignored.
 </p>
 
 
-<notes-textarea notes="[[_notes]]" 
-								on-notes-changed="__notesChanged">
-</notes-textarea>
+<app-textarea value="[[_notes]]" 
+              on-value-changed="__notesChanged">
+</app-textarea>
 
 
 <paper-button class$="save-btn [[__computeSaveBtnClass(isImg)]]"
-							disabled="[[!_changes]]" 
-							raised 
-							on-click="__saveBtnClicked">
-	Save
+              disabled="[[!_changes]]" 
+              raised 
+              on-click="__saveBtnClicked">
+  Save
 </paper-button>
 
 <div id="info" class="shared-divider">
@@ -166,12 +148,12 @@
 
 
   <!-- 
-  	- Future feature - 
+    - Future feature - 
 
-  	The ability to add a gps location to a file.
-  	
-  	Use an address lookup input, interactive map 
-  	with pin drop, or use geolocation api.
+    The ability to add a gps location to a file.
+    
+    Use an address lookup input, interactive map 
+    with pin drop, or use geolocation api.
    -->
   <!-- <div class="info-item"
             hidden="[[_gps]]">

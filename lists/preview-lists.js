@@ -45,7 +45,7 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import htmlString from './preview-lists.html';
-import '@longlost/app-modal/app-modal.js';
+import '@longlost/app-overlays/app-modal.js';
 import '@polymer/paper-button/paper-button.js';
 
 

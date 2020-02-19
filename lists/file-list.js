@@ -58,7 +58,7 @@ import {
   unlisten
 }                 from '@longlost/utils/utils.js';
 import htmlString from './file-list.html';
-import '@longlost/app-header-overlay/app-header-overlay.js';
+import '@longlost/app-overlays/app-header-overlay.js';
 import '@longlost/app-icons/app-icons.js';
 import '@longlost/badged-icon-button/badged-icon-button.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';

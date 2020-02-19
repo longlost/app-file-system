@@ -13,7 +13,7 @@ import services 		 from '@longlost/services/services.js';
 import multiDownload from 'multi-download';
 // Will NOT print pdf's in Chrome when dev tools is open!!
 import printJS  		 from 'print-js'; 
-import '@longlost/app-modal/app-modal.js';
+import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';
 
 

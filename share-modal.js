@@ -47,7 +47,7 @@ import {
 }                 from '@longlost/utils/utils.js';
 import services   from '@longlost/services/services.js';
 import htmlString from './share-modal.html';
-import '@longlost/app-modal/app-modal.js';
+import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';

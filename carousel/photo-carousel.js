@@ -37,7 +37,7 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import htmlString from './photo-carousel.html';
-import '@longlost/app-header-overlay/app-header-overlay.js';
+import '@longlost/app-overlays/app-header-overlay.js';
 
 
 class PhotoCarousel extends AppElement {
