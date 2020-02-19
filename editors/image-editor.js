@@ -38,7 +38,7 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import htmlString from './image-editor.html';
-import '@longlost/app-header-overlay/app-header-overlay.js';
+import '@longlost/app-overlays/app-header-overlay.js';
 
 
 class ImageEditor extends AppElement {

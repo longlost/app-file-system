@@ -3,7 +3,7 @@
   * `metadata-editor`
   * 
   *   Display and update file metadata in a shared content section.
-  * 	Can edit file 'displayName', 'keywords', 'notes'.
+  *   Can edit file 'displayName', 'keywords', 'notes'.
   *
   *
   *
@@ -31,21 +31,21 @@ import {
   FileInfoMixin
 }                 from '../shared/file-info-mixin.js';
 import {
-	compose,
-	map,
-	split
-} 								from '@longlost/lambda/lambda.js';
+  compose,
+  map,
+  split
+}                 from '@longlost/lambda/lambda.js';
 import htmlString from './metadata-editor.html';
 import '@longlost/app-icons/app-icons.js';
+import '@longlost/app-inputs/app-textarea.js';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '../shared/file-icons.js';
-import './notes-textarea.js';
 
 
-const normalize 			= x => x.trim().toLowerCase();
+const normalize       = x => x.trim().toLowerCase();
 const toKeywordsArray = compose(split(' '), map(normalize));
 
 
@@ -60,14 +60,14 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
   static get properties() {
     return {
 
-    	isImg: Boolean,
+      isImg: Boolean,
 
       list: String,
 
       // State of interaction with inputs.
       _changes: {
-      	type: Boolean,
-      	value: false
+        type: Boolean,
+        value: false
       },
 
       _displayName: String,
@@ -81,15 +81,15 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
 
 
   static get observers() {
-  	return [
-  		'__itemChanged(item)',
+    return [
+      '__itemChanged(item)',
       '__displayNameChanged(_displayName)'
-  	];
+    ];
   }
 
 
   __computeSaveBtnClass(isImg) {
-  	return isImg ? 'is-img' : '';
+    return isImg ? 'is-img' : '';
   }
 
 
@@ -99,16 +99,16 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
 
 
   __itemChanged(item) {
-  	if (!item) { return; }
+    if (!item) { return; }
 
-  	const {displayName, keywords, notes} = item;
+    const {displayName, keywords, notes} = item;
 
-  	this._displayName = displayName;
-  	this._rawKeywords = keywords ? keywords.join(' ') : '';
+    this._displayName = displayName;
+    this._rawKeywords = keywords ? keywords.join(' ') : '';
 
     // No undefined values for Firestore.
-  	this._notes 	= notes ? notes : null;
-  	this._changes = false;
+    this._notes   = notes ? notes : null;
+    this._changes = false;
   }
 
 
@@ -121,41 +121,41 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
 
   __displayNameInputValueChanged(event) {
     this._displayName = event.detail.value.trim();
-    this._changes 		= true;
+    this._changes     = true;
   }
 
 
   __keywordsInputValueChanged(event) {
     this._rawKeywords = event.detail.value.trim();
-    this._changes 		= true;
+    this._changes     = true;
   }
 
 
   __notesChanged(event) {
-  	this._notes 	= event.detail.value;
-  	this._changes = true;
+    this._notes   = event.detail.value;
+    this._changes = true;
   }
 
 
   async __saveBtnClicked() {
-  	try {
-  		await this.clicked();
+    try {
+      await this.clicked();
 
-  		const keywords = toKeywordsArray(this._rawKeywords);
+      const keywords = toKeywordsArray(this._rawKeywords);
 
-  		const item = {
-  			...this.item, 
-  			displayName: this._displayName, 
-  			keywords, 
-  			notes: 			 this._notes
-  		};
+      const item = {
+        ...this.item, 
+        displayName: this._displayName, 
+        keywords, 
+        notes:       this._notes
+      };
 
-  		this.fire('update-item', {item});
-  	}
-  	catch (error) {
-  		if (error === 'click debounced') { return; }
-  		console.error(error);
-  	}
+      this.fire('update-item', {item});
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
   }
 
 }

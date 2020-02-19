@@ -83,8 +83,8 @@ import path         from 'path'; // webpack includes this by default!
 import mime         from 'mime-types';
 import descriptions from './mime-descriptions.json';
 import htmlString   from './file-sources.html';
-import '@longlost/app-header-overlay/app-header-overlay.js';
-import '@longlost/app-modal/app-modal.js';
+import '@longlost/app-overlays/app-header-overlay.js';
+import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/paper-button/paper-button.js';

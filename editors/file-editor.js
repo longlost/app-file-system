@@ -41,7 +41,7 @@ import {
   PhotoElementMixin
 }                 from '../shared/photo-element-mixin.js';
 import htmlString from './file-editor.html';
-import '@longlost/app-header-overlay/app-header-overlay.js';
+import '@longlost/app-overlays/app-header-overlay.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-fab/paper-fab.js';
 import '../shared/file-icons.js';
