@@ -62,10 +62,13 @@
 
   <div slot="content">
 
-    <metadata-editor is-img="[[_isImg]]"
+    <metadata-editor dark-mode="[[darkMode]]"
+                     geolocation="[[_geolocation]]"
+                     is-img="[[_isImg]]"
                      item="[[item]]"
                      list="[[list]]"
-                     on-display-name-changed="__displayNameChanged">
+                     on-display-name-changed="__displayNameChanged"
+                     on-open-map-overlay="__openMapOverlay">
     </metadata-editor>
 
     <paper-fab hidden="[[!_isImg]]"
@@ -76,3 +79,13 @@
   </div>
 
 </app-header-overlay>
+
+
+<map-overlay id="mapOverlay"
+             dark-mode="[[darkMode]]"
+             draggable 
+             lat="[[item.geolocation.lat]]" 
+             lng="[[item.geolocation.lng]]"
+             zoom="[[_defaultZoom]]"
+             on-selected-changed="__mapOverlaySelectedChanged">
+</map-overlay>

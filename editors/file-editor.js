@@ -60,7 +60,11 @@ class FileEditor extends PhotoElementMixin(AppElement) {
   static get properties() {
     return {
 
-      // Pass through to <metadata-editor>
+      // Passed into <map-overlay> and <metadata-editor>
+      // which implements <app-map>.
+      darkMode: Boolean,
+
+      // Pass through to <metadata-editor>.
       list: String,
 
       _controls: {
@@ -68,7 +72,21 @@ class FileEditor extends PhotoElementMixin(AppElement) {
         value: false
       },
 
+      _defaultZoom: {
+        type: Number,
+        value: 0
+      },
+
       _editedDisplayName: String,
+
+      // From <map-overlay> to <metadata-editor>.
+      _geolocation: {
+        type: Object,
+        value: null
+      },
+
+      // <map-overlay> state for setting _defaultZoom.
+      _mapOpened: Boolean,
 
       _title: {
         type: String,
@@ -76,6 +94,13 @@ class FileEditor extends PhotoElementMixin(AppElement) {
       }
 
     };
+  }
+
+
+  static get observers() {
+    return [
+      '__itemGeolocationChanged(item.geolocation, _mapOpened)'
+    ];
   }
 
 
@@ -91,6 +116,15 @@ class FileEditor extends PhotoElementMixin(AppElement) {
 
   __computeHideLaunchBtn(isImg, isVid) {
     return !isImg && !isVid;
+  }
+
+  // Only set the default once per session.
+  __itemGeolocationChanged(geolocation, mapOpened) {
+
+    // Only set this when the overlay has been opened at least once.
+    if (geolocation && mapOpened && this._defaultZoom === 0) {
+      this._defaultZoom = 12;
+    }
   }
 
 
@@ -109,6 +143,24 @@ class FileEditor extends PhotoElementMixin(AppElement) {
 
   __displayNameChanged(event) {
     this._editedDisplayName = event.detail.value;
+  }
+
+
+  async __openMapOverlay() {
+
+    this._mapOpened = true;
+
+    await import(
+      /* webpackChunkName: 'map-overlay' */ 
+      '@longlost/app-map/map-overlay.js'
+    );
+
+    this.$.mapOverlay.open();
+  }
+
+
+  __mapOverlaySelectedChanged(event) {
+    this._geolocation = event.detail.selected;
   }
 
 

@@ -24,6 +24,13 @@
     color:     var(--secondary-text-color);
   }
 
+  #geolocation-btn {
+    align-self: flex-start;
+    position:   relative;
+    left:      -12px;
+    margin:     16px 0px;
+  }
+
   .save-btn {
     position: -webkit-sticky;
     position: sticky;
@@ -50,6 +57,18 @@
 
   .info-item {
     margin: 16px 0px;
+  }
+
+  #map {
+    height:   50vw;
+
+    /* Position and z-index set to force map to be below fab. */
+    position: relative;
+    z-index:  0;
+  }
+
+  *[hidden] {
+    display: none;
   }
 
 </style>
@@ -85,7 +104,7 @@
 </paper-input>
 
 <p class="explainer">
-  <strong>Keywords</strong>, also called <strong>tags</strong>, allow for powerful database searches.  These should be single words that are highly relevant to the file subject matter. Example - 'coffee whole rich roasted bold arabica'
+  <strong>Keywords</strong>, also called <strong>tags</strong>, allow for powerful searches.  These should be single words that are highly relevant to the file subject matter. Example - 'coffee whole rich roasted bold arabica'
 </p>
 <p class="explainer">
   Seperate keywords with a space. Do not use punctuation. Common words, such as 'a', 'and', 'is', 'or', 'very', etc., are ignored.
@@ -95,6 +114,17 @@
 <app-textarea value="[[_notes]]" 
               on-value-changed="__notesChanged">
 </app-textarea>
+
+
+<paper-button id="geolocation-btn" 
+              class="shared-paper-button-with-icon"
+              hidden="[[_hideGeolocationEditBtn]]"
+              on-click="__editGeolocationBtnClicked">
+  <iron-icon class="shared-iron-icon-inside-paper-button" 
+             icon="[[_geoLocationBtnIcon]]">
+  </iron-icon>
+  [[_geoLocationBtnText]]
+</paper-button>
 
 
 <paper-button class$="save-btn [[__computeSaveBtnClass(isImg)]]"
@@ -141,24 +171,16 @@
   </div>
 
   <div class="info-item"
-       hidden="[[!_gps]]">
+       hidden="[[_hideGPSDisplay]]">
     <iron-icon icon="file-icons:place"></iron-icon>
     <span>[[_gps]]</span>
   </div>
 
-
-  <!-- 
-    - Future feature - 
-
-    The ability to add a gps location to a file.
-    
-    Use an address lookup input, interactive map 
-    with pin drop, or use geolocation api.
-   -->
-  <!-- <div class="info-item"
-            hidden="[[_gps]]">
-    <paper-icon-button icon="file-icons:add-location"></paper-icon-button>
-    <span>Add file location.</span>
-  </div> -->
+  <app-map id="map" 
+           dark-mode="[[darkMode]]" 
+           hidden="[[_hideGPSDisplay]]"
+           lat="[[_lat]]"
+           lng="[[_lng]]">
+  </app-map>
 
 </div>

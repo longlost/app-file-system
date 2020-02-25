@@ -119,7 +119,7 @@ class QuickOptions extends AppElement {
 
     this.style['display'] = 'flex';
     await schedule();
-    this.$.background.style['opacity'] = '0.9';
+    this.$.background.style['opacity'] = '0.7';
     this.style['opacity']              = '1';
     this.style['transform']            = 'scale(1, 1)';
   }

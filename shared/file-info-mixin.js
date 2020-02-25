@@ -22,6 +22,12 @@ import mime              from 'mime-types';
 // ];
 
 
+const coordsStr = ({degrees, minutes, seconds, direction}) => 
+	seconds ? 
+		`${degrees}º ${minutes}' ${seconds}" ${direction}` : 
+		`${degrees}º ${minutes}' ${direction}`;
+
+
 export const FileInfoMixin = superClass => {
   return class FileInfoMixin extends superClass {
 
@@ -44,7 +50,19 @@ export const FileInfoMixin = superClass => {
 
 	      _gps: {
 	      	type: String,
-	      	computed: '__computeGPS(item.exif)'
+	      	computed: '__computeGPS(_lat, _lng)'
+	      },
+
+	      // Make exif data ready for <app-map>.
+	      _lat: {
+	      	type: Object,
+	      	computed: `__computeCoord(item.geolocation.lat, item.exif, 'Latitude')`
+	      },
+
+	      // Make exif data ready for <app-map>.
+	      _lng: {
+	      	type: Object,
+	      	computed: `__computeCoord(item.geolocation.lng, item.exif, 'Longitude')`
 	      },
 
 	      _mimeExt: {
@@ -58,6 +76,25 @@ export const FileInfoMixin = superClass => {
 	      }
 
 	    };
+	  }
+
+
+	  __computeCoord(position, exif, type) {
+
+	  	if (position) { return position; }
+
+	  	if (!exif) { return; }
+
+	  	// ie. 'GPSLatitude'
+	  	const numsKey = `GPS${type}`;
+	  	const dirKey 	= `${numsKey}Ref`;
+
+	  	if (!exif[numsKey] || !exif[dirKey]) { return; }
+
+	  	const [degrees, minutes, seconds] = exif[numsKey];
+	  	const [direction] 								= exif[dirKey];
+
+	  	return {degrees, minutes, seconds, direction};
 	  }
 
 
@@ -77,13 +114,12 @@ export const FileInfoMixin = superClass => {
 	  }
 
 
-	  __computeGPS(exif) {
-	  	if (!exif || !exif['GPSLatitude'] || !exif['GPSLongitude']) { return ''; }
+	  __computeGPS(lat, lng) {
+	  	if (!lat || !lng) { return ''; }
 
-	  	const lat  = `${exif['GPSLatitude']} ${exif['GPSLatitudeRef']}`;
-	  	const long = `${exif['GPSLongitude']} ${exif['GPSLongitudeRef']}`;
+	  	if (typeof lat === 'number') { return `Lat ${lat}, Lng ${lng}`; }  	
 
-	  	return `${lat}, ${long}`;
+	  	return `${coordsStr(lat)}, ${coordsStr(lng)}`;
 	  }
 
 
