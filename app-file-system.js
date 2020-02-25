@@ -223,6 +223,9 @@ class AppFileSystem extends EventsMixin(AppElement) {
       // Firestore collection name.
       coll: String,
 
+      // Passed into <map-overlay> and <app-map>
+      darkMode: Boolean,
+
       // Firestore document name.
       doc: String,
 

@@ -550,10 +550,10 @@
     "@polymer/paper-ripple" "^3.0.2"
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/app-map@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@longlost/app-map/-/app-map-1.4.0.tgz#ec94c91166b76e9e8257d1b225bd1b649ebfcb1e"
-  integrity sha512-5TD8Qxt48cSUZwFUe3fRx4OM7aZ2InAVhskizbZL7PZk8wFRUXFCtP7XFVyX9naOiDPto8stvE4jzUODc8S+Zg==
+"@longlost/app-map@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@longlost/app-map/-/app-map-1.4.1.tgz#6daba7e442dbb902460c47469af526f2d3710478"
+  integrity sha512-uW/0s09JWFeD4ngSas5hd9CJOtYMn0WwnxWssLiAP5GMp1XKGo0jk1FiH+4LJF+ckQhXtJ7SGdYONgcVDkW5KQ==
   dependencies:
     "@longlost/app-element" "^1.1.1"
     "@longlost/app-icons" "^1.0.11"
