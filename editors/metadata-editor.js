@@ -35,6 +35,9 @@ import {
   map,
   split
 }                 from '@longlost/lambda/lambda.js';
+import {
+  isOnScreen
+}                 from '@longlost/utils/utils.js';
 import htmlString from './metadata-editor.html';
 import '@longlost/app-icons/app-icons.js';
 import '@longlost/app-inputs/app-textarea.js';
@@ -60,6 +63,14 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
   static get properties() {
     return {
 
+      // Passed into <app-map>.
+      darkMode: Boolean,
+
+      geolocation: {
+        type: Object,
+        value: null // Firestore does not allow undefined values.
+      },
+
       isImg: Boolean,
 
       list: String,
@@ -72,6 +83,30 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
 
       _displayName: String,
 
+      _geoLocationBtnIcon: {
+        type: String,
+        value: 'file-icons:add-location',
+        computed: '__computedGeolocationBtnIcon(item.geolocation)'
+      },
+
+      _geoLocationBtnText: {
+        type: String,
+        value: 'ADD LOCATION',
+        computed: '__computedGeolocationBtnText(item.geolocation)'
+      },
+
+      _hideGeolocationEditBtn: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideGeolocationEditBtn(item.exif)'
+      },
+
+      _hideGPSDisplay: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideGPSDisplay(_gps)'
+      },
+
       _notes: String,
 
       _rawKeywords: String
@@ -82,9 +117,36 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
 
   static get observers() {
     return [
+      '__geolocationChanged(geolocation)',
+      '__gpsChanged(_gps)',
       '__itemChanged(item)',
       '__displayNameChanged(_displayName)'
     ];
+  }
+
+
+  __computedGeolocationBtnIcon(geolocation) {
+    return geolocation ? 'file-icons:edit-location' : 'file-icons:add-location'
+  }
+
+
+  __computedGeolocationBtnText(geolocation) {
+    return geolocation ? 'EDIT LOCATION' : 'ADD LOCATION';
+  }
+
+
+  __computeHideGeolocationEditBtn(exif) {
+    return exif && exif['GPSLatitude'];
+  }
+
+
+  __computeHideGPSDisplay(gps) {
+    return !Boolean(gps);
+  }
+
+
+  __computeHideOrder(list) {
+    return list !== 'file-list';
   }
 
 
@@ -93,8 +155,22 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
   }
 
 
-  __computeHideOrder(list) {
-    return list !== 'file-list';
+  __geolocationChanged(geolocation) {
+    if (geolocation) {
+      this._changes = true;
+    }
+  }
+
+
+  async __gpsChanged(gps) {
+    if (gps) {
+
+      await isOnScreen(this.$.map);
+
+      await import('@longlost/app-map/app-map.js');
+
+      this.$.map.resize();
+    }
   }
 
 
@@ -137,6 +213,19 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
   }
 
 
+  async __editGeolocationBtnClicked() {
+    try {
+      await this.clicked();
+
+      this.fire('open-map-overlay');
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
+
   async __saveBtnClicked() {
     try {
       await this.clicked();
@@ -145,7 +234,8 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
 
       const item = {
         ...this.item, 
-        displayName: this._displayName, 
+        displayName: this._displayName,
+        geolocation: this.geolocation,
         keywords, 
         notes:       this._notes
       };
