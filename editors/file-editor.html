@@ -1,6 +1,10 @@
 
 <style>
 
+  :host {
+    --fab-animation-ease: var(--custom-ease, cubic-bezier(0.49, 0.01, 0, 1));
+  }
+
   #overlay {
     --overlay-toolbar-background-parallax-height: 120%;
     --overlay-toolbar-vignette-opacity:           0.5;
@@ -12,12 +16,22 @@
     width:  100%;
   }
 
-  paper-fab {
+  #fab {
     position: fixed;
     right:    16px;
     bottom:   16px;
     background-color: var(--app-accent-color);
     color:            var(--constant-light-text);
+    z-index:          1;
+    transition:       transform 0.4s var(--fab-animation-ease), opacity 0.2s ease-in 0.15s;
+  }
+
+  .fab-base-transform {
+    transform: scale(0, 0) rotate(-90deg);
+  }
+
+  .fab-animation {
+    transform: scale(1, 1) rotate(0deg);
   }
 
   *[hidden] {
@@ -31,7 +45,10 @@
                     header-size="[[__computeHeaderSize(_isImg, _isVid)]]"
                     prebuilt-animation="from-right"
                     reveal-header
-                    title="[[_title]]">
+                    title="[[_title]]"
+                    on-overlay-exiting="__hideFab"
+                    on-reset="__resetFab">
+
 
   <lazy-image alt="[[item.displayName]]"
               hidden="[[!_isImg]]"
@@ -60,25 +77,27 @@
                      on-click="__launchBtnClicked">
   </paper-icon-button>
 
-  <div slot="content">
 
-    <metadata-editor dark-mode="[[darkMode]]"
-                     geolocation="[[_geolocation]]"
-                     is-img="[[_isImg]]"
-                     item="[[item]]"
-                     list="[[list]]"
-                     on-display-name-changed="__displayNameChanged"
-                     on-open-map-overlay="__openMapOverlay">
-    </metadata-editor>
+  <metadata-editor dark-mode="[[darkMode]]"
+                   geolocation="[[_geolocation]]"
+                   is-img="[[_isImg]]"
+                   item="[[item]]"
+                   list="[[list]]"
+                   slot="content"
+                   on-display-name-changed="__displayNameChanged"
+                   on-open-map-overlay="__openMapOverlay">
+  </metadata-editor>
 
-    <paper-fab hidden="[[!_isImg]]"
-               icon="file-icons:tune"
-               on-click="__fabClicked">
-    </paper-fab>
-
-  </div>
 
 </app-header-overlay>
+
+
+<paper-fab id="fab"
+           class="fab-base-transform"
+           hidden="[[!_isImg]]"
+           icon="file-icons:tune"
+           on-click="__fabClicked">
+</paper-fab>
 
 
 <map-overlay id="mapOverlay"

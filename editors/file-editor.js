@@ -40,6 +40,9 @@ import {
 import {
   PhotoElementMixin
 }                 from '../shared/photo-element-mixin.js';
+import {
+  schedule
+}                 from '@longlost/utils/utils.js';
 import htmlString from './file-editor.html';
 import '@longlost/app-overlays/app-header-overlay.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
@@ -177,8 +180,30 @@ class FileEditor extends PhotoElementMixin(AppElement) {
   }
 
 
-  open() {
-    return this.$.overlay.open();
+  async __showFab() {
+    this.$.fab.style['display'] = 'flex';
+    await schedule();
+    this.$.fab.classList.add('fab-animation');
+  }
+
+  // <app-header-overlay> 'on-overlay-exiting' handler.
+  __hideFab() {
+    this.$.fab.classList.remove('fab-animation');
+  }
+
+  // <app-header-overlay> 'on-reset' handler.
+  __resetFab() {
+
+    // Remove the class in case the overlay 
+    // is reset programmatically.
+    this.$.fab.classList.remove('fab-animation');
+    this.$.fab.style['display'] = 'none';
+  }
+
+
+  async open() {
+    await  this.$.overlay.open();
+    return this.__showFab();
   }
 
   // Used for confirmed delete actions.
