@@ -2,21 +2,40 @@
 <style include="app-shared-styles">
 
   :host {
-    display: 			 flex;
-    position: 		 absolute;
-    top: 					 8px;
-    right: 				 8px;
-    border: 			 2px solid var(--light-text-color);
+    display:  block;
+    position: absolute;
+    top:      0px;
+    right:    0px;
+    bottom:   0px;
+    left:     0px;
+  }
+
+  :host([checked]) {
+    background-color: rgba(33, 33, 33, 0.3);
+  }
+
+  :host([hidden]) {
+    display: none;
+  }
+
+  #wrapper {
+    display:       flex;
+    position:      absolute;
+    top:           8px;
+    right:         8px;
+    border:        2px solid var(--light-text-color);
     border-radius: 2px;
   }
 
   .shared-paper-checkbox {
-  	--paper-checkbox-label-spacing: 0px;
+    --paper-checkbox-label-spacing: 0px;
   }
 
 </style>
 
 
-<paper-checkbox class="shared-paper-checkbox"
-								checked="[[checked]]">
-</paper-checkbox>
+<div id="wrapper">
+  <paper-checkbox class="shared-paper-checkbox"
+                  checked="[[checked]]">
+  </paper-checkbox>
+</div>

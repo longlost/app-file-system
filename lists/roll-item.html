@@ -10,9 +10,13 @@
 </style>
 
 
-<file-thumbnail item="[[item]]"></file-thumbnail>
+<file-thumbnail controls="[[_controls]]"
+                item="[[item]]">
+</file-thumbnail>
+
 
 <processing-icon item="[[item]]"></processing-icon>
+
 
 <upload-controls id="uploadControls"
                  coll="[[coll]]"
@@ -20,3 +24,9 @@
                  field="[[field]]"
                  file="[[item.file]]">
 </upload-controls>
+
+
+<select-checkbox checked="[[selected]]"
+                 hidden="[[hideCheckbox]]"
+                 on-value-changed="__selectCheckboxValChanged">
+</select-checkbox>
