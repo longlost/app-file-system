@@ -52,27 +52,15 @@
     color:     var(--secondary-text-color);
   }
 
-  select-checkbox[hidden] {
-    display: none;
-  }
-
-  .selected {
-    opacity: 0.7;
-  }
-
 </style>
 
 
-<file-thumbnail class$="[[_selectedClass]]"
-                controls="[[_controls]]"
-                item="[[item]]"
-                on-click="__itemClicked">
+<file-thumbnail controls="[[_controls]]"
+                item="[[item]]">
 </file-thumbnail>
 
 
-<div id="label"
-     class$="[[_selectedClass]]"                
-     on-click="__itemClicked">
+<div id="label">
 
   <div id="label-name">
     <div id="label-order">
@@ -105,7 +93,6 @@
 
 
 <upload-controls id="uploadControls"
-                 class$="[[_selectedClass]]"
                  coll="[[coll]]"
                  doc="[[doc]]"
                  field="[[field]]"
@@ -115,7 +102,7 @@
 
 <select-checkbox checked="[[selected]]"
                  hidden="[[hideCheckbox]]"
-                 on-click="__itemClicked">
+                 on-value-changed="__selectCheckboxValChanged">
 </select-checkbox>
 
 
