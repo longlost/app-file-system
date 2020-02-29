@@ -1,22 +1,97 @@
 
-<style>
-  
+<style>  
+
   :host {
-    display: block;
-  } 
+    --scale-animation-ease: var(--custom-ease, cubic-bezier(0.49, 0.01, 0, 1));
+  }
+      
+  #overlay {
+    --overlay-toolbar-background-color: transparent;
+    --overlay-toolbar-color:            var(--constant-light-text);
+    --overlay-toolbar-pointer-events:   none;
+  }
+
+  .blur {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter:         blur(10px);
+    background-color:        var(--app-dark-color);
+    opacity:                 0.7;
+  }
+
+  #header-background {
+    position:         absolute;
+    top:              0px;
+    right:            0px;
+    bottom:           0px;
+    left:             0px;
+    pointer-events:   none;
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+                0px 1px 5px 0px rgba(0, 0, 0, 0.12),
+                0px 3px 1px -2px rgba(0, 0, 0, 0.2);
+    z-index:   -1;
+  }
+
+  #scale {
+    display:         flex;
+    justify-content: center;
+    width:           100%;
+    position:        fixed;
+    bottom:          48px;
+    transition:      transform 0.3s var(--scale-animation-ease);
+    z-index:         1;
+  }
+
+  .hide-scale {
+    transform: translateY(128px);
+  }
+
+  #scale .blur {
+    height:        40px;
+    border-radius: 20px;
+    overflow:      hidden;
+  }
 
 </style>
 
 
-<template is="dom-repeat" 
-          items="[[items]]">
+<app-header-overlay id="overlay"
+                    header-size="1"
+                    prebuilt-animation="from-bottom"
+                    reveal-header
+                    threshold="64"
+                    title="My Photos"
+                    on-header-overlay-threshold-triggered-changed="__overlayTriggered"
+                    on-overlay-exiting="__hideScale"
+                    on-reset="__resetScale">
 
-  <roll-item coll="[[coll]]"
-             doc="[[doc]]"
-             field="[[field]]"
-             file="[[item.file]]"
-             item="[[item]]"
-             on-click="__itemClicked">
-  </roll-item>
+  <div id="header-background"
+       class="blur" 
+       slot="header-background-slot">
+  </div>
 
-</template>
+  <multiselect-btns id="multi"
+                    items="[[items]]" 
+                    slot="top-toolbar-buttons-slot"
+                    on-all-changed="__allChanged"
+                    on-hide-checkboxes-changed="__hideCheckboxesChanged">
+  </multiselect-btns>
+
+
+  <roll-items id="rollItems"
+              all="[[_all]]"
+              coll="[[coll]]"
+              doc="[[doc]]"
+              field="[[field]]"
+              hide-checkboxes="[[_hideCheckboxes]]"
+              hide-dropzone="[[hideDropzone]]" 
+              items="[[items]]"
+              slot="content">
+  </roll-items>
+
+
+</app-header-overlay>
+
+
+<div id="scale">
+  <div class="blur">Scale</div>  
+</div>

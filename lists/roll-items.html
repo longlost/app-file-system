@@ -1,0 +1,46 @@
+
+<style>
+
+  :host {
+  	--thumbnail-scale: 		 100px;
+    display: 							 grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--thumbnail-scale), 1fr));
+    grid-gap: 2px;
+    padding:  2px;
+  }
+
+  .box {
+  	position: 	 relative;
+  	height: 		 0px;
+  	padding-top: 100%;
+  }
+
+  .wrapper {
+  	position: absolute;
+  	top: 			0px;
+  	right:    0px;
+  	bottom: 	0px;
+  	left: 		0px;
+  }
+
+</style>
+             
+
+<template is="dom-repeat" 
+          items="[[items]]"
+          strip-whitespace>
+
+  <div class="box">
+  	<div class="wrapper">
+		  <roll-item class="roll-item"
+		             coll="[[coll]]"
+		             doc="[[doc]]"
+		             field="[[field]]"
+		             hide-checkbox="[[hideCheckboxes]]"
+		             item="[[item]]"
+		             selected="[[all]]">
+		  </roll-item>
+		</div>
+	</div>
+
+</template>

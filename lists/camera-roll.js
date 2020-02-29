@@ -1,5 +1,4 @@
 
-
 /**
   * `camera-roll`
   * 
@@ -58,8 +57,14 @@ import {
   AppElement, 
   html
 }                 from '@longlost/app-element/app-element.js';
+import {
+  hijackEvent,
+  listen,
+  unlisten
+}                 from '@longlost/utils/utils.js';
 import htmlString from './camera-roll.html';
-import './roll-item.js';
+import './multiselect-btns.js';
+import './roll-items.js';
 
 
 class CameraRoll extends AppElement {
@@ -86,35 +91,108 @@ class CameraRoll extends AppElement {
       // Input items from db.
       items: Array,
 
+      // Data-bound to <file-items>.
+      // All item checkboxes selected when true.
+      _all: {
+        type: Boolean,
+        value: false
+      },
 
-
-      _toDelete: Object
+      // Set to true to hide <select-checkbox>'s
+      _hideCheckboxes: {
+        type: Boolean,
+        value: true
+      }
 
     };
   }
 
 
-  cancelDelete() {
-    if (!this._toDelete) { return; }
+  connectedCallback() {
+    super.connectedCallback();
 
-    const {uploader} = this._toDelete;
+    this._itemsSelectedListenerKey = listen(
+      this,
+      'item-selected',
+      this.__itemSelected.bind(this)
+    );
+  }
 
-    uploader.resumeUpload();
-  }  
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    unlisten(this._itemsSelectedListenerKey);
+  }
+
+
+  __overlayTriggered(event) {
+    const triggered = event.detail.value;
+
+    if (triggered) {
+      this.__hideScale();
+    }
+    else {
+      this.__showScale();
+    }
+  }
+
+
+  __hideScale() {
+    this.$.scale.classList.add('hide-scale');
+  }
+
+
+  __showScale() {
+    this.$.scale.classList.remove('hide-scale');
+  }
+
+
+  __resetScale() {
+    this.$.scale.style['display'] = 'none';
+  }
+
+
+  __allChanged(event) {
+    this._all = event.detail.value;
+  }
+
+
+  __hideCheckboxesChanged(event) {
+    this._hideCheckboxes = event.detail.value;
+  }
+
+
+  __itemSelected(event) {
+    hijackEvent(event);
+
+    const {item, selected} = event.detail;
+
+    if (selected) {
+      this.$.multi.selected(item);
+    }
+    else {
+      this.$.multi.unselected(item);
+    }
+  }
 
 
   cancelUploads(uids) {
-    const elements = this.selectAll('roll-item');
-
-    // 'uids' is optional.
-    const elsToCancel = uids ? 
-      uids.map(uid => elements.find(el => el.item.uid === uid)) : 
-      elements;
-
-    elsToCancel.forEach(element => {
-      element.cancelUpload();
-    });
+    this.$.rollItems.cancelUploads(uids);
   }
+
+
+  delete() {
+    this.$.multi.delete();
+  }
+
+
+  async open() {
+    this.$.scale.style['display'] = 'flex';
+    await this.$.overlay.open();
+    this.__showScale();
+  }
+
 
 }
 

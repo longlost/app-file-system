@@ -155,20 +155,39 @@ class PreviewList extends AppElement {
   }
 
 
-  delete() {
+  delete() {    
 
-    if (this.$.fileList.delete) {
-      this.$.fileList.delete();
+    if (this.list === 'file-list') {
+
+      if (this.$.fileList.delete) {
+        this.$.fileList.delete();
+      }
+    }
+    else if (this.list === 'camera-roll') {
+
+      if (this.$.cameraRoll.delete) {
+        this.$.cameraRoll.delete();
+      }
     }
   }
 
 
-  open() {
+  async open() {
 
     if (this.list === 'file-list') {
+      await import(
+        /* webpackChunkName: 'app-file-system-file-list' */ 
+        './file-list.js'
+      );
+
       return this.$.fileList.open();
     }
     else if (this.list === 'camera-roll') {
+      await import(
+        /* webpackChunkName: 'app-file-system-camera-roll' */ 
+        './camera-roll.js'
+      );
+      
       return this.$.cameraRoll.open();
     }
 
