@@ -41,6 +41,13 @@ class FileThumbnail extends PhotoElementMixin(AppElement) {
   static get properties() {
     return {  
 
+      // Sets the proportion of width to height for <lazy-video>.
+      // 'classic', 'fill', 'landscape', 'portrait' or 'square'
+      aspectRatio: {
+        type: String,
+        value: 'landscape'
+      },
+
       // Lazy-video controls.
       controls: Boolean,  
 

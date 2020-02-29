@@ -105,7 +105,8 @@
                 on-sort-finish="__handleSort">                
 
   <template is="dom-repeat" 
-            items="[[_rearrangedItems]]">
+            items="[[_rearrangedItems]]"
+            strip-whitespace>
     <!-- 
         Outter div fixes a bug that causes drag-drop-list classes from being
         blown away whenever an item updates while user is dragging. Probably

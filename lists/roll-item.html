@@ -4,13 +4,15 @@
   :host {
     display:  block;
     position: relative;
+    height:   100%;
     overflow: hidden;
   }
 
 </style>
 
 
-<file-thumbnail controls="[[_controls]]"
+<file-thumbnail aspect-ratio="fill"
+                controls="[[_controls]]"
                 item="[[item]]">
 </file-thumbnail>
 
