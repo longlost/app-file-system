@@ -590,6 +590,13 @@
   dependencies:
     "@polymer/polymer" "^3.3.1"
 
+"@longlost/app-shared-styles@^2.0.13":
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/@longlost/app-shared-styles/-/app-shared-styles-2.0.13.tgz#7a800d088a19bcda6288ff20d19cc9772ff36223"
+  integrity sha512-4PqO8cv8xbBMvUcaSWxnLVUQbExwVT8wR7d0KSzCyqo1WRGWaCE+4/Dyxrz12czBGPTwSuSbaA4iq/3KSmJ/Mg==
+  dependencies:
+    "@polymer/polymer" "^3.3.1"
+
 "@longlost/app-spinner@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@longlost/app-spinner/-/app-spinner-1.1.0.tgz#170ad84c15ccafce5a5cd87226960e176076d558"
@@ -1109,7 +1116,7 @@
     "@polymer/paper-styles" "^3.0.0-pre.26"
     "@polymer/polymer" "^3.0.0"
 
-"@polymer/paper-progress@^3.0.1":
+"@polymer/paper-progress@^3.0.0-pre.26", "@polymer/paper-progress@^3.0.1":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@polymer/paper-progress/-/paper-progress-3.0.1.tgz#2943054a909ad381236b3c7aecee078123bba839"
   integrity sha512-5nguG+tmnyoaWKVNG8Smtno2uLSPBgEsT3f20JY8yJTjUBYWaqa8E3l5RLkTRXgA4x9OnvLb8/CdlQWXQIogBg==
@@ -1133,6 +1140,21 @@
   integrity sha512-DnLNvYIMsiayeICroYxx6Q6Hg1cUU8HN2sbutXazlemAlGqdq80qz3TIaVdbpbt/pvjcFGX2HtntMlPstCge8Q==
   dependencies:
     "@polymer/iron-a11y-keys-behavior" "^3.0.0-pre.26"
+    "@polymer/polymer" "^3.0.0"
+
+"@polymer/paper-slider@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-slider/-/paper-slider-3.0.1.tgz#f252af4b41f7ce72bd4fb761e6b1efd55ca75550"
+  integrity sha512-TNA8nEQci1fe3vTQQaFwkPj9p9yTLSr9Mhe8xQSTHpFNKun1rsp91LlKJmiKJDO7xU9RGZmA2mRlQwaj6kgR3g==
+  dependencies:
+    "@polymer/iron-a11y-keys-behavior" "^3.0.0-pre.26"
+    "@polymer/iron-behaviors" "^3.0.0-pre.26"
+    "@polymer/iron-flex-layout" "^3.0.0-pre.26"
+    "@polymer/iron-form-element-behavior" "^3.0.0-pre.26"
+    "@polymer/paper-behaviors" "^3.0.0-pre.27"
+    "@polymer/paper-input" "^3.0.0-pre.26"
+    "@polymer/paper-progress" "^3.0.0-pre.26"
+    "@polymer/paper-styles" "^3.0.0-pre.26"
     "@polymer/polymer" "^3.0.0"
 
 "@polymer/paper-spinner@^3.0.2":

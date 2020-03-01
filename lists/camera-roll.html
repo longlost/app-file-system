@@ -1,5 +1,5 @@
 
-<style>  
+<style include="app-shared-styles">  
 
   :host {
     --scale-animation-ease: var(--custom-ease, cubic-bezier(0.49, 0.01, 0, 1));
@@ -9,12 +9,12 @@
     --overlay-toolbar-background-color: transparent;
     --overlay-toolbar-color:            var(--constant-light-text);
     --overlay-toolbar-pointer-events:   none;
+    --overlay-background-color:         var(--app-body-color);
   }
 
   .blur {
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter:         blur(10px);
-    background-color:        var(--app-dark-color);
     opacity:                 0.7;
   }
 
@@ -25,6 +25,7 @@
     bottom:           0px;
     left:             0px;
     pointer-events:   none;
+    background-color: var(--app-dark-color);
     box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
                 0px 1px 5px 0px rgba(0, 0, 0, 0.12),
                 0px 3px 1px -2px rgba(0, 0, 0, 0.2);
@@ -32,7 +33,7 @@
   }
 
   #scale {
-    display:         flex;
+    display:         none;
     justify-content: center;
     width:           100%;
     position:        fixed;
@@ -42,13 +43,24 @@
   }
 
   .hide-scale {
-    transform: translateY(128px);
+    transform: translateY(92px);
   }
 
-  #scale .blur {
-    height:        40px;
-    border-radius: 20px;
-    overflow:      hidden;
+  #scale-wrapper {
+    display:     flex;
+    position:    relative;
+    align-items: center;
+    padding:     0px 8px;
+  }
+
+  #scale-background {
+    position:         absolute;
+    top:              0px;
+    right:            0px;
+    bottom:           0px;
+    left:             0px;
+    border-radius:    16px;
+    background-color: var(--app-background-color);
   }
 
 </style>
@@ -85,6 +97,7 @@
               hide-checkboxes="[[_hideCheckboxes]]"
               hide-dropzone="[[hideDropzone]]" 
               items="[[items]]"
+              scale="[[_scale]]"
               slot="content">
   </roll-items>
 
@@ -92,6 +105,16 @@
 </app-header-overlay>
 
 
-<div id="scale">
-  <div class="blur">Scale</div>  
+<div id="scale" 
+     class="hide-scale">
+  <div id="scale-wrapper">
+    <div id="scale-background" 
+         class="blur">
+    </div>
+    <iron-icon icon="file-icons:view-comfy"></iron-icon>
+    <paper-slider value="50" 
+                  on-immediate-value-changed="__sliderValChanged">
+    </paper-slider>
+    <iron-icon icon="file-icons:view-module"></iron-icon>
+  </div>
 </div>

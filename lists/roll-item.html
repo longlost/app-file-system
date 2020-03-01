@@ -6,6 +6,7 @@
     position: relative;
     height:   100%;
     overflow: hidden;
+    background-color: var(--app-background-color);
   }
 
 </style>
@@ -13,7 +14,8 @@
 
 <file-thumbnail aspect-ratio="fill"
                 controls="[[_controls]]"
-                item="[[item]]">
+                item="[[item]]"
+                on-click="__thumbnailClicked">
 </file-thumbnail>
 
 

@@ -39,6 +39,19 @@ class RollItem extends ItemMixin(AppElement) {
     };
   }
 
+
+  async __thumbnailClicked() {
+    try {
+      await this.clicked();
+
+      this.fire('open-carousel', {item: this.item});
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
 }
 
 window.customElements.define(RollItem.is, RollItem);

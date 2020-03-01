@@ -283,14 +283,14 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   static get observers() {
     return [
-      '__collDocFieldChanged(coll, doc, field)',
+      '__collDocFieldListChanged(coll, doc, field, list)',
       '__dbDataChanged(_dbData)'
     ];
   }
 
   // Start a subscription to file data changes.
-  async __collDocFieldChanged(coll, doc, field) {
-    if (!coll || !doc || !field) { return; }
+  async __collDocFieldListChanged(coll, doc, field, list) {
+    if (!coll || !doc || !field || !list) { return; }
 
     if (this._unsubscribe) {
       this._unsub();
@@ -313,6 +313,14 @@ class AppFileSystem extends EventsMixin(AppElement) {
                       sort((a, b) => a.index - b.index);
     };
 
+
+    // const callback = results => {
+    //   // Filter out orphaned data that may have been caused
+    //   // by deletions prior to cloud processing completion.
+    //   this._items = results.filter(obj => obj.uid);
+    // };
+
+
     const errorCallback = error => {
       this._dbData = undefined;
       this._items  = undefined;
@@ -331,6 +339,18 @@ class AppFileSystem extends EventsMixin(AppElement) {
       doc,
       errorCallback
     });
+
+    // const orderBy = list === 'file-list' ?
+    //   {prop: 'index',     direction: 'asc'} :
+    //   {prop: 'timestamp', direction: 'desc'};
+
+
+    // this._unsubscribe = services.subscribe({
+    //   callback,
+    //   coll,
+    //   errorCallback,
+    //   orderBy
+    // });
   }
 
 

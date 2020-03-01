@@ -33,18 +33,13 @@
   *
   *
   *
-  *  Events:         
-  *
-  *
-  *    'item-clicked' - Fired when an item is clicked.
-  *                     detail -> {uid} - item uid
   *
   *  
   *  Methods:
   *
   *
   *
-  *    cancelDelete() - User dismisses the delete modal in <preview-list> parent element.
+  *    delete() - Clears multiselect after a delete operation.
   *
   *
   *    cancelUploads() - Cancels each item's active file upload.
@@ -63,6 +58,9 @@ import {
   unlisten
 }                 from '@longlost/utils/utils.js';
 import htmlString from './camera-roll.html';
+import '@longlost/app-shared-styles/app-shared-styles.js';
+import '@polymer/iron-icon/iron-icon.js';
+import '@polymer/paper-slider/paper-slider.js';
 import './multiselect-btns.js';
 import './roll-items.js';
 
@@ -102,7 +100,9 @@ class CameraRoll extends AppElement {
       _hideCheckboxes: {
         type: Boolean,
         value: true
-      }
+      },
+
+      _scale: Number
 
     };
   }
@@ -128,6 +128,9 @@ class CameraRoll extends AppElement {
 
   __overlayTriggered(event) {
     const triggered = event.detail.value;
+
+    // Noop on overlay initialization during first open.
+    if (!this.$.overlay.header) { return; }
 
     if (triggered) {
       this.__hideScale();
@@ -174,6 +177,11 @@ class CameraRoll extends AppElement {
     else {
       this.$.multi.unselected(item);
     }
+  }
+
+
+  __sliderValChanged(event) {
+    this._scale = event.detail.value;
   }
 
 
