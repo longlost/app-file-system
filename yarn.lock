@@ -754,6 +754,13 @@
     "@polymer/iron-scroll-target-behavior" "^3.0.0-pre.26"
     "@polymer/polymer" "^3.0.0"
 
+"@polymer/app-storage@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@polymer/app-storage/-/app-storage-3.0.3.tgz#72268d318bce31740246430ea8849e3fee817e07"
+  integrity sha512-t9SpRbtU3SHKlavE/CvIPhFmhJ0D4dfdFnHwXCjLHfx2SL+PBCk/dmJNNFaCxmNm7bml8xonGpeqtfvbfzdiyQ==
+  dependencies:
+    "@polymer/polymer" "^3.0.0"
+
 "@polymer/font-roboto@^3.0.0-pre.25", "@polymer/font-roboto@^3.0.1":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@polymer/font-roboto/-/font-roboto-3.0.2.tgz#80cdaa7225db2359130dfb2c6d9a3be1820020c3"
