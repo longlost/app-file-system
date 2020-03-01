@@ -59,6 +59,7 @@ import {
 }                 from '@longlost/utils/utils.js';
 import htmlString from './camera-roll.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
+import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-slider/paper-slider.js';
 import './multiselect-btns.js';
@@ -102,7 +103,12 @@ class CameraRoll extends AppElement {
         value: true
       },
 
-      _scale: Number
+      // This default is overridden by localstorage 
+      // after initial interaction from user.
+      _scale: {
+        type: Number,
+        value: 50
+      }
 
     };
   }
@@ -123,6 +129,11 @@ class CameraRoll extends AppElement {
     super.disconnectedCallback();
 
     unlisten(this._itemsSelectedListenerKey);
+  }
+
+
+  __localstorageDataChanged(event) {
+    this._scale = event.detail.value;
   }
 
 

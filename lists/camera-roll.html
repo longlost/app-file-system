@@ -66,6 +66,13 @@
 </style>
 
 
+<app-localstorage-document id="cameraRollScaleStorage"
+                           key="cameraRollScaleStorage" 
+                           data="[[_scale]]"
+                           on-data-changed="__localstorageDataChanged">
+</app-localstorage-document>
+
+
 <app-header-overlay id="overlay"
                     header-size="1"
                     prebuilt-animation="from-bottom"
@@ -112,7 +119,7 @@
          class="blur">
     </div>
     <iron-icon icon="file-icons:view-comfy"></iron-icon>
-    <paper-slider value="50" 
+    <paper-slider value="[[_scale]]" 
                   on-immediate-value-changed="__sliderValChanged">
     </paper-slider>
     <iron-icon icon="file-icons:view-module"></iron-icon>
