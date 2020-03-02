@@ -281,12 +281,10 @@ export const EventsMixin = superClass => {
 	    // by drag and drop reordering.
 	    const {sorted} = event.detail;
 
-	    const newIndexes = sorted.reduce((accum, uid, index) => {
-	      accum[uid] = {...this._dbData[uid], index};
-	      return accum;
-	    }, {});
+	    const newIndexes = sorted.map((uid, index) => 
+	    	({...this._dbData[uid], index}));
 
-	    this.__saveFileData(newIndexes);
+	    this.__saveItems(newIndexes);
 	  }
 
 	  // From <file-item> (image files only) and <roll-item>
@@ -375,13 +373,13 @@ export const EventsMixin = superClass => {
 	    const {uid, original, path} = event.detail;
 
 	    // Merge with existing file data.
-	    const fileData = {...this._dbData[uid], original, path}; 
+	    const item = {...this._dbData[uid], original, path}; 
 
 	    this.$.sources.delete(uid);
 
-	    await this.__saveFileData({[uid]: fileData});
+	    await this.__saveItem(item);
 
-	    this.fire('file-uploaded', fileData);
+	    this.fire('file-uploaded', {item});
 	  }
 
 
@@ -510,7 +508,7 @@ export const EventsMixin = superClass => {
 		  	
 		  	await this.__updateContentDisposition(item);
 
-		  	await this.__saveFileData({[item.uid]: item});
+		  	await this.__saveItem(item);
 	  	}
 	  	catch (error) {
 	  		console.error(error);

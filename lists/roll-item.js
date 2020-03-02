@@ -31,7 +31,10 @@ class RollItem extends ItemMixin(AppElement) {
 
 
   static get properties() {
-    return {
+    return {      
+
+      // Firestore coll path string.
+      coll: String,
       
       // File item object.
       item: Object

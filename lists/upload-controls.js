@@ -45,16 +45,6 @@ class UploadControls extends AppElement {
       // Firestore coll path string.
       coll: String,
 
-      // Firestore doc path string.
-      doc: String,
-
-      // Firestore document field to use for saving file data after processing.
-      // ie. 'backgroundImg', 'catImages', ...
-      field: {
-        type: String,
-        value: 'files'
-      },
-
       file: Object,
 
       // file upload controls
@@ -70,7 +60,7 @@ class UploadControls extends AppElement {
       // the correct place in Firestore.
       _metadata: {
         type: Object,
-        computed: '__computeMetadata(field, file)'
+        computed: '__computeMetadata(file)'
       },
 
       // upload progress
@@ -95,8 +85,8 @@ class UploadControls extends AppElement {
   }
 
 
-  __computeMetadata(field, file) {
-    if (!field || !file) { return; }
+  __computeMetadata(file) {
+    if (!file) { return; }
 
     const {displayName, ext, uid} = file;
     
@@ -109,7 +99,7 @@ class UploadControls extends AppElement {
 
       // 'metadata.customMetadata' in client sdk, 
       // 'metadata.metadata' in cloud functions.
-      customMetadata: {field, uid}
+      customMetadata: {uid}
     }; 
   }
 
@@ -139,15 +129,14 @@ class UploadControls extends AppElement {
     if (
       !file ||
       !metadata || 
-      !metadata.customMetadata.uid || 
-      !metadata.customMetadata.field
+      !metadata.customMetadata.uid
     ) { 
       this.__hide();
       return; 
     }
 
-    if (!this.coll || !this.doc) { 
-      throw new Error(`upload-controls must have both 'coll' and 'doc' set`); 
+    if (!this.coll) { 
+      throw new Error(`upload-controls must have a 'coll' set`); 
     }
 
     this.__uploadFile(file, metadata);
@@ -212,8 +201,7 @@ class UploadControls extends AppElement {
       this._state    = capitalize(state);
     };
 
-    const name = `${file.uid}${file.ext}`;
-    const path = `${this.coll}/${this.doc}/${name}`;
+    const path = `${this.coll}/${file.uid}/${file.basename}`;
 
     services.fileUpload({
       controlsCallback:     controlsCallback,

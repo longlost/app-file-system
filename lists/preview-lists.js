@@ -15,16 +15,6 @@
   *           default -> undefined
   *
   *
-  *    doc - <String> required: firestore document path to use when saving.
-  *           ie. `${program}`, 'home', `${uid}`
-  *           default -> undefined
-  *
-  *
-  *    field - <String> optional: firestore document object field (prop) to save the file metadata/info.
-  *            ie. 'backgroundImg', 'carousel', 'profileImg'
-  *            default -> 'files'
-  *
-  *
   *  
   *    items - Collection of file data objects that drives the template repeater.
   *
@@ -62,13 +52,6 @@ class PreviewList extends AppElement {
 
       // Firestore coll path string.
       coll: String,
-
-      // Firestore doc path string.
-      doc: String,
-      
-      // Firestore document field to use for saving file data after processing.
-      // ie. 'backgroundImg', 'catImages', ...
-      field: String,
 
       files: Object,
 
@@ -120,13 +103,13 @@ class PreviewList extends AppElement {
 
   __listChanged(list) {
     
-    if (list === 'file-list') {
+    if (list === 'files') {
       import(
         /* webpackChunkName: 'app-file-system-file-list' */ 
         './file-list.js'
       );
     }
-    else if (list === 'camera-roll') {
+    else if (list === 'photos') {
       import(
         /* webpackChunkName: 'app-file-system-camera-roll' */ 
         './camera-roll.js'
@@ -157,13 +140,13 @@ class PreviewList extends AppElement {
 
   delete() {    
 
-    if (this.list === 'file-list') {
+    if (this.list === 'files') {
 
       if (this.$.fileList.delete) {
         this.$.fileList.delete();
       }
     }
-    else if (this.list === 'camera-roll') {
+    else if (this.list === 'photos') {
 
       if (this.$.cameraRoll.delete) {
         this.$.cameraRoll.delete();
@@ -174,7 +157,7 @@ class PreviewList extends AppElement {
 
   async open() {
 
-    if (this.list === 'file-list') {
+    if (this.list === 'files') {
       await import(
         /* webpackChunkName: 'app-file-system-file-list' */ 
         './file-list.js'
@@ -182,7 +165,7 @@ class PreviewList extends AppElement {
 
       return this.$.fileList.open();
     }
-    else if (this.list === 'camera-roll') {
+    else if (this.list === 'photos') {
       await import(
         /* webpackChunkName: 'app-file-system-camera-roll' */ 
         './camera-roll.js'

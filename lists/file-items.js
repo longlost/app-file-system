@@ -16,16 +16,6 @@
   *           default -> undefined
   *
   *
-  *    doc - <String> required: firestore document path to use when saving.
-  *           ie. `${program}`, 'home', `${uid}`
-  *           default -> undefined
-  *
-  *
-  *    field - <String> optional: firestore document object field (prop) to save the file metadata/info.
-  *            ie. 'backgroundImg', 'carousel', 'profileImg'
-  *            default -> 'files'
-  *
-  *
   *    hideDropzone - <Boolean> optional: undefined -> When true, hide delete dropzone.
   *
   *
@@ -114,13 +104,6 @@ class FileItems extends AppElement {
 
       // Firestore coll path string.
       coll: String,
-
-      // Firestore doc path string.
-      doc: String,
-      
-      // Firestore document field to use for saving file data after processing.
-      // ie. 'backgroundImg', 'catImages', ...
-      field: String,
 
       // Set to true to hide <file-item> <select-checkbox>'s
       hideCheckboxes: Boolean,

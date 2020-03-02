@@ -64,10 +64,17 @@ class ProcessingIcon extends AppElement {
   // animate from upload through final processing
   __computeAnimate(item) {
     if (!item || 'type' in item === false) { return false; }
+
+    const {type} = item;
+
     // animate during image processing as well
-    if (item.type.includes('image')) {
+    if (
+      type.includes('image') && 
+      (type.includes('jpeg') || type.includes('jpg') || type.includes('png'))
+    ) {
       return 'original' in item && 'optimized' in item === false;
     }
+
     // Other file types don't have futher processing
     // so we are done animating.  
     return 'original' in item === false;
@@ -75,6 +82,7 @@ class ProcessingIcon extends AppElement {
 
 
   async __animateChanged(animate) {
+
     if (animate) {
       this.style['display'] = 'block';
       await wait(500); // Wait for <upload-controls> to hide.

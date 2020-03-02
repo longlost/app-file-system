@@ -216,7 +216,7 @@ class FileSources extends AppElement {
       // Used for <list-icon-button> calculations.
       items: Array,
 
-      list: String, // 'rearrange-list' or 'camera-roll'.
+      list: String, // 'files' or 'photos'.
 
       maxfiles: Number,
 

@@ -146,7 +146,7 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
 
 
   __computeHideOrder(list) {
-    return list !== 'file-list';
+    return list !== 'files';
   }
 
 
