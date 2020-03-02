@@ -94,9 +94,9 @@ class ListIconButton extends AppElement {
 
   __computeIcon(list) {
     switch (list) {
-      case 'rearrange-list':
+      case 'files':
         return 'file-icons:apps';
-      case 'camera-roll':
+      case 'photos':
         return 'file-icons:dashboard-90';
       default:
         return 'file-icons:apps';

@@ -102,7 +102,7 @@ class ShareModal extends AppElement {
 
       if (!isOpen) { return; }
 
-      const {field, path, shareable, sharePath, type, uid} = item;
+      const {path, shareable, sharePath, type, uid} = item;
 
       if (sharePath) {
         if (shareable) {
@@ -127,7 +127,6 @@ class ShareModal extends AppElement {
       else {
         services.cloudFunction({
           data: {
-            field,
             path, 
             type,
             uid

@@ -33,18 +33,27 @@
   *
   *
   *    coll - <String> required: firestore collection path to use when saving.
-  *           ie. `cms/ui/programs`, 'images', `users`
+  *           ie. `cms/ui/programs`, 'images', `users/${user.uid}/photos`
   *           default -> undefined
   *
+  * 
+  *    list - <String> required: 'files' or 'photos'. Defaults to 'files'.
+  *           Controls the type of file preview list to use.
   *
-  *    doc - <String> required: firestore document path to use when saving.
-  *           ie. `${program}`, 'home', `${uid}`
-  *           default -> undefined
+  *           Choose 'files' for a general file picker and editor
+  *           that handles many different types of files. 
+  *           The picker allows the user to rearrange the order in
+  *           which the files appear with a drag and drop interface.
+  *           The file 'index' property is used to order the elements
+  *           which makes it a good fit for use with carousels or 
+  *           layouts where the order can be arbitrary and not based 
+  *           on when the file was saved.
   *
-  *
-  *    field - <String> optional: firestore document object field (prop) to save the file metadata/info.
-  *            ie. 'backgroundImg', 'carousel', 'profileImg'
-  *            default -> 'files'
+  *           Choose 'photos' for image and video files only. 
+  *           Typically useful for photos captured on device where 
+  *           the photos should be ordered by timestamp or 
+  *           geolocation contexts.
+  *           The user cannot rearrange these files.
   *
   *
   *    multiple - <Boolean> optional: false -> only accept one file at a time, true -> allow many files at the same time.
@@ -56,7 +65,7 @@
   *
   *
   *    'data-changed' - Fired any time file(s) data changes.
-  *                     detail -> {[uid]: {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}, ...}
+  *                     detail -> {[uid]: {coll, doc, ext, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}, ...}
   *                                _tempUrl - window.URL.createObjectURL
   *                                index    - used for multiple files ordering
   *
@@ -68,16 +77,16 @@
   *
   *  
   *    'file-uploaded' - Fired after successful upload operation.
-  *                      detail -> {coll, doc, ext, field, name, original, path, size, sizeStr, type, uid, _tempUrl}
+  *                      detail -> {coll, doc, ext, name, original, path, size, sizeStr, type, uid, _tempUrl}
   *                                 original - public download url for full size original
   *
   *
-  *    'items-deleted' - Fired after user deletes a file item.
-  *                     detail -> {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}
+  *    'items-deleted' - Fired after user deletes one or more file items.
+  *                     detail -> {uids}
   *
   *     
   *    'upload-cancelled' - Fired if user cancels the upload process.
-  *                         detail -> {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl}          
+  *                         detail -> {coll, doc, ext, index, name, path, size, sizeStr, type, uid, _tempUrl}          
   *
   *
   *  
@@ -87,12 +96,12 @@
   *    add() - Add one File obj or an array of File objects for upload to Firebase Firestore and Storage.
   *
   *
-  *    getData() - Returns file data {[uid]: {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}, ...}.
+  *    getData() - Returns file data {[uid]: {coll, doc, ext, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}, ...}.
   *              
   *
   *    delete(uid) - uid  -> <String> required: file uid to target for delete operation.
   *                            Returns Promise 
-  *                            resolves to {coll, doc, ext, field, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}.
+  *                            resolves to {coll, doc, ext, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}.
   *
   *    
   *    deleteAll() - Returns Promise that resolves when deletion finishes.
@@ -154,6 +163,12 @@ const getImageFileDeletePaths = storagePath => {
 };
 
 
+const isCloudProcessable = ({type}) => 
+  type && 
+  type.includes('image') && 
+  (type.includes('jpeg') || type.includes('jpg') || type.includes('png'));
+
+
 // Fails gracefully.
 const deleteStorageFiles = async item => {
 
@@ -163,14 +178,15 @@ const deleteStorageFiles = async item => {
   // This sometimes happens with slow connections.
   try {
 
-    const {sharePath, path: storagePath, type} = item;
+    const {sharePath, path: storagePath} = item;
 
-    if (storagePath) {    
+    if (storagePath) {
+
       // Test the file type.
       // If its an image, 
       // then delete the optim_ and 
       // thumb_ files from storage as well.
-      if (type && type.includes('image')) {
+      if (isCloudProcessable(item)) {
         const paths    = getImageFileDeletePaths(storagePath);
         const promises = paths.map(p => services.deleteFile(p));
 
@@ -226,15 +242,6 @@ class AppFileSystem extends EventsMixin(AppElement) {
       // Passed into <map-overlay> and <app-map>
       darkMode: Boolean,
 
-      // Firestore document name.
-      doc: String,
-
-      // Firestore document prop.
-      field: {
-        type: String,
-        value: 'files'
-      },
-
       // Set to true to hide the add and delete dropzones.
       hideDropzone: {
         type: Boolean,
@@ -242,9 +249,24 @@ class AppFileSystem extends EventsMixin(AppElement) {
       },
 
       // Controls the type of file preview list to use.
+      //
+      // Choose 'files' for a general file picker and editor
+      // that handles many different types of files. 
+      // The picker allows the user to rearrange the order in
+      // which the files appear with a drag and drop interface.
+      // The file 'index' property is used to order the elements
+      // which makes it a good fit for use with carousels or 
+      // layouts where the order can be arbitrary and not based 
+      // on when the file was saved.
+      //
+      // Choose 'photos' for image and video files only. 
+      // Typically useful for photos captured on device where 
+      // the photos should be ordered by timestamp or 
+      // geolocation contexts.
+      // The user cannot rearrange these files.
       list: {
         type: String,
-        value: 'file-list' // Or 'camera-roll'.
+        value: 'files' // Or 'photos'.
       },
 
       // Positive Int that represents the maximum
@@ -267,8 +289,8 @@ class AppFileSystem extends EventsMixin(AppElement) {
         value: 'kB' // or 'B', 'MB', 'GB'
       },
 
-      // Firestore data. Raw document data
-      // at field (docData[this.field]).
+      // An object version of the items returned from the database.
+      // Used for quick and easy access to file items via uid.
       _dbData: Object,
 
       // Drives <preview-lists> repeater.
@@ -283,14 +305,14 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   static get observers() {
     return [
-      '__collDocFieldListChanged(coll, doc, field, list)',
+      '__collListChanged(coll, list)',
       '__dbDataChanged(_dbData)'
     ];
   }
 
   // Start a subscription to file data changes.
-  async __collDocFieldListChanged(coll, doc, field, list) {
-    if (!coll || !doc || !field || !list) { return; }
+  async __collListChanged(coll, list) {
+    if (!coll || !list) { return; }
 
     if (this._unsubscribe) {
       this._unsub();
@@ -303,27 +325,20 @@ class AppFileSystem extends EventsMixin(AppElement) {
       await wait(500);
     }
 
-    const callback = docData => {
-      this._dbData = docData[field];
+
+    const callback = results => {
 
       // Filter out orphaned data that may have been caused
       // by deletions prior to cloud processing completion.
-      this._items = Object.values(this._dbData).
-                      filter(obj => obj.uid).
-                      sort((a, b) => a.index - b.index);
+      this._items = results.filter(obj => obj.uid);
+
+      this._dbData = arrayToDbObj(this._items);
     };
 
 
-    // const callback = results => {
-    //   // Filter out orphaned data that may have been caused
-    //   // by deletions prior to cloud processing completion.
-    //   this._items = results.filter(obj => obj.uid);
-    // };
-
-
     const errorCallback = error => {
-      this._dbData = undefined;
       this._items  = undefined;
+      this._dbData = undefined;
 
       if (
         error.message && 
@@ -333,24 +348,17 @@ class AppFileSystem extends EventsMixin(AppElement) {
       console.error(error);
     };
 
+    const orderBy = list === 'files' ?
+      {prop: 'index',     direction: 'asc'} :
+      {prop: 'timestamp', direction: 'desc'};
+
+
     this._unsubscribe = services.subscribe({
       callback,
       coll,
-      doc,
-      errorCallback
+      errorCallback,
+      orderBy
     });
-
-    // const orderBy = list === 'file-list' ?
-    //   {prop: 'index',     direction: 'asc'} :
-    //   {prop: 'timestamp', direction: 'desc'};
-
-
-    // this._unsubscribe = services.subscribe({
-    //   callback,
-    //   coll,
-    //   errorCallback,
-    //   orderBy
-    // });
   }
 
 
@@ -362,6 +370,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   __dbDataChanged(data) {
+
     this.fire('data-changed', {data});
   }
 
@@ -369,10 +378,10 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // Resolve the promise when the 
   // file item has an optimized prop.
   __waitForCloudProcessing(item) {
-    const {optimized, original, type, uid} = item;
+    const {optimized, original, uid} = item;
 
     // An image that has been uploaded but not yet optimized.
-    if (type && type.includes('image') && original && !optimized) {
+    if (isCloudProcessable(item) && original && !optimized) {
 
       return new Promise(resolve => {
 
@@ -391,48 +400,10 @@ class AppFileSystem extends EventsMixin(AppElement) {
   }
 
 
-  __deleteDbFileData(uids) { 
-
-    // Filter out orphaned data that may have been caused
-    // by deletions prior to cloud processing completion,
-    // and filter out the item to be deleted by uid.
-    const remainingItems = uids.reduce((accum, uid) => {
-
-      if (accum[uid]) {
-        delete accum[uid];
-      }
-
-      return accum;
-    }, {...this._dbData});
-
-
-    // Cleanup indexes from items deleted from middle of list.
-    const ordered = Object.
-                      values(remainingItems).
-                      filter(item => item.uid).
-                      sort((a, b) => a.index - b.index).
-                      map((item, index) => ({...item, index}));
-
-    // From array back to a data obj.
-    const orderedData = arrayToDbObj(ordered);
-
-    // Replace entire document entry with
-    // item to delete removed (merge: false).
-    return services.set({
-      coll: this.coll,
-      doc:  this.doc,
-      data: {
-        [this.field]: orderedData
-      },
-      merge: false
-    });
-  }
-
-
   async __delete(uids) {
 
     // Clone to survive deletion and fire with event.
-    const items = uids.map(uid => ({...this._dbData[uid]}));
+    const items = uids.map(uid => this._dbData[uid]);
 
     // Make sure these two operations run synchronously
     // for each item, but allow parallel at the items level.
@@ -445,38 +416,40 @@ class AppFileSystem extends EventsMixin(AppElement) {
       return deleteStorageFiles(item);
     };
 
-    const promises = items.map(item => deleteFromStorage(item));
+    const storagePromises = items.map(item => deleteFromStorage(item));
 
-    await Promise.all(promises);
+    await Promise.all(storagePromises);
 
     // Adjust <file-items>'s <drag-drop-list> state correction.
     uids.forEach(() => {
       this.$.lists.delete();  
     });
 
-    await this.__deleteDbFileData(uids);
+    const dbPromises = uids.map(uid => 
+      services.deleteDocument({coll: this.coll, doc: uid}));
+
+    await Promise.all(dbPromises);
 
     // Garbage collect file data.
     uids.forEach(uid => {
       this.$.sources.delete(uid);
     });
 
-    this.fire('items-deleted', {items});
+    this.fire('items-deleted', {uids});
   }
 
 
-  __saveFileData(obj = {}) {
-    const data = this._dbData ? 
-                   {...this._dbData, ...obj} : // Merge with existing data.
-                   obj; // Set new data.
-
+  __saveItem(item) {
     return services.set({
       coll: this.coll,
-      doc:  this.doc,
-      data: {
-        [this.field]: data
-      }
+      doc:  item.uid,
+      data: item
     });
+  }
+
+
+  __saveItems(items) {
+    return items.map(item => this.__saveItem(item));
   }
 
   // Strip out file obj data since it must be uploaded
@@ -486,7 +459,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
     const files     = Object.values(filesObj);
     const lastIndex = this._items ? this._items.length : 0;
 
-    const newItems = files.reduce((accum, file) => {
+    const newItems = files.map(file => {
 
       // Cannot destructure the File object since it
       // is not a true iterable JS object.
@@ -505,16 +478,15 @@ class AppFileSystem extends EventsMixin(AppElement) {
         uid,
       } = file;
 
-      accum[uid] = {
+      return {
         _tempUrl,
         basename,
-        coll:     this.coll,
+        coll: this.coll,
         displayName,
-        doc:      this.doc,
+        doc: uid,
         exif,
         ext,
-        field:    this.field,
-        index:    index + lastIndex,
+        index: index + lastIndex,
         lastModified,
         size, 
         sizeStr,
@@ -522,22 +494,20 @@ class AppFileSystem extends EventsMixin(AppElement) {
         type,
         uid
       };
-
-      return accum;
-    }, {});
+    });
 
     this.fire('files-received', {files});
 
     if (!this.multiple) {
 
       // Delete previous file and its data.
-      if (this._items && this._items.length) {
-        const {uid} = this._items[this._items.length - 1];
-        await this.__delete([uid]);        
+      if (Array.isArray(this._items) && this._items.length) {
+        const uids = this._items.map(item => item.uid);
+        await this.__delete(uids);        
       }
     }
 
-    return this.__saveFileData(newItems);
+    return this.__saveItems(newItems);
   }
 
   // Add one HTML5 File object or an array of File objects.
@@ -592,10 +562,6 @@ class AppFileSystem extends EventsMixin(AppElement) {
       this.$.lists.cancelUploads();
 
       await this.__delete(uids);
-      await services.deleteDocument({
-        coll: this.coll,
-        doc:  this.doc
-      });
     }
     catch (error) {
       console.error(error);

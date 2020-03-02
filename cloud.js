@@ -16,10 +16,16 @@ const SHARE_PREFIX    = 'share_';
 const THUMB_PREFIX    = 'thumb_';
 
 
+const isOptimizable = type => 
+  type.startsWith('image/') && 
+  (type.includes('jpeg') || type.includes('jpg') || type.includes('png'));
+
+
 const getRandomFileName = ext => `${crypto.randomBytes(20).toString('hex')}${ext}`;
 const getTempLocalFile  = name => path.join(os.tmpdir(), name);
 const getNewFilePath    = (dir, prefix, name) => 
                             path.normalize(path.join(dir, `${prefix}${name}`));
+
 
 const getCollAndDoc = dir => {
   const segments = dir.split('/');
@@ -47,7 +53,7 @@ exports.init = (admin, functions) => {
   // Uses ImageMagick to process images.
   //
   // Dynamically merges the url data into 
-  // the appropriate coll, doc and field.
+  // the appropriate coll, doc.
   const optimize = functions.
     runWith({timeoutSeconds: 300}). // Extended runtime of 5 min. for large files (default 60 sec).
     storage.
@@ -63,9 +69,9 @@ exports.init = (admin, functions) => {
           size
         } = object;
 
-        // Exit if this is triggered on a file that is not an image.
-        if (!contentType.startsWith('image/')) {
-          console.log('This file is not an image. Not optimizing.');
+        // Exit if this is triggered on a file that is not a jpeg or png image.
+        if (!isOptimizable(contentType)) {
+          console.log('This file is not a jpeg or png image. Not optimizing.');
           return null;
         }
 
@@ -151,7 +157,6 @@ exports.init = (admin, functions) => {
           // Setting new contentDisposition here has no effect.
           // Can only be done on client with Storage SDK.
           metadata: {
-            'field':         metadata.field,
             'processed':    'true',
             'originalSize': `${size}`,
             'uid':           metadata.uid
@@ -189,16 +194,12 @@ exports.init = (admin, functions) => {
 
         const {coll, doc} = getCollAndDoc(fileDir);
 
-        // Fully dynamic save to firestore doc.
+        // Add optimize data to existing firestore doc.
         await admin.firestore().collection(coll).doc(doc).set(
           {
-            [metadata.field]: { // <app-file-system> custom element 'field' prop on client.
-              [metadata.uid]: {
-                optimized,
-                sharePath: optimPath, // Used to get a shareable link.
-                thumbnail
-              }
-            }
+            optimized,
+            sharePath: optimPath, // Used to get a shareable link.
+            thumbnail
           }, 
           {merge: true}
         );
@@ -218,15 +219,17 @@ exports.init = (admin, functions) => {
     try {
 
       // Can pass a bucketName to use a different bucket than the default.
-      const {bucketName, field, path: filePath, type, uid} = data;
+      const {bucketName, path: filePath, type, uid} = data;
 
-      if (!field || !filePath || !type || !uid) {
+      if (!filePath || !type || !uid) {
         throw new functions.https.HttpsError('unknown', 'createShareable missing args.');
       }
 
-      // Exit if this is triggered on a file that is an image.
-      if (type.startsWith('image/')) {
-        console.log('This file is an image. Not copying.');
+      // Exit if this is triggered on a file that is a jpeg or png
+      // since the 'optimize' cloud function already provides a 
+      // link for these.
+      if (isOptimizable(type)) {
+        console.log('This file is an optimizable image. Not copying.');
         return null;
       }
 
@@ -240,15 +243,9 @@ exports.init = (admin, functions) => {
       
       const {coll, doc} = getCollAndDoc(fileDir);
 
-      // Fully dynamic save to firestore doc.
+      // Add data to existing firestore doc.
       await admin.firestore().collection(coll).doc(doc).set(
-        {
-          [field]: { // <app-file-system> custom element 'field' prop on client.
-            [uid]: {
-              sharePath // Used to get a shareable link.
-            }
-          }
-        }, 
+        {sharePath}, // Used to get a shareable link.
         {merge: true}
       );
 

@@ -13,16 +13,6 @@
   *           ie. `cms/ui/programs`, 'images', `users`
   *           default -> undefined
   *
-  *
-  *    doc - <String> required: Firestore document path to use when saving.
-  *           ie. `${program}`, 'home', `${uid}`
-  *           default -> undefined
-  *
-  *
-  *    field - <String> optional: Firestore document object field (prop) to save the file metadata/info.
-  *            ie. 'backgroundImg', 'carousel', 'profileImg'
-  *            default -> 'files'
-  *
   *  
   *    item - <Object> required: File item data object.
   *
@@ -64,16 +54,6 @@ export const ItemMixin = superClass => {
 
 	      // Firestore coll path string.
 	      coll: String,
-
-	      // Firestore doc path string.
-	      doc: String,
-
-	      // Firestore document field to use for saving file data after processing.
-	      // ie. 'backgroundImg', 'catImages', ...
-	      field: {
-	        type: String,
-	        value: 'files'
-	      },
 
 	      hideCheckbox: Boolean,
 
