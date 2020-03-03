@@ -135,7 +135,6 @@ import path       from 'path';
 import services   from '@longlost/services/services.js';
 import htmlString from './app-file-system.html';
 import './sources/file-sources.js';
-import './lists/preview-lists.js';
 // app-modal, app-spinner imports in events-mixin.js.
 
 
@@ -286,7 +285,8 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   static get observers() {
     return [
-      '__dbDataChanged(_dbData)' // _dbData prop def in events-mixin.js.
+      '__dbDataChanged(_dbData)', // _dbData prop def in events-mixin.js.
+      '__listChanged(list)'
     ];
   }
 
@@ -294,6 +294,23 @@ class AppFileSystem extends EventsMixin(AppElement) {
   __dbDataChanged(data) {
 
     this.fire('data-changed', {data});
+  }
+
+
+  __listChanged(list) {
+    
+    if (list === 'files') {
+      import(
+        /* webpackChunkName: 'app-file-system-file-list' */ 
+        './lists/file-list.js'
+      );
+    }
+    else if (list === 'photos') {
+      import(
+        /* webpackChunkName: 'app-file-system-camera-roll' */ 
+        './lists/camera-roll.js'
+      );
+    }
   }
 
   // Listen for data changes.
@@ -321,6 +338,24 @@ class AppFileSystem extends EventsMixin(AppElement) {
     return Promise.resolve();
   }
 
+  // Adjust <file-items>'s <drag-drop-list> state correction.
+  // Reset multiselect-btns.
+  __deleteFromList() {    
+
+    if (this.list === 'files') {
+
+      if (this.$.fileList.delete) {
+        this.$.fileList.delete();
+      }
+    }
+    else if (this.list === 'photos') {
+
+      if (this.$.cameraRoll.delete) {
+        this.$.cameraRoll.delete();
+      }
+    }
+  }
+
 
   async __delete(uids) {
 
@@ -343,8 +378,9 @@ class AppFileSystem extends EventsMixin(AppElement) {
     await Promise.all(storagePromises);
 
     // Adjust <file-items>'s <drag-drop-list> state correction.
+    // Reset multiselect-btns.
     uids.forEach(() => {
-      this.$.lists.delete();  
+      this.__deleteFromList();  
     });
 
     const dbPromises = uids.map(uid => 
@@ -434,6 +470,18 @@ class AppFileSystem extends EventsMixin(AppElement) {
     return this.__saveItems(newItems);
   }
 
+
+  __cancelUploads(uids) {
+
+    if (this.$.fileList.cancelUploads) {
+      this.$.fileList.cancelUploads(uids);
+    }
+
+    if (this.$.cameraRoll.cancelUploads) {
+      this.$.cameraRoll.cancelUploads(uids);
+    }
+  }
+
   // Add one HTML5 File object or an array of File objects.
   async add(files) {
     try {
@@ -462,7 +510,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
     try {
       await this.$.spinner.show('Deleting file.');
 
-      this.$.lists.cancelUploads([uid]);
+      this.__cancelUploads([uid]);
 
       await this.__delete([uid]);
     }
@@ -483,7 +531,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
       const uids = Object.keys(this._dbData);
 
-      this.$.lists.cancelUploads();
+      this.__cancelUploads();
 
       await this.__delete(uids);
     }
@@ -505,7 +553,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
     try {
       await this.$.spinner.show('Deleting files.');
 
-      this.$.lists.cancelUploads(uids);
+      this.__cancelUploads(uids);
 
       await this.__delete(uids);
     }
@@ -525,8 +573,25 @@ class AppFileSystem extends EventsMixin(AppElement) {
   }
 
 
-  openList() {
-    return this.$.lists.open();
+  async openList() {
+    if (this.list === 'files') {
+      await import(
+        /* webpackChunkName: 'app-file-system-file-list' */ 
+        './lists/file-list.js'
+      );
+
+      return this.$.fileList.open();
+    }
+    else if (this.list === 'photos') {
+      await import(
+        /* webpackChunkName: 'app-file-system-camera-roll' */ 
+        './lists/camera-roll.js'
+      );
+      
+      return this.$.cameraRoll.open();
+    }
+
+    throw new Error('Cannot open the overlay without the list property being properly set.');
   }
 
 

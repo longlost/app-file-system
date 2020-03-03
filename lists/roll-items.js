@@ -16,7 +16,6 @@
   *           default -> undefined
   *
   *
-  *    hideDropzone - <Boolean> optional: undefined -> When true, hide delete dropzone.
   *
   *
   *    items - <Array> required: Input items from Firestore db.
@@ -73,9 +72,6 @@ class RollItems extends AppElement {
 
       // Set to true to hide <file-item> <select-checkbox>'s
       hideCheckboxes: Boolean,
-
-      // Set to true to hide the delete dropzone.
-      hideDropzone: Boolean,
 
       // Input items from db.
       items: Array,
