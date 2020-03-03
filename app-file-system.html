@@ -37,12 +37,17 @@
 
 
 <!-- _files from events-mixin.js -->
-<preview-lists id="lists"
-               coll="[[coll]]"
-               files="[[_files]]"
-               hide-dropzone="[[hideDropzone]]"
-               list="[[list]]">
-</preview-lists>
+<file-list id="fileList"
+           coll="[[coll]]"
+           hide-dropzone="[[hideDropzone]]"
+           files="[[_files]]">
+</file-list>
+
+<!-- _files from events-mixin.js -->
+<camera-roll id="cameraRoll"
+             coll="[[coll]]"
+             files="[[_files]]">
+</camera-roll>
 
 
 <file-editor id="fileEditor"

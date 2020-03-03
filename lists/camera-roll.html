@@ -12,24 +12,28 @@
     --overlay-background-color:         var(--app-body-color);
   }
 
-  .blur {
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter:         blur(10px);
-    opacity:                 0.7;
-  }
-
-  #header-background {
+  .background {
     position:         absolute;
     top:              0px;
     right:            0px;
     bottom:           0px;
     left:             0px;
     pointer-events:   none;
+    z-index:         -1;
+  }
+
+  .blur {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter:         blur(10px);
+  }
+
+  /*
+    Cannot have a background color and 
+    a backdrop-filter on same element.
+  */
+  #header-color-background {
+    opacity:          0.7;
     background-color: var(--app-dark-color);
-    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-                0px 1px 5px 0px rgba(0, 0, 0, 0.12),
-                0px 3px 1px -2px rgba(0, 0, 0, 0.2);
-    z-index:   -1;
   }
 
   #scale {
@@ -47,19 +51,22 @@
   }
 
   #scale-wrapper {
-    display:     flex;
-    position:    relative;
-    align-items: center;
-    padding:     0px 8px;
+    display:       flex;
+    position:      relative;
+    align-items:   center;
+    padding:       0px 8px;
+    border-radius: 16px;
   }
 
+  /*
+    So the opacity setting required for 
+    backdrop-filter does not affect any other elements.
+
+    Cannot have a background color and 
+    a backdrop-filter on same element.
+  */
   #scale-background {
-    position:         absolute;
-    top:              0px;
-    right:            0px;
-    bottom:           0px;
-    left:             0px;
-    border-radius:    16px;
+    opacity:          0.7;
     background-color: var(--app-background-color);
   }
 
@@ -83,13 +90,17 @@
                     on-overlay-exiting="__hideScale"
                     on-reset="__resetScale">
 
-  <div id="header-background"
-       class="blur" 
+  <div class="background blur" 
+       slot="header-background-slot">
+  </div>
+
+  <div id="header-color-background"
+       class="background" 
        slot="header-background-slot">
   </div>
 
   <multiselect-btns id="multi"
-                    items="[[items]]" 
+                    items="[[_combinedFileItems]]" 
                     slot="top-toolbar-buttons-slot"
                     on-all-changed="__allChanged"
                     on-hide-checkboxes-changed="__hideCheckboxesChanged">
@@ -100,8 +111,7 @@
               all="[[_all]]"
               coll="[[coll]]"
               hide-checkboxes="[[_hideCheckboxes]]"
-              hide-dropzone="[[hideDropzone]]" 
-              items="[[items]]"
+              items="[[_combinedFileItems]]"
               scale="[[_scale]]"
               slot="content">
   </roll-items>
@@ -112,9 +122,10 @@
 
 <div id="scale" 
      class="hide-scale">
-  <div id="scale-wrapper">
+  <div id="scale-wrapper" 
+       class="shared-border-radius-mask blur">
     <div id="scale-background" 
-         class="blur">
+         class="background">
     </div>
     <iron-icon icon="file-icons:view-comfy"></iron-icon>
     <paper-slider value="[[_scale]]" 

@@ -101,11 +101,11 @@ class ListIconButton extends AppElement {
   __computeIcon(list) {
     switch (list) {
       case 'files':
-        return 'file-icons:apps';
-      case 'photos':
         return 'file-icons:dashboard-90';
-      default:
+      case 'photos':
         return 'file-icons:apps';
+      default:
+        return 'file-icons:dashboard-90';
     }
   }
 

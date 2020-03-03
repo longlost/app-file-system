@@ -448,7 +448,9 @@ export const EventsMixin = superClass => {
 	      await this.$.deleteConfirmModal.close();
 
 	      // Reset drag-drop delete if applicable.
-	      this.$.lists.resetDeleteTarget();
+	      if (this.$.fileList.resetDeleteTarget) {
+		      this.$.fileList.resetDeleteTarget();
+		    }
 
 	      // Close editors since their item is now gone.
 	      // Test for close method since these elements
@@ -490,7 +492,9 @@ export const EventsMixin = superClass => {
 	      await this.$.deleteConfirmModal.close();
 
 	      // Reset drag-drop delete if applicable.
-	      this.$.lists.cancelDelete();
+	      if (this.$.fileList.cancelDelete) {
+		      this.$.fileList.cancelDelete();
+		    }
 	    }
 	    catch (error) {
 	      if (error === 'click debounced') { return; }
