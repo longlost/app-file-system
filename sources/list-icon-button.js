@@ -8,7 +8,7 @@
   *  properites:
   *
   *  
-  *    items - Array of file data objects that drives animation timing.
+  *    data - Object of file data objects that drives animation timing.
   * 
   *
   *
@@ -45,8 +45,8 @@ class ListIconButton extends AppElement {
   static get properties() {
     return {
 
-      // File object collection.
-      items: Array,
+      // Object form of database items.
+      data: Object,
 
       // Determines which icon is shown for the <paper-icon-button>
       list: String,
@@ -55,19 +55,19 @@ class ListIconButton extends AppElement {
       _animateArrow: {
         type: Boolean,
         value: false,
-        computed: '__computeAnimateArrow(items)'
+        computed: '__computeAnimateArrow(_items)'
       },
 
       // Cloud processing gear animation state.
       _animateGear: {
         type: Boolean,
         value: false,
-        computed: '__computeAnimateGear(items)'
+        computed: '__computeAnimateGear(_items)'
       },
 
       _count: {
         type: Number,
-        computed: '__computeCount(items)'
+        computed: '__computeCount(_items)'
       },
 
       _icon: {
@@ -75,9 +75,15 @@ class ListIconButton extends AppElement {
         computed: '__computeIcon(list)'
       },
 
+      // File object collection.
+      _items: {
+        type: Array,
+        computed: '__computeItems(data)'
+      },
+
       _show: {
         type: Boolean,
-        computed: '__computeShow(items)'
+        computed: '__computeShow(_count)'
       }
 
     };
@@ -101,6 +107,11 @@ class ListIconButton extends AppElement {
       default:
         return 'file-icons:apps';
     }
+  }
+
+
+  __computeItems(data) {
+    return data ? Object.values(data) : undefined;
   }
 
   // animate from upload through final processing
@@ -135,8 +146,8 @@ class ListIconButton extends AppElement {
   }
 
 
-  __computeShow(items) {
-    return Array.isArray(items) && items.length > 0;
+  __computeShow(count) {
+    return typeof count === 'number' && count > 0;
   }
 
 

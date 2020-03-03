@@ -139,15 +139,6 @@ import './lists/preview-lists.js';
 // app-modal, app-spinner imports in events-mixin.js.
 
 
-// From items array/collection back to a Firestore data obj.
-const arrayToDbObj = array => {
-  return array.reduce((accum, obj) => {
-    accum[obj.uid] = obj;
-    return accum;
-  }, {});
-};    
-
-
 const getImageFileDeletePaths = storagePath => {
   const base = path.basename(storagePath);
   const dir  = path.dirname(storagePath);
@@ -287,17 +278,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
       unit: {
         type: String,
         value: 'kB' // or 'B', 'MB', 'GB'
-      },
-
-      // An object version of the items returned from the database.
-      // Used for quick and easy access to file items via uid.
-      _dbData: Object,
-
-      // Drives <preview-lists> repeater.
-      _items: Array,
-
-      // Services/Firestore subscription unsubscribe function.
-      _unsubscribe: Object
+      }
 
     };
   }
@@ -305,67 +286,8 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   static get observers() {
     return [
-      '__collListChanged(coll, list)',
-      '__dbDataChanged(_dbData)'
+      '__dbDataChanged(_dbData)' // _dbData prop def in events-mixin.js.
     ];
-  }
-
-  // Start a subscription to file data changes.
-  async __collListChanged(coll, list) {
-    if (!coll || !list) { return; }
-
-    if (this._unsubscribe) {
-      this._unsub();
-    }
-    else { 
-
-      // App is still initializing, 
-      // so give <app-settings> time to call enablePersistence
-      // on services before calling subscribe.
-      await wait(500);
-    }
-
-
-    const callback = results => {
-
-      // Filter out orphaned data that may have been caused
-      // by deletions prior to cloud processing completion.
-      this._items = results.filter(obj => obj.uid);
-
-      this._dbData = arrayToDbObj(this._items);
-    };
-
-
-    const errorCallback = error => {
-      this._items  = undefined;
-      this._dbData = undefined;
-
-      if (
-        error.message && 
-        error.message.includes('document does not exist')
-      ) { return; }
-
-      console.error(error);
-    };
-
-    const orderBy = list === 'files' ?
-      {prop: 'index',     direction: 'asc'} :
-      {prop: 'timestamp', direction: 'desc'};
-
-
-    this._unsubscribe = services.subscribe({
-      callback,
-      coll,
-      errorCallback,
-      orderBy
-    });
-  }
-
-
-  __unsub() {
-    if (this._unsubscribe) {
-      this._unsubscribe();
-    }
   }
 
 
@@ -457,7 +379,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
   async __addNewFileItems(filesObj) {
 
     const files     = Object.values(filesObj);
-    const lastIndex = this._items ? this._items.length : 0;
+    const lastIndex = this._dbData ? Object.keys(this._dbData).length : 0;
 
     const newItems = files.map(file => {
 
@@ -498,13 +420,15 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
     this.fire('files-received', {files});
 
-    if (!this.multiple) {
 
-      // Delete previous file and its data.
-      if (Array.isArray(this._items) && this._items.length) {
-        const uids = this._items.map(item => item.uid);
-        await this.__delete(uids);        
-      }
+    // Delete previous file and its data.
+    if (!this.multiple && this._dbData) {
+
+      const uids = Object.keys(this._dbData);
+
+      if (uids.length > 0) {
+        await this.__delete(uids);   
+      }     
     }
 
     return this.__saveItems(newItems);

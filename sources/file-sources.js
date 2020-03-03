@@ -210,11 +210,12 @@ class FileSources extends AppElement {
       // one of 3 shorthand values: 'image', 'video' or 'audio'.
       accept: String,
 
+      // Used for <list-icon-button> calculation and animations.
+      // Object form of database items.
+      data: Object,
+
       // Set to true to hide the add and delete dropzones.
       hideDropzone: Boolean,
-
-      // Used for <list-icon-button> calculations.
-      items: Array,
 
       list: String, // 'files' or 'photos'.
 

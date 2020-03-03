@@ -17,7 +17,7 @@
 
 
   <multiselect-btns id="multi"
-                    items="[[items]]" 
+                    items="[[_combinedFileItems]]" 
                     slot="top-toolbar-buttons-slot"
                     on-all-changed="__allChanged"
                     on-hide-checkboxes-changed="__hideCheckboxesChanged">
@@ -29,7 +29,7 @@
               coll="[[coll]]"
               hide-checkboxes="[[_hideCheckboxes]]"
               hide-dropzone="[[hideDropzone]]" 
-              items="[[items]]"
+              items="[[_combinedFileItems]]"
               slot="content">
   </file-items>
 

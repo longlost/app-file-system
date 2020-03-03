@@ -57,15 +57,7 @@ class PreviewList extends AppElement {
 
       hideDropzone: Boolean,
 
-      items: Array,
-
-      list: String,
-
-      // Drives <template is="dom-repeat">
-      _previewItems: {
-        type: Array,
-        computed: '__computePreviewItems(items, files)'
-      }
+      list: String
 
     };
   }
@@ -75,29 +67,6 @@ class PreviewList extends AppElement {
     return [
       '__listChanged(list)'
     ];
-  }
-
-  // Combine incomming file obj with db item.
-  // File obj is fed to <upload-controls>.
-  __computePreviewItems(items, files) {
-
-    if (!items || items.length === 0) { return; }
-    if (!files || Object.keys(files).length === 0) { return items; }
-
-    const previewItems = items.map(item => {
-
-      const match = files[item.uid];
-
-      if (!match) {
-        // Remove file prop.
-        const {file, ...rest} = item; 
-        return {...rest};
-      }
-      // Add file to item.
-      return {...item, file: match};
-    });
-
-    return previewItems;
   }
 
 
