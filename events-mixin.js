@@ -17,6 +17,15 @@ import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';
 
 
+// From items array/collection back to a Firestore data obj.
+const arrayToDbObj = array => {
+  return array.reduce((accum, obj) => {
+    accum[obj.uid] = obj;
+    return accum;
+  }, {});
+};    
+
+
 const getPrintType = type => {
   if (type.includes('image')) {
     return 'image';
@@ -85,7 +94,11 @@ export const EventsMixin = superClass => {
 
 
     static get properties() {
-      return { 
+      return {
+
+	      // An object version of the items returned from the database.
+	      // Used for quick and easy access to file items via uid.
+	      _dbData: Object,
 
 	      // When deleting an item with drag and drop,
 	      // or with item delete icon button,
@@ -101,6 +114,8 @@ export const EventsMixin = superClass => {
 
 	      // From <file-sources>.
 	      _files: Object,
+
+	      _itemsChangedListenerKey: Object,
 
 	      _openCarouselListenerKey: Object,
 
@@ -157,6 +172,13 @@ export const EventsMixin = superClass => {
 	      this, 
 	      'edit-image', 
 	      this.__editImage.bind(this)
+	    );
+
+	    // <file-item>, <photo-carousel>
+	    this._itemsChangedListenerKey = listen(
+	      this, 
+	      'items-changed', 
+	      this.__itemsChanged.bind(this)
 	    );
 
 	    // Events from <file-items> which is
@@ -231,6 +253,7 @@ export const EventsMixin = superClass => {
 	    unlisten(this._downloadsListenerKey);
 	    unlisten(this._editFileListenerKey);
 	    unlisten(this._editImageListenerKey);
+	    unlisten(this._itemsChangedListenerKey);
 	    unlisten(this._openCarouselListenerKey);
 	    unlisten(this._printListenerKey);    
 	    unlisten(this._printsListenerKey);
@@ -240,7 +263,6 @@ export const EventsMixin = superClass => {
 	    unlisten(this._sortedListenerKey);
 	    unlisten(this._updateListenerKey);
 	    unlisten(this._uploadListenerKey);
-	    this.__unsub();
 	  }
 
 	  // So top level elements can receive real-time updates to item.
@@ -271,6 +293,19 @@ export const EventsMixin = superClass => {
 	    finally {
 	      this.$.spinner.hide();
 	    }	    
+	  }
+
+
+	  __itemsChanged(event) {
+
+	  	const items = event.detail.value;
+
+	  	if (Array.isArray(items)) {
+	  		this._dbData = arrayToDbObj(items);
+	  	}
+	  	else {
+	  		this._dbData = undefined;
+	  	}
 	  }
 
 	  // 'file-items-sorted' events from <file-items>

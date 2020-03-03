@@ -109,16 +109,16 @@ class FileItems extends AppElement {
       hideCheckboxes: Boolean,
 
       // Set to true to hide the delete dropzone.
-      hideDropzone: Boolean,
+      hideDropzone: Boolean,    
 
-      // Input items from db.
+      // Db items combined with local file items when appropriate.
       items: Array,
 
       // Cached order in which shuffled file items 
       // are ordered (translated by <drag-drop-list>
       // and reused by <template is="dom-repeat">), so saves 
       // by other devices can be correcly displayed locally.
-      _domState: Array,
+      _domState: Array,  
 
       // Keep a snapshot of the items proper
       // order in sequence to correct an
@@ -134,7 +134,7 @@ class FileItems extends AppElement {
 
   static get observers() {
     return [
-      '__itemsChanged(items)',
+      '__itemsChanged(items)'
     ];
   }
 
