@@ -19,36 +19,22 @@
     padding:  3px;
   }
 
-  .box {
-    position:    relative;
-    height:      0px;
-    padding-top: 100%;
-  }
-
-  .wrapper {
-    position: absolute;
-    top:      0px;
-    right:    0px;
-    bottom:   0px;
-    left:     0px;
-  }
-
 </style>
-             
+
 
 <template is="dom-repeat" 
-          items="[[items]]"
+          items="[[_paginations]]"
+          as="pagination"
           strip-whitespace>
-
-  <div class="box">
-    <div class="wrapper">
-      <roll-item class="roll-item"
-                 coll="[[coll]]"
-                 hide-checkbox="[[hideCheckboxes]]"
-                 item="[[item]]"
-                 selected="[[all]]">
-      </roll-item>
-    </div>
-  </div>
+          
+  <paginated-roll-items class="item"
+                        all="[[all]]"
+                        coll="[[coll]]"
+                        files="[[files]]"
+                        hide-checkboxes="[[hideCheckboxes]]"
+                        index="[[index]]"
+                        pagination="[[pagination]]"
+                        on-new-pagination-doc="__newPaginationDoc">
+  </paginated-roll-items>
 
 </template>

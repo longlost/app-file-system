@@ -1,0 +1,23 @@
+
+<style>
+	
+	:host {
+		display: contents;
+	}
+
+</style>
+
+
+<template is="dom-repeat" 
+          items="[[_combinedFileItems]]"
+          strip-whitespace
+          on-dom-change="__domChanged">
+          
+  <roll-item class="item"
+             coll="[[coll]]"
+             hide-checkbox="[[hideCheckboxes]]"
+             item="[[item]]"
+             selected="[[all]]">
+  </roll-item>
+
+</template>

@@ -100,18 +100,18 @@
   </div>
 
   <multiselect-btns id="multi"
-                    items="[[_combinedFileItems]]" 
+                    data="[[data]]" 
                     slot="top-toolbar-buttons-slot"
                     on-all-changed="__allChanged"
                     on-hide-checkboxes-changed="__hideCheckboxesChanged">
   </multiselect-btns>
 
 
-  <roll-items id="rollItems"
+  <roll-items id="items"
               all="[[_all]]"
               coll="[[coll]]"
+              files="[[files]]"
               hide-checkboxes="[[_hideCheckboxes]]"
-              items="[[_combinedFileItems]]"
               scale="[[_scale]]"
               slot="content">
   </roll-items>

@@ -45,7 +45,7 @@ class UploadControls extends AppElement {
       // Firestore coll path string.
       coll: String,
 
-      file: Object,
+      item: Object,
 
       // file upload controls
       // {cancel, pause, resume}
@@ -60,7 +60,7 @@ class UploadControls extends AppElement {
       // the correct place in Firestore.
       _metadata: {
         type: Object,
-        computed: '__computeMetadata(file)'
+        computed: '__computeMetadata(item.file)'
       },
 
       // upload progress
@@ -80,7 +80,7 @@ class UploadControls extends AppElement {
 
   static get observers() {
     return [
-      '__fileChanged(file, _metadata)'
+      '__fileChanged(item.file, _metadata)'
     ];
   }
 
@@ -110,7 +110,7 @@ class UploadControls extends AppElement {
     await wait(800);
 
     // If processing happens faster than animation timing, abort.
-    if (isDisplayed(this) || !this.file) { return; }
+    if (isDisplayed(this) || !this.item.file) { return; }
 
     this.style['display'] = 'flex';
     await schedule();
@@ -145,7 +145,7 @@ class UploadControls extends AppElement {
 
 
   __uploadFinished({path, url}) {
-    const {uid}           = this.file;
+    const {uid}           = this.item;
     this._controls        = undefined;
     this._state           = 'Done';
     this._hideControlBtns = true;
