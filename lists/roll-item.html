@@ -4,9 +4,25 @@
   :host {
     display:  block;
     position: relative;
-    height:   100%;
-    overflow: hidden;
+    /*
+      CSS padding hack. Padding percentages measure 
+      from the elements width, so it is used here to 
+      force the elements to be as high as they are wide, 
+      thus always creating squares, regardless of their 
+      width being dynamic.
+    */
+    height:           0px;
+    padding-top:      100%;
+    overflow:         hidden;
     background-color: var(--app-background-color);
+  }
+
+  #wrapper {
+    position: absolute;
+    top:      0px;
+    right:    0px;
+    bottom:   0px;
+    left:     0px;
   }
 
   processing-icon {
@@ -16,23 +32,25 @@
 </style>
 
 
-<file-thumbnail aspect-ratio="fill"
-                controls="[[_controls]]"
-                item="[[item]]"
-                on-click="__thumbnailClicked">
-</file-thumbnail>
+<div id="wrapper">
+  <file-thumbnail aspect-ratio="fill"
+                  controls="[[_controls]]"
+                  item="[[item]]"
+                  on-click="__thumbnailClicked">
+  </file-thumbnail>
 
 
-<processing-icon item="[[item]]"></processing-icon>
+  <processing-icon item="[[item]]"></processing-icon>
 
 
-<upload-controls id="uploadControls"
-                 coll="[[coll]]"
-                 file="[[item.file]]">
-</upload-controls>
+  <upload-controls id="uploadControls"
+                   coll="[[coll]]"
+                   item="[[item]]">
+  </upload-controls>
 
 
-<select-checkbox checked="[[selected]]"
-                 hidden="[[hideCheckbox]]"
-                 on-value-changed="__selectCheckboxValChanged">
-</select-checkbox>
+  <select-checkbox checked="[[selected]]"
+                   hidden="[[hideCheckbox]]"
+                   on-value-changed="__selectCheckboxValChanged">
+  </select-checkbox>
+</div>

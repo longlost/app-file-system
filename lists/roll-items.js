@@ -18,7 +18,7 @@
   *
   *
   *
-  *    items - <Array> required: Input items from Firestore db.
+  *    files - <Object> required: File objects data bound from <file-sources>.
   *
   *
   *                                   
@@ -46,7 +46,7 @@ import {
 }                 from '@longlost/app-element/app-element.js';
 import {scale}    from '@longlost/lambda/lambda.js';
 import htmlString from './roll-items.html';
-import './roll-item.js';
+import './paginated-roll-items.js';
 
 // args -> inputMin, inputMax, outputMin, outputMax, input.
 const thumbnailScaler = scale(0, 100, 72, 148);
@@ -63,7 +63,7 @@ class RollItems extends AppElement {
   static get properties() {
     return {
 
-      // From <file-list> tri-state multi select icon button.
+      // From tri-state multiselect-btns.
       // Select all item checkboxes when true.
       all: Boolean,
 
@@ -73,11 +73,18 @@ class RollItems extends AppElement {
       // Set to true to hide <file-item> <select-checkbox>'s
       hideCheckboxes: Boolean,
 
-      // Input items from db.
-      items: Array,
+      // File objects data bound from <file-sources>.
+      files: Object,
 
       // From 0 to 100.
-      scale: Number
+      scale: Number,
+
+      // Last snapshot doc from each pagination.
+      // Drives outer template repeater.
+      _paginations: {
+        type: Array,
+        value: [null]
+      }
 
     };
   }
@@ -87,6 +94,15 @@ class RollItems extends AppElement {
     return [
       '__scaleChanged(scale)'
     ];
+  }
+
+
+  __newPaginationDoc(event) {
+    const {doc, index} = event.detail;
+
+    // Add/replace current pagination 
+    // doc into paginations array.
+    this.splice('_paginations', index + 1, 1, doc);
   }
 
 
@@ -100,15 +116,10 @@ class RollItems extends AppElement {
 
 
   cancelUploads(uids) {
-    const elements = this.selectAll('.roll-item');
+    const elements = this.selectAll('.item');
 
-    // 'uids' is optional.
-    const elsToCancel = uids ? 
-      uids.map(uid => elements.find(el => el.item.uid === uid)) : 
-      elements;
-
-    elsToCancel.forEach(element => {
-      element.cancelUpload();
+    elements.forEach(element => {
+      element.cancelUploads();
     });
   }
 

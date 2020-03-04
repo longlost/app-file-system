@@ -117,6 +117,8 @@ export const EventsMixin = superClass => {
 
 	      _itemsChangedListenerKey: Object,
 
+	      _itemDataChangedListenerKey: Object,
+
 	      _openCarouselListenerKey: Object,
 
 	      _printListenerKey: Object,
@@ -180,6 +182,13 @@ export const EventsMixin = superClass => {
 	      'items-changed', 
 	      this.__itemsChanged.bind(this)
 	    );
+
+	    // <paginated-roll-items>, <paginated-file-items>
+	    this._itemDataChangedListenerKey = listen(
+	      this, 
+	      'item-data-changed', 
+	      this.__itemDataChanged.bind(this)
+	    );	    
 
 	    // Events from <file-items> which is
 	    // a child of <file-list>
@@ -254,6 +263,7 @@ export const EventsMixin = superClass => {
 	    unlisten(this._editFileListenerKey);
 	    unlisten(this._editImageListenerKey);
 	    unlisten(this._itemsChangedListenerKey);
+	    unlisten(this._itemDataChangedListenerKey);
 	    unlisten(this._openCarouselListenerKey);
 	    unlisten(this._printListenerKey);    
 	    unlisten(this._printsListenerKey);
@@ -306,6 +316,13 @@ export const EventsMixin = superClass => {
 	  	else {
 	  		this._dbData = undefined;
 	  	}
+	  }
+
+	  // From <paginated-roll-items> and <paginated-file-items>
+	  __itemDataChanged(event) {
+
+	  	// Merge incomming data with existing data.
+	  	this._dbData = {...this._dbData, ...event.detail.value};
 	  }
 
 	  // 'file-items-sorted' events from <file-items>

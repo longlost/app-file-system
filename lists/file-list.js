@@ -62,9 +62,11 @@ class FileList extends AppElement {
       // Firestore coll path string.
       coll: String,
 
+      data: Object,
+
       hideDropzone: Boolean,
 
-      files: Array,
+      files: Object,
 
       // Data-bound to <file-items>.
       // All item checkboxes selected when true.

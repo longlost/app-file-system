@@ -20,15 +20,15 @@
   *
   *
   *    'request-delete-items' - Fired when user clicks the delete btn.
-  *                    					detail: {items} 
+  *                             detail: {items} 
   *
   *
   *    'download-items' - Fired when user clicks the download btn.
-  *                    					detail: {items} 
+  *                             detail: {items} 
   *
   *
   *    'pring-items' - Fired when user clicks the print btn.
-  *                    					detail: {items} 
+  *                             detail: {items} 
   *
   *
   * @customElement
@@ -61,9 +61,8 @@ class MultiselectBtns extends AppElement {
   static get properties() {
     return {
 
-      items: Array,
+      data: Object,
 
-      // Data-bound to <file-items>.
       // All item checkboxes selected when true.
       _all: {
         type: Boolean,
@@ -108,14 +107,19 @@ class MultiselectBtns extends AppElement {
       _hidePrintBtn: {
         type: Boolean,
         value: true,
-        computed: '__computeHidePrintBtn(items)'
+        computed: '__computeHidePrintBtn(_items)'
       },
 
       // Do not show multi-select icon button when there are no items.
       _hideSelectBtn: {
         type: Boolean,
         value: true,
-        computed: '__computeHideSelectBtn(items)'
+        computed: '__computeHideSelectBtn(_items)'
+      },      
+
+      _items: {
+        type: Array,
+        computed: '__computeItems(data)'
       },
 
       // A cache of multi-selected items.
@@ -133,7 +137,7 @@ class MultiselectBtns extends AppElement {
       _showAllBadge: {
         type: Boolean,
         value: false,
-        computed: '__computeShowAllBadge(_count, items)'
+        computed: '__computeShowAllBadge(_count, _items)'
       },
 
       _showCountBadge: {
@@ -147,10 +151,10 @@ class MultiselectBtns extends AppElement {
 
 
   static get observers() {
-  	return [
-  		'__allChanged(_all)',
-  		'__hideCheckboxesChanged(_hideCheckboxes)'
-  	];
+    return [
+      '__allChanged(_all)',
+      '__hideCheckboxesChanged(_hideCheckboxes)'
+    ];
   }
 
 
@@ -191,6 +195,13 @@ class MultiselectBtns extends AppElement {
   }
 
 
+  __computeItems(data) {
+    if (!data) { return; }
+
+    return Object.values(data);
+  }
+
+
   __computeShowAllBadge(count, items) {
     if (!Array.isArray(items)) { return false; }
 
@@ -204,12 +215,12 @@ class MultiselectBtns extends AppElement {
 
 
   __allChanged(value) {
-  	this.fire('all-changed', {value});
+    this.fire('all-changed', {value});
   }
 
 
   __hideCheckboxesChanged(value) {
-  	this.fire('hide-checkboxes-changed', {value});
+    this.fire('hide-checkboxes-changed', {value});
   }
 
 
@@ -276,12 +287,12 @@ class MultiselectBtns extends AppElement {
 
 
   selected(item) {
-  	this._selectedItems = {...this._selectedItems, [item.uid]: item};
+    this._selectedItems = {...this._selectedItems, [item.uid]: item};
   }
 
 
   unselected(item) {
-  	delete this._selectedItems[item.uid];
+    delete this._selectedItems[item.uid];
     this._selectedItems = {...this._selectedItems};
   }
 
