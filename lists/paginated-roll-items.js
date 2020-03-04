@@ -41,7 +41,7 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import {
-	isOnScreen,
+  isOnScreen,
   wait
 }                 from '@longlost/utils/utils.js';
 import {firebase} from '@longlost/boot/boot.js';
@@ -73,30 +73,24 @@ class CameraRoll extends AppElement {
       // Input items from db.
       files: Array,
 
-	    hideCheckboxes: Boolean,
+      hideCheckboxes: Boolean,
 
       // From outter template repeater.
       index: Number,
 
       // How many items to fetch and render at a time while paginating.
       limit: {
-      	type: Number,
-      	value: 8
+        type: Number,
+        value: 8
       },
 
       // Passed in Firestore startAfter to paginate further results.
       // Is the previous element's last snapshot doc.
       pagination: Object,
 
-      // Drives <template is="dom-repeat">
-      _combinedFileItems: {
-        type: Array,
-        computed: '__computeCombinedFileItems(_items, files)'
-      },
-
       _data: {
-      	type: Object,
-      	computed: '__computeData(_items)'
+        type: Object,
+        computed: '__computeData(_items)'
       },
 
       // This element's last snapshot doc.
@@ -110,8 +104,8 @@ class CameraRoll extends AppElement {
       _trigger: Object,
 
       _triggered: {
-      	type: Boolean,
-      	value: false
+        type: Boolean,
+        value: false
       },
 
       // Services/Firestore subscription unsubscribe function.
@@ -137,37 +131,14 @@ class CameraRoll extends AppElement {
     this.__unsub();
   }
 
-  // Combine incomming file obj with db item.
-  // File obj is fed to <upload-controls>.
-  __computeCombinedFileItems(items, files) {
-
-    if (!items || items.length === 0) { return; }
-    if (!files || Object.keys(files).length === 0) { return items; }
-
-    const fileItems = items.map(item => {
-
-      const match = files[item.uid];
-
-      if (!match) {
-        // Remove file prop.
-        const {file, ...rest} = item; 
-        return {...rest};
-      }
-      // Add file to item.
-      return {...item, file: match};
-    });
-
-    return fileItems;
-  }
-
 
   __computeData(items) {
-  	if (!Array.isArray(items)) { return; }
+    if (!Array.isArray(items)) { return; }
 
-  	return items.reduce((accum, item) => {
-  		accum[item.uid] = item;
-  		return accum;
-  	}, {});
+    return items.reduce((accum, item) => {
+      accum[item.uid] = item;
+      return accum;
+    }, {});
   }
 
   // Start a subscription to file data changes.
@@ -195,7 +166,7 @@ class CameraRoll extends AppElement {
       // Filter out orphaned data that may have been caused
       // by deletions prior to cloud processing completion.
       this._items = results.filter(obj => obj.uid);
-      this._doc 	= doc;
+      this._doc   = doc;
     };
 
 
@@ -214,26 +185,26 @@ class CameraRoll extends AppElement {
     let ref = db.collection(coll).orderBy('timestamp', 'desc');
 
     if (pagination) {
-    	ref = ref.startAfter(pagination);
+      ref = ref.startAfter(pagination);
     }
 
     this._unsubscribe = ref.limit(this.limit).onSnapshot(snapshot => {
 
-			if (snapshot.exists || ('empty' in snapshot && snapshot.empty === false)) {
+      if (snapshot.exists || ('empty' in snapshot && snapshot.empty === false)) {
 
-				// Use the last doc to paginate next results.
-				const docs = snapshot.docs;
-				const doc  = docs[docs.length - 1];
-				const data = [];
+        // Use the last doc to paginate next results.
+        const docs = snapshot.docs;
+        const doc  = docs[docs.length - 1];
+        const data = [];
 
-				snapshot.forEach(doc => data.push(doc.data()));
+        snapshot.forEach(doc => data.push(doc.data()));
 
-				callback(data, doc);
-			} 
-			else {
-				errorCallback({message: 'document does not exist'});
-			}
-		}, errorCallback);
+        callback(data, doc);
+      } 
+      else {
+        errorCallback({message: 'document does not exist'});
+      }
+    }, errorCallback);
   }
 
 
@@ -245,39 +216,39 @@ class CameraRoll extends AppElement {
 
 
   __dataChanged(data) {
-  	if (!data) { return; }
+    if (!data) { return; }
 
-  	this.fire('item-data-changed', {value: data});
+    this.fire('item-data-changed', {value: data});
   }
 
 
   async __triggerChanged(trigger) {
-  	if (!trigger) { return; }
+    if (!trigger) { return; }
 
-  	await isOnScreen(trigger);
+    await isOnScreen(trigger);
 
-  	this._triggered = true;
+    this._triggered = true;
   }
 
 
   __docTriggeredChanged(doc, triggered) {
 
-  	if (!doc || !triggered) { return; }
+    if (!doc || !triggered) { return; }
 
-  	this.fire('new-pagination-doc', {doc, index: this.index});
+    this.fire('new-pagination-doc', {doc, index: this.index});
   }
 
 
   __domChanged() {
 
-  	// Already paginated.
-  	if (this._triggered || !Array.isArray(this._items)) { return; }
+    // Already paginated.
+    if (this._triggered || !Array.isArray(this._items)) { return; }
 
-  	const elements = this.selectAll('.item');
+    const elements = this.selectAll('.item');
 
-  	if (elements.length !== this._items.length) { return; }
+    if (elements.length !== this._items.length) { return; }
 
-  	this._trigger = elements[elements.length - 1];
+    this._trigger = elements[elements.length - 1];
   }
 
 

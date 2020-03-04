@@ -24,6 +24,7 @@
 
 <file-sources id="sources"
               accept="[[accept]]"
+              coll="[[coll]]"
               data="[[_dbData]]"
               hide-dropzone="[[hideDropzone]]"
               list="[[list]]"
@@ -31,8 +32,9 @@
               maxsize="[[maxsize]]"
               multiple="[[multiple]]"
               unit="[[unit]]"
-              on-files-changed="__sourcesFilesChanged"
-              on-open-list="openList">
+              on-files-changed="__filesChanged"
+              on-open-list="openList"
+              on-upload-progress-updated="__uploadProgressUpdated">
 </file-sources>
 
 

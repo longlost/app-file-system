@@ -1,20 +1,21 @@
 
 <style>
-	
-	:host {
-		display: contents;
-	}
+  
+  :host {
+    display: contents;
+  }
 
 </style>
 
 
 <template is="dom-repeat" 
-          items="[[_combinedFileItems]]"
+          items="[[_items]]"
           strip-whitespace
           on-dom-change="__domChanged">
           
   <roll-item class="item"
              coll="[[coll]]"
+             files="[[files]]"
              hide-checkbox="[[hideCheckboxes]]"
              item="[[item]]"
              selected="[[all]]">
