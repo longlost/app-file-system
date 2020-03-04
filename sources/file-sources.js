@@ -82,6 +82,7 @@ import {
 import path         from 'path'; // webpack includes this by default!
 import mime         from 'mime-types';
 import descriptions from './mime-descriptions.json';
+import services     from '@longlost/services/services.js';
 import htmlString   from './file-sources.html';
 import '@longlost/app-overlays/app-header-overlay.js';
 import '@longlost/app-overlays/app-modal.js';
@@ -209,6 +210,9 @@ class FileSources extends AppElement {
       // Any valid HTML5 input accept string or
       // one of 3 shorthand values: 'image', 'video' or 'audio'.
       accept: String,
+
+      // Same as Firestore collection save location.
+      coll: String,
 
       // Used for <list-icon-button> calculation and animations.
       // Object form of database items.
@@ -361,8 +365,106 @@ class FileSources extends AppElement {
   }
 
 
-  __addNewFiles(files) {
-    const newFiles = files.reduce((accum, file) => {
+  async __uploadFile(file) {
+
+    let controlsCallback;
+
+    const {basename, displayName, ext, uid} = file;
+
+    const controlsPromise = new Promise(resolve => {
+      controlsCallback = resolve;
+    });
+
+    const doneCallback = data => {
+      const {path, url} = data;
+
+      this.fire('upload-complete', {
+        original: url,
+        path,
+        uid
+      });
+    };
+
+    const errorCallback = error => {
+      
+      if (error.code_ && error.code_ === 'storage/canceled') {
+
+        this.fire('upload-progress-updated', {
+          progress: 0, 
+          state:   'Canceled', 
+          uid
+        });
+
+        return;
+      }
+
+      if (error.code_ && error.code_ === 'storage/unknown') {
+
+        this.fire('upload-progress-updated', {
+          progress: 0, 
+          state:   'Error', 
+          uid
+        });
+
+        warn('An error occured while uploading your file.');
+        return;
+      }
+
+      console.error('Upload error: ', error.code_);
+    };
+
+    const stateChangedCallback = data => {
+      const {progress, state} = data;
+
+      this.fire('upload-progress-updated', {
+        progress, 
+        state: capitalize(state), 
+        uid
+      });
+    };
+
+    const metadata = {
+
+      // Force 'original' file link to be 
+      // downloadable when used in an anchor tag.
+      // ie. <a download href="http://original-file-url.ext">Download Me</a>.
+      contentDisposition: `attachment; filename="${displayName}${ext}"`,
+
+      // 'metadata.customMetadata' in client sdk, 
+      // 'metadata.metadata' in cloud functions.
+      customMetadata: {uid}
+    }; 
+
+    const path = `${this.coll}/${uid}/${basename}`;
+
+    await services.fileUpload({
+      controlsCallback:     controlsCallback,
+      doneCallback:         doneCallback,
+      errorCallback:        errorCallback, 
+      file,
+      metadata,
+      path,
+      stateChangedCallback: stateChangedCallback
+    });
+
+    file.controls = await controlsPromise;
+
+    return file;
+  }
+
+  // Start File upload to storage.
+  // Add upload controls and 
+  // state for <upload-controls> UI.
+  __uploadNewFiles(files) {
+    return files.map(file => this.__uploadFile(file));
+  }
+
+
+  async __addNewFiles(files) {
+
+    const uploadingFiles = await Promise.all(this.__uploadNewFiles(files));
+
+    const newFiles = uploadingFiles.reduce((accum, file) => {
       accum[file.uid] = file;
       return accum;
     }, {});

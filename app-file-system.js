@@ -122,6 +122,7 @@ import {
   deepClone
 }                 from '@longlost/lambda/lambda.js';
 import {
+  hijackEvent,
   listen,  
   schedule,
   unlisten,
@@ -410,11 +411,10 @@ class AppFileSystem extends EventsMixin(AppElement) {
     return items.map(item => this.__saveItem(item));
   }
 
-  // Strip out file obj data since it must be uploaded
+  // Strip out File data, keep file metadata, since it must be uploaded
   // via Firebase storage and is not allowed in Firestore.
-  async __addNewFileItems(filesObj) {
+  async __addNewFileItems(files) {
 
-    const files     = Object.values(filesObj);
     const lastIndex = this._dbData ? Object.keys(this._dbData).length : 0;
 
     const newItems = files.map(file => {
@@ -446,8 +446,11 @@ class AppFileSystem extends EventsMixin(AppElement) {
         ext,
         index: index + lastIndex,
         lastModified,
+        optimized: null,
+        original: null,
         size, 
         sizeStr,
+        thumbnail: null,
         timestamp,
         type,
         uid
@@ -468,6 +471,30 @@ class AppFileSystem extends EventsMixin(AppElement) {
     }
 
     return this.__saveItems(newItems);
+  }
+
+  // <file-sources> 'files-changed' event.
+  __filesChanged(event) {
+    hijackEvent(event);
+
+    this._files = event.detail.value;
+
+    // Filter out files that have already been handled.
+    const newFiles = Object.
+                       values(this._files).
+                       filter(file => !Boolean(this._dbData[file.uid]));
+
+    this.__addNewFileItems(newFiles);
+  }
+
+
+  __uploadProgressUpdated(event) {
+    const {progress, state, uid} = event.detail;
+
+    if (!this._files || !this._files[uid]) { return; }
+
+    this.set(`_files.${uid}.state`, state);
+    this.set(`_files.${uid}.progress`, progress);
   }
 
 

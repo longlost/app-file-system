@@ -72,12 +72,12 @@ class ProcessingIcon extends AppElement {
       type.includes('image') && 
       (type.includes('jpeg') || type.includes('jpg') || type.includes('png'))
     ) {
-      return 'original' in item && 'optimized' in item === false;
+      return item.original && !item.optimized;
     }
 
     // Other file types don't have futher processing
     // so we are done animating.  
-    return 'original' in item === false;
+    return false;
   }
 
 

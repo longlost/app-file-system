@@ -575,13 +575,5 @@ export const EventsMixin = superClass => {
 	  	}
 	  }
 
-	  // <file-sources> 'files-changed' event.
-	  __sourcesFilesChanged(event) {
-	    hijackEvent(event);
-
-	    this._files = event.detail.value;
-	    this.__addNewFileItems(this._files);
-	  }
-
   };
 };
