@@ -278,6 +278,14 @@ class AppFileSystem extends EventsMixin(AppElement) {
       unit: {
         type: String,
         value: 'kB' // or 'B', 'MB', 'GB'
+      },
+
+      // From file-soureces.
+      // Upload controls, progress and state.
+      // Consumed by upload-controls ui.
+      _uploads: {
+        type: Object,
+        value: () => ({})
       }
 
     };
@@ -312,6 +320,16 @@ class AppFileSystem extends EventsMixin(AppElement) {
         './lists/camera-roll.js'
       );
     }
+  }
+
+
+  __cancelUploads(uids) {
+
+    uids.forEach(uid => {
+      if (this._uploads[uid]) {
+        this._uploads[uid].controls.cancel();
+      }
+    });
   }
 
   // Listen for data changes.
@@ -360,6 +378,8 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   async __delete(uids) {
 
+    this.__cancelUploads(uids);
+
     // Clone to survive deletion and fire with event.
     const items = uids.map(uid => this._dbData[uid]);
 
@@ -389,11 +409,6 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
     await Promise.all(dbPromises);
 
-    // Garbage collect file data.
-    uids.forEach(uid => {
-      this.$.sources.delete(uid);
-    });
-
     this.fire('items-deleted', {uids});
   }
 
@@ -411,101 +426,36 @@ class AppFileSystem extends EventsMixin(AppElement) {
     return items.map(item => this.__saveItem(item));
   }
 
-  // Strip out File data, keep file metadata, since it must be uploaded
-  // via Firebase storage and is not allowed in Firestore.
-  async __addNewFileItems(files) {
+  // From file-sources.
+  // Previous file(s) are replaced when 
+  // 'multiple' is falsey. 
+  // Only one file at a time.
+  __deletePrevious(event) {
+    this.__delete(event.detail.uids);
+  }
 
-    const lastIndex = this._dbData ? Object.keys(this._dbData).length : 0;
+  // From file-sources.
+  // Upload successful, canceled or failed.
+  __uploadDone(event) {
+    const {uid} = event.detail;
 
-    const newItems = files.map(file => {
+    this.set(`_uploads.${uid}`, null);
+    delete this._uploads[uid]; 
+  }
 
-      // Cannot destructure the File object since it
-      // is not a true iterable JS object.
-      const {
-        _tempUrl,      
-        basename,
-        displayName,
-        exif,
-        ext,
-        index,
-        lastModified,
-        size,  
-        sizeStr,
-        timestamp,
-        type,
-        uid,
-      } = file;
+  // From file-sources.
+  // Upload controls, state or progress updates.
+  __uploadUpdated(event) {
+    const {upload} = event.detail;
 
-      return {
-        _tempUrl,
-        basename,
-        coll: this.coll,
-        displayName,
-        doc: uid,
-        exif,
-        ext,
-        index: index + lastIndex,
-        lastModified,
-        optimized: null,
-        original: null,
-        size, 
-        sizeStr,
-        thumbnail: null,
-        timestamp,
-        type,
-        uid
-      };
-    });
+    if (this._uploads[upload.uid]) {
+      const {progress, state, uid} = upload;
 
-    this.fire('files-received', {files});
-
-
-    // Delete previous file and its data.
-    if (!this.multiple && this._dbData) {
-
-      const uids = Object.keys(this._dbData);
-
-      if (uids.length > 0) {
-        await this.__delete(uids);   
-      }     
+      this.set(`_uploads.${uid}.progress`, progress);    
+      this.set(`_uploads.${uid}.state`,    state);
     }
-
-    return this.__saveItems(newItems);
-  }
-
-  // <file-sources> 'files-changed' event.
-  __filesChanged(event) {
-    hijackEvent(event);
-
-    this._files = event.detail.value;
-
-    // Filter out files that have already been handled.
-    const newFiles = Object.
-                       values(this._files).
-                       filter(file => !Boolean(this._dbData[file.uid]));
-
-    this.__addNewFileItems(newFiles);
-  }
-
-
-  __uploadProgressUpdated(event) {
-    const {progress, state, uid} = event.detail;
-
-    if (!this._files || !this._files[uid]) { return; }
-
-    this.set(`_files.${uid}.state`, state);
-    this.set(`_files.${uid}.progress`, progress);
-  }
-
-
-  __cancelUploads(uids) {
-
-    if (this.$.fileList.cancelUploads) {
-      this.$.fileList.cancelUploads(uids);
-    }
-
-    if (this.$.cameraRoll.cancelUploads) {
-      this.$.cameraRoll.cancelUploads(uids);
+    else {
+      this.set(`_uploads.${upload.uid}`, upload);
     }
   }
 
@@ -537,8 +487,6 @@ class AppFileSystem extends EventsMixin(AppElement) {
     try {
       await this.$.spinner.show('Deleting file.');
 
-      this.__cancelUploads([uid]);
-
       await this.__delete([uid]);
     }
     catch (error) {
@@ -557,8 +505,6 @@ class AppFileSystem extends EventsMixin(AppElement) {
       await this.$.spinner.show('Deleting files.');
 
       const uids = Object.keys(this._dbData);
-
-      this.__cancelUploads();
 
       await this.__delete(uids);
     }
@@ -580,8 +526,6 @@ class AppFileSystem extends EventsMixin(AppElement) {
     try {
       await this.$.spinner.show('Deleting files.');
 
-      this.__cancelUploads(uids);
-
       await this.__delete(uids);
     }
     catch (error) {
@@ -601,6 +545,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   async openList() {
+    
     if (this.list === 'files') {
       await import(
         /* webpackChunkName: 'app-file-system-file-list' */ 

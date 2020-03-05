@@ -2,8 +2,7 @@
 /**
   * `paginated-roll-items`
   * 
-  *   Accepts files from user and handles 
-  *   uploading/saving/optimization/deleting/previewing/rearranging.
+  *   Paginates photo items from db as user scrolls.
   *
   *
   *   @customElement
@@ -19,7 +18,7 @@
   *           default -> undefined
   *
   *
-  *    files - <Array> required: Input items from Firestore db.
+  *    uploads - <Array> required: File upload controls, progress and state.
   *
   *
   *
@@ -29,9 +28,6 @@
   *
   *
   *
-  *
-  *    cancelUploads() - Cancels each item's active file upload.
-  *              
   *
   **/
 
@@ -52,7 +48,7 @@ import './roll-item.js';
 const db = firebase.firestore();
 
 
-class CameraRoll extends AppElement {
+class PaginatedRollItems extends AppElement {
   static get is() { return 'paginated-roll-items'; }
 
   static get template() {
@@ -70,9 +66,6 @@ class CameraRoll extends AppElement {
       // Firestore coll path string.
       coll: String,
 
-      // Input items from db.
-      files: Array,
-
       hideCheckboxes: Boolean,
 
       // From outter template repeater.
@@ -87,6 +80,9 @@ class CameraRoll extends AppElement {
       // Passed in Firestore startAfter to paginate further results.
       // Is the previous element's last snapshot doc.
       pagination: Object,
+
+      // File upload controls, progress and state.
+      uploads: Object,
 
       _data: {
         type: Object,
@@ -160,7 +156,6 @@ class CameraRoll extends AppElement {
       await wait(500);
     }
 
-
     const callback = (results, doc) => {
 
       // Filter out orphaned data that may have been caused
@@ -168,7 +163,6 @@ class CameraRoll extends AppElement {
       this._items = results.filter(obj => obj.uid);
       this._doc   = doc;
     };
-
 
     const errorCallback = error => {
       this._items  = undefined;
@@ -251,20 +245,6 @@ class CameraRoll extends AppElement {
     this._trigger = elements[elements.length - 1];
   }
 
-
-  cancelUploads(uids) {
-    const elements = this.selectAll('.item');
-
-    // 'uids' is optional.
-    const elsToCancel = uids ? 
-      uids.map(uid => elements.find(el => el.item.uid === uid)) : 
-      elements;
-
-    elsToCancel.forEach(element => {
-      element.cancelUpload();
-    });
-  }
-
 }
 
-window.customElements.define(CameraRoll.is, CameraRoll);
+window.customElements.define(PaginatedRollItems.is, PaginatedRollItems);

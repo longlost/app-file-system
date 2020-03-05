@@ -32,25 +32,25 @@
               maxsize="[[maxsize]]"
               multiple="[[multiple]]"
               unit="[[unit]]"
-              on-files-changed="__filesChanged"
+              on-delete-previous="__deletePrevious"
               on-open-list="openList"
-              on-upload-progress-updated="__uploadProgressUpdated">
+              on-upload-done="__uploadDone"
+              on-upload-updated="__uploadUpdated">
 </file-sources>
 
 
-<!-- _files from events-mixin.js -->
 <file-list id="fileList"
            coll="[[coll]]"
            data="[[_dbData]]"
            hide-dropzone="[[hideDropzone]]"
-           files="[[_files]]">
+           uploads="[[_uploads]]">
 </file-list>
 
-<!-- _files from events-mixin.js -->
+
 <camera-roll id="cameraRoll"
              coll="[[coll]]"
              data="[[_dbData]]"
-             files="[[_files]]">
+             uploads="[[_uploads]]">
 </camera-roll>
 
 

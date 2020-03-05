@@ -3,8 +3,7 @@
 /**
   * `roll-items`
   * 
-  *   Accepts photos and videos from user and handles 
-  *   uploading/saving/optimization/deleting/previewing.
+  *   Photo items list.
   *
   *
   *
@@ -18,7 +17,7 @@
   *
   *
   *
-  *    files - <Object> required: File objects data bound from <file-sources>.
+  *    uploads - <Object> required: File upload objects data bound from <file-sources>.
   *
   *
   *                                   
@@ -27,9 +26,6 @@
   *  Methods:
   *
   *
-  *
-  *
-  *    cancelUploads() - Cancels each item's active file upload.
   *
   *
   *   @customElement
@@ -73,11 +69,11 @@ class RollItems extends AppElement {
       // Set to true to hide <file-item> <select-checkbox>'s
       hideCheckboxes: Boolean,
 
-      // File objects data bound from <file-sources>.
-      files: Object,
-
       // From 0 to 100.
       scale: Number,
+
+      // File upload controls, progress and state.
+      uploads: Object,
 
       // Last snapshot doc from each pagination.
       // Drives outer template repeater.
@@ -112,15 +108,6 @@ class RollItems extends AppElement {
     const size = thumbnailScaler(scale);
 
     this.updateStyles({'--thumbnail-size': `${size}px`});
-  }
-
-
-  cancelUploads(uids) {
-    const elements = this.selectAll('.item');
-
-    elements.forEach(element => {
-      element.cancelUploads();
-    });
   }
 
 }

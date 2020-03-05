@@ -2,8 +2,10 @@
 /**
   * `camera-roll`
   * 
-  *   Accepts files from user and handles 
-  *   uploading/saving/optimization/deleting/previewing/rearranging.
+  *   Displays photos in a compact list form. 
+  *
+  *   Shows uploading/optimization and gives the user options for 
+  *   deleting, printing, downloading and sharing.
   *
   *
   *   @customElement
@@ -30,9 +32,6 @@
   *
   *
   *    delete() - Clears multiselect after a delete operation.
-  *
-  *
-  *    cancelUploads() - Cancels each item's active file upload.
   *              
   *
   **/
@@ -55,7 +54,9 @@ import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-slider/paper-slider.js';
 import './multiselect-btns.js';
-import './roll-items.js';
+
+
+// import './roll-items.js';
 
 
 class CameraRoll extends AppElement {
@@ -74,8 +75,8 @@ class CameraRoll extends AppElement {
 
       data: Object,
 
-      // Input items from db.
-      files: Object,
+      // File upload controls, progress and state.
+      uploads: Object,
 
       // All item checkboxes selected when true.
       _all: {
@@ -194,7 +195,14 @@ class CameraRoll extends AppElement {
 
   async open() {
     this.$.scale.style['display'] = 'flex';
+
     await this.$.overlay.open();
+
+    await import(
+      /* webpackChunkName: 'app-file-system-roll-items' */ 
+      './roll-items.js'
+    );
+    
     this.__showScale();
   }
 
