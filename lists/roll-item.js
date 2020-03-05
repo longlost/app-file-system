@@ -35,15 +35,20 @@ class RollItem extends ItemMixin(AppElement) {
 
       // Firestore coll path string.
       coll: String,
-
-      files: Object,
       
       // File item object.
       item: Object,
 
-      _file: {
+      // File upload controls, progress and state.
+      uploads: Object,
+
+      _progress: Number,
+
+      _state: String,
+
+      _upload: {
         type: Object,
-        computed: '__computeFile(item.uid, files)'
+        computed: '__computeUpload(item.uid, uploads)'
       }
 
     };
@@ -52,22 +57,22 @@ class RollItem extends ItemMixin(AppElement) {
 
   static get observers() {
     return [
-      '__fileChanged(_file)'
+      '__uploadChanged(_upload)'
     ];
   }
 
 
-  __computeFile(uid, files) {
-    if (!uid || !files) { return; }
+  __computeUpload(uid, uploads) {
+    if (!uid || !uploads) { return; }
 
-    return files[uid];
+    return uploads[uid];
   }
 
   // This is a performance enhancement 
   // over using a wildcard observer.
-  __fileChanged(file) {
+  __uploadChanged(upload) {
 
-    if (!file) {
+    if (!upload) {
 
       this._progress = 0;
       this._state    = '';
@@ -83,12 +88,12 @@ class RollItem extends ItemMixin(AppElement) {
       // Polymer specific dynamic computed properties.
       this._createComputedProperty(
         '_progress', 
-        `__computeProgress(files.${file.uid}.progress)`, 
+        `__computeProgress(uploads.${upload.uid}.progress)`, 
         true
       );
       this._createComputedProperty(
         '_state', 
-        `__computeState(files.${file.uid}.state)`, 
+        `__computeState(uploads.${upload.uid}.state)`, 
         true
       );
     }

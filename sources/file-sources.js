@@ -239,8 +239,6 @@ class FileSources extends AppElement {
         computed: '__computeAcceptableTypes(_mimes)'
       },
 
-      _files: Object,
-
       _filesToRename: Array,
 
       // Using maxsize and unit to calculate the total allowed bytes
@@ -265,13 +263,6 @@ class FileSources extends AppElement {
       }
 
     };
-  }
-
-
-  static get observers() {
-    return [
-      '__filesChanged(_files)'
-    ];
   }
 
 
@@ -345,14 +336,6 @@ class FileSources extends AppElement {
   }
 
 
-  __filesChanged(files) {
-    if (!files) { return; }
-
-    this.$.deviceFileCard.clearFeedback();
-    this.fire('files-changed', {value: files});
-  }
-
-
   async __listBtnClicked() {
     try {
       await this.clicked();
@@ -367,62 +350,69 @@ class FileSources extends AppElement {
 
   async __uploadFile(file) {
 
-    let controlsCallback;
+    let controls;
 
     const {basename, displayName, ext, uid} = file;
 
-    const controlsPromise = new Promise(resolve => {
-      controlsCallback = resolve;
-    });
+    const controlsCallback = uploadControls => {
+      controls = uploadControls;
+
+      this.fire('upload-updated', {
+        upload: {          
+          controls,
+          progress: 0, 
+          state:   'Starting', 
+          uid
+        }
+      });
+    };
 
     const doneCallback = data => {
       const {path, url} = data;
 
-      this.fire('upload-complete', {
-        original: url,
-        path,
-        uid
+      this.fire('upload-done', {uid});
+
+      services.set({
+        coll: this.coll,
+        doc:  uid,
+        data: {original: url, path}
       });
     };
 
     const errorCallback = error => {
-      
-      if (error.code_ && error.code_ === 'storage/canceled') {
-
-        this.fire('upload-progress-updated', {
-          progress: 0, 
-          state:   'Canceled', 
-          uid
-        });
-
-        return;
-      }
+      // Use 'storage/canceled' to handle user canceled uploads.
 
       if (error.code_ && error.code_ === 'storage/unknown') {
-
-        this.fire('upload-progress-updated', {
-          progress: 0, 
-          state:   'Error', 
-          uid
-        });
+        console.error('Upload error: ', error.code_);
 
         warn('An error occured while uploading your file.');
-        return;
+
+        services.deleteDocument({coll: this.coll, doc: uid});
       }
 
-      console.error('Upload error: ', error.code_);
+      this.fire('upload-done', {uid}); 
     };
 
     const stateChangedCallback = data => {
       const {progress, state} = data;
 
-      this.fire('upload-progress-updated', {
-        progress, 
-        state: capitalize(state), 
-        uid
+      this.fire('upload-updated', {
+        upload: {          
+          controls,
+          progress, 
+          state: capitalize(state), 
+          uid
+        }
       });
     };
 
+    // Custom contentDisposition required to 
+    // show the user's chosen displayName in the
+    // browser ui as the default file name when
+    // the file is downloaded.
+    // Custom metadata is used in cloud functions
+    // to save urls that point to processed 
+    // versions of the original file back to db.
     const metadata = {
 
       // Force 'original' file link to be 
@@ -437,7 +427,7 @@ class FileSources extends AppElement {
 
     const path = `${this.coll}/${uid}/${basename}`;
 
-    await services.fileUpload({
+    services.fileUpload({
       controlsCallback:     controlsCallback,
       doneCallback:         doneCallback,
       errorCallback:        errorCallback, 
@@ -446,30 +436,87 @@ class FileSources extends AppElement {
       path,
       stateChangedCallback: stateChangedCallback
     });
-
-    file.controls = await controlsPromise;
-
-    return file;
   }
 
-  // Start File upload to storage.
-  // Add upload controls and 
-  // state for <upload-controls> UI.
-  __uploadNewFiles(files) {
-    return files.map(file => this.__uploadFile(file));
+  // Strip out File data, keep file metadata, since it must be uploaded
+  // via Firebase storage and is not allowed in Firestore.
+  async __saveItems(files) {
+
+    const lastIndex = this.data ? Object.keys(this.data).length : 0;
+
+    const items = files.map(file => {
+
+      // Cannot destructure the File object since it
+      // is not a true iterable JS object.
+      const {
+        _tempUrl,      
+        basename,
+        displayName,
+        exif,
+        ext,
+        index,
+        lastModified,
+        size,  
+        sizeStr,
+        timestamp,
+        type,
+        uid,
+      } = file;
+
+      return {
+        _tempUrl,
+        basename,
+        coll: this.coll,
+        displayName,
+        doc: uid,
+        exif,
+        ext,
+        index: index + lastIndex,
+        lastModified,
+        optimized: null,
+        original: null,
+        size, 
+        sizeStr,
+        thumbnail: null,
+        timestamp,
+        type,
+        uid
+      };
+    });
+
+    
+    // Replacement operation. Delete previous file and its data.
+    if (!this.multiple && this.data) {
+
+      const uids = Object.keys(this.data);
+
+      if (uids.length > 0) {
+        this.fire('delete-previous', {uids});
+      }     
+    }
+
+    const promises = items.map(item => services.set({
+      coll: this.coll,
+      doc:  item.uid,
+      data: item
+    }));
+
+    return Promise.all(promises);
   }
 
 
   async __addNewFiles(files) {
 
-    const uploadingFiles = await Promise.all(this.__uploadNewFiles(files));
+    // Start File upload to storage.
+    // Add upload controls, progress and 
+    // state for <upload-controls> UI.
+    files.forEach(file => {
+      this.__uploadFile(file);
+    });
 
-    const newFiles = uploadingFiles.reduce((accum, file) => {
-      accum[file.uid] = file;
-      return accum;
-    }, {});
+    await this.__saveItems(files);
 
-    this._files = this._files ? {...this._files, ...newFiles} : newFiles;
+    this.$.deviceFileCard.clearFeedback();
   }
 
 
@@ -522,7 +569,7 @@ class FileSources extends AppElement {
         return file;
       });
 
-      this.__addNewFiles(renamedFiles);
+      await this.__addNewFiles(renamedFiles);
       await this.__resetRenameFilesModal();
     }
     catch (error) {
@@ -544,7 +591,7 @@ class FileSources extends AppElement {
         return file;
       });
 
-      this.__addNewFiles(files);
+      await this.__addNewFiles(files);
       await this.__resetRenameFilesModal();
     }
     catch (error) {
@@ -600,7 +647,7 @@ class FileSources extends AppElement {
   __handleMultipleFiles(files) {
     const array = [...files];
 
-    if (this.maxfiles && Object.keys(this._files).length + array.length > this.maxfiles) {
+    if (this.maxfiles && array.length > this.maxfiles) {
       this.__showFeedback('tooMany');
     }
     else if (array.some(file => this._maxbytes && file.size > this._maxbytes)) {
@@ -634,13 +681,6 @@ class FileSources extends AppElement {
     else {
       this.__showFeedback('single');
     }
-  }
-  
-
-  delete(uid) {
-    if (!this._files || !this._files[uid]) { return; }
-    
-    delete this._files[uid];
   }
 
 

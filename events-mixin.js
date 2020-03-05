@@ -112,9 +112,6 @@ export const EventsMixin = superClass => {
 
 	      _editImageListenerKey: Object,
 
-	      // From <file-sources>.
-	      _files: Object,
-
 	      _itemsChangedListenerKey: Object,
 
 	      _itemDataChangedListenerKey: Object,
@@ -144,9 +141,7 @@ export const EventsMixin = superClass => {
 
 	      _sortedListenerKey: Object,
 
-	      _updateListenerKey: Object,
-
-      	_uploadListenerKey: Object
+	      _updateListenerKey: Object
 
       };
     }
@@ -245,14 +240,6 @@ export const EventsMixin = superClass => {
 	      'update-item', 
 	      this.__updateItem.bind(this)
 	    );
-
-	    // Events from <upload-controls> which 
-	    // are nested children of <preview-lists>.
-	    this._uploadListenerKey = listen(
-	      this, 
-	      'upload-complete', 
-	      this.__fileUploadComplete.bind(this)
-	    );
 	  }
 
 
@@ -272,7 +259,6 @@ export const EventsMixin = superClass => {
 	    unlisten(this._shareListenerKey);
 	    unlisten(this._sortedListenerKey);
 	    unlisten(this._updateListenerKey);
-	    unlisten(this._uploadListenerKey);
 	  }
 
 	  // So top level elements can receive real-time updates to item.
@@ -415,23 +401,6 @@ export const EventsMixin = superClass => {
 	    finally {
 	      this.$.spinner.hide();
 	    }
-	  }
-
-	  // 'upload-complete' events from <upload-controls> 
-	  // which are nested children of <preview-lists>.
-	  async __fileUploadComplete(event) {
-	    hijackEvent(event);
-
-	    const {uid, original, path} = event.detail;
-
-	    // Merge with existing file data.
-	    const item = {...this._dbData[uid], original, path}; 
-
-	    this.$.sources.delete(uid);
-
-	    await this.__saveItem(item);
-
-	    this.fire('file-uploaded', {item});
 	  }
 
 

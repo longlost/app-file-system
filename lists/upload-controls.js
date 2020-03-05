@@ -37,16 +37,17 @@ class UploadControls extends AppElement {
   static get properties() {
     return {
 
-      file: Object,
-
       progress: Number,
 
       state: String,
 
+      // File upload controls, progress and state.
+      upload: Object,
+
       // hides pause/play button when upload is done or canceled
       _hideBtns: {
         type: Boolean,
-        computed: '__computeHideBtns(file.controls)'
+        computed: '__computeHideBtns(upload)'
       },
 
       _paused: {
@@ -60,13 +61,13 @@ class UploadControls extends AppElement {
 
   static get observers() {
     return [
-      '__fileChanged(file)'
+      '__uploadChanged(upload)'
     ];
   }
 
 
-  __computeHideBtns(controls) {
-    return !Boolean(controls);
+  __computeHideBtns(upload) {
+    return !Boolean(upload);
   }
 
 
@@ -76,7 +77,7 @@ class UploadControls extends AppElement {
     await wait(800);
 
     // If processing happens faster than animation timing, abort.
-    if (isDisplayed(this) || !this.file) { return; }
+    if (isDisplayed(this) || !this.upload) { return; }
 
     this.style['display'] = 'flex';
     await schedule();
@@ -91,9 +92,9 @@ class UploadControls extends AppElement {
   }
 
 
-  __fileChanged(file) {
+  __uploadChanged(upload) {
 
-    if (!file) { 
+    if (!upload) { 
       this.__hide();
     }
     else {
@@ -127,24 +128,24 @@ class UploadControls extends AppElement {
 
 
   cancel() {
-    if (this.file && this.file.controls) {
-      this.file.controls.cancel();
+    if (this.upload && this.upload.controls) {
+      this.upload.controls.cancel();
     }
   }
 
 
   pause() {
-    if (this.file && this.file.controls) {
+    if (this.upload && this.upload.controls) {
       this._paused = true;
-      this.file.controls.pause();
+      this.upload.controls.pause();
     }
   }
 
 
   resume() {
-    if (this.file && this.file.controls) {
+    if (this.upload && this.upload.controls) {
       this._paused = false;
-      this.file.controls.resume();
+      this.upload.controls.resume();
     }
   }
 
