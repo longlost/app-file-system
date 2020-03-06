@@ -69,6 +69,9 @@ class RollItems extends AppElement {
       // Set to true to hide <file-item> <select-checkbox>'s
       hideCheckboxes: Boolean,
 
+      // Only run db item subscriptions when overlay is open.
+      opened: Boolean,
+
       // From 0 to 100.
       scale: Number,
 

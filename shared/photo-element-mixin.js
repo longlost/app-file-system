@@ -36,12 +36,12 @@ export const PhotoElementMixin = superClass => {
 
 	      _imgPlaceholder: {
 	      	type: String,
-	      	computed: '__computeImgPlaceholder(item, _isImg)'
+	      	computed: '__computeImgPlaceholder(item.original, item._tempUrl, _isImg)'
 	      },
 
 	      _imgSrc: {
 	      	type: String,
-	      	computed: '__computeImgSrc(item, _isImg, _isThumbnail)'
+	      	computed: '__computeImgSrc(item.optimized, item.original, item.thumbnail, _isImg, _isThumbnail)'
 	      },
 
 	      _isImg: {
@@ -69,12 +69,12 @@ export const PhotoElementMixin = superClass => {
 
 	      _vidPlaceholder: {
 	      	type: String,
-	      	computed: '__computeVidPlaceholder(item, _isVid)'
+	      	computed: '__computeVidPlaceholder(item.original, item._tempUrl, _isVid)'
 	      },
 
 	      _vidSrc: {
 	      	type: String,
-	      	computed: '__computeVidSrc(item, _isVid)'
+	      	computed: '__computeVidSrc(item.original, _isVid)'
 	      }
 
 	    };
@@ -115,29 +115,21 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeImgPlaceholder(item, isImg) {
-	    if (!item || !isImg) { return; }
+	  __computeImgPlaceholder(original, temp, isImg) {
+	    if (!isImg) { return; }	    
 
-	    const {original, _tempUrl} = item;
-
-	    if (original) { return; }
-
-	    return _tempUrl;
+	    return original ? original : temp;
 	  }
 
 
-	  __computeImgSrc(item, isImg, isThumbnail) {
-	    if (!item || !isImg) { return; }
-
-	    const {optimized, original, thumbnail} = item;
+	  __computeImgSrc(optimized, original, thumbnail, isImg, isThumbnail) {
+	    if (!isImg) { return; }
 
 	    if (isThumbnail && thumbnail) { return thumbnail; }
 
 	    if (!isThumbnail && optimized) { return optimized; }
 
-	    if (original)  { return original; }
-
-	    return;
+	    return original;
 	  }
 
 
@@ -146,25 +138,17 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeVidPlaceholder(item, isVid) {
-	    if (!item || !isVid) { return; }
+	  __computeVidPlaceholder(original, temp, isVid) {
+	    if (!isVid) { return; }
 
-	    const {original, _tempUrl} = item;
-
-	    if (original) { return; }
-
-	    return _tempUrl;
+	    return original ? original : temp;
 	  }
 
 
-	  __computeVidSrc(item, isVid) {
-	    if (!item || !isVid) { return; }
+	  __computeVidSrc(original, isVid) {
+	    if (!isVid) { return; }
 
-	    const {original} = item;
-
-	    if (original) { return original; }
-
-	    return;
+	    return original;
 	  }
 
 	  // <lazy-image> 'on-loaded-changed' event handler.

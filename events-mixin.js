@@ -404,10 +404,33 @@ export const EventsMixin = superClass => {
 	  }
 
 
+	  __pauseUploads(uids) {
+
+	    uids.forEach(uid => {
+	      if (this._uploads[uid]) {
+	        this._uploads[uid].controls.pause();
+	      }
+	    });
+	  }
+
+
+	  __resumeUploads(uids) {
+
+	    uids.forEach(uid => {
+	      if (this._uploads[uid]) {
+	        this._uploads[uid].controls.resume();
+	      }
+	    });
+	  }
+
+
 	  async __requestDeleteItem(event) {
 	    hijackEvent(event);
 
-	    this._deleteItems = [event.detail.item];
+	    const {item} = event.detail;
+
+	    this._deleteItems = [item];
+	    this.__pauseUploads([item.uid]);
 
 	    await schedule();
 
@@ -418,7 +441,12 @@ export const EventsMixin = superClass => {
 	  async __requestDeleteItems(event) {
 	    hijackEvent(event);
 
-	    this._deleteItems = event.detail.items;
+	    const {items} = event.detail;
+	    const uids 		= items.map(item => item.uid);
+
+	    this._deleteItems = items;
+	    this.__pauseUploads(uids);
+
 
 	    await schedule();
 
@@ -487,6 +515,11 @@ export const EventsMixin = superClass => {
 	      console.error(error);
 	    }
 	    finally {
+
+	    	const uids = this._deleteItems.map(item => item.uid);
+
+	    	this.__resumeUploads(uids);
+
 	      this._deleteItems = undefined;
 	    }
 	  }
