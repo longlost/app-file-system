@@ -179,6 +179,7 @@ const addAdditionalData = async files => {
       }
     
       file.basename  = file.name;
+      file.category  = path.dirname(file.type);
       file.exif      = tags ? tags : null; // Firestore does not accept undefined vals;
       file.ext       = path.extname(file.name);
       file.index     = index;
@@ -451,6 +452,7 @@ class FileSources extends AppElement {
       const {
         _tempUrl,      
         basename,
+        category,
         displayName,
         exif,
         ext,
@@ -466,6 +468,7 @@ class FileSources extends AppElement {
       return {
         _tempUrl,
         basename,
+        category,
         coll: this.coll,
         displayName,
         doc: uid,
@@ -569,8 +572,8 @@ class FileSources extends AppElement {
         return file;
       });
 
-      await this.__addNewFiles(renamedFiles);
       await this.__resetRenameFilesModal();
+      await this.__addNewFiles(renamedFiles);
     }
     catch (error) {
       if (error === 'click debounced') { return; }
@@ -591,8 +594,8 @@ class FileSources extends AppElement {
         return file;
       });
 
-      await this.__addNewFiles(files);
       await this.__resetRenameFilesModal();
+      await this.__addNewFiles(files);
     }
     catch (error) {
       if (error === 'click debounced') { return; }

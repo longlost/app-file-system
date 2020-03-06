@@ -88,7 +88,7 @@
                     title="My Photos"
                     on-header-overlay-threshold-triggered-changed="__overlayTriggered"
                     on-overlay-exiting="__hideScale"
-                    on-reset="__resetScale">
+                    on-reset="__reset">
 
   <div class="background blur" 
        slot="header-background-slot">
@@ -111,6 +111,7 @@
               all="[[_all]]"
               coll="[[coll]]"
               hide-checkboxes="[[_hideCheckboxes]]"
+              opened="[[_opened]]"
               scale="[[_scale]]"
               slot="content"
               uploads="[[uploads]]">

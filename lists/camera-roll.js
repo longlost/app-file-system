@@ -56,9 +56,6 @@ import '@polymer/paper-slider/paper-slider.js';
 import './multiselect-btns.js';
 
 
-// import './roll-items.js';
-
-
 class CameraRoll extends AppElement {
   static get is() { return 'camera-roll'; }
 
@@ -88,7 +85,10 @@ class CameraRoll extends AppElement {
       _hideCheckboxes: {
         type: Boolean,
         value: true
-      }, 
+      },
+
+      // Only run db item subscriptions when overlay is open.
+      _opened: Boolean,
 
       // This default is overridden by localstorage 
       // after initial interaction from user.
@@ -182,9 +182,10 @@ class CameraRoll extends AppElement {
     this._scale = event.detail.value;
   }
 
-
-  cancelUploads(uids) {
-    this.$.items.cancelUploads(uids);
+  // Overlay on-reset handler.
+  __reset() {
+    this._opened = false;
+    this.__resetScale();
   }
 
 
@@ -197,6 +198,8 @@ class CameraRoll extends AppElement {
     this.$.scale.style['display'] = 'flex';
 
     await this.$.overlay.open();
+
+    this._opened = true;
 
     await import(
       /* webpackChunkName: 'app-file-system-roll-items' */ 

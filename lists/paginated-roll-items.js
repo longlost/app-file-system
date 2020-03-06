@@ -77,6 +77,9 @@ class PaginatedRollItems extends AppElement {
         value: 8
       },
 
+      // Only run db item subscriptions when overlay is open.
+      opened: Boolean,
+
       // Passed in Firestore startAfter to paginate further results.
       // Is the previous element's last snapshot doc.
       pagination: Object,
@@ -113,7 +116,7 @@ class PaginatedRollItems extends AppElement {
 
   static get observers() {
     return [
-      '__collChanged(coll, index, pagination)',
+      '__collChanged(coll, index, opened, pagination)',
       '__dataChanged(_data)',
       '__docTriggeredChanged(_doc, _triggered)',
       '__triggerChanged(_trigger)'
@@ -138,23 +141,18 @@ class PaginatedRollItems extends AppElement {
   }
 
   // Start a subscription to file data changes.
-  async __collChanged(coll, index, pagination) {
-    if (!coll || typeof index !== 'number') { return; }
+  async __collChanged(coll, index, opened, pagination) {
+    if (!coll || typeof index !== 'number') { return; }    
 
     // Only first set of elements can run 
     // without a pagination snapshot doc.
     if (index > 0 && !pagination) { return; }
+    
+    // Cancel previous subscription.
+    this.__unsub();
 
-    if (this._unsubscribe) {
-      this.__unsub();
-    }
-    else { 
-
-      // App is still initializing, 
-      // so give <app-settings> time to call enablePersistence
-      // on services before calling subscribe.
-      await wait(500);
-    }
+    // Don't start a new subscription if parent overlay is closed.
+    if (!opened) { return; }
 
     const callback = (results, doc) => {
 
@@ -175,8 +173,11 @@ class PaginatedRollItems extends AppElement {
       console.error(error);
     };
 
-
-    let ref = db.collection(coll).orderBy('timestamp', 'desc');
+    // Will need to create an index in Firestore.
+    // Only images and/or videos for camera-roll.
+    let ref = db.collection(coll).
+                where('category', 'in', ['image', 'video']).
+                orderBy('timestamp', 'desc');
 
     if (pagination) {
       ref = ref.startAfter(pagination);
@@ -205,6 +206,7 @@ class PaginatedRollItems extends AppElement {
   __unsub() {
     if (this._unsubscribe) {
       this._unsubscribe();
+      this._unsubscribe = undefined;
     }
   }
 
