@@ -5,33 +5,6 @@
     display: block;
     padding: 16px;
   }
-  
-  .file-item {
-    display:          inline-flex;
-    flex-direction:   column; 
-    position:         relative;
-    height:           calc(20vmax + 36px);
-    width:            20vmax;
-    min-height:       156px;
-    min-width:        120px;
-    max-height:       240px;
-    max-width:        204px;
-    margin:           4px;
-    border-radius:    3px;
-    overflow:         hidden;
-    z-index:          1;
-    background-color: var(--app-background-color);
-    --file-item-thumbnail-border-radius: 3px 3px 0px 0px;
-  }
-
-  /* Maintain aspect ratio for video. */
-  .video {
-    height:     unset;
-    min-height: unset;
-    max-height: unset;
-    min-width:  246px; /* This size chosen to keep minimal controls and start time. */
-    max-width:  576px;
-  }
 
   #icon-container {
     display:         flex;
@@ -74,61 +47,30 @@
   *[hidden] {
     display: none;
   }
-
-
-
-  /*For testing only*/
-
-  /*.sortable {
-    position: relative;
-  }
-
-  .test-div {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    padding: 8px;
-    font-size: 20px;
-    background-color: white;
-    color: rebeccapurple;
-    z-index: 1;
-  }*/
   
 
 </style>
 
 
 <drag-drop-list disabled="[[!hideCheckboxes]]"
-                sortable=".sortable"
                 on-items-change="__handleChanges"
                 on-item-dropped="__handleDrop" 
-                on-sort-finish="__handleSort">                
+                on-sort-finish="__handleSort">
 
   <template is="dom-repeat" 
-            items="[[_rearrangedItems]]"
+            items="[[_paginations]]"
+            as="pagination"
             strip-whitespace>
-    <!-- 
-        Outter div fixes a bug that causes drag-drop-list classes from being
-        blown away whenever an item updates while user is dragging. Probably
-        involving the Polymer dynamic 'class$' syntax. 
-    -->
-    <div class="sortable"
-         state-index="[[index]]">
-      <file-item class$="file-item [[__computeSortableClass(item.type)]]"
-                 coll="[[coll]]"
-                 hide-checkbox="[[hideCheckboxes]]"
-                 item="[[item]]"
-                 selected="[[all]]">
-      </file-item>
-
-
-
-      <!-- Testing only -->
-       <!-- <div class="test-div">[[index]]</div> -->
-
-
-
-    </div>
+            
+    <paginated-file-items all="[[all]]"
+                          coll="[[coll]]"
+                          hide-checkboxes="[[hideCheckboxes]]"
+                          index="[[index]]"
+                          opened="[[opened]]"
+                          pagination="[[pagination]]"
+                          uploads="[[uploads]]"
+                          on-new-pagination-doc="__newPaginationDoc">
+    </paginated-file-items>
 
   </template>
 

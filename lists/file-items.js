@@ -62,21 +62,14 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-}                 from '@longlost/app-element/app-element.js';
-import {
-  removeOne
-}                 from '@longlost/lambda/lambda.js';
-import {
-  hijackEvent,
-  wait
-}                 from '@longlost/utils/utils.js';
-import htmlString from './file-items.html';
+import {AppElement, html}  from '@longlost/app-element/app-element.js';
+import {ItemsMixin}        from './items-mixin.js';
+import {removeOne}         from '@longlost/lambda/lambda.js';
+import {hijackEvent, wait} from '@longlost/utils/utils.js';
+import htmlString          from './file-items.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';
-import './file-item.js';
+import './paginated-file-items.js';
 import '../shared/file-icons.js';
 
 
@@ -87,7 +80,7 @@ const dropIsOverDropZone = ({top, right, bottom, left, x, y}) => {
 };
 
 
-class FileItems extends AppElement {
+class FileItems extends ItemsMixin(AppElement) {
   static get is() { return 'file-items'; }
 
   static get template() {
@@ -98,21 +91,11 @@ class FileItems extends AppElement {
   static get properties() {
     return {
 
-      // From <file-list> tri-state multi select icon button.
-      // Select all item checkboxes when true.
-      all: Boolean,
-
-      // Firestore coll path string.
-      coll: String,
-
-      // Set to true to hide <file-item> <select-checkbox>'s
-      hideCheckboxes: Boolean,
-
       // Set to true to hide the delete dropzone.
       hideDropzone: Boolean,    
 
-      // Db items combined with local file items when appropriate.
-      items: Array,
+      // Db items object, keyed by uid bound from top level.
+      data: Object,
 
       // Cached order in which shuffled file items 
       // are ordered (translated by <drag-drop-list>
@@ -134,16 +117,8 @@ class FileItems extends AppElement {
 
   static get observers() {
     return [
-      '__itemsChanged(items)'
+      '__dataChanged(data)'
     ];
-  }
-
-
-  __computeSortableClass(type) {
-    if (type && type.includes('video')) {
-      return 'video';
-    }
-    return '';
   }
 
 
@@ -152,9 +127,9 @@ class FileItems extends AppElement {
   }
 
 
-  __itemsChanged(items) {
+  __dataChanged(data) {
     
-    if (!items) {
+    if (!data) {
       this._rearrangedItems = undefined;
       return; 
     }
@@ -167,22 +142,12 @@ class FileItems extends AppElement {
     // inside <drag-drop-list>.
     if (this._previousSort) {
       this._rearrangedItems = this._previousSort.
-                                map(uid => 
-                                  items.find(item => 
-                                    item.uid === uid)).
+                                map(uid     => data[uid]).
                                 filter(item => item);
 
       this._previousSort = undefined; // This reset is why this is not a computed method.
     }
     else if (Array.isArray(this._domState) && this._domState.length > 0) {
-
-      // This is an optimization over doing an array find
-      // operation inside the state reduce function.
-      // Create an object keyed by item index
-      const indexed = items.reduce((accum, val) => {
-        accum[val.index] = val;
-        return accum;
-      }, {});
 
       // State indexes correlate to the reused <template is="dom-repeat">
       // elements that have been shuffled (translated) around by <drag-drop-list>.
@@ -191,25 +156,26 @@ class FileItems extends AppElement {
       const found = 
         this._domState.
           reduce((accum, stateIndex, index) => {
-            const match = indexed[index];
+            const match = data[index];
+
             if (match) {
               accum[stateIndex] = match;
             }
+
             return accum; 
           }, []).
           filter(item => item); // Remove any gaps of undefined values.
 
       // Grab any new items, sort them by index
       // and add them to the end of existing items.
-      const newItems = 
-        items.
-          sort((a, b) => a.index - b.index).
-          slice(found.length);
+      const newItems = Object.values(data).
+                         sort((a, b) => a.index - b.index).
+                         slice(found.length);
 
       this._rearrangedItems = [...found, ...newItems];
     }
     else {
-      this._rearrangedItems = items;
+      this._rearrangedItems = Object.values(data);
     }
   }
 
@@ -220,7 +186,7 @@ class FileItems extends AppElement {
     hijackEvent(event);
 
     const {items}  = event.detail;
-    this._domState = items.map(({stateIndex}) => stateIndex);
+    this._domState = items.map(({index}) => index);
   }
 
 
@@ -244,14 +210,11 @@ class FileItems extends AppElement {
 
     if (dropIsOverDropZone(measurements)) {
 
-      const uploader                 = target.firstElementChild;
-      const {uid}                    = uploader.item;
-      const {x: targetX, y: targetY} = target.getBoundingClientRect();
-
-      uploader.pauseUpload();
+      const {uid}                    = target.item;
+      const {x: targetX, y: targetY} = target.getBoundingClientRect();      
 
       // Override transform to keep item over delete zone.
-      this._toDelete = {target, uploader, x: targetX, y: targetY};
+      this._toDelete = {target, x: targetX, y: targetY};
       this.__putTargetWhereDropped();
 
       // Show a confirmation modal before deleting.
@@ -284,7 +247,7 @@ class FileItems extends AppElement {
                            filter(item => item).
                            map(item => item.uid);
 
-    const sorted = this.selectAll('.file-item').map(el => el.item.uid);
+    const sorted = this.selectAll('.item').map(el => el.item.uid);
 
     this.fire('file-items-sorted', {sorted});
   }
@@ -293,24 +256,7 @@ class FileItems extends AppElement {
   cancelDelete() {
     if (!this._toDelete) { return; }
 
-    const {uploader} = this._toDelete;
-
-    uploader.resumeUpload();
     this.resetDeleteTarget();
-  }
-
-
-  cancelUploads(uids) {
-    const elements = this.selectAll('.file-item');
-
-    // 'uids' is optional.
-    const elsToCancel = uids ? 
-      uids.map(uid => elements.find(el => el.item.uid === uid)) : 
-      elements;
-
-    elsToCancel.forEach(element => {
-      element.cancelUpload();
-    });
   }
 
   // Must setup the right correction technique BEFORE

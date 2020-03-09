@@ -37,26 +37,17 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-}                 from '@longlost/app-element/app-element.js';
-import {
-  hijackEvent,
-  listen,
-  unlisten,
-  wait
-}                 from '@longlost/utils/utils.js';
-import services   from '@longlost/services/services.js';
-import htmlString from './camera-roll.html';
+import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {ListOverlayMixin} from './list-overlay-mixin.js';
+import htmlString         from './camera-roll.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-slider/paper-slider.js';
-import './multiselect-btns.js';
+// 'roll-items' lazy loaded after open.
 
 
-class CameraRoll extends AppElement {
+class CameraRoll extends ListOverlayMixin(AppElement) {
   static get is() { return 'camera-roll'; }
 
   static get template() {
@@ -67,29 +58,6 @@ class CameraRoll extends AppElement {
   static get properties() {
     return {
 
-      // Firestore coll path string.
-      coll: String,
-
-      data: Object,
-
-      // File upload controls, progress and state.
-      uploads: Object,
-
-      // All item checkboxes selected when true.
-      _all: {
-        type: Boolean,
-        value: false
-      },
-
-      // Set to true to hide <select-checkbox>'s
-      _hideCheckboxes: {
-        type: Boolean,
-        value: true
-      },
-
-      // Only run db item subscriptions when overlay is open.
-      _opened: Boolean,
-
       // This default is overridden by localstorage 
       // after initial interaction from user.
       _scale: {
@@ -98,24 +66,6 @@ class CameraRoll extends AppElement {
       }
 
     };
-  }
-
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    this._itemsSelectedListenerKey = listen(
-      this,
-      'item-selected',
-      this.__itemSelected.bind(this)
-    );
-  }
-
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-
-    unlisten(this._itemsSelectedListenerKey);
   }
 
 
@@ -154,35 +104,11 @@ class CameraRoll extends AppElement {
   }
 
 
-  __allChanged(event) {
-    this._all = event.detail.value;
-  }
-
-
-  __hideCheckboxesChanged(event) {
-    this._hideCheckboxes = event.detail.value;
-  }
-
-
-  __itemSelected(event) {
-    hijackEvent(event);
-
-    const {item, selected} = event.detail;
-
-    if (selected) {
-      this.$.multi.selected(item);
-    }
-    else {
-      this.$.multi.unselected(item);
-    }
-  }
-
-
   __sliderValChanged(event) {
     this._scale = event.detail.value;
   }
 
-  // Overlay on-reset handler.
+  // Overlay 'on-reset' handler.
   __reset() {
     this._opened = false;
     this.__resetScale();

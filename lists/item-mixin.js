@@ -19,18 +19,6 @@
   *
   *
   *
-  *  Methods: 
-  *
-  *   
-  *   cancelUpload - Cancel an item upload mid-stream. Used when an item is deleted early.
-  *
-  *
-  *   pauseUpload - Pause incomplete uploads when user is deciding to delete an item.
-  *
-  *
-  *   resumeUpload - Resume an incomplete upload when a user dismisses the delete modal.
-  *
-  *
   *
   * @customElement
   * @polymer
@@ -56,6 +44,12 @@ export const ItemMixin = superClass => {
 	      coll: String,
 
 	      hideCheckbox: Boolean,
+      
+	      // File item object.
+	      item: Object,
+
+	      // File upload controls, progress and state.
+	      uploads: Object,
 
 	      // Selected/checked state.
 	      // Passed into <select-checkbox>
@@ -68,6 +62,15 @@ export const ItemMixin = superClass => {
 	      _controls: {
 	        type: Boolean,
 	        value: false
+	      },
+
+	      _progress: Number,
+
+	      _state: String,
+
+	      _upload: {
+	        type: Object,
+	        computed: '__computeUpload(item.uid, uploads)'
 	      }
 
 	    };
@@ -78,7 +81,8 @@ export const ItemMixin = superClass => {
 	    return [
 	      '__hideCheckboxChanged(hideCheckbox)',
 	      '__itemChanged(item)',
-	      '__selectedChanged(selected)'
+	      '__selectedChanged(selected)',
+	      '__uploadChanged(_upload)'
 	    ];
 	  }
 
@@ -103,23 +107,46 @@ export const ItemMixin = superClass => {
 	  }
 
 
+	  __computeUpload(uid, uploads) {
+	    if (!uid || !uploads) { return; }
+
+	    return uploads[uid];
+	  }
+
+	  // This is a performance enhancement 
+	  // over using a wildcard observer.
+	  __uploadChanged(upload) {
+
+	    if (!upload) {
+
+	      this._progress = 0;
+	      this._state    = '';
+	      this.__computeProgress = null;
+	      this.__computeState    = null;
+
+	    }
+	    else {      
+
+	      this.__computeProgress = progress => progress;
+	      this.__computeState    = state    => state;
+
+	      // Polymer specific dynamic computed properties.
+	      this._createComputedProperty(
+	        '_progress', 
+	        `__computeProgress(uploads.${upload.uid}.progress)`, 
+	        true
+	      );
+	      this._createComputedProperty(
+	        '_state', 
+	        `__computeState(uploads.${upload.uid}.state)`, 
+	        true
+	      );
+	    }
+	  }
+
+
 	  __selectCheckboxValChanged(event) {
 	    this.selected = event.detail.value;
-	  }
-
-	  // Used for app-file-system.js deleteAll() method.
-	  cancelUpload() {
-	    this.$.uploadControls.cancel();
-	  }
-
-
-	  pauseUpload() {
-	    this.$.uploadControls.pause();
-	  }
-
-
-	  resumeUpload() {
-	    this.$.uploadControls.resume();
 	  }
 
   };
