@@ -2,10 +2,35 @@
 <style include="app-shared-styles">
 
   :host {
-    display:  block;
+    display:  inline-block;
     position: relative;
     overflow: hidden;
-    --file-item-thumbnail-border-radius: inherit; /* Another Safari fix. */
+    --file-item-thumbnail-border-radius: 3px 3px 0px 0px; /* Another Safari fix. */
+  }
+
+  .wrapper {
+    display:          flex;
+    flex-direction:   column; 
+    position:         relative;
+    height:           calc(20vmax + 36px);
+    width:            20vmax;
+    min-height:       156px;
+    min-width:        120px;
+    max-height:       240px;
+    max-width:        204px;
+    margin:           4px;
+    border-radius:    3px;
+    overflow:         hidden;
+    z-index:          1;
+    background-color: var(--app-background-color);
+  }
+
+  .video {
+    height:     unset;
+    min-height: unset;
+    max-height: unset;
+    min-width:  246px; /* This size chosen to keep minimal controls and start time. */
+    max-width:  576px;
   }
 
   file-thumbnail {
@@ -52,58 +77,80 @@
     color:     var(--secondary-text-color);
   }
 
+  /*Reordering Testing Only*/
+  /*#test-div {
+    position:         absolute;
+    top:              8px;
+    left:             8px;
+    padding:          8px;
+    font-size:        20px;
+    background-color: white;
+    color:            rebeccapurple;
+    z-index:          1;
+  }*/
+
 </style>
 
 
-<file-thumbnail controls="[[_controls]]"
-                item="[[item]]">
-</file-thumbnail>
+<div class$="wrapper [[__computeSortableClass(item.type)]]">
 
 
-<div id="label">
+  <file-thumbnail controls="[[_controls]]"
+                  item="[[item]]">
+  </file-thumbnail>
 
-  <div id="label-name">
-    <div id="label-order">
-      [[_order]]
-    </div>
-    <div class="shared-single-line-truncate">
-      [[item.displayName]]
-    </div>
-  </div>
 
-  <div id="label-body">
-    <div id="label-stats">
-      <div class="label-stat shared-single-line-truncate">
-        [[_dateTime]]
+  <div id="label">
+
+    <div id="label-name">
+      <div id="label-order">
+        [[_order]]
       </div>
-
-      <div class="label-stat shared-single-line-truncate">
-        [[__computeStatsLine2(_mimeExt, item.sizeStr)]]
+      <div class="shared-single-line-truncate">
+        [[item.displayName]]
       </div>
     </div>
 
-    <paper-icon-button hidden="[[!hideCheckbox]]"
-                       icon="app-icons:more-vert"
-                       on-click="__moreBtnClicked">
-    </paper-icon-button>
+    <div id="label-body">
+      <div id="label-stats">
+        <div class="label-stat shared-single-line-truncate">
+          [[_dateTime]]
+        </div>
+
+        <div class="label-stat shared-single-line-truncate">
+          [[__computeStatsLine2(_mimeExt, item.sizeStr)]]
+        </div>
+      </div>
+
+      <paper-icon-button hidden="[[!hideCheckbox]]"
+                         icon="app-icons:more-vert"
+                         on-click="__moreBtnClicked">
+      </paper-icon-button>
+    </div>
+
+    <processing-icon item="[[item]]"></processing-icon>
   </div>
 
-  <processing-icon item="[[item]]"></processing-icon>
+
+  <upload-controls progress="[[_progress]]"
+                   state="[[_state]]"
+                   upload="[[_upload]]">
+  </upload-controls>
+
+
+  <select-checkbox checked="[[selected]]"
+                   hidden="[[hideCheckbox]]"
+                   on-value-changed="__selectCheckboxValChanged">
+  </select-checkbox>
+
+
+  <quick-options id="options" 
+                 item="[[item]]">
+  </quick-options>
+
+
+  <!-- Testing only -->
+       <!-- <div id="test-div">[[stateIndex]]</div> -->
+
+
 </div>
-
-
-<upload-controls id="uploadControls"
-                 coll="[[coll]]"
-                 file="[[item.file]]">
-</upload-controls>
-
-
-<select-checkbox checked="[[selected]]"
-                 hidden="[[hideCheckbox]]"
-                 on-value-changed="__selectCheckboxValChanged">
-</select-checkbox>
-
-
-<quick-options id="options" 
-               item="[[item]]">
-</quick-options>

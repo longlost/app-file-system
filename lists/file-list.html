@@ -13,7 +13,8 @@
                     header-size="1"
                     prebuilt-animation="from-right"
                     reveal-header
-                    title="My Files">
+                    title="My Files"
+                    on-reset="__reset">
 
 
   <multiselect-btns id="multi"
@@ -24,13 +25,15 @@
   </multiselect-btns>
 
 
-  <file-items id="fileItems"
+  <file-items id="items"
               all="[[_all]]"
               coll="[[coll]]"
+              data="[[data]]"
               hide-checkboxes="[[_hideCheckboxes]]"
-              hide-dropzone="[[hideDropzone]]" 
-              items="[[_combinedFileItems]]"
-              slot="content">
+              hide-dropzone="[[hideDropzone]]"
+              opened="[[_opened]]" 
+              slot="content"
+              uploads="[[uploads]]">
   </file-items>
 
 

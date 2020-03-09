@@ -1,0 +1,24 @@
+
+<style>
+  
+  :host {
+    display: contents;
+  }
+
+</style>
+
+
+<template is="dom-repeat" 
+          items="[[_items]]"
+          strip-whitespace
+          on-dom-change="__domChanged">
+          
+  <file-item class="item"
+             coll="[[coll]]"
+             hide-checkbox="[[hideCheckboxes]]"
+             item="[[item]]"
+             selected="[[all]]"
+             uploads="[[uploads]]">
+  </file-item>
+
+</template>

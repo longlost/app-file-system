@@ -31,6 +31,14 @@ class FileItem extends ItemMixin(FileInfoMixin(AppElement)) {
   }
 
 
+  __computeSortableClass(type) {
+    if (type && type.includes('video')) {
+      return 'video';
+    }
+    return '';
+  }
+
+
   __computeStatsLine2(mimeExt, sizeStr) {
     if (!mimeExt) { return sizeStr; }
 

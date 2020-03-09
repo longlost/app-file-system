@@ -16,7 +16,7 @@
   *
   *
   *  
-  *    files - Collection of file data objects that are combined with database items.
+  *    uploads - Collection of file upload objects that are combined with database items.
   *
   *  
   *
@@ -31,24 +31,13 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-}                 from '@longlost/app-element/app-element.js';
-import {
-  hijackEvent,
-  listen,
-  unlisten,
-  wait
-}                 from '@longlost/utils/utils.js';
-import services   from '@longlost/services/services.js';
-import htmlString from './file-list.html';
-import '@longlost/app-overlays/app-header-overlay.js';
-import './multiselect-btns.js';
-import './file-items.js';
+import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {ListOverlayMixin} from './list-overlay-mixin.js';
+import htmlString         from './file-list.html';
+// 'file-items' lazy loaded after open.
 
 
-class FileList extends AppElement {
+class FileList extends ListOverlayMixin(AppElement) {
   static get is() { return 'file-list'; }
 
   static get template() {
@@ -59,92 +48,13 @@ class FileList extends AppElement {
   static get properties() {
     return {
 
-      // Firestore coll path string.
-      coll: String,
-
-      data: Object,
-
       hideDropzone: Boolean,
-
-      files: Object,
-
-      // Data-bound to <file-items>.
-      // All item checkboxes selected when true.
-      _all: {
-        type: Boolean,
-        value: false
-      },
-
-      // Drives <template is="dom-repeat">
-      _combinedFileItems: {
-        type: Array,
-        computed: '__computeCombinedFileItems(_items, files)'
-      },
-
-      // Set to true to hide <select-checkbox>'s
-      _hideCheckboxes: {
-        type: Boolean,
-        value: true
-      },    
-
-      // Input items from db.
-      _items: Array,
-
-      // Services/Firestore subscription unsubscribe function.
-      _unsubscribe: Object
 
     };
   }
 
 
-  static get observers() {
-    return [
-      '__collChanged(coll)',
-      '__itemsChanged(_items)',
-    ];
-  }
 
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    this._itemsSelectedListenerKey = listen(
-      this,
-      'item-selected',
-      this.__itemSelected.bind(this)
-    );
-  }
-
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-
-    unlisten(this._itemsSelectedListenerKey);
-    this.__unsub();
-  }
-
-  // Combine incomming file obj with db item.
-  // File obj is fed to <upload-controls>.
-  __computeCombinedFileItems(items, files) {
-
-    if (!items || items.length === 0) { return; }
-    if (!files || Object.keys(files).length === 0) { return items; }
-
-    const fileItems = items.map(item => {
-
-      const match = files[item.uid];
-
-      if (!match) {
-        // Remove file prop.
-        const {file, ...rest} = item; 
-        return {...rest};
-      }
-      // Add file to item.
-      return {...item, file: match};
-    });
-
-    return fileItems;
-  }
 
   // Start a subscription to file data changes.
   async __collChanged(coll) {
@@ -197,66 +107,37 @@ class FileList extends AppElement {
     });
   }
 
-  // Fire up to top level to create _dbData.
-  __itemsChanged(items) {
-    this.fire('items-changed', {value: items});
-  }
-
-
-  __unsub() {
-    if (this._unsubscribe) {
-      this._unsubscribe();
-    }
-  }
-
-
-  __allChanged(event) {
-    this._all = event.detail.value;
-  }
-
-
-  __hideCheckboxesChanged(event) {
-    this._hideCheckboxes = event.detail.value;
-  }
-
-
-  __itemSelected(event) {
-    hijackEvent(event);
-
-    const {item, selected} = event.detail;
-
-    if (selected) {
-      this.$.multi.selected(item);
-    }
-    else {
-      this.$.multi.unselected(item);
-    }
+  // Overlay 'on-reset' handler.
+  __reset() {
+    this._opened = false;
   }
 
 
   cancelDelete() {
-    this.$.fileItems.cancelDelete();
-  }
-
-
-  cancelUploads(uids) {
-    this.$.fileItems.cancelUploads(uids);
+    this.$.items.cancelDelete();
   }
 
 
   delete() {
     this.$.multi.delete();
-    this.$.fileItems.delete();
+    this.$.items.delete();
   }
 
 
-  open() {
-    return this.$.overlay.open();
+  async open() {
+    await this.$.overlay.open();
+
+    this._opened = true;
+
+    await import(
+      /* webpackChunkName: 'app-file-system-file-items' */ 
+      './file-items.js'
+    );
   }
 
 
   resetDeleteTarget() {
-    this.$.fileItems.resetDeleteTarget();
+    this.$.items.resetDeleteTarget();
   }
 
 }
