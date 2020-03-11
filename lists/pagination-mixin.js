@@ -261,6 +261,9 @@ export const PaginationMixin = superClass => {
 	    if (elements.length !== this._items.length) { return; }
 
 	    this._trigger = elements[elements.length - 1];
+
+	    // Inform <drag-drop-list> of new dom elements.
+	    this.fire('drag-drop-update-items');
 	  }
 
   };
