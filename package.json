@@ -26,7 +26,7 @@
     "@longlost/app-spinner": "^1.1.1",
     "@longlost/badged-icon-button": "^1.1.1",
     "@longlost/boot": "^1.2.3",
-    "@longlost/drag-drop-list": "^2.0.0",
+    "@longlost/drag-drop-list": "^2.0.1",
     "@longlost/lambda": "^2.2.0",
     "@longlost/lazy-image": "^1.1.4",
     "@longlost/lazy-video": "^2.3.2",
