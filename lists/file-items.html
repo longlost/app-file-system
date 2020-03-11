@@ -53,6 +53,8 @@
 
 
 <drag-drop-list disabled="[[!hideCheckboxes]]"
+                sortable=".sortable"
+                nested-selector=".item"
                 on-items-change="__handleChanges"
                 on-item-dropped="__handleDrop" 
                 on-sort-finish="__handleSort">
@@ -62,7 +64,8 @@
             as="pagination"
             strip-whitespace>
             
-    <paginated-file-items all="[[all]]"
+    <paginated-file-items class="sortable"
+                          all="[[all]]"
                           coll="[[coll]]"
                           hide-checkboxes="[[hideCheckboxes]]"
                           index="[[index]]"
