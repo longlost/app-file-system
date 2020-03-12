@@ -115,11 +115,11 @@ class FileItems extends ItemsMixin(AppElement) {
   }
 
 
-  static get observers() {
-    return [
-      '__dataChanged(data)'
-    ];
-  }
+  // static get observers() {
+  //   return [
+  //     '__dataChanged(data)'
+  //   ];
+  // }
 
 
   __computeHideIcons(items) {
@@ -127,57 +127,57 @@ class FileItems extends ItemsMixin(AppElement) {
   }
 
 
-  __dataChanged(data) {
+  // __dataChanged(data) {
     
-    if (!data) {
-      this._rearrangedItems = undefined;
-      return; 
-    }
+  //   if (!data) {
+  //     this._rearrangedItems = undefined;
+  //     return; 
+  //   }
 
-    // First save after a local interaction with
-    // <drag-drop-list>.
-    // Use the snapshot of the current sequence 
-    // of items to correct an issue with 
-    // using a <template is="dom-repeat"> 
-    // inside <drag-drop-list>.
-    if (this._previousSort) {
-      this._rearrangedItems = this._previousSort.
-                                map(uid     => data[uid]).
-                                filter(item => item);
+  //   // First save after a local interaction with
+  //   // <drag-drop-list>.
+  //   // Use the snapshot of the current sequence 
+  //   // of items to correct an issue with 
+  //   // using a <template is="dom-repeat"> 
+  //   // inside <drag-drop-list>.
+  //   if (this._previousSort) {
+  //     this._rearrangedItems = this._previousSort.
+  //                               map(uid     => data[uid]).
+  //                               filter(item => item);
 
-      this._previousSort = undefined; // This reset is why this is not a computed method.
-    }
-    else if (Array.isArray(this._domState) && this._domState.length > 0) {
+  //     this._previousSort = undefined; // This reset is why this is not a computed method.
+  //   }
+  //   else if (Array.isArray(this._domState) && this._domState.length > 0) {
 
-      // State indexes correlate to the reused <template is="dom-repeat">
-      // elements that have been shuffled (translated) around by <drag-drop-list>.
-      // So use the incoming data expected order index and correct for
-      // the local shuffled, reused element order.
-      const found = 
-        this._domState.
-          reduce((accum, stateIndex, index) => {
-            const match = data[index];
+  //     // State indexes correlate to the reused <template is="dom-repeat">
+  //     // elements that have been shuffled (translated) around by <drag-drop-list>.
+  //     // So use the incoming data expected order index and correct for
+  //     // the local shuffled, reused element order.
+  //     const found = 
+  //       this._domState.
+  //         reduce((accum, stateIndex, index) => {
+  //           const match = data[index];
 
-            if (match) {
-              accum[stateIndex] = match;
-            }
+  //           if (match) {
+  //             accum[stateIndex] = match;
+  //           }
 
-            return accum; 
-          }, []).
-          filter(item => item); // Remove any gaps of undefined values.
+  //           return accum; 
+  //         }, []).
+  //         filter(item => item); // Remove any gaps of undefined values.
 
-      // Grab any new items, sort them by index
-      // and add them to the end of existing items.
-      const newItems = Object.values(data).
-                         sort((a, b) => a.index - b.index).
-                         slice(found.length);
+  //     // Grab any new items, sort them by index
+  //     // and add them to the end of existing items.
+  //     const newItems = Object.values(data).
+  //                        sort((a, b) => a.index - b.index).
+  //                        slice(found.length);
 
-      this._rearrangedItems = [...found, ...newItems];
-    }
-    else {
-      this._rearrangedItems = Object.values(data);
-    }
-  }
+  //     this._rearrangedItems = [...found, ...newItems];
+  //   }
+  //   else {
+  //     this._rearrangedItems = Object.values(data);
+  //   }
+  // }
 
   // Cache the order in which shuffled (translated by <drag-drop-list>)
   // and reused file items are ordered, so saves 
@@ -185,8 +185,10 @@ class FileItems extends ItemsMixin(AppElement) {
   __handleChanges(event) {
     hijackEvent(event);
 
-    const {items}  = event.detail;
-    this._domState = items.map(({index}) => index);
+    // const {items}  = event.detail;
+    // this._domState = items.map(({index}) => index);
+
+    // console.log('state: ', event.detail.items.map(({index}) => index));
   }
 
 
@@ -243,13 +245,21 @@ class FileItems extends ItemsMixin(AppElement) {
     // of items to correct an issue with 
     // using a <template is="dom-repeat"> 
     // inside <drag-drop-list>.
-    this._previousSort = this._rearrangedItems.
-                           filter(item => item).
-                           map(item => item.uid);
 
-    const sorted = this.selectAll('.item').map(el => el.item.uid);
+    // this._previousSort = this._rearrangedItems.
+    //                        filter(item => item).
+    //                        map(item => item.uid);
+
+    // const sorted = this.selectAll('.item').map(el => el.item.uid);
+
+    // this.fire('file-items-sorted', {sorted});
+
+    const sorted = event.detail.items.
+                     map(el => el.item ? el.item.uid : undefined).
+                     filter(uid => uid);
 
     this.fire('file-items-sorted', {sorted});
+
   }
 
 
@@ -265,16 +275,16 @@ class FileItems extends ItemsMixin(AppElement) {
   delete() { 
 
     // Use _domState instead of _previousSort after a delete.
-    this._previousSort = undefined;
+    // this._previousSort = undefined;
 
-    // Take out largest index since the <template is="dom-repeat">
-    // always removes the last item from the dom.
-    // Find the largest index in the state array 
-    // and remove it.
-    const index = this._domState.findIndex(num => 
-                    num === this._domState.length - 1);
+    // // Take out largest index since the <template is="dom-repeat">
+    // // always removes the last item from the dom.
+    // // Find the largest index in the state array 
+    // // and remove it.
+    // const index = this._domState.findIndex(num => 
+    //                 num === this._domState.length - 1);
 
-    this._domState = removeOne(index, this._domState);
+    // this._domState = removeOne(index, this._domState);
   }
 
 

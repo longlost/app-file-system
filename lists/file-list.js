@@ -53,60 +53,6 @@ class FileList extends ListOverlayMixin(AppElement) {
     };
   }
 
-
-
-
-  // Start a subscription to file data changes.
-  async __collChanged(coll) {
-    if (!coll) { return; }
-
-    if (this._unsubscribe) {
-      this._unsub();
-    }
-    else { 
-
-      // App is still initializing, 
-      // so give <app-settings> time to call enablePersistence
-      // on services before calling subscribe.
-      await wait(500);
-    }
-
-
-    const callback = results => {
-
-      // Filter out orphaned data that may have been caused
-      // by deletions prior to cloud processing completion.
-      // Items from the database may have sparse index values
-      // caused by deleted items, so collapse indexes.
-      this._items = results.
-                      filter(obj => obj.uid).
-                      map((item, index) => ({...item, index}));
-    };
-
-
-    const errorCallback = error => {
-      this._items  = undefined;
-
-      if (
-        error.message && 
-        error.message.includes('document does not exist')
-      ) { return; }
-
-      console.error(error);
-    };
-
-
-    this._unsubscribe = services.subscribe({
-      callback,
-      coll,
-      errorCallback,
-      orderBy: {
-        prop:      'index',
-        direction: 'asc'
-      }
-    });
-  }
-
   // Overlay 'on-reset' handler.
   __reset() {
     this._opened = false;

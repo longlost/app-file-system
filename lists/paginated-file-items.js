@@ -27,6 +27,37 @@ class PaginatedFileItems extends PaginationMixin(AppElement) {
     return html([htmlString]);
   }
 
+
+  static get properties() {
+    return {
+
+      _correctedStateItems: Array,
+
+    };
+  }
+
+
+  static get observers() {
+    return [
+      '__itemsChanged(_items)'
+    ];
+  }
+
+
+  __itemsChanged(items) {
+    if (!items) { return; }
+
+    if (!Array.isArray(this._state) || this._state.length === 0) { 
+
+      this._correctedStateItems = items; 
+    }
+    else {
+
+      this._correctedStateItems = this._state.map(uid => 
+        items.find(item => item.uid === uid));
+    }    
+  }
+
 }
 
 window.customElements.define(PaginatedFileItems.is, PaginatedFileItems);
