@@ -31,6 +31,16 @@ class FileItem extends ItemMixin(FileInfoMixin(AppElement)) {
   }
 
 
+  static get properties() {
+    return {
+
+      // <drag-drop-list> sort correction number.
+      stateIndex: Number
+
+    };
+  }
+
+
   __computeSortableClass(type) {
     if (type && type.includes('video')) {
       return 'video';

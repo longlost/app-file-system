@@ -94,6 +94,10 @@ export const PaginationMixin = superClass => {
 	      	computed: '__computeRef(coll, _type)'
 	      },
 
+	      // Used by file-items to correct template 
+	      // items for <drag-drop-list> sort.
+	      _state: Array,
+
 	      // Last element in sub-sequence.
 	      // Used to trigger next pagination.
 	      _trigger: Object,
@@ -261,6 +265,8 @@ export const PaginationMixin = superClass => {
 	    if (elements.length !== this._items.length) { return; }
 
 	    this._trigger = elements[elements.length - 1];
+
+	    this._state = this._items.map(item => item.uid);
 
 	    // Inform <drag-drop-list> of new dom elements.
 	    this.fire('drag-drop-update-items');
