@@ -466,24 +466,29 @@ class FileSources extends AppElement {
       } = file;
 
       return {
-        _tempUrl,
-        basename,
-        category,
         coll: this.coll,
-        displayName,
         doc: uid,
-        exif,
-        ext,
-        index: index + lastIndex,
-        lastModified,
-        optimized: null,
-        original: null,
-        size, 
-        sizeStr,
-        thumbnail: null,
-        timestamp,
-        type,
-        uid
+        data: {
+          _tempUrl,
+          basename,
+          category,
+          coll: this.coll,
+          displayName,
+          doc: uid,
+          exif,
+          ext,
+          index: index + lastIndex,
+          lastModified,
+          optimized: null,
+          original: null,
+          size, 
+          sizeStr,
+          thumbnail: null,
+          timestamp,
+          type,
+          uid
+        },
+        merge: false
       };
     });
 
@@ -498,13 +503,7 @@ class FileSources extends AppElement {
       }     
     }
 
-    const promises = items.map(item => services.set({
-      coll: this.coll,
-      doc:  item.uid,
-      data: item
-    }));
-
-    return Promise.all(promises);
+    return services.saveItems(items);
   }
 
 

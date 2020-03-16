@@ -412,20 +412,6 @@ class AppFileSystem extends EventsMixin(AppElement) {
     this.fire('items-deleted', {uids});
   }
 
-
-  __saveItem(item) {
-    return services.set({
-      coll: this.coll,
-      doc:  item.uid,
-      data: item
-    });
-  }
-
-
-  __saveItems(items) {
-    return items.map(item => this.__saveItem(item));
-  }
-
   // From file-sources.
   // Previous file(s) are replaced when 
   // 'multiple' is falsey. 

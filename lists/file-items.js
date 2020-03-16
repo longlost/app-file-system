@@ -64,13 +64,17 @@
 
 import {AppElement, html}  from '@longlost/app-element/app-element.js';
 import {ItemsMixin}        from './items-mixin.js';
+import {firebase}          from '@longlost/boot/boot.js';
 import {removeOne}         from '@longlost/lambda/lambda.js';
-import {hijackEvent, wait} from '@longlost/utils/utils.js';
+import {hijackEvent, isOnScreen, wait} from '@longlost/utils/utils.js';
 import htmlString          from './file-items.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';
 import './paginated-file-items.js';
 import '../shared/file-icons.js';
+
+
+const db = firebase.firestore();
 
 
 const dropIsOverDropZone = ({top, right, bottom, left, x, y}) => {
@@ -92,10 +96,19 @@ class FileItems extends ItemsMixin(AppElement) {
     return {
 
       // Set to true to hide the delete dropzone.
-      hideDropzone: Boolean,    
+      hideDropzone: Boolean,  
 
-      // Db items object, keyed by uid bound from top level.
-      data: Object,
+      // How many items to fetch and render at a time while paginating.
+      limit: {
+        type: Number,
+        value: 8
+      },
+
+      // Firebase subsription doc used for pagination.
+      _docs: {
+        type: Array,
+        value: () => ({})
+      },
 
       // Cached order in which shuffled file items 
       // are ordered (translated by <drag-drop-list>
@@ -103,92 +116,180 @@ class FileItems extends ItemsMixin(AppElement) {
       // by other devices can be correcly displayed locally.
       _domState: Array,  
 
-      // Keep a snapshot of the items proper
-      // order in sequence to correct an
-      // issue with using <drag-drop-list>
-      _previousSort: Array,
+      // DB subscription results.
+      // This array drives the dom-repeat template and is
+      // corrected for drag-drop-files sort actions.
+      _items: {
+        type: Array,
+        value: () => ([])
+      },
 
-      // Drives template repeater.
-      _rearrangedItems: Array
+      _page: {
+        type: Number,
+        value: 0
+      },
+
+      _unsubscribes: {
+        type: Array,
+        value: () => ([])
+      }
 
     };
   }
 
 
-  // static get observers() {
-  //   return [
-  //     '__dataChanged(data)'
-  //   ];
-  // }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    this.__reset();
+  }
+
+
+  static get observers() {
+    return [
+      '__collOpenedPageChanged(coll, opened, _page)',
+      '__itemsChanged(_items.*)',
+      '__triggeredChanged(_triggered)',
+      '__triggerElementChanged(_trigger)'
+    ];
+  }
 
 
   __computeHideIcons(items) {
     return !items || items.length < 2;
   }
 
+  
+  __collOpenedPageChanged(coll, opened, page) {
 
-  // __dataChanged(data) {
+    if (!coll) { return; } 
+
+    // Only first page doesn't have a startAfter doc ref.
+    if (page > 0 && !this._docs[page]) { return; }    
+
+    // Reset if parent overlay is closed.
+    if (!opened) {
+      this.__reset();
+      return; 
+    }
+
+    const start = page * this.limit;
+
+
+    const callback = (results, doc) => {
+
+      // Test if incoming results have previous local state.
+      if (this._domState && this._domState.length >= (start + results.length)) {
+
+        // results.forEach((result, index) => {
+
+        //   const stateIndex = this._domState[result.index];
+
+        //   if (typeof stateIndex === 'number') {
+        //     this.splice('_items', stateIndex, 1, result);
+        //   }
+        //   else {
+        //     this.splice('_items', start + index, 1, result);
+        //   }
+
+        // });
+
+
+
+        results.forEach((result, index) => {
+
+          const pageIndex = start + index;
+
+          const stateIndex = this._domState[pageIndex];
+
+          if (typeof stateIndex === 'number') {
+            this.splice('_items', stateIndex, 1, result);
+          }
+          else {
+            this.splice('_items', pageIndex, 1, result);
+          }
+
+        });
+
+
+      }
+      else {        
+        this.splice('_items', start, results.length, ...results); 
+      }
+
+      // Add/update next page's startAfter doc ref.
+      this._docs[page + 1] = doc;
+
+    };
+
+    const errorCallback = error => {
+
+      this._docs[page + 1] = undefined;
+      this.splice('_items', start, this.limit);
+
+      if (
+        error.message && 
+        error.message.includes('document does not exist')
+      ) { return; }
+
+      console.error(error);
+    };
+
+
+    let ref = db.collection(coll).
+                orderBy('index', 'asc').
+                orderBy('timestamp', 'asc');
     
-  //   if (!data) {
-  //     this._rearrangedItems = undefined;
-  //     return; 
-  //   }
+    if (this._docs[page]) {
+      ref = ref.startAfter(this._docs[page]);
+    }
 
-  //   // First save after a local interaction with
-  //   // <drag-drop-list>.
-  //   // Use the snapshot of the current sequence 
-  //   // of items to correct an issue with 
-  //   // using a <template is="dom-repeat"> 
-  //   // inside <drag-drop-list>.
-  //   if (this._previousSort) {
-  //     this._rearrangedItems = this._previousSort.
-  //                               map(uid     => data[uid]).
-  //                               filter(item => item);
+    const unsubscribe = ref.limit(this.limit).onSnapshot(snapshot => {
 
-  //     this._previousSort = undefined; // This reset is why this is not a computed method.
-  //   }
-  //   else if (Array.isArray(this._domState) && this._domState.length > 0) {
+      if (snapshot.exists || ('empty' in snapshot && snapshot.empty === false)) {
 
-  //     // State indexes correlate to the reused <template is="dom-repeat">
-  //     // elements that have been shuffled (translated) around by <drag-drop-list>.
-  //     // So use the incoming data expected order index and correct for
-  //     // the local shuffled, reused element order.
-  //     const found = 
-  //       this._domState.
-  //         reduce((accum, stateIndex, index) => {
-  //           const match = data[index];
+        // Use the last doc to paginate next results.
+        const docs = snapshot.docs;
+        const doc  = docs[docs.length - 1];
+        const data = [];
 
-  //           if (match) {
-  //             accum[stateIndex] = match;
-  //           }
+        snapshot.forEach(doc => data.push(doc.data()));
 
-  //           return accum; 
-  //         }, []).
-  //         filter(item => item); // Remove any gaps of undefined values.
+        callback(data, doc);
+      } 
+      else {
+        errorCallback({message: 'document does not exist'});
+      }
+    }, errorCallback);
 
-  //     // Grab any new items, sort them by index
-  //     // and add them to the end of existing items.
-  //     const newItems = Object.values(data).
-  //                        sort((a, b) => a.index - b.index).
-  //                        slice(found.length);
+    this._unsubscribes.push(unsubscribe);
+  }
 
-  //     this._rearrangedItems = [...found, ...newItems];
-  //   }
-  //   else {
-  //     this._rearrangedItems = Object.values(data);
-  //   }
-  // }
 
-  // Cache the order in which shuffled (translated by <drag-drop-list>)
-  // and reused file items are ordered, so saves 
-  // by other devices can be correcly displayed locally.
-  __handleChanges(event) {
-    hijackEvent(event);
+  __unsub() {
+    if (this._unsubscribes) {
+      this._unsubscribes.forEach(unsubscribe => {
+        unsubscribe();
+      });
+      this._unsubscribes = [];
+    }
+  }
 
-    // const {items}  = event.detail;
-    // this._domState = items.map(({index}) => index);
 
-    // console.log('state: ', event.detail.items.map(({index}) => index));
+  __reset() {
+    this.__unsub();
+    this._docs      = {};
+    this._items     = [];
+    this._page      = 0;
+    this._trigger   = undefined;
+    this._triggered = false;
+  }
+
+
+  __itemsChanged(polymerObj) {
+    if (!polymerObj || !polymerObj.base) { return; }
+
+    this.fire('items-changed', {value: polymerObj.base});
   }
 
 
@@ -246,20 +347,63 @@ class FileItems extends ItemsMixin(AppElement) {
     // using a <template is="dom-repeat"> 
     // inside <drag-drop-list>.
 
-    // this._previousSort = this._rearrangedItems.
-    //                        filter(item => item).
-    //                        map(item => item.uid);
+    const {items} = event.detail;
 
-    // const sorted = this.selectAll('.item').map(el => el.item.uid);
+    this._domState = items.map(item => item.stateIndex);
 
-    // this.fire('file-items-sorted', {sorted});
-
-    const sorted = event.detail.items.
-                     map(el => el.item ? el.item.uid : undefined).
+    const sorted = items.
+                     map((el, index) => el.item ? {...el.item, index} : undefined).
                      filter(uid => uid);
 
     this.fire('file-items-sorted', {sorted});
+  }
 
+
+  __triggeredChanged(triggered) {
+
+    if (!triggered) { return; }
+
+    this._page       = this._page + 1;
+    this._triggered  = false;
+  }
+
+
+  async __triggerElementChanged(trigger) {
+    try {
+
+      if (!trigger) { return; }
+
+      await isOnScreen(trigger);
+
+      this._trigger   = undefined;
+      this._triggered = true;
+    }
+    catch (error) {
+
+      // Offscreen elements may be removed
+      // during delete actions of visible items.
+      // Reissue a new trigger.
+      if (error === 'Element removed.') {
+        const elements = this.selectAll('.item');
+
+        this._trigger = elements[elements.length - 1];
+      }
+      else {
+        console.error(error);
+      }
+    }
+  }
+
+
+  __domChanged() {
+
+    if (this._items.length === 0) { return; }
+
+    const elements = this.selectAll('.item');
+
+    if (elements.length !== this._items.length) { return; }
+
+    this._trigger = elements[elements.length - 1]; 
   }
 
 
@@ -269,23 +413,26 @@ class FileItems extends ItemsMixin(AppElement) {
     this.resetDeleteTarget();
   }
 
+
+
+
   // Must setup the right correction technique BEFORE
   // the items change handler is triggered by next db save
   // that occurs during a delete operation.
   delete() { 
 
-    // Use _domState instead of _previousSort after a delete.
-    // this._previousSort = undefined;
-
-    // // Take out largest index since the <template is="dom-repeat">
-    // // always removes the last item from the dom.
-    // // Find the largest index in the state array 
-    // // and remove it.
+    // Take out largest index since the <template is="dom-repeat">
+    // always removes the last item from the dom.
+    // Find the largest index in the state array 
+    // and remove it.
     // const index = this._domState.findIndex(num => 
     //                 num === this._domState.length - 1);
 
     // this._domState = removeOne(index, this._domState);
   }
+
+
+
 
 
   async resetDeleteTarget() {

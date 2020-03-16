@@ -53,27 +53,23 @@
 
 
 <drag-drop-list disabled="[[!hideCheckboxes]]"
-                sortable=".sortable"
-                nested-selector=".item"
-                on-items-change="__handleChanges"
+                sortable=".item"
                 on-item-dropped="__handleDrop" 
                 on-sort-finish="__handleSort">
 
   <template is="dom-repeat" 
-            items="[[_paginations]]"
-            as="pagination"
-            strip-whitespace>
-            
-    <paginated-file-items class="sortable"
-                          all="[[all]]"
-                          coll="[[coll]]"
-                          hide-checkboxes="[[hideCheckboxes]]"
-                          index="[[index]]"
-                          opened="[[opened]]"
-                          pagination="[[pagination]]"
-                          uploads="[[uploads]]"
-                          on-new-pagination-doc="__newPaginationDoc">
-    </paginated-file-items>
+            items="[[_items]]"
+            strip-whitespace
+            on-dom-change="__domChanged">
+
+    <file-item class="item"
+               coll="[[coll]]"
+               hide-checkbox="[[hideCheckboxes]]"
+               state-index="[[index]]"
+               item="[[item]]"
+               selected="[[all]]"
+               uploads="[[uploads]]">
+    </file-item>
 
   </template>
 
