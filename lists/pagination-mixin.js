@@ -96,7 +96,7 @@ export const PaginationMixin = superClass => {
 
 	      // Used by file-items to correct template 
 	      // items for <drag-drop-list> sort.
-	      _state: Array,
+	      _state: Object,
 
 	      // Last element in sub-sequence.
 	      // Used to trigger next pagination.
@@ -160,7 +160,8 @@ export const PaginationMixin = superClass => {
 	  	}
 	  	
 	    return db.collection(coll).
-	                orderBy('index', 'asc');
+	                orderBy('index', 'asc').
+	                orderBy('timestamp', 'asc');
 	  }
 
 	  // Start a subscription to file data changes.
@@ -183,11 +184,16 @@ export const PaginationMixin = superClass => {
 	      // Filter out orphaned data that may have been caused
 	      // by deletions prior to cloud processing completion.
 	      this._items = results.filter(obj => obj.uid);
-	      this._doc   = doc;
+
+	      // Noop if same doc as before.
+	      if (this._doc && this._doc.id === doc.id) { return; }
+
+	      this._doc = doc;
 	    };
 
 	    const errorCallback = error => {
 	      this._items  = undefined;
+	      this._doc 	 = undefined;
 
 	      if (
 	        error.message && 
@@ -239,11 +245,28 @@ export const PaginationMixin = superClass => {
 
 
 	  async __triggerChanged(trigger) {
-	    if (!trigger) { return; }
+	  	try {
 
-	    await isOnScreen(trigger);
+		    if (!trigger) { return; }
 
-	    this._triggered = true;
+		    await isOnScreen(trigger);
+
+		    this._triggered = true;
+	  	}
+	  	catch (error) {
+
+	  		// Offscreen elements may be removed
+	  		// during delete actions of visible items.
+	  		// Reissue a new trigger.
+	  		if (error === 'Element removed.') {
+	  			const elements = this.selectAll('.item');
+
+	  			this._trigger  = elements[elements.length - 1];
+	  		}
+	  		else {
+	  			console.error(error);
+	  		}
+	  	}
 	  }
 
 
@@ -264,9 +287,7 @@ export const PaginationMixin = superClass => {
 
 	    if (elements.length !== this._items.length) { return; }
 
-	    this._trigger = elements[elements.length - 1];
-
-	    this._state = this._items.map(item => item.uid);
+	    this._trigger = elements[elements.length - 1];	    
 
 	    // Inform <drag-drop-list> of new dom elements.
 	    this.fire('drag-drop-update-items');

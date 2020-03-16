@@ -103,7 +103,9 @@ export const FileInfoMixin = superClass => {
 
 	    const {lastModified, timestamp} = item;
 	    
-	    const millis = lastModified ? lastModified : timestamp;	    
+	    const millis = lastModified ? lastModified : timestamp;	 
+
+	    if (!millis) { return ''; } 
 
 	    return formatTimestamp(millis, 'short');
 	  }

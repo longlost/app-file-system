@@ -319,10 +319,13 @@ export const EventsMixin = superClass => {
 	    // by drag and drop reordering.
 	    const {sorted} = event.detail;
 
-	    const newIndexes = sorted.map((uid, index) => 
-	    	({...this._dbData[uid], index}));
+	    const newIndexes = sorted.map(item => ({
+	    	coll: this.coll,
+      	doc:  item.uid,
+      	data: {index: item.index}
+	    }));
 
-	    this.__saveItems(newIndexes);
+	    services.saveItems(newIndexes);
 	  }
 
 	  // From <file-item> (image files only) and <roll-item>
@@ -566,7 +569,11 @@ export const EventsMixin = superClass => {
 		  	
 		  	await this.__updateContentDisposition(item);
 
-		  	await this.__saveItem(item);
+		  	await services.set({
+		      coll: this.coll,
+		      doc:  item.uid,
+		      data: item
+		    });
 	  	}
 	  	catch (error) {
 	  		console.error(error);
