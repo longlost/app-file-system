@@ -95,6 +95,11 @@ class FileItems extends ItemsMixin(AppElement) {
   static get properties() {
     return {
 
+      coll: {
+        type: String,
+        observer: '__collChanged'
+      },
+
       // Set to true to hide the delete dropzone.
       hideDropzone: Boolean,  
 
@@ -104,7 +109,7 @@ class FileItems extends ItemsMixin(AppElement) {
         value: 8
       },
 
-      // Firebase subsription doc used for pagination.
+      // Firebase subscription doc used for pagination.
       _docs: {
         type: Array,
         value: () => ({})
@@ -129,6 +134,17 @@ class FileItems extends ItemsMixin(AppElement) {
         value: 0
       },
 
+
+
+
+      _subscriptions: {
+        type: Object,
+        value: () => ({})
+      },
+
+
+
+
       _unsubscribes: {
         type: Array,
         value: () => ([])
@@ -147,8 +163,8 @@ class FileItems extends ItemsMixin(AppElement) {
 
   static get observers() {
     return [
-      '__collOpenedPageChanged(coll, opened, _page)',
       '__itemsChanged(_items.*)',
+      '__openedPageChanged(opened, _page)',
       '__triggeredChanged(_triggered)',
       '__triggerElementChanged(_trigger)'
     ];
@@ -159,72 +175,111 @@ class FileItems extends ItemsMixin(AppElement) {
     return !items || items.length < 2;
   }
 
-  
-  __collOpenedPageChanged(coll, opened, page) {
 
-    if (!coll) { return; } 
-
-    // Only first page doesn't have a startAfter doc ref.
-    if (page > 0 && !this._docs[page]) { return; }    
-
-    // Reset if parent overlay is closed.
-    if (!opened) {
+  __collChanged(newVal, oldVal) {
+    if (!newVal || (oldVal && newVal !== oldVal)) {
       this.__reset();
-      return; 
     }
+  }
+
+
+  __updateItems(start, results) {
+
+    // Test if incoming results have previous local state.
+    if (this._domState && this._domState.length >= (start + results.length)) {
+
+      results.forEach((result, index) => {
+
+        const pageIndex = start + index;
+
+        const stateIndex = this._domState[pageIndex];
+
+        if (typeof stateIndex === 'number') {
+          this.splice('_items', stateIndex, 1, result);
+        }
+        else {
+          this.splice('_items', pageIndex, 1, result);
+
+
+
+          // Remove this else statement if not needed.
+          console.log('no state found, pageIndex: ', pageIndex, ' index: ', result.index);
+
+        }
+
+      });
+
+
+    }
+    else {        
+      this.splice('_items', start, results.length, ...results); 
+    }
+
+  }
+
+
+  __removeDeletedItems(count, start) {
+
+    // Test for deleted items.
+    if (count < this.limit) {
+
+      const end = start + count;
+
+      // Delete operation.
+      if (end < this._items.length) {
+
+        // Remove unused dom elements from end of repeater.
+        const diff = this._items.length - end;
+
+        this.splice('_items', end, diff);
+      }
+    }
+  }
+
+
+  __startSubscription(subscription) {
+
+    const {page, startAfter, unsubscribe} = subscription;
+
+    // This page not ready to be fetched yet.
+    if (typeof page !== 'number') { return; }
+
+    // Previous page has not returned results yet.
+    if (page > 0 && !startAfter) { return; }
+
+    if (unsubscribe) {
+      unsubscribe();
+    }
+
 
     const start = page * this.limit;
 
 
     const callback = (results, doc) => {
 
-      // Test if incoming results have previous local state.
-      if (this._domState && this._domState.length >= (start + results.length)) {
+      this.__updateItems(start, results);
+      this.__removeDeletedItems(results.length, start);
 
-        // results.forEach((result, index) => {
+      const nextSub = this._subscriptions[page + 1] || {};
 
-        //   const stateIndex = this._domState[result.index];
+      // Only start new subscriptions if the startAfter 
+      // document has been changed.
+      if (nextSub.startAfter && nextSub.startAfter.id === doc.id) { return; }
 
-        //   if (typeof stateIndex === 'number') {
-        //     this.splice('_items', stateIndex, 1, result);
-        //   }
-        //   else {
-        //     this.splice('_items', start + index, 1, result);
-        //   }
-
-        // });
-
-
-
-        results.forEach((result, index) => {
-
-          const pageIndex = start + index;
-
-          const stateIndex = this._domState[pageIndex];
-
-          if (typeof stateIndex === 'number') {
-            this.splice('_items', stateIndex, 1, result);
-          }
-          else {
-            this.splice('_items', pageIndex, 1, result);
-          }
-
-        });
-
-
-      }
-      else {        
-        this.splice('_items', start, results.length, ...results); 
-      }
+      const newSub = {...nextSub, startAfter: doc};
 
       // Add/update next page's startAfter doc ref.
-      this._docs[page + 1] = doc;
+      this._subscriptions[page + 1] = newSub;
+
+      this.__startSubscription(newSub);
 
     };
 
+
     const errorCallback = error => {
 
-      this._docs[page + 1] = undefined;
+      this._subscriptions[page] = undefined;
+
       this.splice('_items', start, this.limit);
 
       if (
@@ -236,15 +291,16 @@ class FileItems extends ItemsMixin(AppElement) {
     };
 
 
-    let ref = db.collection(coll).
+    let ref = db.collection(this.coll).
                 orderBy('index', 'asc').
                 orderBy('timestamp', 'asc');
-    
-    if (this._docs[page]) {
-      ref = ref.startAfter(this._docs[page]);
+
+    if (startAfter) {
+      ref = ref.startAfter(startAfter);
     }
 
-    const unsubscribe = ref.limit(this.limit).onSnapshot(snapshot => {
+
+    const newUnsubscribe = ref.limit(this.limit).onSnapshot(snapshot => {
 
       if (snapshot.exists || ('empty' in snapshot && snapshot.empty === false)) {
 
@@ -262,23 +318,46 @@ class FileItems extends ItemsMixin(AppElement) {
       }
     }, errorCallback);
 
-    this._unsubscribes.push(unsubscribe);
+
+    this._subscriptions[page].unsubscribe = newUnsubscribe;
+  }
+
+
+  __openedPageChanged(opened, page) {
+
+    if (!this.coll) { return; }
+     
+    // Reset if parent overlay is closed.
+    if (!opened) {
+      this.__reset();
+      return; 
+    }
+
+
+    const current = this._subscriptions[page] || {};
+
+    const subscription = {...current, page};
+
+    this._subscriptions[page] = subscription;
+
+    this.__startSubscription(subscription);
   }
 
 
   __unsub() {
-    if (this._unsubscribes) {
-      this._unsubscribes.forEach(unsubscribe => {
-        unsubscribe();
-      });
-      this._unsubscribes = [];
-    }
+
+    Object.values(this._subscriptions).forEach(sub => {
+      if (sub && sub.unsubscribe) {
+        sub.unsubscribe();
+      }
+    });
+
+    this._subscriptions = {};
   }
 
 
   __reset() {
     this.__unsub();
-    this._docs      = {};
     this._items     = [];
     this._page      = 0;
     this._trigger   = undefined;
