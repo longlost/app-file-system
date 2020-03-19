@@ -16,10 +16,8 @@
   *           default -> undefined
   *
   *
-  *    hideDropzone - <Boolean> optional: undefined -> When true, hide delete dropzone.
-  *
-  *
-  *    items - <Array> required: Input items from Firestore db.
+  *    limit - <Number> optional: The number of items to fetch per pagination.
+  *            default -> 8
   *
   *
   *
@@ -30,28 +28,10 @@
   *                              detail -> {sorted} - array of item uid's
   *
   *
-  *    'request-delete-item' - Fired when a user drags an item over the delete dropzone.
-  *                            detail -> {uid} - item uid
-  *                                   
   *
   *  
   *  Methods:
   *
-  *
-  *    cancelDelete() - User dismisses the delete modal in <file-list> parent element.
-  *
-  *
-  *    cancelUploads() - Cancels each item's active file upload.
-  *              
-  *
-  *    delete() - Removes the highest index found in the _domState correction array.
-  *               The reason for removing the highest index is because the <template is="dom-repeat">
-  *               element removes the last item in the array of dom elements no matter which item index
-  *               is actually removed.
-  *
-  *    
-  *    resetDeleteTarget() - Clears corrective styles applied to an element dragged onto the dropzone, 
-  *                          following a dismissed or confirmed delete action.
   *
   *
   *   @customElement
@@ -62,12 +42,12 @@
   **/
 
 
-import {AppElement, html}  from '@longlost/app-element/app-element.js';
-import {ItemsMixin}        from './items-mixin.js';
-import {firebase}          from '@longlost/boot/boot.js';
-import {removeOne}         from '@longlost/lambda/lambda.js';
-import {hijackEvent, isOnScreen, wait} from '@longlost/utils/utils.js';
-import htmlString          from './file-items.html';
+import {AppElement, html}        from '@longlost/app-element/app-element.js';
+import {ItemsMixin}              from './items-mixin.js';
+import {firebase}                from '@longlost/boot/boot.js';
+import {removeOne}               from '@longlost/lambda/lambda.js';
+import {hijackEvent, isOnScreen} from '@longlost/utils/utils.js';
+import htmlString                from './file-items.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';
 import './paginated-file-items.js';
@@ -75,13 +55,6 @@ import '../shared/file-icons.js';
 
 
 const db = firebase.firestore();
-
-
-const dropIsOverDropZone = ({top, right, bottom, left, x, y}) => {
-  if (y < top  || y > bottom) { return false; }
-  if (x < left || x > right)  { return false; }
-  return true;
-};
 
 
 class FileItems extends ItemsMixin(AppElement) {
@@ -100,19 +73,10 @@ class FileItems extends ItemsMixin(AppElement) {
         observer: '__collChanged'
       },
 
-      // Set to true to hide the delete dropzone.
-      hideDropzone: Boolean,  
-
       // How many items to fetch and render at a time while paginating.
       limit: {
         type: Number,
         value: 8
-      },
-
-      // Firebase subscription doc used for pagination.
-      _docs: {
-        type: Array,
-        value: () => ({})
       },
 
       // Cached order in which shuffled file items 
@@ -134,20 +98,9 @@ class FileItems extends ItemsMixin(AppElement) {
         value: 0
       },
 
-
-
-
       _subscriptions: {
         type: Object,
         value: () => ({})
-      },
-
-
-
-
-      _unsubscribes: {
-        type: Array,
-        value: () => ([])
       }
 
     };
@@ -190,8 +143,7 @@ class FileItems extends ItemsMixin(AppElement) {
 
       results.forEach((result, index) => {
 
-        const pageIndex = start + index;
-
+        const pageIndex  = start + index;
         const stateIndex = this._domState[pageIndex];
 
         if (typeof stateIndex === 'number') {
@@ -214,7 +166,6 @@ class FileItems extends ItemsMixin(AppElement) {
     else {        
       this.splice('_items', start, results.length, ...results); 
     }
-
   }
 
 
@@ -272,14 +223,12 @@ class FileItems extends ItemsMixin(AppElement) {
       this._subscriptions[page + 1] = newSub;
 
       this.__startSubscription(newSub);
-
     };
 
 
     const errorCallback = error => {
 
       this._subscriptions[page] = undefined;
-
       this.splice('_items', start, this.limit);
 
       if (
@@ -333,9 +282,7 @@ class FileItems extends ItemsMixin(AppElement) {
       return; 
     }
 
-
-    const current = this._subscriptions[page] || {};
-
+    const current      = this._subscriptions[page] || {};
     const subscription = {...current, page};
 
     this._subscriptions[page] = subscription;
@@ -372,67 +319,24 @@ class FileItems extends ItemsMixin(AppElement) {
   }
 
 
-  __putTargetWhereDropped() {
-    const {target, x, y} = this._toDelete;
-
-    // Make sure item covers, or layers over, the dropzone.
-    target.style['z-index']   = '1';
-    target.style['transform'] = `translate3d(${x}px, ${y}px, 1px)`;
-  }
-
-  // See if item was dropped over the delete area
-  // compare pointer coordinates with area position.
-  async __handleDrop(event) {
-    hijackEvent(event);
-
-    const {data, target}             = event.detail;
-    const {x, y}                     = data;
-    const {top, right, bottom, left} = this.$.dropZone.getBoundingClientRect();
-    const measurements               = {top, right, bottom, left, x, y};
-
-    if (dropIsOverDropZone(measurements)) {
-
-      const {uid}                    = target.item;
-      const {x: targetX, y: targetY} = target.getBoundingClientRect();      
-
-      // Override transform to keep item over delete zone.
-      this._toDelete = {target, x: targetX, y: targetY};
-      this.__putTargetWhereDropped();
-
-      // Show a confirmation modal before deleting.
-      this.fire('request-delete-item', {uid});
-    }
-  }
-
-  // <drag-drop-list> artifact that requires correction
-  // so placement does not change.
-  __correctForDragDropList() {
-    const {target, x, y}     = this._toDelete;
-    const {x: newX, y: newY} = target.getBoundingClientRect();
-
-    target.style['transform'] = `translate3d(${x - newX}px, ${y - newY}px, 1px)`;
-  }
-
-
   async __handleSort(event) {
     hijackEvent(event);
-
-    if (this._toDelete) {
-      this.__correctForDragDropList();
-    }
 
     // Take a snapshot of current sequence 
     // of items to correct an issue with 
     // using a <template is="dom-repeat"> 
     // inside <drag-drop-list>.
-
     const {items} = event.detail;
 
     this._domState = items.map(item => item.stateIndex);
 
     const sorted = items.
-                     map((el, index) => el.item ? {...el.item, index} : undefined).
-                     filter(uid => uid);
+                     map((el, index) => {                      
+                       if (el.item.index !== index) { // Only changes need to be saved.
+                         return {...el.item, index};
+                       }
+                     }).
+                     filter(item => item);
 
     this.fire('file-items-sorted', {sorted});
   }
@@ -442,8 +346,8 @@ class FileItems extends ItemsMixin(AppElement) {
 
     if (!triggered) { return; }
 
-    this._page       = this._page + 1;
-    this._triggered  = false;
+    this._page      = this._page + 1;
+    this._triggered = false;
   }
 
 
@@ -483,53 +387,6 @@ class FileItems extends ItemsMixin(AppElement) {
     if (elements.length !== this._items.length) { return; }
 
     this._trigger = elements[elements.length - 1]; 
-  }
-
-
-  cancelDelete() {
-    if (!this._toDelete) { return; }
-
-    this.resetDeleteTarget();
-  }
-
-
-
-
-  // Must setup the right correction technique BEFORE
-  // the items change handler is triggered by next db save
-  // that occurs during a delete operation.
-  delete() { 
-
-    // Take out largest index since the <template is="dom-repeat">
-    // always removes the last item from the dom.
-    // Find the largest index in the state array 
-    // and remove it.
-    // const index = this._domState.findIndex(num => 
-    //                 num === this._domState.length - 1);
-
-    // this._domState = removeOne(index, this._domState);
-  }
-
-
-
-
-
-  async resetDeleteTarget() {
-    if (!this._toDelete) { return; }
-
-    const {target} = this._toDelete;
-
-    target.style['transition'] = 'transform 0.2s var(--custom-ease)';
-    target.style['transform']  = '';
-
-    await wait(250);
-
-    // Set z-index to an unrecognized value
-    // so <drag-drop-list> can control
-    // with css classes.
-    target.style['z-index']    = '';
-    target.style['transition'] = 'unset';
-    this._toDelete             = undefined;
   }
 
 }
