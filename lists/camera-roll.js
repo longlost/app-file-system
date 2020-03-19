@@ -8,20 +8,11 @@
   *   deleting, printing, downloading and sharing.
   *
   *
-  *   @customElement
-  *   @polymer
-  *   @demo demo/index.html
-  *
   *
   *  Properites:
   *
   *
-  *    coll - <String> required: firestore collection path to use when saving.
-  *           ie. `cms/ui/programs`, 'images', `users`
-  *           default -> undefined
-  *
-  *
-  *    items - <Array> required: Input items from Firestore db.
+  *    Inherited from list-overlay-mixin.js
   *
   *
   *
@@ -31,8 +22,13 @@
   *
   *
   *
-  *    delete() - Clears multiselect after a delete operation.
-  *              
+  *    open() - Opens camera-roll overlay.
+  *
+  *
+  *
+  *   @customElement
+  *   @polymer
+  *   @demo demo/index.html
   *
   **/
 
@@ -112,11 +108,6 @@ class CameraRoll extends ListOverlayMixin(AppElement) {
   __reset() {
     this._opened = false;
     this.__resetScale();
-  }
-
-
-  delete() {
-    this.$.multi.delete();
   }
 
 

@@ -111,5 +111,10 @@ export const ListOverlayMixin = superClass => {
 	    }
 	  }
 
+
+	  delete() {
+	    this.$.multi.delete();
+	  }
+
   };
 };

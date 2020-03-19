@@ -464,11 +464,6 @@ export const EventsMixin = superClass => {
 
 	      await this.$.deleteConfirmModal.close();
 
-	      // Reset drag-drop delete if applicable.
-	      if (this.$.fileList.resetDeleteTarget) {
-		      this.$.fileList.resetDeleteTarget();
-		    }
-
 	      // Close editors since their item is now gone.
 	      // Test for close method since these elements
 	      // are lazy loaded and may not yet exist.
@@ -507,11 +502,6 @@ export const EventsMixin = superClass => {
 
 	      await this.clicked();
 	      await this.$.deleteConfirmModal.close();
-
-	      // Reset drag-drop delete if applicable.
-	      if (this.$.fileList.cancelDelete) {
-		      this.$.fileList.cancelDelete();
-		    }
 	    }
 	    catch (error) {
 	      if (error === 'click debounced') { return; }

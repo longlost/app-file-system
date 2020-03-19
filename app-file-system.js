@@ -404,10 +404,35 @@ class AppFileSystem extends EventsMixin(AppElement) {
       this.__deleteFromList();  
     });
 
-    const dbPromises = uids.map(uid => 
-      services.deleteDocument({coll: this.coll, doc: uid}));
+    // Gather items left over from delete.
+    // These are used to collapse indexes.
+    const remaining = uids.reduce((accum, uid) => {
+      delete accum[uid];
+      return accum;
+    }, {...this._dbData});
 
-    await Promise.all(dbPromises);
+
+    const itemsToDelete = uids.map(uid => ({coll: this.coll, doc: uid}));
+
+    await services.deleteItems(itemsToDelete);
+
+    // Take remaining items, 
+    // sort ascending by index, 
+    // issue new indexes.
+    const collapsed = Object.values(remaining).
+                        sort((a, b) => a.index - b.index).
+                        map((item, index) => {
+                          if (item.index !== index) { // Only changes need to be saved.
+                            return {
+                              coll: this.coll, 
+                              doc:  item.uid, 
+                              data: {index}
+                            };
+                          }
+                        }).
+                        filter(obj => obj);
+
+    await services.saveItems(collapsed);
 
     this.fire('items-deleted', {uids});
   }

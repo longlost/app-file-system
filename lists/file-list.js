@@ -10,16 +10,13 @@
   *  Properites:
   *
   *
-  *    coll - <String> required: firestore collection path to use when saving.
-  *           ie. `cms/ui/programs`, 'images', `users`
-  *           default -> undefined
-  *
+  *    Inherited from list-overlay-mixin.js
   *
   *  
-  *    uploads - Collection of file upload objects that are combined with database items.
+  *  Methods:
   *
-  *  
   *
+  *   open() - Opens the file list overlay.
   *
   *
   *
@@ -44,29 +41,9 @@ class FileList extends ListOverlayMixin(AppElement) {
     return html([htmlString]);
   }
 
-
-  static get properties() {
-    return {
-
-      hideDropzone: Boolean,
-
-    };
-  }
-
   // Overlay 'on-reset' handler.
   __reset() {
     this._opened = false;
-  }
-
-
-  cancelDelete() {
-    this.$.items.cancelDelete();
-  }
-
-
-  delete() {
-    this.$.multi.delete();
-    this.$.items.delete();
   }
 
 
@@ -79,11 +56,6 @@ class FileList extends ListOverlayMixin(AppElement) {
       /* webpackChunkName: 'app-file-system-file-items' */ 
       './file-items.js'
     );
-  }
-
-
-  resetDeleteTarget() {
-    this.$.items.resetDeleteTarget();
   }
 
 }
