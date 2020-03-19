@@ -240,7 +240,20 @@ class FileSources extends AppElement {
         computed: '__computeAcceptableTypes(_mimes)'
       },
 
+      // Used to issue new item indexes and
+      // display total file count to user.
+      _dbCount: Number,
+
       _filesToRename: Array,
+
+      // Hide actions when _dbCount is unavailable
+      // because it is neccessary for issuing indexes
+      // properly to new items.
+      _hideContent: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideContent(_dbCount)'
+      },
 
       // Using maxsize and unit to calculate the total allowed bytes
       // any one file can have.
@@ -261,9 +274,26 @@ class FileSources extends AppElement {
       _newDisplayNames: {
         type: Object,
         value: () => ({})
-      }
+      },
+
+      // Overlay opened state.
+      // Controls wether to subscribe to db for 
+      // file items count or not.
+      _opened: {
+        type: Boolean,
+        value: false
+      },
+
+      _unsubscribe: Object
 
     };
+  }
+
+
+  static get observers() {
+    return [
+      '__collOpenedChanged(coll, _opened)'
+    ];
   }
 
 
@@ -281,6 +311,11 @@ class FileSources extends AppElement {
     }, '');
 
     return `${capitalize(description)}.`;
+  }
+
+
+  __computeHideContent(dbCount) {
+    return typeof dbCount !== 'number';
   }
 
 
@@ -334,6 +369,60 @@ class FileSources extends AppElement {
 
   __computePlaceholderName(name) {
     return getName(name);
+  }
+
+
+  __unsub() {
+    if (this._unsubscribe) {
+      this._unsubscribe();
+      this._unsubscribe = undefined;
+    }
+  }
+
+
+  async __collOpenedChanged(coll, opened) {
+    if (!coll || !opened) {
+      this.__unsub();
+      this._dbCount = undefined;
+      return;
+    }
+
+    const callback = results => {
+
+      if (results.length > 0) {
+        this._dbCount = results[0].index + 1;
+      }
+      else {
+        this._dbCount = 0;
+      }
+    };
+
+    const errorCallback = error => {
+
+      if (error && error.message && error.message.includes('document does not exist')) {
+        this._dbCount = 0;
+        return;
+      }
+
+      this._dbCount = undefined;
+      console.error(error);
+    };
+
+    this._unsubscribe = await services.subscribe({
+      callback,
+      coll,
+      errorCallback,
+      limit: 1,
+      orderBy: {
+        prop:      'index',
+        direction: 'desc'
+      }
+    });
+  }
+
+
+  __reset() {
+    this._opened = false;
   }
 
 
@@ -443,8 +532,6 @@ class FileSources extends AppElement {
   // via Firebase storage and is not allowed in Firestore.
   async __saveItems(files) {
 
-    const lastIndex = this.data ? Object.keys(this.data).length : 0;
-
     const items = files.map(file => {
 
       // Cannot destructure the File object since it
@@ -477,7 +564,7 @@ class FileSources extends AppElement {
           doc: uid,
           exif,
           ext,
-          index: index + lastIndex,
+          index: index + this._dbCount,
           lastModified,
           optimized: null,
           original: null,
@@ -686,8 +773,9 @@ class FileSources extends AppElement {
   }
 
 
-  open() {
-    return this.$.overlay.open();
+  async open() {
+    await this.$.overlay.open();
+    this._opened = true;
   }
 
 }

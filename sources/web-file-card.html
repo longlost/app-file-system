@@ -71,7 +71,7 @@
 <div class="shared-card">
   
   <paper-input class="shared-paper-input"
-               allowed-pattern="[^/\f/\n/\r/\t/\v]"
+               allowed-pattern="[^\f\n\r\s\t\v]"
                autocapitalize
                autocomplete
                autocorrect
@@ -79,6 +79,7 @@
                label="Link to File"
                placeholder="https://example.com/my-file.ext"
                tabindex="0"
+               type="url"
                on-value-changed="__inputValueChanged">
     <iron-icon id="link-icon"
                icon="file-icons:link" 

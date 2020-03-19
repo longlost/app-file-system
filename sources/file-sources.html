@@ -10,6 +10,10 @@
     height:  calc(100vh - 128px);
   }
 
+  #content[hidden] {
+    display: none;
+  }
+
   #grid {
     display:            grid;
     grid-template-rows: min-content min-content 24px 1fr;
@@ -53,15 +57,18 @@
                     header-size="1"
                     prebuilt-animation="from-top"
                     fixed-header
-                    title="File Sources">
+                    title="File Sources"
+                    on-overlay-reset="__reset">
 
-  <list-icon-button data="[[data]]"
+  <list-icon-button count="[[_dbCount]]"
+                    data="[[data]]"
                     list="[[list]]"
                     slot="top-toolbar-buttons-slot"
                     on-click="__listBtnClicked">
   </list-icon-button>
 
-  <div id="content" 
+  <div id="content"
+       hidden="[[_hideContent]]" 
        slot="content">
 
     <div id="grid">
