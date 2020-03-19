@@ -43,7 +43,10 @@ class ListIconButton extends AppElement {
 
 
   static get properties() {
-    return {
+    return {      
+
+      // Total number of file items saved in db.
+      count: Number,
 
       // Object form of database items.
       data: Object,
@@ -65,11 +68,6 @@ class ListIconButton extends AppElement {
         computed: '__computeAnimateGear(_items)'
       },
 
-      _count: {
-        type: Number,
-        computed: '__computeCount(_items)'
-      },
-
       _icon: {
         type: String,
         computed: '__computeIcon(list)'
@@ -83,7 +81,7 @@ class ListIconButton extends AppElement {
 
       _show: {
         type: Boolean,
-        computed: '__computeShow(_count)'
+        computed: '__computeShow(count)'
       }
 
     };
@@ -119,9 +117,7 @@ class ListIconButton extends AppElement {
     if (!Array.isArray(items) || items.length === 0) { return false; }
 
     const shouldAnimate = items.some(item => 
-      '_tempUrl' in item && 
-      'original' in item === false
-    );
+                            item._tempUrl && !item.original);
 
     return shouldAnimate;
   }
@@ -132,17 +128,11 @@ class ListIconButton extends AppElement {
 
     const shouldAnimate = items.some(item => 
       item.type.includes('image') && 
-      'original'  in item && 
-      'optimized' in item === false
+      item.original && 
+      !item.optimized
     );
 
     return shouldAnimate;
-  }
-
-
-  __computeCount(items) {
-    if (!Array.isArray(items)) { return; }
-    return items.length;
   }
 
 

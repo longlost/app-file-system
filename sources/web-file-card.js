@@ -84,7 +84,7 @@ class WebFileCard extends AppElement {
 
 
 
-      // _url: String
+      // _url: String,
 
 
 
@@ -150,7 +150,9 @@ class WebFileCard extends AppElement {
 
     const type = mime.contentType(path.extname(url));
 
-    return mimes.some(m => type.includes(m));
+    return typeof type === 'string' ? 
+      mimes.some(m => type.includes(m)) : 
+      false;
   }
 
 
@@ -172,7 +174,7 @@ class WebFileCard extends AppElement {
   // commented out for testing only.
 
   __inputValueChanged(event) {
-    // const {value}      = event.detail;
+    // const {value} = event.detail;
     // this._url = value.trim();
   }
 
