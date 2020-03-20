@@ -34,7 +34,10 @@ class RollItem extends ItemMixin(AppElement) {
     try {
       await this.clicked();
 
-      this.fire('open-carousel', {item: this.item});
+      this.fire('open-carousel', {
+        item:         this.item, 
+        measurements: this.getBoundingClientRect()
+      });
     }
     catch (error) {
       if (error === 'click debounced') { return; }

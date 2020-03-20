@@ -333,13 +333,8 @@ export const EventsMixin = superClass => {
 
 	  	const {item, measurements} = event.detail;
 
-	  	// TODO:
-	  	// 			use measurements to create an expanding 
-	  	//			animation from current item location into fullscreen.
-
-
 	  	this._liveUid = item.uid;
-	  	await schedule();
+
 	    await import('./carousel/photo-carousel.js');
 	    this.$.carousel.open(measurements);
 	  }

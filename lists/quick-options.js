@@ -37,7 +37,6 @@ import {
 import htmlString from './quick-options.html';
 import '@longlost/app-icons/app-icons.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
-import '../shared/file-icons.js';
 import '../shared/action-buttons.js';
 
 
@@ -80,19 +79,6 @@ class QuickOptions extends AppElement {
       await this.clicked();
 
       this.close();
-    }
-    catch (error) { 
-      if (error === 'click debounced') { return; }
-      console.error(error); 
-    }
-  }
-
-
-  async __editBtnClicked() {
-    try {
-      await this.clicked();
-
-      this.fire('edit-file', {item: this.item});
     }
     catch (error) { 
       if (error === 'click debounced') { return; }

@@ -37,7 +37,7 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import htmlString from './photo-carousel.html';
-import '@longlost/app-overlays/app-header-overlay.js';
+import '../shared/action-buttons.js';
 
 
 class PhotoCarousel extends AppElement {
@@ -51,20 +51,57 @@ class PhotoCarousel extends AppElement {
   static get properties() {
     return {
 
-      currentItem: Object,
+      // Used for entry animation and inital setup.
+      item: Object,
 
-      items: Array
+      _currentItem: Object,
+
+      _items: Array
 
     };
   }
 
 
+  connectedCallback() {
+    super.connectedCallback();
 
-  open(measurements) {
+    const customEase = 'cubic-bezier(0.49, 0.01, 0, 1)';
+
+    this._overlayAnimations = {
+      open: {
+        name:    'fade-in', 
+        nodes:   this.$.overlay, 
+        options: {duration: 550, easing: 'ease-out'}
+      },
+      back: [{
+        name:    'slide-up', 
+        nodes:   this.$.overlay, 
+        options: {duration: 550, easing: customEase}
+      }, {
+        name:    'fade-out', 
+        nodes:   this.$.overlay, 
+        options: {duration: 500, easing: 'ease-in'}
+      }],
+      close: [{
+        name:    'slide-up', 
+        nodes:   this.$.overlay, 
+        options: {duration: 550, easing: customEase}
+      }, {
+        name:    'fade-out', 
+        nodes:   this.$.overlay, 
+        options: {duration: 500, easing: 'ease-in'}
+      }]
+    };
+  }
+
+
+
+  async open(measurements) {
 
     // TODO:
     //      run an expand animation using the item and measurements
 
+    await import('@longlost/app-overlays/app-header-overlay.js');
 
     return this.$.overlay.open();
   }
