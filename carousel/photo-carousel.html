@@ -1,5 +1,16 @@
 
-<style> 
+<style>
+
+  #bottom-toolbar-btns {
+    display:         flex;
+    justify-content: flex-end;
+    align-items:     center;
+    position:        absolute;
+    top:             0px;
+    bottom:          0px;
+    left:            16px;
+    right:           16px;
+  }
 
   *[hidden] {
     display: none;
@@ -9,9 +20,21 @@
 
 
 <app-header-overlay id="overlay"
-                    header-size="1"
-                    prebuilt-animation="from-right"
-                    title="My Photos">
+                    close-button
+                    custom-animation="[[_overlayAnimations]]"
+                    header-size="2"
+                    no-back-button
+                    reset-scroll
+                    title="[[item.displayName]]"
+                    top-title>
+
+  <div id="bottom-toolbar-btns"
+       slot="bottom-toolbar-buttons-slot">
+    <action-buttons edit-button
+                    item="[[_currentItem]]">
+    </action-buttons>
+  </div>
+
 
   <div id="container" 
        slot="container">

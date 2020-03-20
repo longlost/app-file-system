@@ -46,7 +46,12 @@ class ActionButtons extends AppElement {
     return {
       
       // File item object.
-      item: Object
+      item: Object,
+
+      editButton: {
+        type: Boolean,
+        value: false
+      }
 
     };
   }
@@ -99,6 +104,11 @@ class ActionButtons extends AppElement {
 
   __shareBtnClicked() {
     this.__optionBtnClicked('share-item');
+  }
+
+
+  __editBtnClicked() {
+    this.__optionBtnClicked('edit-file');
   }
 
 }
