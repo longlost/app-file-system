@@ -7,11 +7,6 @@
   *  
   *
   *
-  *   @customElement
-  *   @polymer
-  *   @demo demo/index.html
-  *
-  *
   *  Properites:
   *
   *
@@ -30,6 +25,12 @@
   *                       detail -> {file: <JS File Object>}
   *
   *  
+  *
+  *
+  *   @customElement
+  *   @polymer
+  *   @demo demo/index.html
+  *
   *
   **/
 

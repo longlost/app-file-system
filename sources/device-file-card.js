@@ -8,9 +8,6 @@
   *   Drag and drop zone.
   *
   *
-  *   @customElement
-  *   @polymer
-  *   @demo demo/index.html
   *
   *
   *  Properites:
@@ -56,6 +53,13 @@
   *
   *
   *    createFeedback(type) - Show file user error feedback in dropzone.
+  *
+  *
+  *
+  *   @customElement
+  *   @polymer
+  *   @demo demo/index.html
+  *
   *
   **/
 

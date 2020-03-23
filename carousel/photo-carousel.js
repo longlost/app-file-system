@@ -6,10 +6,6 @@
   *   Fullscreen image/photo/video viewer carousel.
   *
   *
-  *   @customElement
-  *   @polymer
-  *   @demo demo/index.html
-  *
   *
   *  Properites:
   *
@@ -27,6 +23,12 @@
   *
   *
   *    open()
+  *
+  *
+  *
+  *   @customElement
+  *   @polymer
+  *   @demo demo/index.html
   *
   *
   **/
