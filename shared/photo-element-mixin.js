@@ -6,7 +6,7 @@ import {
 	schedule,
 	unlisten
 } from '@longlost/utils/utils.js';
-import '@longlost/lazy-image/lazy-image.js';
+import '@longlost/app-images/lazy-image.js';
 import '@longlost/lazy-video/lazy-video.js';
 
 
