@@ -714,6 +714,14 @@
     "@longlost/lambda" "^1.3.9"
     "@longlost/utils" "^1.2.4"
 
+"@longlost/animation@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@longlost/animation/-/animation-2.0.0.tgz#13f6772eeaaf73bd14e53cdfdcf27ffae6fe8d26"
+  integrity sha512-fZKR0vcnyesFAQTvcsLLXdK5RWMwpqotNHdY9xieuufn5wpEXylcUJyEnD2HiKi7lzmHSBiJLjVx2LR5hRkvEA==
+  dependencies:
+    "@longlost/lambda" "^2.2.0"
+    "@longlost/utils" "^1.3.5"
+
 "@longlost/app-element@^1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@longlost/app-element/-/app-element-1.0.6.tgz#b3492eea81d87b683821e130b304f49c5ada5bb0"
@@ -736,6 +744,16 @@
   integrity sha512-shFrW8bCKuhxpTmhGo3kkKEURbDvKqpL5oF8353dRSwECNJAceckvxm+FBObDC3wUe34+edMOyQbrOfC8cARAA==
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
+
+"@longlost/app-images@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.0.0.tgz#3f16ba61eb309ca1c14b7e09a0b05e1ecbda7f60"
+  integrity sha512-9F7jNMsfo9GKm6MERubGNM3J3RGbLnTPVgw5vZhe4mYEeGOF/d0N5HSU1kTIe2HNQaBUj8PE45mbCrcMtNxX7Q==
+  dependencies:
+    "@longlost/animation" "^2.0.0"
+    "@longlost/app-element" "^1.1.1"
+    "@longlost/utils" "^1.3.5"
+    "@polymer/iron-image" "^3.0.2"
 
 "@longlost/app-inputs@^1.3.8":
   version "1.3.8"
@@ -898,16 +916,6 @@
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.2.0.tgz#f9ae362590222896d64272df580a281929081051"
   integrity sha512-hjwZPIcs1FPC1tHG6moCAX0bjtFHIRqVg/jBgsnLhGV0p3Dc0bGo1Z+lGYhEEKZnZFgxhxHY3+PBXw0brgPkPg==
-
-"@longlost/lazy-image@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@longlost/lazy-image/-/lazy-image-1.1.4.tgz#c842fa19404eac569d38204485388b18fc96f206"
-  integrity sha512-dEXzdIPf1cAidZl2xrZmM7CqxHEIA7rkRx93q0cmxVGmvZTovaWOjxVsvcRegvMlSG4llIp/cWYe8/xXrI6X4g==
-  dependencies:
-    "@longlost/app-element" "^1.1.1"
-    "@longlost/utils" "^1.3.5"
-    "@polymer/iron-image" "^3.0.2"
-    "@polymer/polymer" "^3.3.1"
 
 "@longlost/lazy-video@^2.3.2":
   version "2.3.2"

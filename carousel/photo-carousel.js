@@ -38,7 +38,10 @@ import {
   AppElement, 
   html
 }                 from '@longlost/app-element/app-element.js';
+import {wait}     from '@longlost/utils/utils.js';
 import htmlString from './photo-carousel.html';
+import '@longlost/app-images/flip-image.js';
+import '@polymer/iron-image/iron-image.js';
 import '../shared/action-buttons.js';
 
 
@@ -58,7 +61,12 @@ class PhotoCarousel extends AppElement {
 
       _currentItem: Object,
 
-      _items: Array
+      _items: Array,
+
+      _src: {
+        type: String,
+        computed: '__computeSrc(item)'
+      }
 
     };
   }
@@ -97,15 +105,29 @@ class PhotoCarousel extends AppElement {
   }
 
 
+  __computeSrc(item) {
+    if (!item) { return '#'; }
+
+    const {optimized, original} = item;
+
+    return optimized ? optimized : original;
+  }
+
 
   async open(measurements) {
 
-    // TODO:
-    //      run an expand animation using the item and measurements
+    this._measurements = measurements;
+
+    await this.$.flip.play();
 
     await import('@longlost/app-overlays/app-header-overlay.js');
 
-    return this.$.overlay.open();
+    await this.$.overlay.open();
+
+    // Prevents a flicker.
+    await wait(500);
+
+    this.$.flip.reset();
   }
 
 }

@@ -1,6 +1,14 @@
 
 <style>
 
+  #flip {
+    z-index: 1;
+  }
+
+  #overlay {
+    --overlay-background-color: transparent;
+  }
+
   #bottom-toolbar-btns {
     display:         flex;
     justify-content: flex-end;
@@ -12,11 +20,31 @@
     right:           16px;
   }
 
+  #container {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+  }
+
+  iron-image {
+    width: 100%;
+    height: 100%;
+    --iron-image-width: 100%;
+  }
+
   *[hidden] {
     display: none;
   }
 
 </style>
+
+
+<flip-image id="flip"
+            measurements="[[_measurements]]"
+            src="[[_src]]">
+</flip-image>
 
 
 <app-header-overlay id="overlay"
@@ -37,9 +65,11 @@
 
 
   <div id="container" 
-       slot="container">
-
-    Photos
+       slot="content">
+    
+    <iron-image src="[[_src]]"
+                sizing="cover">
+    </iron-image>
 
   </div>
 
