@@ -50,7 +50,7 @@ import {hijackEvent, isOnScreen} from '@longlost/utils/utils.js';
 import htmlString                from './file-items.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';
-import './paginated-file-items.js';
+import './file-item.js';
 import '../shared/file-icons.js';
 
 

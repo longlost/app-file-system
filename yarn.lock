@@ -745,10 +745,10 @@
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
 
-"@longlost/app-images@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.0.0.tgz#3f16ba61eb309ca1c14b7e09a0b05e1ecbda7f60"
-  integrity sha512-9F7jNMsfo9GKm6MERubGNM3J3RGbLnTPVgw5vZhe4mYEeGOF/d0N5HSU1kTIe2HNQaBUj8PE45mbCrcMtNxX7Q==
+"@longlost/app-images@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.1.0.tgz#da5304773545c2087f1af03ccdb776e6dd262c14"
+  integrity sha512-oPqw1Q7nRbHZ5SjQOYoXvrM5JSBuq7TjMkBmEuM1smiRMFojNpYJrJ1wBJk9DuDp0vGS5Jwkv1P3eryeE/laYQ==
   dependencies:
     "@longlost/animation" "^2.0.0"
     "@longlost/app-element" "^1.1.1"
@@ -2477,10 +2477,10 @@ nan@^2.13.2:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
 
-nanoid@^2.1.11:
-  version "2.1.11"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-2.1.11.tgz#ec24b8a758d591561531b4176a01e3ab4f0f0280"
-  integrity sha512-s/snB+WGm6uwi0WjsZdaVcuf3KJXlfGl2LcxgwkEwJF0D/BWzVWAZW/XY4bFaiR7s0Jk3FPvlnepg1H1b1UwlA==
+nanoid@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.0.0.tgz#760f6d7e076935d086aa3c790e0272cab41abbcb"
+  integrity sha512-5lU+F2QpTW1JLwlXxnu2/jkpTipIuYZL3Za6TQzM16HYDzZQqlthbXYSW0H2KzZu1UQPGHDPbCl1TS3xOKfqEQ==
 
 needle@^2.2.1:
   version "2.4.0"
