@@ -745,10 +745,10 @@
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
 
-"@longlost/app-images@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.1.0.tgz#da5304773545c2087f1af03ccdb776e6dd262c14"
-  integrity sha512-oPqw1Q7nRbHZ5SjQOYoXvrM5JSBuq7TjMkBmEuM1smiRMFojNpYJrJ1wBJk9DuDp0vGS5Jwkv1P3eryeE/laYQ==
+"@longlost/app-images@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.3.0.tgz#3eeb1db95fc45fd703a6c77fb258ee284db684f5"
+  integrity sha512-5MKRAtRqGRiZopgIXcbYhvHNotXdmhHXWimpiCn4p27hl9llV4BLeUfG4saE1kVLmc2IlV+q4FKSJgiLmePnyA==
   dependencies:
     "@longlost/animation" "^2.0.0"
     "@longlost/app-element" "^1.1.1"
@@ -815,12 +815,12 @@
     "@polymer/paper-card" "^3.0.1"
     "@polymer/paper-icon-button" "^3.0.2"
 
-"@longlost/app-overlays@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@longlost/app-overlays/-/app-overlays-1.1.0.tgz#e9ef99749ce502e87f74ebde1313b9dc53dcb717"
-  integrity sha512-tf3T5ZN2oN1PEoh9BbPpkaxaITTmS1JYZ0pDjiR3Rd7Ato9QKqIq5xCXmfzsOgf+BIBoJRTMSUoXKYfpaHJGeQ==
+"@longlost/app-overlays@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-overlays/-/app-overlays-1.2.0.tgz#4270723a443d9a324ce1eef033dc25353d4f81ea"
+  integrity sha512-dje6Z2pQ1He1MD1bA4tSxktCPjPeo6/RufpfTiPNajEa6XSw3YyHAQ9qRLBplOOS+gMjf6irQLjO+HeechLKVQ==
   dependencies:
-    "@longlost/animation" "^1.0.5"
+    "@longlost/animation" "^2.0.0"
     "@longlost/app-element" "^1.1.1"
     "@longlost/app-icons" "^1.0.11"
     "@longlost/app-shared-styles" "^2.0.13"
@@ -2477,10 +2477,10 @@ nan@^2.13.2:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
 
-nanoid@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.0.0.tgz#760f6d7e076935d086aa3c790e0272cab41abbcb"
-  integrity sha512-5lU+F2QpTW1JLwlXxnu2/jkpTipIuYZL3Za6TQzM16HYDzZQqlthbXYSW0H2KzZu1UQPGHDPbCl1TS3xOKfqEQ==
+nanoid@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.0.2.tgz#37e91e6f5277ce22335be473e2a5db1bd96dd026"
+  integrity sha512-WOjyy/xu3199NlQiQWlx7VbspSFlGtOxa1bRX9ebmXOnp1fje4bJfjPs1wLQ8jZbJUfD+yceJmw879ZSaVJkdQ==
 
 needle@^2.2.1:
   version "2.4.0"

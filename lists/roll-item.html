@@ -27,6 +27,7 @@
 
   processing-icon {
     background-color: transparent;
+    pointer-events:   none;
   }
 
 </style>
@@ -41,6 +42,9 @@
 
 
   <processing-icon item="[[item]]"></processing-icon>
+
+
+  <paper-ripple on-transitionend="__rippleDone"></paper-ripple>
 
 
   <upload-controls progress="[[_progress]]"

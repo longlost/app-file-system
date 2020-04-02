@@ -31,7 +31,7 @@ const getUidAndTags = (file, names) => {
 			}
 			
 			return accum;
-		}, {});
+		}, {Orientation: 1});
 
 		return {tags: requestedTags, uid};
 	}

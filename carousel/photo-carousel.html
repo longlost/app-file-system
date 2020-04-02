@@ -1,62 +1,118 @@
 
-<style>
+<style include="app-shared-styles">
+
+  lazy-image,
+  #content {
+    position: fixed;
+    top:      0px;
+    right:    0px;
+    bottom:   0px;
+    left:     0px;
+  }
+
+  lazy-image {
+    display:    none;
+    opacity:    0;
+    transition: opacity 0.2s;
+    z-index:    1;
+  }
 
   #flip {
     z-index: 1;
   }
 
   #overlay {
-    --overlay-background-color: transparent;
+    box-shadow: none;
+    --overlay-background-color:         transparent;
+    --overlay-toolbar-background-parallax-height: 100%;
+    --overlay-toolbar-background-color: transparent;
+    --overlay-toolbar-vignette-opacity: 0;
+  }
+
+  .background {
+    position:       absolute;
+    top:            0px;
+    right:          0px;
+    bottom:         0px;
+    left:           0px;
+    pointer-events: none;
+    z-index:       -1;
+  }
+
+  .blur {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter:         blur(10px);
+  }
+
+  /*
+    Cannot have a background color and 
+    a backdrop-filter on same element.
+  */
+  #header-color-background {
+    opacity:          0.7;
+    background-color: var(--app-primary-color);
   }
 
   #bottom-toolbar-btns {
     display:         flex;
     justify-content: flex-end;
-    align-items:     center;
+    align-items:     flex-end;
     position:        absolute;
-    top:             0px;
+    top:            -64px;
     bottom:          0px;
-    left:            16px;
-    right:           16px;
+    left:            0px;
+    right:           0px;
+    padding:         16px;
+    pointer-events:  none;
   }
 
-  #container {
-    position: fixed;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
-  }
-
-  iron-image {
-    width: 100%;
-    height: 100%;
-    --iron-image-width: 100%;
-  }
-
-  *[hidden] {
-    display: none;
+  action-buttons {
+    pointer-events: auto;
   }
 
 </style>
 
 
+<lazy-image id="lazyImg"
+            alt="[[item.displayName]]"
+            orientation="[[_orientation]]"
+            placeholder="[[_placeholder]]"
+            src="[[_src]]"
+            sizing="contain"
+            on-lazy-image-loaded-changed="__lazyImgLoaded">
+</lazy-image>
+
+
 <flip-image id="flip"
             measurements="[[_measurements]]"
-            src="[[_src]]">
+            orientation="[[item.exif.Orientation]]"
+            sizing="contain"
+            src="[[_placeholder]]">
 </flip-image>
 
 
 <app-header-overlay id="overlay"
                     close-button
-                    custom-animation="[[_overlayAnimations]]"
+                    disable-background-effects
+                    prebuilt-animation="from-top"
                     header-size="2"
                     no-back-button
                     reset-scroll
                     title="[[item.displayName]]"
-                    top-title>
+                    top-title
+                    on-overlay-reset="__reset">
+
+  <div class="background blur" 
+       slot="header-background-slot">
+  </div>
+
+  <div id="header-color-background"
+       class="background" 
+       slot="header-background-slot">
+  </div>
 
   <div id="bottom-toolbar-btns"
+       class="shared-card-shadow"
        slot="bottom-toolbar-buttons-slot">
     <action-buttons edit-button
                     item="[[_currentItem]]">
@@ -64,12 +120,10 @@
   </div>
 
 
-  <div id="container" 
+  <div id="content"
        slot="content">
     
-    <iron-image src="[[_src]]"
-                sizing="cover">
-    </iron-image>
+    
 
   </div>
 
