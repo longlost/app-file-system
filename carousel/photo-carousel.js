@@ -3,7 +3,7 @@
 /**
   * `photo-carousel`
   * 
-  *   Fullscreen image/photo/video viewer carousel.
+  *   Image/photo/video viewer ovelay with a carousel ui.
   *
   *
   *
@@ -46,7 +46,9 @@ import htmlString from './photo-carousel.html';
 import '@longlost/app-images/flip-image.js';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/app-shared-styles/app-shared-styles.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/action-buttons.js';
+import './paginated-carousel.js';
 
 
 class PhotoCarousel extends AppElement {
@@ -147,6 +149,33 @@ class PhotoCarousel extends AppElement {
 
   __lazyImgLoaded(event) {
     this._imgLoaded = event.detail.value;
+  }
+
+
+  async __editBtnClicked() {
+    try {
+      await this.clicked();
+
+      this.fire('edit-image', {item: this._currentItem});
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
+
+  __currentItemChanged(event) {
+    this._currentItem = event.detail.value;
+  }
+
+
+  __photoSelected(event) {
+
+    // TODO:
+    //      open photo-viewer with event.detail.selected
+
+
   }
 
 

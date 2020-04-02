@@ -1,0 +1,48 @@
+
+<style>
+
+  :host {
+    display:         	flex;
+    justify-content: 	center;
+    align-items:     	center;   
+    height:          	100%;
+    overflow:        	hidden;
+    background-color: inherit;
+  }
+
+  .item {
+    height: 100%; 
+    width:  100%;
+  }
+
+  lazy-image {
+    display: flex;
+  }
+
+  lazy-image,
+  lazy-video {
+  	background-color: inherit;
+  }
+
+</style>
+
+
+<template is="dom-if"
+          if="[[_isImg]]">
+  <lazy-image class="item"
+              alt="[[item.displayName]]"
+              orientation="[[_orientation]]"
+              placeholder="[[_imgPlaceholder]]"
+              src="[[_imgSrc]]"
+              sizing="contain">
+  </lazy-image>  
+</template>
+
+<template is="dom-if"
+          if="[[_isVid]]">
+  <lazy-video class="item"
+              aspect-ratio="landscape"
+              placeholder="[[_vidPlaceholder]]"
+              src="[[_vidSrc]]">
+  </lazy-video>
+</template>

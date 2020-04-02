@@ -1,0 +1,35 @@
+
+<style>
+
+	:host {
+		display: 		 flex;
+		align-items: center;
+		width: 	 		 100vmin;
+		height:  		 100vmin;
+		background-color: inherit;
+	}
+
+	app-carousel {
+		height: 					100%;
+		background-color: inherit;
+	}
+
+</style>
+
+
+<app-carousel id="carousel"  
+              aspect-ratio="fill"
+              nav="[[_nav]]"
+              on-app-carousel-centered-item-changed="__currentItemChanged">
+
+  <template is="dom-repeat" 
+            items="[[_items]]"
+            strip-whitespace>
+
+    <carousel-item item="[[item]]"
+    							 on-click="__itemClicked">
+    </carousel-item>
+
+  </template>
+
+</app-carousel>

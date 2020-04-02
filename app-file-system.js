@@ -555,27 +555,116 @@ class AppFileSystem extends EventsMixin(AppElement) {
   }
 
 
+  // async openList() {
+    
+  //   if (this.list === 'files') {
+  //     await import(
+  //       /* webpackChunkName: 'app-file-system-file-list' */ 
+  //       './lists/file-list.js'
+  //     );
+
+  //     return this.$.fileList.open();
+  //   }
+  //   else if (this.list === 'photos') {
+  //     await import(
+  //       /* webpackChunkName: 'app-file-system-camera-roll' */ 
+  //       './lists/camera-roll.js'
+  //     );
+      
+  //     return this.$.cameraRoll.open();
+  //   }
+
+  //   throw new Error('Cannot open the overlay without the list property being properly set.');
+  // }
+
+
+
+
+  // TESTING/DEV ONLY!!
+
   async openList() {
     
-    if (this.list === 'files') {
-      await import(
-        /* webpackChunkName: 'app-file-system-file-list' */ 
-        './lists/file-list.js'
-      );
+    const measurements = {
+      "x": 189,
+      "y": 67,
+      "width": 183,
+      "height": 183,
+      "top": 67,
+      "right": 372,
+      "bottom": 250,
+      "left": 189
+    };
 
-      return this.$.fileList.open();
-    }
-    else if (this.list === 'photos') {
-      await import(
-        /* webpackChunkName: 'app-file-system-camera-roll' */ 
-        './lists/camera-roll.js'
-      );
-      
-      return this.$.cameraRoll.open();
-    }
+    this._dbData = {
+      "1OgnAldjiVmoxU36L4OaJ": {
+        "_tempUrl": "blob:http://localhost:3000/29fd0fd0-0115-45f9-a383-8a48b91e8e1d",
+        "basename": "IMG_0110.JPG",
+        "category": "image",
+        "coll": "test",
+        "displayName": "Valley",
+        "doc": "1OgnAldjiVmoxU36L4OaJ",
+        "exif": {
+          "DateTimeOriginal": [
+            "2017:03:19 14:24:08"
+          ],
+          "GPSAltitude": 27.276102088167054,
+          "GPSAltitudeRef": 0,
+          "GPSDateStamp": [
+            "2017:03:19"
+          ],
+          "GPSImgDirection": 292.30348258706465,
+          "GPSImgDirectionRef": [
+            "T"
+          ],
+          "GPSLatitude": [
+            26,
+            12,
+            20.2
+          ],
+          "GPSLatitudeRef": [
+            "N"
+          ],
+          "GPSLongitude": [
+            98,
+            4,
+            56
+          ],
+          "GPSLongitudeRef": [
+            "W"
+          ],
+          "GPSTimeStamp": [
+            19,
+            24,
+            8
+          ],
+          "Orientation": 1
+        },
+        "ext": ".JPG",
+        "index": 33,
+        "lastModified": 1534191047346,
+        "optimized": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2F1OgnAldjiVmoxU36L4OaJ%2Foptim_IMG_0110.JPG?generation=1584648197154509&alt=media",
+        "original": "https://firebasestorage.googleapis.com/v0/b/longlost-starter.appspot.com/o/test%2F1OgnAldjiVmoxU36L4OaJ%2FIMG_0110.JPG?alt=media&token=47b26d90-d748-46bb-94f2-9b140b09fa6f",
+        "path": "test/1OgnAldjiVmoxU36L4OaJ/IMG_0110.JPG",
+        "sharePath": "test/1OgnAldjiVmoxU36L4OaJ/optim_IMG_0110.JPG",
+        "size": 1851158,
+        "sizeStr": "1.8MB",
+        "thumbnail": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2F1OgnAldjiVmoxU36L4OaJ%2Fthumb_IMG_0110.JPG?generation=1584648197123820&alt=media",
+        "timestamp": 1584648153471,
+        "type": "image/jpeg",
+        "uid": "1OgnAldjiVmoxU36L4OaJ"
+      }
+    };
 
-    throw new Error('Cannot open the overlay without the list property being properly set.');
+    this._liveUid = "1OgnAldjiVmoxU36L4OaJ";
+    
+    await import(
+      './carousel/photo-carousel.js'
+    );
+    
+    return this.$.carousel.open(measurements);
   }
+
+
 
 
   openSources() {
