@@ -4,7 +4,7 @@
 
 import * as Comlink from 'comlink';
 import ExifReader 	from 'exifreader'; // https://github.com/mattiasw/ExifReader
-import nanoid 			from 'nanoid/non-secure';
+import {nanoid}			from 'nanoid/non-secure';
 
 
 const reader = new FileReaderSync();
