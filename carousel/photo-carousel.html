@@ -8,6 +8,7 @@
     right:    0px;
     bottom:   0px;
     left:     0px;
+    background-color: black;
   }
 
   lazy-image {
@@ -66,8 +67,14 @@
     pointer-events:  none;
   }
 
-  action-buttons {
+  .toolbar-buttons {
     pointer-events: auto;
+  }
+
+  #content {
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
   }
 
 </style>
@@ -98,7 +105,7 @@
                     header-size="2"
                     no-back-button
                     reset-scroll
-                    title="[[item.displayName]]"
+                    title="[[_currentItem.displayName]]"
                     top-title
                     on-overlay-reset="__reset">
 
@@ -114,16 +121,27 @@
   <div id="bottom-toolbar-btns"
        class="shared-card-shadow"
        slot="bottom-toolbar-buttons-slot">
-    <action-buttons edit-button
+
+    <action-buttons class="toolbar-buttons" 
                     item="[[_currentItem]]">
     </action-buttons>
+
+    <paper-icon-button class="toolbar-buttons"
+                       icon="file-icons:tune"
+                       on-click="__editBtnClicked">
+    </paper-icon-button>
+
   </div>
 
 
   <div id="content"
        slot="content">
     
-    
+    <paginated-carousel start="[[item]]"
+                        opened="[[_opened]]"
+                        on-current-item-changed="__currentItemChanged"
+                        on-photo-selected="__photoSelected">
+    </paginated-carousel>
 
   </div>
 
