@@ -33,6 +33,38 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
     return html([htmlString]);
   }
 
+
+  static get properties() {
+    return {
+
+      index: Number,
+
+      reverse: Boolean
+
+    };
+  }
+
+
+  static get observers() {
+    return [
+      '__indexReverseChanged(index, reverse)'
+    ];
+  }
+
+  // Reverses the css flex order so added/removed
+  // items are automatically right-to-left order.
+  //
+  // This is a performance enhancment compared to
+  // using a sort function on the parent dom-repeat 
+  // template since such a function would have to 
+  // run over all elements in the template for every
+  // change in the dom.
+  __indexReverseChanged(index, reverse) {
+    if (!index || !reverse) { return; }
+
+    this.style['order'] = `-${index}`;
+  }
+
 }
 
 window.customElements.define(CarouselItem.is, CarouselItem);

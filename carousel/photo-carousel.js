@@ -62,8 +62,16 @@ class PhotoCarousel extends AppElement {
   static get properties() {
     return {
 
+      // Passed to paginated-carousel.
+      coll: String,
+
       // Used for entry animation and inital setup.
       item: Object,
+
+      _carouselDisabled: {
+        type: Boolean,
+        value: true
+      },
 
       _currentItem: Object,
 
@@ -86,6 +94,15 @@ class PhotoCarousel extends AppElement {
       _src: {
         type: String,
         computed: '__computeSrc(item)'
+      },
+
+      // paginated-carousel starting item.
+      _start: Object,
+
+      _title: {
+        type: String,
+        value: ' ',
+        computed: '__computeTitle(_currentItem.displayName)'
       }
 
     };
@@ -124,6 +141,11 @@ class PhotoCarousel extends AppElement {
   }
 
 
+  __computeTitle(displayName) {
+    return displayName ? displayName : ' ';
+  }
+
+
   async __loadedOpenedChanged(loaded, opened) {
 
     if (loaded && opened) {
@@ -135,15 +157,14 @@ class PhotoCarousel extends AppElement {
   }
 
 
-  async __reset() {
-    this.$.lazyImg.style['opacity'] = '0';
+  __reset() {
+    this._carouselDisabled = true;
+    this._opened           = false;
+    this._lazySrc          = undefined;
 
-    await wait(250);
-
-    this._opened  = false;
-    this._lazySrc = undefined;
-
-    this.$.lazyImg.style['display'] = 'none';
+    this.$.lazyImg.style['display']  = 'none';
+    this.$.lazyImg.style['opacity']  = '0';
+    this.$.carousel.style['opacity'] = '0';
   }
 
 
@@ -165,23 +186,36 @@ class PhotoCarousel extends AppElement {
   }
 
 
+  async __carouselReady() {
+    this.$.carousel.style['opacity'] = '1';
+
+    await schedule();
+
+    this._carouselDisabled = false;
+    this.$.lazyImg.style['display']  = 'none';
+    this.$.lazyImg.style['opacity']  = '0';
+  }
+
+
   __currentItemChanged(event) {
+
+    if (this._carouselDisabled) { return; }
+
     this._currentItem = event.detail.value;
   }
 
 
   __photoSelected(event) {
-
-    // TODO:
-    //      open photo-viewer with event.detail.selected
-
-
+    this.fire('open-photo-viewer', event.detail);
   }
 
 
   async open(measurements) {
 
     this._measurements = measurements;
+
+    // Avoid infinite loops by setting this once per open.
+    this._start = this.item; 
 
     await this.$.flip.play();
 

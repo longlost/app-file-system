@@ -45,7 +45,6 @@
 import {AppElement, html}        from '@longlost/app-element/app-element.js';
 import {ItemsMixin}              from './items-mixin.js';
 import {firebase}                from '@longlost/boot/boot.js';
-import {removeOne}               from '@longlost/lambda/lambda.js';
 import {hijackEvent, isOnScreen} from '@longlost/utils/utils.js';
 import htmlString                from './file-items.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
@@ -101,7 +100,11 @@ class FileItems extends ItemsMixin(AppElement) {
       _subscriptions: {
         type: Object,
         value: () => ({})
-      }
+      },
+
+      _trigger: Object,
+
+      _triggered: Boolean
 
     };
   }
@@ -169,18 +172,19 @@ class FileItems extends ItemsMixin(AppElement) {
   }
 
 
-  __removeDeletedItems(count, start) {
+  __removeDeletedItems(count) {
 
     // Test for deleted items.
     if (count < this.limit) {
 
-      const end = start + count;
+      const total = this._items.length;
+      const end   = total - (count - this.limit);
 
       // Delete operation.
-      if (end < this._items.length) {
+      if (end < total) {
 
         // Remove unused dom elements from end of repeater.
-        const diff = this._items.length - end;
+        const diff = total - end;
 
         this.splice('_items', end, diff);
       }
@@ -209,7 +213,7 @@ class FileItems extends ItemsMixin(AppElement) {
     const callback = (results, doc) => {
 
       this.__updateItems(start, results);
-      this.__removeDeletedItems(results.length, start);
+      this.__removeDeletedItems(results.length);
 
       const nextSub = this._subscriptions[page + 1] || {};
 

@@ -4,9 +4,8 @@
 	:host {
 		display: 		 flex;
 		align-items: center;
-		width: 	 		 100vmin;
-		height:  		 100vmin;
-		background-color: inherit;
+		width: 	 		 100vw;
+		height:  		 100vh;
 	}
 
 	app-carousel {
@@ -19,14 +18,35 @@
 
 <app-carousel id="carousel"  
               aspect-ratio="fill"
+              disabled="[[disabled]]"
               nav="[[_nav]]"
-              on-app-carousel-centered-item-changed="__currentItemChanged">
+              on-app-carousel-centered-item-changed="__currentItemChanged"
+              on-app-carousel-section-index-changed="__carouselIndexChanged">
+
 
   <template is="dom-repeat" 
-            items="[[_items]]"
-            strip-whitespace>
+            items="[[_beforeItems]]"
+            strip-whitespace
+            on-dom-change="__beforeDomChanged">
 
-    <carousel-item item="[[item]]"
+    <carousel-item class="before-item"
+    							 index="[[index]]"
+    							 item="[[item]]"
+    							 reverse
+    							 on-click="__itemClicked">
+    </carousel-item>
+
+  </template>
+
+
+
+  <template is="dom-repeat" 
+            items="[[_afterItems]]"
+            strip-whitespace
+            on-dom-change="__afterDomChanged">
+
+    <carousel-item class="after-item"
+    							 item="[[item]]"
     							 on-click="__itemClicked">
     </carousel-item>
 
