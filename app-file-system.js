@@ -596,66 +596,33 @@ class AppFileSystem extends EventsMixin(AppElement) {
     };
 
     this._dbData = {
-      "1OgnAldjiVmoxU36L4OaJ": {
-        "_tempUrl": "blob:http://localhost:3000/29fd0fd0-0115-45f9-a383-8a48b91e8e1d",
-        "basename": "IMG_0110.JPG",
+      "gki2KPvLICQ-g9bq0UGCv": {
+        "_tempUrl": "blob:http://localhost:3000/81edc0f5-63fa-4d18-bb1f-de686a4d853c",
+        "basename": "chewbacca.jpg",
         "category": "image",
         "coll": "test",
-        "displayName": "Valley",
-        "doc": "1OgnAldjiVmoxU36L4OaJ",
+        "displayName": "chewbacca",
+        "doc": "gki2KPvLICQ-g9bq0UGCv",
         "exif": {
-          "DateTimeOriginal": [
-            "2017:03:19 14:24:08"
-          ],
-          "GPSAltitude": 27.276102088167054,
-          "GPSAltitudeRef": 0,
-          "GPSDateStamp": [
-            "2017:03:19"
-          ],
-          "GPSImgDirection": 292.30348258706465,
-          "GPSImgDirectionRef": [
-            "T"
-          ],
-          "GPSLatitude": [
-            26,
-            12,
-            20.2
-          ],
-          "GPSLatitudeRef": [
-            "N"
-          ],
-          "GPSLongitude": [
-            98,
-            4,
-            56
-          ],
-          "GPSLongitudeRef": [
-            "W"
-          ],
-          "GPSTimeStamp": [
-            19,
-            24,
-            8
-          ],
           "Orientation": 1
         },
-        "ext": ".JPG",
-        "index": 33,
-        "lastModified": 1534191047346,
-        "optimized": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2F1OgnAldjiVmoxU36L4OaJ%2Foptim_IMG_0110.JPG?generation=1584648197154509&alt=media",
-        "original": "https://firebasestorage.googleapis.com/v0/b/longlost-starter.appspot.com/o/test%2F1OgnAldjiVmoxU36L4OaJ%2FIMG_0110.JPG?alt=media&token=47b26d90-d748-46bb-94f2-9b140b09fa6f",
-        "path": "test/1OgnAldjiVmoxU36L4OaJ/IMG_0110.JPG",
-        "sharePath": "test/1OgnAldjiVmoxU36L4OaJ/optim_IMG_0110.JPG",
-        "size": 1851158,
-        "sizeStr": "1.8MB",
-        "thumbnail": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2F1OgnAldjiVmoxU36L4OaJ%2Fthumb_IMG_0110.JPG?generation=1584648197123820&alt=media",
-        "timestamp": 1584648153471,
+        "ext": ".jpg",
+        "index": 58,
+        "lastModified": 1519489538796,
+        "optimized": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2Fgki2KPvLICQ-g9bq0UGCv%2Foptim_chewbacca.jpg?generation=1583455696048347&alt=media",
+        "original": "https://firebasestorage.googleapis.com/v0/b/longlost-starter.appspot.com/o/test%2Fgki2KPvLICQ-g9bq0UGCv%2Fchewbacca.jpg?alt=media&token=ad8eca9b-04d7-4632-a0cd-e0479ad9f215",
+        "path": "test/gki2KPvLICQ-g9bq0UGCv/chewbacca.jpg",
+        "sharePath": "test/gki2KPvLICQ-g9bq0UGCv/optim_chewbacca.jpg",
+        "size": 789997,
+        "sizeStr": "771.5KB",
+        "thumbnail": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2Fgki2KPvLICQ-g9bq0UGCv%2Fthumb_chewbacca.jpg?generation=1583455696039688&alt=media",
+        "timestamp": 1583455655568,
         "type": "image/jpeg",
-        "uid": "1OgnAldjiVmoxU36L4OaJ"
+        "uid": "gki2KPvLICQ-g9bq0UGCv"
       }
     };
 
-    this._liveUid = "1OgnAldjiVmoxU36L4OaJ";
+    this._liveUid = "gki2KPvLICQ-g9bq0UGCv";
     
     await import(
       './carousel/photo-carousel.js'

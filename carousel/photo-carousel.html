@@ -2,7 +2,7 @@
 <style include="app-shared-styles">
 
   lazy-image,
-  #content {
+  #carousel {
     position: fixed;
     top:      0px;
     right:    0px;
@@ -24,10 +24,10 @@
 
   #overlay {
     box-shadow: none;
-    --overlay-background-color:         transparent;
+    --overlay-background-color:                   transparent;
     --overlay-toolbar-background-parallax-height: 100%;
-    --overlay-toolbar-background-color: transparent;
-    --overlay-toolbar-vignette-opacity: 0;
+    --overlay-toolbar-background-color:           transparent;
+    --overlay-toolbar-vignette-opacity:           0;
   }
 
   .background {
@@ -63,7 +63,7 @@
     bottom:          0px;
     left:            0px;
     right:           0px;
-    padding:         16px;
+    padding:         12px 16px;
     pointer-events:  none;
   }
 
@@ -75,6 +75,10 @@
     display:         flex;
     justify-content: center;
     align-items:     center;
+  }
+
+  #carousel {
+    opacity: 0;
   }
 
 </style>
@@ -105,7 +109,8 @@
                     header-size="2"
                     no-back-button
                     reset-scroll
-                    title="[[_currentItem.displayName]]"
+                    sticky-bottom-toolbar
+                    title="[[_title]]"
                     top-title
                     on-overlay-reset="__reset">
 
@@ -137,8 +142,12 @@
   <div id="content"
        slot="content">
     
-    <paginated-carousel start="[[item]]"
+    <paginated-carousel id="carousel"
+                        coll="[[coll]]"
+                        disabled="[[_carouselDisabled]]"
+                        start="[[_start]]"
                         opened="[[_opened]]"
+                        on-carousel-ready="__carouselReady"
                         on-current-item-changed="__currentItemChanged"
                         on-photo-selected="__photoSelected">
     </paginated-carousel>
