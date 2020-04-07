@@ -546,19 +546,19 @@ class PaginatedCarousel extends AppElement {
   }
 
 
-  __currentItemChanged(event) {
+  __centeredItemChanged(event) {
     const {carouselIndex} = event.detail.value;
 
     if (typeof carouselIndex !== 'number') { return; }
 
     if (carouselIndex < this._beforeItems.length) {
-      this.fire('current-item-changed', {value: this._beforeItems[carouselIndex]});
+      this.fire('centered-item-changed', {value: this._beforeItems[carouselIndex]});
     }
     else {
 
       const index = carouselIndex - this._beforeItems.length;
 
-      this.fire('current-item-changed', {value: this._afterItems[index]});
+      this.fire('centered-item-changed', {value: this._afterItems[index]});
     }   
   }
 

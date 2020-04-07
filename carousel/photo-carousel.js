@@ -73,7 +73,13 @@ class PhotoCarousel extends AppElement {
         value: true
       },
 
-      _currentItem: Object,
+      // The centered item from app-carousel.
+      _centeredItem: Object,
+
+      _currentItem: {
+        type: Object,
+        computed: '__computeCurrentItem(_carouselDisabled, _centeredItem)'
+      },
 
       _imgLoaded: Boolean,
 
@@ -113,6 +119,13 @@ class PhotoCarousel extends AppElement {
     return [
       '__loadedOpenedChanged(_imgLoaded, _opened)'
     ];
+  }
+
+
+  __computeCurrentItem(disabled, centered) {
+    if (disabled || !centered) { return; }
+
+    return centered;
   }
 
 
@@ -189,7 +202,8 @@ class PhotoCarousel extends AppElement {
   async __carouselReady() {
     this.$.carousel.style['opacity'] = '1';
 
-    await schedule();
+    // Wait for lazy-image fade-in.
+    await wait(300);
 
     this._carouselDisabled = false;
     this.$.lazyImg.style['display']  = 'none';
@@ -197,11 +211,8 @@ class PhotoCarousel extends AppElement {
   }
 
 
-  __currentItemChanged(event) {
-
-    if (this._carouselDisabled) { return; }
-
-    this._currentItem = event.detail.value;
+  __centeredItemChanged(event) {
+    this._centeredItem = event.detail.value;
   }
 
 
