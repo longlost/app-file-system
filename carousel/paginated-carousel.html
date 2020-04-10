@@ -6,6 +6,47 @@
     background-color: inherit;
   }
 
+  #scroller {
+    display:             flex;
+    flex-wrap:           wrap;
+    flex-direction:      column;
+    align-content:       flex-start;
+    position:            absolute;
+    top:                 0px;
+    left:                0px;
+    width:               100%;
+    height:              100%;
+    pointer-events:      auto;
+    overflow-x:          scroll;
+    overflow-y:          hidden;
+
+    /* No scroll chaining. */
+    overscroll-behavior: contain;
+    scroll-snap-type:    x mandatory;
+
+    /* Enable iOS mobile scrolling. */
+    -webkit-overflow-scrolling: touch; 
+
+    /* Hide native scrollbar. */
+    scrollbar-width:    none;
+    -ms-overflow-style: none;
+  }
+
+  /* Hide Safari native scrollbar. */
+  #scroller::-webkit-scrollbar {
+    display: none;
+  }
+
+  /*
+    Use the sudo-element to respect last child margin so 
+    IntersectionObserver will work correctly.
+  */
+  #scroller::after {
+    content: '';
+    height:  100%;
+    width:   1px;
+  }
+
 </style>
 
 
@@ -16,33 +57,40 @@
               on-app-carousel-centered-item-changed="__centeredItemChanged"
               on-app-carousel-section-index-changed="__carouselIndexChanged">
 
+  <div id="scroller" 
+       slot="scroller">
 
-  <template is="dom-repeat" 
-            items="[[_beforeItems]]"
-            strip-whitespace
-            on-dom-change="__beforeDomChanged">
+    <!-- These items are put before the starting element -->
+    <template is="dom-repeat" 
+              items="[[_beforeItems]]"
+              strip-whitespace
+              on-dom-change="__beforeDomChanged">
 
-    <carousel-item class="before-item"
-                   index="[[index]]"
-                   item="[[item]]"
-                   reverse
-                   on-click="__itemClicked">
-    </carousel-item>
+      <carousel-item class="before-item"
+                     index="[[index]]"
+                     item="[[item]]"
+                     reverse
+                     on-click="__itemClicked">
+      </carousel-item>
 
-  </template>
+    </template>
 
+    <!-- 
+      These items include the starting element and 
+      elements that are after the starting element. 
+    -->
+    <template is="dom-repeat" 
+              items="[[_afterItems]]"
+              strip-whitespace
+              on-dom-change="__afterDomChanged">
 
+      <carousel-item class="after-item"
+                     item="[[item]]"
+                     on-click="__itemClicked">
+      </carousel-item>
 
-  <template is="dom-repeat" 
-            items="[[_afterItems]]"
-            strip-whitespace
-            on-dom-change="__afterDomChanged">
+    </template>
 
-    <carousel-item class="after-item"
-                   item="[[item]]"
-                   on-click="__itemClicked">
-    </carousel-item>
-
-  </template>
+  </div>
 
 </app-carousel>
