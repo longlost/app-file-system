@@ -2,41 +2,33 @@
 <style>
 
   :host {
-    display:         flex;
-    justify-content: center;
-    align-items:     center;   
-    height:          100%;
+    display:  block;
+    overflow: hidden; 
 
     /*
-      These position styles work around app-carousel's 
-      underlying IntersectionObserver calculations.
-
-      The negative left counteracts how adding margin
-      gives a 4px offset to the element when it is
-      first measured by the observer.
-
-      Thankfully, the carousel's scroll-snap ensures 
-      that the -4px positioning does not affect how 
-      the element is ultimately positioned. 
+      Margin will NOT work on iOS Safari,
+      initial positioning is off by a factor
+      of margin for each added item.
     */
-    position: relative;
-    left:    -4px;
-    margin:   0px 4px;
-    overflow: hidden;
+    padding: 0px 4px;
+
+    /*
+      Temporary Safari wordaround for dynamic 
+      slotted scroll-snap elements.
+    */
+    height: 100%;
+    width:  calc(100% - 8px);
+    scroll-snap-align: center;
   }
 
   .item {
     height: 100%; 
     width:  100%;
+    background-color: black;
   }
 
   lazy-image {
     display: flex;
-  }
-
-  lazy-image,
-  lazy-video {
-    background-color: black;
   }
 
 </style>

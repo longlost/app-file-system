@@ -81,7 +81,11 @@ class PhotoCarousel extends AppElement {
         computed: '__computeCurrentItem(_carouselDisabled, _centeredItem)'
       },
 
-      _imgLoaded: Boolean,
+      _editBtnDisabled: {
+        type: Boolean,
+        value: true,
+        computed: '__computeEditBtnDisabled(_currentItem)'
+      },
 
       _items: Array,
 
@@ -97,11 +101,6 @@ class PhotoCarousel extends AppElement {
         computed: '__computePlaceholder(item)'
       },
 
-      _src: {
-        type: String,
-        computed: '__computeSrc(item)'
-      },
-
       // paginated-carousel starting item.
       _start: Object,
 
@@ -115,17 +114,15 @@ class PhotoCarousel extends AppElement {
   }
 
 
-  static get observers() {
-    return [
-      '__loadedOpenedChanged(_imgLoaded, _opened)'
-    ];
-  }
-
-
   __computeCurrentItem(disabled, centered) {
     if (disabled || !centered) { return; }
 
     return centered;
+  }
+
+
+  __computeEditBtnDisabled(currentItem) {
+    return !Boolean(currentItem);
   }
 
 
@@ -145,44 +142,17 @@ class PhotoCarousel extends AppElement {
   }
 
 
-  __computeSrc(item) {
-    if (!item) { return; }
-
-    const {optimized, original} = item;
-
-    return optimized ? optimized : original;
-  }
-
-
   __computeTitle(displayName) {
     return displayName ? displayName : ' ';
   }
 
 
-  async __loadedOpenedChanged(loaded, opened) {
-
-    if (loaded && opened) {
-      
-      // Wait til <lazy-image> fades in.
-      await wait(550);
-      this.$.flip.reset();
-    }
-  }
-
-
   __reset() {
+    this.$.carousel.style['opacity'] = '0';
+
     this._carouselDisabled = true;
     this._opened           = false;
-    this._lazySrc          = undefined;
-
-    this.$.lazyImg.style['display']  = 'none';
-    this.$.lazyImg.style['opacity']  = '0';
-    this.$.carousel.style['opacity'] = '0';
-  }
-
-
-  __lazyImgLoaded(event) {
-    this._imgLoaded = event.detail.value;
+    this._start            = undefined;
   }
 
 
@@ -200,14 +170,15 @@ class PhotoCarousel extends AppElement {
 
 
   async __carouselReady() {
-    this.$.carousel.style['opacity'] = '1';
+    this.$.carousel.style['opacity']   = '1';
+    this.$.background.style['opacity'] = '0';
 
-    // Wait for lazy-image fade-in.
-    await wait(300);
+    // Wait for carousel lazy-image fade-in.
+    await wait(550);
 
     this._carouselDisabled = false;
-    this.$.lazyImg.style['display']  = 'none';
-    this.$.lazyImg.style['opacity']  = '0';
+    this.$.background.style['display'] = 'none';
+    this.$.flip.reset();
   }
 
 
@@ -228,17 +199,22 @@ class PhotoCarousel extends AppElement {
     // Avoid infinite loops by setting this once per open.
     this._start = this.item; 
 
-    await this.$.flip.play();
+    this.$.background.style['display'] = 'block';
 
-    this.$.lazyImg.style['display'] = 'block';  
+    await Promise.all([
+      import(
+        /* webpackChunkName: 'app-header-overlay' */ 
+        '@longlost/app-overlays/app-header-overlay.js'
+      ), 
+      schedule()
+    ]);
 
-    await schedule();
+    this.$.background.style['opacity'] = '1';
 
-    this.$.lazyImg.style['opacity'] = '1';
-
-    await import('@longlost/app-overlays/app-header-overlay.js');
-
-    await this.$.overlay.open();
+    await Promise.all([
+      this.$.flip.play(), 
+      this.$.overlay.open()
+    ]);
 
     this._opened = true;
   }

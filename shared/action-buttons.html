@@ -5,6 +5,10 @@
     display: inline-block;
   }
 
+  paper-icon-buton[disabled] {
+    color: var(--disabled-text-color);
+  }
+
   a {
     text-decoration: none;
     color:           currentColor;
@@ -18,26 +22,29 @@
 </style>
 
 
-<paper-icon-button icon="file-icons:delete"
+<paper-icon-button disabled=[[_disabled]]
+                   icon="file-icons:delete"
                    on-click="__deleteBtnClicked">
 </paper-icon-button>
 
-<a class$="[[__computeDownloadBtnDisabledClass(item)]]"
+<a class$="[[_downloadBtnDisabledClass]]"
    download
    href="[[__computeDownloadUrl(item.original)]]">  
   <paper-icon-button icon="file-icons:file-download"></paper-icon-button>
 </a>
 
-<paper-icon-button hidden="[[__computePrintBtnHidden(item.type)]]"
+<paper-icon-button hidden="[[_hidePrintBtn]]"
                    icon="file-icons:print"
                    on-click="__printBtnClicked">
 </paper-icon-button>
 
-<paper-icon-button icon="file-icons:share"
+<paper-icon-button disabled=[[_disabled]]
+                   icon="file-icons:share"
                    on-click="__shareBtnClicked">
 </paper-icon-button>
 
-<paper-icon-button hidden="[[!editButton]]"
+<paper-icon-button disabled=[[_disabled]]
+                   hidden="[[!editButton]]"
                    icon="file-icons:build"
                    on-click="__editBtnClicked">
 </paper-icon-button>

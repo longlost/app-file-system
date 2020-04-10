@@ -79,6 +79,13 @@ class PaginatedCarousel extends AppElement {
         value: () => ([])
       },
 
+
+
+      // Temporary workaround for Safari carousel slotted elements with scroll-snap.
+      _afterNodes: Array,
+
+
+
       _afterPage: {
         type: Number,
         value: 0
@@ -109,6 +116,13 @@ class PaginatedCarousel extends AppElement {
         type: Array,
         value: () => ([])
       }, 
+
+
+
+      // Temporary workaround for Safari carousel slotted elements with scroll-snap.
+      _beforeNodes: Array,
+
+
 
       _beforePage: {
         type: Number,
@@ -146,8 +160,18 @@ class PaginatedCarousel extends AppElement {
       '__beforeTriggeredChanged(_beforeTriggered)',
       '__beforeTriggerElementChanged(_beforeTrigger)',
       '__openedStartChanged(opened, start)',
-      '__openedChanged(opened)'
+      '__openedChanged(opened)',
+
+      // Temporary Safari workaround for slotted carousel nodes with scroll-snap.
+      '__nodesChanged(_afterNodes, _beforeNodes)'
     ];
+  }
+
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.$.carousel.scrollContainer = this.$.scroller;
   }
 
 
@@ -341,7 +365,7 @@ class PaginatedCarousel extends AppElement {
 
   __updateItems(list, start, results) {
     this.splice(list, start, results.length, ...results); 
-  }  
+  } 
 
 
   __removeDeletedItems(list, count) {
@@ -532,17 +556,46 @@ class PaginatedCarousel extends AppElement {
   }
 
 
+  // __beforeElCarouselIndexChanged(el, carouselIndex) {
+  //   if (!el || typeof carouselIndex !== 'number') { return; }
+
+  //   this.$.carousel.moveToSection(carouselIndex + 1);
+
+  //   this._beforeTrigger = el;
+  //   this._beforeEl      = undefined;
+
+  //   if (this._beforePage === 0) {
+  //     this.fire('carousel-ready');
+  //   }
+  // }
+
+
+
+  // Temporary Safari workaround version.
   __beforeElCarouselIndexChanged(el, carouselIndex) {
     if (!el || typeof carouselIndex !== 'number') { return; }
 
-    this.$.carousel.moveToSection(carouselIndex + 1);
+    if (carouselIndex < 0) { return; }
+
+    const {width} = el.getBoundingClientRect();
+    const left    = width * this.limit;
 
     this._beforeTrigger = el;
     this._beforeEl      = undefined;
 
-    if (this._beforePage === 0) {
-      this.fire('carousel-ready');
-    }
+    // MUST be rAF and NOT schedule for Safari!
+    window.requestAnimationFrame(() => {
+
+      this.$.scroller.scrollBy({
+        top: 0,
+        left,
+        behavior: 'auto'
+      });
+
+      if (this._beforePage === 0) {
+        this.fire('carousel-ready');
+      }
+    });    
   }
 
 
@@ -568,11 +621,29 @@ class PaginatedCarousel extends AppElement {
   }
 
 
+  // __afterDomChanged() {
+
+  //   if (this._afterItems.length === 0) { return; }
+
+  //   const elements = this.selectAll('.after-item');
+
+  //   if (elements.length !== this._afterItems.length) { return; }
+
+  //   this._afterTrigger = elements[elements.length - 1]; 
+  // }
+
+
+  // Temporary Safari carousel workaround version.
   __afterDomChanged() {
 
     if (this._afterItems.length === 0) { return; }
 
     const elements = this.selectAll('.after-item');
+
+
+    // Temporary Safari carousel workaround.
+    this._afterNodes = elements;
+
 
     if (elements.length !== this._afterItems.length) { return; }
 
@@ -580,16 +651,36 @@ class PaginatedCarousel extends AppElement {
   }
 
 
-  async __beforeDomChanged() {
+  // __beforeDomChanged() {
+
+  //   if (this._beforeItems.length === 0) { return; }
+
+  //   const elements = this.selectAll('.before-item');
+
+  //   if (elements.length !== this._beforeItems.length) { return; }
+
+  //   this._beforeEl = elements[elements.length - 1];
+  // }
+
+
+  // Temporary Safari carousel workaround version.
+  __beforeDomChanged() {
 
     if (this._beforeItems.length === 0) { return; }
 
     const elements = this.selectAll('.before-item');
 
+
+    // Temporary Safari carousel workaround.
+    this._beforeNodes = elements;
+
+
     if (elements.length !== this._beforeItems.length) { return; }
 
-    this._beforeEl = elements[elements.length - 1];
+    this._beforeEl = elements[0];
   }
+
+
 
 
   async __itemClicked(event) {
@@ -597,6 +688,8 @@ class PaginatedCarousel extends AppElement {
       await this.clicked();
 
       const {children, item} =  event.model;
+
+      // First and last elements are text nodes.
       const measurements = children[1].getBoundingClientRect();
 
       this.fire('photo-selected', {measurements, selected: item});
@@ -606,6 +699,13 @@ class PaginatedCarousel extends AppElement {
       console.error(error);
     }
   } 
+
+
+  // Temporary Safari workaround for slotted 
+  // carousel nodes with scroll-snap.
+  __nodesChanged(after = [], before = []) {
+    this.$.carousel.setItems([...before, ...after]);
+  }
 
 }
 

@@ -51,9 +51,32 @@ class ActionButtons extends AppElement {
       editButton: {
         type: Boolean,
         value: false
+      },
+
+      _disabled: {
+        type: Boolean,
+        value: true,
+        computed: '__computeDisabled(item)'
+      },
+
+      _downloadBtnDisabledClass: {
+        type: String,
+        value: 'disabled',
+        computed: '__computeDownloadBtnDisabledClass(item)'
+      },
+
+      _hidePrintBtn: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHidePrintBtn(item.type)'
       }
 
     };
+  }
+
+
+  __computeDisabled(item) {
+    return !Boolean(item);
   }
 
 
@@ -67,7 +90,7 @@ class ActionButtons extends AppElement {
   }
 
 
-  __computePrintBtnHidden(type) {
+  __computeHidePrintBtn(type) {
     const isPrintable = type && (
                           type.includes('html') ||
                           type.includes('image') ||

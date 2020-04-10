@@ -1,7 +1,7 @@
 
 <style include="app-shared-styles">
 
-  lazy-image,
+  #background,
   #carousel {
     position: fixed;
     top:      0px;
@@ -10,11 +10,11 @@
     left:     0px;
     background-color: black;
   }
-
-  lazy-image {
+  
+  #background {
     display:    none;
     opacity:    0;
-    transition: opacity 0.2s;
+    transition: opacity 0.6s;
     z-index:    1;
   }
 
@@ -30,7 +30,7 @@
     --overlay-toolbar-vignette-opacity:           0;
   }
 
-  .background {
+  .header-background {
     position:       absolute;
     top:            0px;
     right:          0px;
@@ -71,27 +71,28 @@
     pointer-events: auto;
   }
 
-  #content {
-    display:         flex;
-    justify-content: center;
-    align-items:     center;
+  paper-icon-button[disabled] {
+    color: var(--disabled-text-color);
   }
 
   #carousel {
+
+    /*
+      iOS Safari fix for initial positioning being 
+      offset when using margin on carousel-items. 
+      MUST use padding and match the padding with
+      a wider carousel.
+    */
+    left:  -4px;
+    right: -4px;
+
     opacity: 0;
   }
 
 </style>
 
 
-<lazy-image id="lazyImg"
-            alt="[[item.displayName]]"
-            orientation="[[_orientation]]"
-            placeholder="[[_placeholder]]"
-            src="[[_src]]"
-            sizing="contain"
-            on-lazy-image-loaded-changed="__lazyImgLoaded">
-</lazy-image>
+<div id="background"></div>
 
 
 <flip-image id="flip"
@@ -114,12 +115,12 @@
                     top-title
                     on-overlay-reset="__reset">
 
-  <div class="background blur" 
+  <div class="header-background blur" 
        slot="header-background-slot">
   </div>
 
   <div id="header-color-background"
-       class="background" 
+       class="header-background" 
        slot="header-background-slot">
   </div>
 
@@ -132,6 +133,7 @@
     </action-buttons>
 
     <paper-icon-button class="toolbar-buttons"
+                       disabled="[[_editBtnDisabled]]"
                        icon="file-icons:tune"
                        on-click="__editBtnClicked">
     </paper-icon-button>
