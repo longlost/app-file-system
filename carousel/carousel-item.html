@@ -13,11 +13,13 @@
     padding: 0px 4px;
 
     /*
-      Temporary Safari wordaround for dynamic 
+      Safari wordaround for dynamic 
       slotted scroll-snap elements.
     */
-    height: 100%;
-    width:  calc(100% - 8px);
+    height:    100%;
+    width:     calc(100% - 8px);
+    min-width: calc(100% - 8px);
+
     scroll-snap-align: center;
   }
 
@@ -36,12 +38,17 @@
 
 <template is="dom-if"
           if="[[_isImg]]">
+  <!-- 
+    Adjusted 'trigger' to start loading the 
+    image before it becomes visible. 
+  -->
   <lazy-image class="item"
               alt="[[item.displayName]]"
               orientation="[[_orientation]]"
               placeholder="[[_imgPlaceholder]]"
               src="[[_imgSrc]]"
-              sizing="contain">
+              sizing="contain"
+              trigger="6">
   </lazy-image>  
 </template>
 

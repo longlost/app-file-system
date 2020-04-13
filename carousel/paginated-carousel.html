@@ -7,18 +7,11 @@
   }
 
   #scroller {
-    display:             flex;
-    flex-wrap:           wrap;
-    flex-direction:      column;
-    align-content:       flex-start;
-    position:            absolute;
-    top:                 0px;
-    left:                0px;
-    width:               100%;
-    height:              100%;
-    pointer-events:      auto;
-    overflow-x:          scroll;
-    overflow-y:          hidden;
+    display:        flex;
+    height:         100%;
+    pointer-events: auto;
+    overflow-x:     scroll;
+    overflow-y:     hidden;
 
     /* No scroll chaining. */
     overscroll-behavior: contain;
@@ -54,8 +47,8 @@
               aspect-ratio="fill"
               disabled="[[disabled]]"
               nav="[[_nav]]"
-              on-app-carousel-centered-item-changed="__centeredItemChanged"
-              on-app-carousel-section-index-changed="__carouselIndexChanged">
+              on-app-carousel-centered-item-changed="__centeredItemChanged">
+
 
   <div id="scroller" 
        slot="scroller">
@@ -92,5 +85,6 @@
     </template>
 
   </div>
+  
 
 </app-carousel>
