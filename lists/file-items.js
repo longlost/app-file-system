@@ -172,13 +172,13 @@ class FileItems extends ItemsMixin(AppElement) {
   }
 
 
-  __removeDeletedItems(count) {
+  __removeDeletedItems(start, count) {
 
     // Test for deleted items.
     if (count < this.limit) {
 
       const total = this._items.length;
-      const end   = total - (count - this.limit);
+      const end   = start + count;
 
       // Delete operation.
       if (end < total) {
@@ -213,7 +213,7 @@ class FileItems extends ItemsMixin(AppElement) {
     const callback = (results, doc) => {
 
       this.__updateItems(start, results);
-      this.__removeDeletedItems(results.length);
+      this.__removeDeletedItems(start, results.length);
 
       const nextSub = this._subscriptions[page + 1] || {};
 

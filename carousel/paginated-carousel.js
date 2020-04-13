@@ -79,12 +79,8 @@ class PaginatedCarousel extends AppElement {
         value: () => ([])
       },
 
-
-
-      // Temporary workaround for Safari carousel slotted elements with scroll-snap.
+      // Workaround for Safari carousel slotted elements with scroll-snap.
       _afterNodes: Array,
-
-
 
       _afterPage: {
         type: Number,
@@ -117,12 +113,8 @@ class PaginatedCarousel extends AppElement {
         value: () => ([])
       }, 
 
-
-
-      // Temporary workaround for Safari carousel slotted elements with scroll-snap.
+      // Workaround for Safari carousel slotted elements with scroll-snap.
       _beforeNodes: Array,
-
-
 
       _beforePage: {
         type: Number,
@@ -140,6 +132,23 @@ class PaginatedCarousel extends AppElement {
 
       _beforeTriggered: Boolean,
 
+      // Used to wait until the carousel settles on an item before
+      // lazy loading new items into the '_beforeItems' array.
+      _centered: Boolean,
+
+      // Carousel item is 100vw + 4px margin on either side.
+      // The 6px adjustment enlarges the screen IntersectonObserver 
+      // rootMargin bbox 2px greater so the promise is resolved 
+      // just before the trigger element comes into view.
+      _isOnScreenAdjustment: {
+        type: Number,
+        value: 6
+      },
+
+      // Used to keep track of before item lazy loading scroll corrections.
+      // This ensures that only one correction is made per page.
+      _lastShiftedPage: Number,
+
       // Show carousel nav buttons on large screens 
       // that may not have touch interface.
       _nav: Boolean
@@ -154,7 +163,7 @@ class PaginatedCarousel extends AppElement {
       '__afterPageChanged(_afterPage)',
       '__afterTriggeredChanged(_afterTriggered)',
       '__afterTriggerElementChanged(_afterTrigger)',
-      '__beforeElCarouselIndexChanged(_beforeEl, _carouselIndex)',
+      '__beforeElCenteredChanged(_beforeEl, _centered)',
       '__beforeItemsChanged(_beforeItems.*)',
       '__beforePageChanged(_beforePage)',
       '__beforeTriggeredChanged(_beforeTriggered)',
@@ -162,7 +171,7 @@ class PaginatedCarousel extends AppElement {
       '__openedStartChanged(opened, start)',
       '__openedChanged(opened)',
 
-      // Temporary Safari workaround for slotted carousel nodes with scroll-snap.
+      // Safari workaround for slotted carousel nodes with scroll-snap.
       '__nodesChanged(_afterNodes, _beforeNodes)'
     ];
   }
@@ -209,12 +218,16 @@ class PaginatedCarousel extends AppElement {
   }
 
 
-  async __afterTriggerElementChanged(trigger) {
+  async __afterTriggerElementChanged(el) {
     try {
 
-      if (!trigger) { return; }
+      if (!el) { return; }
 
-      await isOnScreen(trigger);
+      // Carousel item is 100vw + 4px margin on either side.
+      // The 6px adjustment enlarges the screen IntersectonObserver 
+      // rootMargin bbox 2px greater so the promise is resolved 
+      // just before the trigger element comes into view.
+      await isOnScreen(el,  this._isOnScreenAdjustment);
 
       this._afterTrigger   = undefined;
       this._afterTriggered = true;
@@ -263,12 +276,16 @@ class PaginatedCarousel extends AppElement {
   }
 
 
-  async __beforeTriggerElementChanged(trigger) {
+  async __beforeTriggerElementChanged(el) {
     try {
 
-      if (!trigger) { return; }
+      if (!el) { return; }
 
-      await isOnScreen(trigger);
+      // Carousel item is 100vw + 4px margin on either side.
+      // The 6px adjustment enlarges the screen IntersectonObserver 
+      // rootMargin bbox 2px greater so the promise is resolved 
+      // just before the trigger element comes into view.
+      await isOnScreen(el, this._isOnScreenAdjustment);
 
       this._beforeTrigger   = undefined;
       this._beforeTriggered = true;
@@ -365,17 +382,16 @@ class PaginatedCarousel extends AppElement {
 
   __updateItems(list, start, results) {
     this.splice(list, start, results.length, ...results); 
-  } 
+  }
 
 
-  __removeDeletedItems(list, count) {
+  __removeDeletedItems(list, start, count) {
 
     // Test for deleted items.
     if (count < this.limit) {
 
       const total = this[list].length;
-
-      const end = total - (count - this.limit);
+      const end   = start + count;
 
       // Delete operation.
       if (end < total) {
@@ -409,39 +425,42 @@ class PaginatedCarousel extends AppElement {
 
     const callback = (results, doc) => {
 
-      this.__updateItems(list, start, results);
-      this.__removeDeletedItems(list, results.length);
+      window.requestAnimationFrame(() => {        
 
-      if (list === '_afterItems') {
+        this.__updateItems(list, start, results);
+        this.__removeDeletedItems(list, start, results.length);
 
-        const nextSub = this._afterSubscriptions[page + 1] || {};
+        if (list === '_afterItems') {
 
-        // Only start new subscriptions if the startAfter 
-        // document has been changed.
-        if (nextSub.startAfter && nextSub.startAfter.id === doc.id) { return; }
+          const nextSub = this._afterSubscriptions[page + 1] || {};
 
-        const newSub = {...nextSub, startAfter: doc};
+          // Only start new subscriptions if the startAfter 
+          // document has been changed.
+          if (nextSub.startAfter && nextSub.startAfter.id === doc.id) { return; }
 
-        // Add/update next page's startAfter doc ref.
-        this._afterSubscriptions[page + 1] = newSub;
+          const newSub = {...nextSub, startAfter: doc};
 
-        this.__startSubscription(newSub, list);
-      }
-      else {
+          // Add/update next page's startAfter doc ref.
+          this._afterSubscriptions[page + 1] = newSub;
 
-        const nextSub = this._beforeSubscriptions[page + 1] || {};
+          this.__startSubscription(newSub, list);
+        }
+        else {
 
-        // Only start new subscriptions if the startAfter 
-        // document has been changed.
-        if (nextSub.startAfter && nextSub.startAfter.id === doc.id) { return; }
+          const nextSub = this._beforeSubscriptions[page + 1] || {};
 
-        const newSub = {...nextSub, startAfter: doc};
+          // Only start new subscriptions if the startAfter 
+          // document has been changed.
+          if (nextSub.startAfter && nextSub.startAfter.id === doc.id) { return; }
 
-        // Add/update next page's startAfter doc ref.
-        this._beforeSubscriptions[page + 1] = newSub;
+          const newSub = {...nextSub, startAfter: doc};
 
-        this.__startSubscription(newSub, list);
-      }
+          // Add/update next page's startAfter doc ref.
+          this._beforeSubscriptions[page + 1] = newSub;
+
+          this.__startSubscription(newSub, list);
+        }
+      });
     };
 
 
@@ -535,7 +554,6 @@ class PaginatedCarousel extends AppElement {
     this._beforeTrigger   = undefined;
     this._afterTriggered  = false;
     this._beforeTriggered = false;
-    this._carouselIndex   = undefined;
   }
 
 
@@ -555,47 +573,60 @@ class PaginatedCarousel extends AppElement {
     this.fire('item-data-changed', {value: data});
   }
 
+  // Reposition to current photo when new items are added.
+  // New before items shift the scrolled elements to the right,
+  // since the dom is ltr based, so this method compensates for 
+  // that distance and places the current photo back into view.  
+  async __beforeElCenteredChanged(el, centered) {
+    if (!el || !centered) { return; }
 
-  // __beforeElCarouselIndexChanged(el, carouselIndex) {
-  //   if (!el || typeof carouselIndex !== 'number') { return; }
+    // Only correct for each lazy loaded page of before items once.
+    if (this._lastShiftedPage >= this._beforePage) { return; }
 
-  //   this.$.carousel.moveToSection(carouselIndex + 1);
+    this._lastShiftedPage = this._beforePage;
 
-  //   this._beforeTrigger = el;
-  //   this._beforeEl      = undefined;
+    // Prevent this from running more than once 
+    // at a time for a single lazy load process.
+    this._centered = false;
 
-  //   if (this._beforePage === 0) {
-  //     this.fire('carousel-ready');
-  //   }
-  // }
+    // Calculate how many new elements/sections are being added
+    // to determine how much to shift the scroller back so
+    // the current item is still placed in view.
+    const remainder = this._beforeNodes.length % this.limit;
+    const sections  = remainder === 0 ? this.limit : remainder;
+    const {width}   = el.getBoundingClientRect();
 
+    // Watching two items from the end as 
+    // lazy loading trigger after initial setup.
+    // See '__beforeDomChanged' method.
+    const left = this._beforePage === 0 ? 
+                   width * sections : 
+                   width * (sections + 2);
 
-
-  // Temporary Safari workaround version.
-  __beforeElCarouselIndexChanged(el, carouselIndex) {
-    if (!el || typeof carouselIndex !== 'number') { return; }
-
-    if (carouselIndex < 0) { return; }
-
-    const {width} = el.getBoundingClientRect();
-    const left    = width * this.limit;
-
-    this._beforeTrigger = el;
-    this._beforeEl      = undefined;
+    // Must run two frames in a row for Safari.
+    this.$.scroller.scrollTo({
+      top: 0,
+      left,
+      behavior: 'auto'
+    });
 
     // MUST be rAF and NOT schedule for Safari!
     window.requestAnimationFrame(() => {
 
-      this.$.scroller.scrollBy({
+      // Second call to scrollTo is for Safari.
+      this.$.scroller.scrollTo({
         top: 0,
         left,
         behavior: 'auto'
       });
 
+      this._beforeTrigger = el;
+      this._beforeEl      = undefined;
+
       if (this._beforePage === 0) {
         this.fire('carousel-ready');
       }
-    });    
+    });     
   }
 
 
@@ -605,82 +636,54 @@ class PaginatedCarousel extends AppElement {
     if (typeof carouselIndex !== 'number') { return; }
 
     if (carouselIndex < this._beforeItems.length) {
-      this.fire('centered-item-changed', {value: this._beforeItems[carouselIndex]});
+
+      // Undo the nav correction that happens in '__nodesChanged' method.
+      const reversed = [...this._beforeItems].reverse();
+
+      this.fire('centered-item-changed', {value: reversed[carouselIndex]});
     }
     else {
 
       const index = carouselIndex - this._beforeItems.length;
 
       this.fire('centered-item-changed', {value: this._afterItems[index]});
-    }   
+    }
+
+    // Wait for carousel to be settled for a few 
+    // frames before lazy loading more items.
+    this._centered = true;
   }
 
 
-  __carouselIndexChanged(event) {
-    this._carouselIndex = event.detail.value;
-  }
-
-
-  // __afterDomChanged() {
-
-  //   if (this._afterItems.length === 0) { return; }
-
-  //   const elements = this.selectAll('.after-item');
-
-  //   if (elements.length !== this._afterItems.length) { return; }
-
-  //   this._afterTrigger = elements[elements.length - 1]; 
-  // }
-
-
-  // Temporary Safari carousel workaround version.
   __afterDomChanged() {
 
     if (this._afterItems.length === 0) { return; }
 
     const elements = this.selectAll('.after-item');
 
-
-    // Temporary Safari carousel workaround.
-    this._afterNodes = elements;
-
-
     if (elements.length !== this._afterItems.length) { return; }
 
-    this._afterTrigger = elements[elements.length - 1]; 
+    // Safari carousel workaround.
+    this._afterNodes = elements;
+
+    this._afterTrigger = elements.length > 1 ? elements[elements.length - 2] : elements[0]; 
   }
 
 
-  // __beforeDomChanged() {
-
-  //   if (this._beforeItems.length === 0) { return; }
-
-  //   const elements = this.selectAll('.before-item');
-
-  //   if (elements.length !== this._beforeItems.length) { return; }
-
-  //   this._beforeEl = elements[elements.length - 1];
-  // }
-
-
-  // Temporary Safari carousel workaround version.
   __beforeDomChanged() {
 
     if (this._beforeItems.length === 0) { return; }
 
     const elements = this.selectAll('.before-item');
 
-
-    // Temporary Safari carousel workaround.
-    this._beforeNodes = elements;
-
-
     if (elements.length !== this._beforeItems.length) { return; }
 
-    this._beforeEl = elements[0];
+    // Safari carousel workaround.
+    this._beforeNodes = elements;
+
+    // Carousel must get shifted each time new before elements are added.
+    this._beforeEl = elements.length > 1 ? elements[elements.length - 2] : elements[0];
   }
-
-
 
 
   async __itemClicked(event) {
@@ -700,11 +703,14 @@ class PaginatedCarousel extends AppElement {
     }
   } 
 
-
-  // Temporary Safari workaround for slotted 
+  // Safari workaround for slotted 
   // carousel nodes with scroll-snap.
   __nodesChanged(after = [], before = []) {
-    this.$.carousel.setItems([...before, ...after]);
+
+    // Feed before items in reverse order so nav works correctly.
+    const reversed = [...before].reverse();
+
+    this.$.carousel.setItems([...reversed, ...after]);
   }
 
 }
