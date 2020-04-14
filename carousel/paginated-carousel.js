@@ -554,6 +554,8 @@ class PaginatedCarousel extends AppElement {
     this._beforeTrigger   = undefined;
     this._afterTriggered  = false;
     this._beforeTriggered = false;
+    this._centered        = false;
+    this._lastShiftedPage = undefined;
   }
 
 
@@ -684,24 +686,6 @@ class PaginatedCarousel extends AppElement {
     // Carousel must get shifted each time new before elements are added.
     this._beforeEl = elements.length > 1 ? elements[elements.length - 2] : elements[0];
   }
-
-
-  async __itemClicked(event) {
-    try {
-      await this.clicked();
-
-      const {children, item} =  event.model;
-
-      // First and last elements are text nodes.
-      const measurements = children[1].getBoundingClientRect();
-
-      this.fire('photo-selected', {measurements, selected: item});
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
-    }
-  } 
 
   // Safari workaround for slotted 
   // carousel nodes with scroll-snap.

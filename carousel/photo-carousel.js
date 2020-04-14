@@ -3,7 +3,7 @@
 /**
   * `photo-carousel`
   * 
-  *   Image/photo/video viewer ovelay with a carousel ui.
+  *   Image/photo/video viewer overlay with a carousel ui.
   *
   *
   *
@@ -44,7 +44,7 @@ import {
 }                 from '@longlost/utils/utils.js';
 import htmlString from './photo-carousel.html';
 import '@longlost/app-images/flip-image.js';
-import '@longlost/app-images/lazy-image.js';
+import '@longlost/app-overlays/app-header-overlay.js';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/action-buttons.js';
@@ -201,13 +201,7 @@ class PhotoCarousel extends AppElement {
 
     this.$.background.style['display'] = 'block';
 
-    await Promise.all([
-      import(
-        /* webpackChunkName: 'app-header-overlay' */ 
-        '@longlost/app-overlays/app-header-overlay.js'
-      ), 
-      schedule()
-    ]);
+    await schedule();
 
     this.$.background.style['opacity'] = '1';
 

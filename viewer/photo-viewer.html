@@ -1,0 +1,65 @@
+
+<style>
+
+  #flip {
+    z-index: 1;
+  }
+
+  #overlay {
+    box-shadow: 			none;
+    background-color: transparent;
+    z-index: 					1;
+  }
+
+  #content {
+  	height: 100%;
+  }
+
+  lazy-image {
+  	height: 					100%;  	
+    background-color: transparent;
+    opacity: 					0;
+  }
+
+  paper-icon-button {
+  	position: absolute;
+  	top: 			16px;
+  	left: 		16px;
+  	color: 		var(--constant-light-text);
+  }
+
+</style>
+
+
+<flip-image id="flip"
+            measurements="[[_measurements]]"
+            orientation="[[_orientation]]"
+            sizing="cover"
+            src="[[_placeholder]]">
+</flip-image>
+
+
+<app-overlay id="overlay"
+						 modal
+             prebuilt-animation="from-left"
+             on-overlay-reset="__reset">
+
+  <div id="content">
+    
+    <lazy-image id="img"
+    						alt="[[item.displayName]]"
+    						orientation="[[_orientation]]" 
+    						placeholder="[[_placeholder]]" 
+    						sizing="cover" 
+    						src="[[_src]]"
+    						on-lazy-image-loaded-changed="__loadedChanged">
+    </lazy-image>
+
+
+    <paper-icon-button icon="app-icons:arrow-back"
+    									 on-click="__backBtnClicked">
+   	</paper-icon-button>
+
+  </div>
+
+</app-overlay>

@@ -97,7 +97,7 @@
 
 <flip-image id="flip"
             measurements="[[_measurements]]"
-            orientation="[[item.exif.Orientation]]"
+            orientation="[[_orientation]]"
             sizing="contain"
             src="[[_placeholder]]">
 </flip-image>
@@ -139,21 +139,16 @@
     </paper-icon-button>
 
   </div>
-
-
-  <div id="content"
-       slot="content">
     
-    <paginated-carousel id="carousel"
-                        coll="[[coll]]"
-                        disabled="[[_carouselDisabled]]"
-                        start="[[_start]]"
-                        opened="[[_opened]]"
-                        on-carousel-ready="__carouselReady"
-                        on-centered-item-changed="__centeredItemChanged"
-                        on-photo-selected="__photoSelected">
-    </paginated-carousel>
-
-  </div>
+  <paginated-carousel id="carousel"
+                      coll="[[coll]]"
+                      disabled="[[_carouselDisabled]]"
+                      opened="[[_opened]]"
+                      start="[[_start]]"
+                      slot="content"
+                      on-carousel-ready="__carouselReady"
+                      on-centered-item-changed="__centeredItemChanged"
+                      on-photo-selected="__photoSelected">
+  </paginated-carousel>
 
 </app-header-overlay>
