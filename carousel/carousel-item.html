@@ -24,7 +24,7 @@
   }
 
   .item {
-    height: 100%; 
+    height: 100%;
     width:  100%;
     background-color: black;
   }
@@ -40,7 +40,8 @@
           if="[[_isImg]]">
   <!-- 
     Adjusted 'trigger' to start loading the 
-    image before it becomes visible. 
+    image before it becomes visible, but
+    to a scroll-snap point. 
   -->
   <lazy-image class="item"
               alt="[[item.displayName]]"
@@ -48,7 +49,8 @@
               placeholder="[[_imgPlaceholder]]"
               src="[[_imgSrc]]"
               sizing="contain"
-              trigger="6">
+              trigger="6"
+              on-click="__imgClicked">
   </lazy-image>  
 </template>
 
@@ -57,6 +59,7 @@
   <lazy-video class="item"
               aspect-ratio="landscape"
               placeholder="[[_vidPlaceholder]]"
-              src="[[_vidSrc]]">
+              src="[[_vidSrc]]"
+              on-click="__vidClicked">
   </lazy-video>
 </template>

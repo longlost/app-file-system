@@ -118,6 +118,8 @@ export const EventsMixin = superClass => {
 
 	      _openCarouselListenerKey: Object,
 
+	      _openPhotoViewerListenerKey: Object,
+
 	      _printListenerKey: Object,
 
 	      _printsListenerKey: Object,
@@ -199,6 +201,13 @@ export const EventsMixin = superClass => {
 	      this.__openCarousel.bind(this)
 	    );
 
+	    // <photo-carousel>, <file-editor>
+	    this._openPhotoViewerListenerKey = listen(
+	    	this,
+	    	'open-photo-viewer',
+	    	this.__openPhotoViewer.bind(this)
+	    );
+
 	    // <file-list>, <quick-options>
 	    this._printListenerKey = listen(
 	      this, 
@@ -252,6 +261,7 @@ export const EventsMixin = superClass => {
 	    unlisten(this._itemsChangedListenerKey);
 	    unlisten(this._itemDataChangedListenerKey);
 	    unlisten(this._openCarouselListenerKey);
+	    unlisten(this._openPhotoViewerListenerKey);
 	    unlisten(this._printListenerKey);    
 	    unlisten(this._printsListenerKey);
 	    unlisten(this._requestDeleteListenerKey);
@@ -337,6 +347,18 @@ export const EventsMixin = superClass => {
 
 	    await import('./carousel/photo-carousel.js');
 	    this.$.carousel.open(measurements);
+	  }
+
+	  
+	  // From <file-item> (image files only) and <photo-carousel>
+	  async __openPhotoViewer(event) {
+
+	  	const {item, measurements} = event.detail;
+
+	  	this._liveUid = item.uid;
+
+	    await import('./viewer/photo-viewer.js');
+	    this.$.viewer.open(measurements);
 	  }
 
 	  // From <quick-options>, <file-item>
