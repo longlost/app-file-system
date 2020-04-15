@@ -951,6 +951,14 @@
     "@longlost/utils" "^1.1.6"
     "@polymer/polymer" "^3.3.0"
 
+"@longlost/pinch-to-zoom@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@longlost/pinch-to-zoom/-/pinch-to-zoom-1.0.0.tgz#9f41c23a3788dc4cb9eac3191a35a2aafb12e724"
+  integrity sha512-McFnHQZMAmpcbavOzUWc2aYYP8aI/kOwIKGcvQYjqYzYMz1lHRFbO9zIG5mvtildDSBAIWV5HiDMILAaoqwnCg==
+  dependencies:
+    "@polymer/polymer" "^3.3.1"
+    pinch-zoom-element "^1.1.1"
+
 "@longlost/services@^3.1.2":
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/@longlost/services/-/services-3.1.2.tgz#fae15b13386f1727e3aaba4d848a85fdb0dba8fc"
@@ -2707,6 +2715,18 @@ picomatch@^2.0.4:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.2.1.tgz#21bac888b6ed8601f831ce7816e335bc779f0a4a"
   integrity sha512-ISBaA8xQNmwELC7eOjqFKMESB2VIqt4PPDD0nsS95b/9dZXvVKOlz9keMSnoGGKcOHXfTvDD6WMaRoSc9UuhRA==
+
+pinch-zoom-element@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/pinch-zoom-element/-/pinch-zoom-element-1.1.1.tgz#ea86eb5fb93b2619bd70843ad012f07400e44c66"
+  integrity sha512-aqgz+Fqw2UgMUUfxWD3UEE9YsgEyHKSma4Y2YQG+PlgX/0sTMafP8X663VlMME6G04OWyU3u2uyG86fbFEajug==
+  dependencies:
+    pointer-tracker "^2.0.3"
+
+pointer-tracker@^2.0.3:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/pointer-tracker/-/pointer-tracker-2.3.0.tgz#d9dcd467accfb974fc8481adca36a41c8ce761a5"
+  integrity sha512-2tQaxrI62yNRIE6jFkxCpa/nraqavDWPZH1WVVAEA9TlH7CWjqX6sfCsWwrWeSYcQwAiZ/l3YfqXNDp4aQIOCQ==
 
 print-js@^1.0.63:
   version "1.0.63"

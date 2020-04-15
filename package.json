@@ -31,6 +31,7 @@
     "@longlost/drag-drop-list": "^2.0.2",
     "@longlost/lambda": "^2.2.0",
     "@longlost/lazy-video": "^2.3.2",
+    "@longlost/pinch-to-zoom": "^1.0.0",
     "@longlost/services": "^3.2.0",
     "@longlost/utils": "^1.4.0",
     "@longlost/worker": "^3.0.4",
