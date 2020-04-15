@@ -35,8 +35,8 @@
 
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {schedule} 				from '@longlost/utils/utils.js';
-import htmlString 				from './photo-viewer.html';
+import {schedule}         from '@longlost/utils/utils.js';
+import htmlString         from './photo-viewer.html';
 import '@longlost/app-images/flip-image.js';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/app-overlays/app-overlay.js';
@@ -71,8 +71,8 @@ class PhotoViewer extends AppElement {
       },
 
       _src: {
-      	type: String,
-      	computed: '__computeSrc(item)'
+        type: String,
+        computed: '__computeSrc(item)'
       }
 
     };
@@ -80,9 +80,9 @@ class PhotoViewer extends AppElement {
 
 
   static get observers() {
-  	return [
-  		'__loadedOpenedChanged(_loaded, _opened)'
-  	];
+    return [
+      '__loadedOpenedChanged(_loaded, _opened)'
+    ];
   }
 
 
@@ -99,11 +99,11 @@ class PhotoViewer extends AppElement {
     const {_tempUrl, optimized, original} = item;
 
     if (optimized) {
-    	return optimized;
+      return optimized;
     }
 
     if (original) {
-    	return original;
+      return original;
     }
 
     return _tempUrl;
@@ -111,51 +111,55 @@ class PhotoViewer extends AppElement {
 
 
   __computeSrc(item) {
-  	if (!item) { return '#'; }
+    if (!item) { return '#'; }
 
-  	const {_tempUrl, original} = item;
+    const {_tempUrl, original} = item;
 
-  	return original ? original : _tempUrl;
+    return original ? original : _tempUrl;
   }
 
 
   __loadedOpenedChanged(loaded, opened) {
 
-  	if (loaded && opened) {
-  		this.$.img.style['opacity'] = '1';
-  		this.$.flip.reset();
-  	}
+    if (loaded && opened) {
+      this.$.img.style['opacity'] = '1';
+      this.$.flip.reset();
+    }
   }
 
 
   __reset() {
-  	this._opened = false;
+    this._opened = false;
 
-  	this.$.img.style['opacity'] = '0';
+    this.$.img.style['opacity'] = '0';
   }
 
 
   async __loadedChanged(event) {
-  	const loaded = event.detail.value;
+    const loaded = event.detail.value;
 
-  	if (loaded) {
-  		await schedule();
-  	}
+    if (loaded) {
+      await schedule();
+    }
 
-  	this._loaded = loaded;
+    this._loaded = loaded;
   }
 
 
   async __backBtnClicked() {
-  	try {
-  		await this.clicked();
+    try {
+      await this.clicked();
 
-  		this.$.overlay.back();
-  	}
-  	catch (error) {
-  		if (error === 'click debounced') { return; }
-  		console.error(error);
-  	}
+      this.$.flip.reset();
+
+      await schedule();
+
+      this.$.overlay.back();
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
   }
 
 
