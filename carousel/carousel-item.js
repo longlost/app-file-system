@@ -40,7 +40,12 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
 
       index: Number,
 
-      reverse: Boolean
+      reverse: Boolean,
+
+      _trigger: {
+        type: Number,
+        value: 6
+      }
 
     };
   }

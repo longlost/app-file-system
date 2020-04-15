@@ -32,7 +32,7 @@
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
 import {firebase}         from '@longlost/boot/boot.js';
-import {isOnScreen}       from '@longlost/utils/utils.js';
+import {isOnScreen, schedule, wait}       from '@longlost/utils/utils.js';
 import htmlString         from './paginated-carousel.html';
 import '@longlost/app-carousel/app-carousel.js';
 import './carousel-item.js';
@@ -575,10 +575,11 @@ class PaginatedCarousel extends AppElement {
     this.fire('item-data-changed', {value: data});
   }
 
+
   // Reposition to current photo when new items are added.
   // New before items shift the scrolled elements to the right,
   // since the dom is ltr based, so this method compensates for 
-  // that distance and places the current photo back into view.  
+  // that distance and places the current photo back into view. 
   async __beforeElCenteredChanged(el, centered) {
     if (!el || !centered) { return; }
 
@@ -598,36 +599,39 @@ class PaginatedCarousel extends AppElement {
     const sections  = remainder === 0 ? this.limit : remainder;
     const {width}   = el.getBoundingClientRect();
 
-    // Watching two items from the end as 
+    // Watching one item from the end as 
     // lazy loading trigger after initial setup.
     // See '__beforeDomChanged' method.
     const left = this._beforePage === 0 ? 
                    width * sections : 
-                   width * (sections + 2);
+                   width * (sections + 1);
 
-    // Must run two frames in a row for Safari.
-    this.$.scroller.scrollTo({
-      top: 0,
-      left,
-      behavior: 'auto'
-    });
+    // MUST run 4 frames in a row for Safari, 
+    // one for each new dom element.
+    this.$.scroller.scroll(left, 0);
 
     // MUST be rAF and NOT schedule for Safari!
     window.requestAnimationFrame(() => {
 
-      // Second call to scrollTo is for Safari.
-      this.$.scroller.scrollTo({
-        top: 0,
-        left,
-        behavior: 'auto'
+      this.$.scroller.scroll(left, 0);
+
+      window.requestAnimationFrame(() => {
+
+        this.$.scroller.scroll(left, 0);
+
+        window.requestAnimationFrame(async () => {
+
+          this.$.scroller.scroll(left, 0);
+
+          this._beforeTrigger = el;
+          this._beforeEl      = undefined;
+
+          if (this._beforePage === 0) {
+            this.fire('carousel-ready');
+          }
+
+        });
       });
-
-      this._beforeTrigger = el;
-      this._beforeEl      = undefined;
-
-      if (this._beforePage === 0) {
-        this.fire('carousel-ready');
-      }
     });     
   }
 
@@ -668,7 +672,7 @@ class PaginatedCarousel extends AppElement {
     // Safari carousel workaround.
     this._afterNodes = elements;
 
-    this._afterTrigger = elements.length > 1 ? elements[elements.length - 2] : elements[0]; 
+    this._afterTrigger = elements.length > 1 ? elements[elements.length - 1] : elements[0]; 
   }
 
 
@@ -684,7 +688,7 @@ class PaginatedCarousel extends AppElement {
     this._beforeNodes = elements;
 
     // Carousel must get shifted each time new before elements are added.
-    this._beforeEl = elements.length > 1 ? elements[elements.length - 2] : elements[0];
+    this._beforeEl = elements.length > 1 ? elements[elements.length - 1] : elements[0];
   }
 
   // Safari workaround for slotted 

@@ -54,7 +54,8 @@
        slot="scroller">
 
     <!-- These items are put before the starting element -->
-    <template is="dom-repeat" 
+    <template id="beforeRepeater"
+              is="dom-repeat" 
               items="[[_beforeItems]]"
               strip-whitespace
               on-dom-change="__beforeDomChanged">
