@@ -40,6 +40,7 @@ import htmlString         from './photo-viewer.html';
 import '@longlost/app-images/flip-image.js';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/app-overlays/app-overlay.js';
+import '@longlost/pinch-to-zoom/pinch-to-zoom.js';
 
 
 class PhotoViewer extends AppElement {
