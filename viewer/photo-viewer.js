@@ -57,10 +57,6 @@ class PhotoViewer extends AppElement {
       // Used for entry animation and inital setup.
       item: Object,
 
-      _loaded: Boolean,
-
-      _opened: Boolean,
-
       _orientation: {
         type: Number,
         computed: '__computeOrientation(item.exif)'
@@ -77,13 +73,6 @@ class PhotoViewer extends AppElement {
       }
 
     };
-  }
-
-
-  static get observers() {
-    return [
-      '__loadedOpenedChanged(_loaded, _opened)'
-    ];
   }
 
 
@@ -120,30 +109,15 @@ class PhotoViewer extends AppElement {
   }
 
 
-  __loadedOpenedChanged(loaded, opened) {
-
-    if (loaded && opened) {
-      this.$.img.style['opacity'] = '1';
-      this.$.flip.reset();
-    }
-  }
-
-
   __reset() {
-    this._opened = false;
-
+    this.$.content.style['background-color'] = 'transparent';
     this.$.img.style['opacity'] = '0';
-  }
 
-
-  async __loadedChanged(event) {
-    const loaded = event.detail.value;
-
-    if (loaded) {
-      await schedule();
-    }
-
-    this._loaded = loaded;
+    this.$.zoom.setTransform({
+      scale: 1,
+      x:     0,
+      y:     0
+    });
   }
 
 
@@ -164,6 +138,59 @@ class PhotoViewer extends AppElement {
   }
 
 
+  __setImgSize() {
+
+
+    // Using content bbox instead of window.innerHeight/innerWidth
+    // because of mobile Safari's bottom nav bar not being part
+    // of those measurements.  Css position: fixed with bottom: 0
+    // does take this into account.
+    const bbox            = this.$.content.getBoundingClientRect();
+    const deviceAspect    = bbox.width / bbox.height;
+    const sideways        = this._orientation === 6 || this._orientation === 8;
+    const {height, width} = this._measurements;
+    const aspect          = sideways ? height / width : width / height;
+    const heightDelta     = Math.round(bbox.height - height);
+    const widthDelta      = Math.round(bbox.width - width);
+
+    // Device is portrait.
+    if (deviceAspect <= 1) {      
+
+      // This represents the width required to 
+      // get the img height to fill the screen.
+      // Use largest aspect ratio of landscape/portrait images.
+      const heightAdjustment = (width + heightDelta) * Math.max(aspect, 1 / aspect);
+
+      // Use the heightAdjustment if the image height is
+      // the limiting factor, otherwise set the img width
+      // to fill the screen.
+      const w = Math.max(bbox.width, heightAdjustment);
+
+      this.$.img.style['height'] = `${bbox.height}px`;
+      this.$.img.style['width']  = `${w}px`;
+    }
+    else {
+      const widthAdjustment = (height + widthDelta) * Math.max(aspect, 1 / aspect);
+
+      // Use the widthAdjustment if the image height is
+      // the limiting factor, otherwise set the img width
+      // to fill the screen.
+      const h = Math.max(bbox.height, widthAdjustment);
+      const w = sideways ? bbox.width * aspect : bbox.width + (heightDelta * aspect);
+
+      this.$.img.style['height'] = `${h}px`;
+      this.$.img.style['width']  = `${w}px`;
+    }
+  }
+
+
+  __switchToImg() {
+    this.$.content.style['background-color'] = 'black';
+    this.$.img.style['opacity'] = '1';
+    this.$.flip.reset();
+  }
+
+
   async open(measurements) {
 
     this._measurements = measurements;
@@ -171,7 +198,11 @@ class PhotoViewer extends AppElement {
     await this.$.flip.play(); 
     await this.$.overlay.open();
 
-    this._opened = true;
+    this.__setImgSize();
+
+    await schedule();
+
+    this.__switchToImg();
   }
 
 }

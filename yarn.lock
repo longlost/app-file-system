@@ -761,10 +761,10 @@
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
 
-"@longlost/app-images@^1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.3.1.tgz#47e51e4f3eda8675147645ef5990e3a4ae7560f3"
-  integrity sha512-E2yQ+GADPxFrme4smi14lr17EmEveZuVPLYeJDJiizFSi+0c4tHpdolzgmDJg/x2S05x+dokJ7Sx9sVi+Uci0w==
+"@longlost/app-images@^1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.3.2.tgz#d197961f570888a17ae66c3db0517bc2ed69aed3"
+  integrity sha512-PSOZP8xwMhX0ZOEkBAeEfuqlTNauPaLQfeUR/DCaYsZyoxyG10vA4GkNmTTc7m6qlOLYdcUX4DvnaUKgFDgsqQ==
   dependencies:
     "@longlost/animation" "^2.0.0"
     "@longlost/app-element" "^1.1.1"
