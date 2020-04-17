@@ -73,7 +73,6 @@ exports.init = (admin, functions) => {
 
       const {
         contentType,
-        metageneration,
         metadata,
         name: filePath,
         size
@@ -85,7 +84,7 @@ exports.init = (admin, functions) => {
         return null;
       }
 
-      // Exit if the image is already oriented.
+      // Exit if the image is already processed.
       if (metadata && (metadata['oriented'] || metadata['optimized'] || metadata['thumbnail'])) {
         console.log('Exiting. Already processed.');
         return null;
@@ -167,6 +166,14 @@ exports.init = (admin, functions) => {
       const data = type === 'optimized' ? 
         Object.assign({sharePath: newPath}, download) :  // Used to get a shareable link.
         download;
+
+
+
+
+
+      console.log('saving data for: ', type);
+
+
 
       // Add oriented data to existing firestore doc.
       await admin.firestore().collection(coll).doc(doc).set(
@@ -355,7 +362,7 @@ exports.init = (admin, functions) => {
     runWith({timeoutSeconds: 300}). // Extended runtime of 5 min. for large files (default 60 sec).
     storage.
     object().
-    onFinalize(processImg('oriented', '', ['-auto-orient']));
+    onFinalize(processImg('oriented', '', ['-auto-orient', '-strip']));
 
 
   const optimize = functions.
@@ -389,7 +396,8 @@ exports.init = (admin, functions) => {
     onFinalize(processImg('thumbnail', THUMB_PREFIX, [
       '-auto-orient',
       '-thumbnail', 
-      `${THUMB_MAX_WIDTH}>` // Keeps original aspect ratio.
+      `${THUMB_MAX_WIDTH}>`, // Keeps original aspect ratio.
+      '-strip'
     ]));
 
 
