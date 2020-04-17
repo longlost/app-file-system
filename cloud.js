@@ -50,23 +50,24 @@ exports.init = (admin, functions) => {
   // After an image is uploaded to the 
   // Storage bucket:
   //
-  // 1. Make it publicly downloadable.
+  // 1. Download to a temp directory.
   //
-  // 2. Create an optimized version.
+  // 2. Create an processed version.
   //
-  // 3. Create a thumbnail version.
+  // 3. Make the 'oriented' file available for public download.
+  //    Expose 'optimized' as a shareable file. 
   //
   // 4. Save the public download urls for 
-  //    new versions into Firestore.
+  //    newly processed versions into Firestore.
   //
   //
-  // Uses ImageMagick to process images.
+  // Uses ImageMagick to process images. 
+  //
+  // Auto orients all images and strips EXIF metadata so,
+  // all images display correctly across all browsers.
   //
   // Dynamically merges the url data into 
   // the appropriate coll, doc.
-
-  
-
 
   const processImg = (type, prefix, options) => async object => {
     try {
@@ -167,14 +168,6 @@ exports.init = (admin, functions) => {
         Object.assign({sharePath: newPath}, download) :  // Used to get a shareable link.
         download;
 
-
-
-
-
-      console.log('saving data for: ', type);
-
-
-
       // Add oriented data to existing firestore doc.
       await admin.firestore().collection(coll).doc(doc).set(
         data, 
@@ -190,183 +183,21 @@ exports.init = (admin, functions) => {
   };
 
 
-
-
-
-  // const optimize = functions.
-  //   runWith({timeoutSeconds: 300}). // Extended runtime of 5 min. for large files (default 60 sec).
-  //   storage.
-  //   object().
-  //   onFinalize(async object => {
-  //     try {
-
-  //       const {
-  //         contentType,
-  //         metageneration,
-  //         metadata,
-  //         name: filePath,
-  //         size
-  //       } = object;
-
-  //       // Exit if this is triggered on a file that is not a jpeg or png image.
-  //       if (!isOptimizable(contentType)) {
-  //         console.log('This file is not a jpeg or png image. Not optimizing.');
-  //         return null;
-  //       }
-
-  //       // Exit if the image is already processed.
-  //       if ((metadata && metadata.processed) || metageneration > 1) {
-  //         console.log('Exiting. Already processed.');
-  //         return null;
-  //       }
-
-  //       const fileDir  = path.dirname(filePath);
-  //       const fileName = path.basename(filePath);
-  //       const fileExt  = path.extname(filePath);
-
-  //       // Exit if the image is already a thumbnail.
-  //       if (fileName.startsWith(THUMB_PREFIX)) {
-  //         console.log('Exiting. Already a thumbnail.');
-  //         return null;
-  //       }
-
-  //       // Exit if the image is already already optimized.
-  //       if (fileName.startsWith(OPTIM_PREFIX)) {
-  //         console.log('Exiting. Already an optimized version.');
-  //         return null;
-  //       }
-
-  //       // Create random filenames with same extension as uploaded file.
-  //       const randomFileName     = getRandomFileName(fileExt);
-  //       const randomFileName2    = getRandomFileName(fileExt);
-  //       const randomFileName3    = getRandomFileName(fileExt);
-  //       const tempLocalFile      = getTempLocalFile(randomFileName);
-  //       const tempLocalDir       = path.dirname(tempLocalFile);
-  //       const tempLocalOptimFile = getTempLocalFile(randomFileName2);    
-  //       const tempLocalThumbFile = getTempLocalFile(randomFileName3);
-  //       const optimPath          = getNewFilePath(fileDir, OPTIM_PREFIX, fileName);
-  //       const thumbPath          = getNewFilePath(fileDir, THUMB_PREFIX, fileName);
-  //       const bucket             = admin.storage().bucket(object.bucket);
-  //       const fileRef            = bucket.file(filePath);
-
-  //       // Create the temp directory where the storage file will be downloaded.
-  //       await mkdirp(tempLocalDir);
-
-  //       // Allow the original to be downloaded publicly.
-  //       await fileRef.makePublic();
-
-  //       // Download file from bucket.
-  //       await fileRef.download({destination: tempLocalFile}); 
-
-  //       // Best attempt at a happy medium of size/quality.
-  //       const optimOptions = [
-  //         tempLocalFile,
-  //         '-auto-orient',
-  //         '-filter',     'Triangle',
-  //         '-define',     'filter:support=2',
-  //         '-resize',     `${OPTIM_MAX_WIDTH}>`, // Keeps original aspect ratio.
-  //         '-unsharp',    '0.25x0.25+8+0.065',
-  //         '-dither',     'None',
-  //         '-posterize',  '136',
-  //         '-quality',    '82',
-  //         '-define',     'jpeg:fancy-upsampling=off',
-  //         '-define',     'png:compression-filter=5',
-  //         '-define',     'png:compression-level=9',
-  //         '-define',     'png:compression-strategy=1',
-  //         '-define',     'png:exclude-chunk=all',
-  //         '-interlace',  'none',
-  //         '-colorspace', 'sRGB',
-  //         '-strip',
-  //         tempLocalOptimFile
-  //       ];
-
-  //       const thumbOptions = [
-  //         tempLocalFile,
-  //         '-auto-orient',
-  //         '-thumbnail', 
-  //         `${THUMB_MAX_WIDTH}>`, // Keeps original aspect ratio.
-  //         tempLocalThumbFile
-  //       ];
-
-  //       // Convert the image using ImageMagick.
-  //       await Promise.all([
-  //         spawn('convert', optimOptions), 
-  //         spawn('convert', thumbOptions)
-  //       ]);
-        
-  //       const newMetadata = {
-  //         // Setting new contentDisposition here has no effect.
-  //         // Can only be done on client with Storage SDK.
-  //         metadata: {
-  //           'processed':    'true',
-  //           'originalSize': `${size}`,
-  //           'uid':           metadata.uid
-  //         }
-  //       };
-
-  //       // Upload new images.
-  //       await Promise.all([
-  //         bucket.upload(tempLocalOptimFile, {
-  //           destination:    optimPath, 
-  //           predefinedAcl: 'publicRead', 
-  //           metadata:       newMetadata
-  //         }),
-  //         bucket.upload(tempLocalThumbFile, {
-  //           destination:    thumbPath, 
-  //           predefinedAcl: 'publicRead', 
-  //           metadata:       newMetadata
-  //         })
-  //       ]);
-
-  //       // Delete the local files to free up disk space.
-  //       fs.unlinkSync(tempLocalFile); 
-  //       fs.unlinkSync(tempLocalOptimFile);
-  //       fs.unlinkSync(tempLocalThumbFile);
-
-  //       // Get a download url.
-  //       const getUrl = async toFilePath => {
-  //         const f    = bucket.file(toFilePath);
-  //         const meta = await f.getMetadata();
-  //         return meta[0].mediaLink;
-  //       };
-
-  //       const [optimized, thumbnail] = 
-  //         await Promise.all([getUrl(optimPath), getUrl(thumbPath)]); 
-
-  //       const {coll, doc} = getCollAndDoc(fileDir);
-
-  //       // Add optimize data to existing firestore doc.
-  //       await admin.firestore().collection(coll).doc(doc).set(
-  //         {
-  //           optimized,
-  //           sharePath: optimPath, // Used to get a shareable link.
-  //           thumbnail
-  //         }, 
-  //         {merge: true}
-  //       );
-
-  //       return null;
-  //     }
-  //     catch (error) {
-  //       console.error(error);
-  //       throw new functions.https.HttpsError('unknown', 'image optimization error', error);
-  //     }
-  //   });
-
-
-
-
-
-
   const orient = functions.
-    runWith({timeoutSeconds: 300}). // Extended runtime of 5 min. for large files (default 60 sec).
+    runWith({
+      memory:        '1GB',
+      timeoutSeconds: 300, // Extended runtime of 5 min. for large files (default 60 sec).
+    }). 
     storage.
     object().
     onFinalize(processImg('oriented', '', ['-auto-orient', '-strip']));
 
 
   const optimize = functions.
-    runWith({timeoutSeconds: 300}). // Extended runtime of 5 min. for large files (default 60 sec).
+    runWith({
+      memory:        '1GB',
+      timeoutSeconds: 300, // Extended runtime of 5 min. for large files (default 60 sec).
+    }). 
     storage.
     object().
     onFinalize(processImg('optimized', OPTIM_PREFIX, [
@@ -390,7 +221,10 @@ exports.init = (admin, functions) => {
 
 
   const thumbnail = functions.
-    runWith({timeoutSeconds: 300}). // Extended runtime of 5 min. for large files (default 60 sec).
+    runWith({
+      memory:        '1GB',
+      timeoutSeconds: 300, // Extended runtime of 5 min. for large files (default 60 sec).
+    }). 
     storage.
     object().
     onFinalize(processImg('thumbnail', THUMB_PREFIX, [
