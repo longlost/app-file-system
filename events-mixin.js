@@ -23,7 +23,19 @@ const arrayToDbObj = array => {
     accum[obj.uid] = obj;
     return accum;
   }, {});
-};    
+};   
+
+
+const getPrintable = item => {
+
+	const {oriented, original, _tempUrl} = item;
+
+	if (oriented) { return oriented; }
+
+	if (original) { return original; }
+
+	return _tempUrl;
+}; 
 
 
 const getPrintType = type => {
@@ -48,7 +60,7 @@ const getPrintType = type => {
 
 // Will NOT print pdf's in Chrome when dev tools is open!!
 const printItem = async item => {
-  const {displayName, original, type, _tempUrl} = item;
+  const {displayName, type} = item;
 
   const style = `.custom-h3 { 
 		font-family: 'Roboto', 'Noto', Arial, Helvetica, sans-serif; 
@@ -57,7 +69,7 @@ const printItem = async item => {
 	const header = `<h3 class="custom-h3">${displayName}</h3>`;
 
 	// Use temporary reference for files that are not done uploading.
-  const printable = original ? original : _tempUrl;
+  const printable = getPrintable(item);
   const printType = getPrintType(type);
  
   return printJS({
@@ -78,8 +90,7 @@ const printImages = items => {
   }
 
   // Use temporary file reference until file has been uploaded.
-  const urls = items.map(({original, _tempUrl}) => 
-    original ? original : _tempUrl);
+  const urls = items.map(getPrintable);
   
   return printJS({
     imageStyle: 'display: inline-block; float: left; width: calc(50% - 16px); margin: 8px;',
