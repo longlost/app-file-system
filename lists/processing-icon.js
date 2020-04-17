@@ -65,14 +65,14 @@ class ProcessingIcon extends AppElement {
   __computeAnimate(item) {
     if (!item || 'type' in item === false) { return false; }
 
-    const {type} = item;
+    const {optimized, oriented, original, thumbnail, type} = item;
 
     // animate during image processing as well
     if (
       type.includes('image') && 
       (type.includes('jpeg') || type.includes('jpg') || type.includes('png'))
     ) {
-      return item.original && !item.optimized;
+      return original && (!optimized || !oriented || !thumbnail);
     }
 
     // Other file types don't have futher processing

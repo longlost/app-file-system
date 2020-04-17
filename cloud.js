@@ -43,121 +43,6 @@ const getCollAndDoc = dir => {
 };
 
 
-const processImg = (type, prefix, options) => async object => {
-  try {
-
-    const {
-      contentType,
-      metageneration,
-      metadata,
-      name: filePath,
-      size
-    } = object;
-
-    // Exit if this is triggered on a file that is not a jpeg or png image.
-    if (!isOptimizable(contentType)) {
-      console.log('This file is not a jpeg or png image. Not optimizing.');
-      return null;
-    }
-
-    // Exit if the image is already oriented.
-    if (metadata && (metadata['oriented'] || metadata['optimized'] || metadata['thumbnail'])) {
-      console.log('Exiting. Already processed.');
-      return null;
-    }
-
-    const fileDir  = path.dirname(filePath);
-    const fileName = path.basename(filePath);
-    const fileExt  = path.extname(filePath);
-
-    // Exit if the image is already a thumbnail.
-    if (fileName.startsWith(THUMB_PREFIX)) {
-      console.log('Exiting. Already a thumbnail.');
-      return null;
-    }
-
-    // Exit if the image is already already optimized.
-    if (fileName.startsWith(OPTIM_PREFIX)) {
-      console.log('Exiting. Already an optimized version.');
-      return null;
-    }
-
-    // Create random filenames with same extension as uploaded file.
-    const randomFileName       = getRandomFileName(fileExt);
-    const randomFileName2      = getRandomFileName(fileExt);
-    const tempLocalFile        = getTempLocalFile(randomFileName);
-    const tempLocalDir         = path.dirname(tempLocalFile);
-    const tempLocalConvertFile = getTempLocalFile(randomFileName2); 
-    const newPath              = getNewFilePath(fileDir, prefix, fileName);
-    const bucket               = admin.storage().bucket(object.bucket);
-    const fileRef              = bucket.file(filePath);
-
-    // Create the temp directory where the storage file will be downloaded.
-    await mkdirp(tempLocalDir);
-
-    // Download file from bucket.
-    await fileRef.download({destination: tempLocalFile}); 
-
-    // Convert the image using ImageMagick.
-    await spawn('convert', [
-      tempLocalFile,
-      ...options,
-      tempLocalConvertFile
-    ]);
-    
-    const newMetadata = {
-
-      // Setting new contentDisposition here has no effect.
-      // Can only be done on client with Storage SDK.
-      metadata: {
-        [type]:         'true',
-        'originalSize': `${size}`,
-        'uid':           metadata.uid
-      }
-    };
-
-    // Upload new processed image. Replaces original version.
-    await bucket.upload(tempLocalConvertFile, {
-      destination:    newPath, 
-      predefinedAcl: 'publicRead', 
-      metadata:       newMetadata
-    });
-
-    // Delete the local files to free up disk space.
-    fs.unlinkSync(tempLocalFile); 
-    fs.unlinkSync(tempLocalConvertFile);
-
-    if (type === 'oriented') {
-
-      // Allow the oriented version to be downloaded publicly.
-      await bucket.file(newPath).makePublic();   
-    }
-
-    const {coll, doc} = getCollAndDoc(fileDir); 
-
-    const url = await getUrl(bucket, newPath); 
-
-    const download = {[type]: url};
-   
-    const data = type === 'optimized' ? 
-      Object.assign({sharePath: newPath}, download) :  // Used to get a shareable link.
-      download;
-
-    // Add oriented data to existing firestore doc.
-    await admin.firestore().collection(coll).doc(doc).set(
-      data, 
-      {merge: true}
-    );
-
-    return null;
-  }
-  catch (error) {
-    console.error(error);
-    throw new functions.https.HttpsError('unknown', `image ${type} error`, error);
-  }
-};
-
-
 
 
 exports.init = (admin, functions) => {
@@ -179,6 +64,123 @@ exports.init = (admin, functions) => {
   //
   // Dynamically merges the url data into 
   // the appropriate coll, doc.
+
+  
+
+
+  const processImg = (type, prefix, options) => async object => {
+    try {
+
+      const {
+        contentType,
+        metageneration,
+        metadata,
+        name: filePath,
+        size
+      } = object;
+
+      // Exit if this is triggered on a file that is not a jpeg or png image.
+      if (!isOptimizable(contentType)) {
+        console.log('This file is not a jpeg or png image. Not optimizing.');
+        return null;
+      }
+
+      // Exit if the image is already oriented.
+      if (metadata && (metadata['oriented'] || metadata['optimized'] || metadata['thumbnail'])) {
+        console.log('Exiting. Already processed.');
+        return null;
+      }
+
+      const fileDir  = path.dirname(filePath);
+      const fileName = path.basename(filePath);
+      const fileExt  = path.extname(filePath);
+
+      // Exit if the image is already a thumbnail.
+      if (fileName.startsWith(THUMB_PREFIX)) {
+        console.log('Exiting. Already a thumbnail.');
+        return null;
+      }
+
+      // Exit if the image is already already optimized.
+      if (fileName.startsWith(OPTIM_PREFIX)) {
+        console.log('Exiting. Already an optimized version.');
+        return null;
+      }
+
+      // Create random filenames with same extension as uploaded file.
+      const randomFileName       = getRandomFileName(fileExt);
+      const randomFileName2      = getRandomFileName(fileExt);
+      const tempLocalFile        = getTempLocalFile(randomFileName);
+      const tempLocalDir         = path.dirname(tempLocalFile);
+      const tempLocalConvertFile = getTempLocalFile(randomFileName2); 
+      const newPath              = getNewFilePath(fileDir, prefix, fileName);
+      const bucket               = admin.storage().bucket(object.bucket);
+      const fileRef              = bucket.file(filePath);
+
+      // Create the temp directory where the storage file will be downloaded.
+      await mkdirp(tempLocalDir);
+
+      // Download file from bucket.
+      await fileRef.download({destination: tempLocalFile}); 
+
+      // Convert the image using ImageMagick.
+      await spawn('convert', [
+        tempLocalFile,
+        ...options,
+        tempLocalConvertFile
+      ]);
+      
+      const newMetadata = {
+
+        // Setting new contentDisposition here has no effect.
+        // Can only be done on client with Storage SDK.
+        metadata: {
+          [type]:         'true',
+          'originalSize': `${size}`,
+          'uid':           metadata.uid
+        }
+      };
+
+      // Upload new processed image. Replaces original version.
+      await bucket.upload(tempLocalConvertFile, {
+        destination:    newPath, 
+        predefinedAcl: 'publicRead', 
+        metadata:       newMetadata
+      });
+
+      // Delete the local files to free up disk space.
+      fs.unlinkSync(tempLocalFile); 
+      fs.unlinkSync(tempLocalConvertFile);
+
+      if (type === 'oriented') {
+
+        // Allow the oriented version to be downloaded publicly.
+        await bucket.file(newPath).makePublic();   
+      }
+
+      const {coll, doc} = getCollAndDoc(fileDir); 
+
+      const url = await getUrl(bucket, newPath); 
+
+      const download = {[type]: url};
+     
+      const data = type === 'optimized' ? 
+        Object.assign({sharePath: newPath}, download) :  // Used to get a shareable link.
+        download;
+
+      // Add oriented data to existing firestore doc.
+      await admin.firestore().collection(coll).doc(doc).set(
+        data, 
+        {merge: true}
+      );
+
+      return null;
+    }
+    catch (error) {
+      console.error(error);
+      throw new functions.https.HttpsError('unknown', `image ${type} error`, error);
+    }
+  };
 
 
 

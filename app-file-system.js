@@ -336,17 +336,17 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // Resolve the promise when the 
   // file item has an optimized prop.
   __waitForCloudProcessing(item) {
-    const {optimized, original, uid} = item;
+    const {optimized, oriented, original, thumbnail, uid} = item;
 
     // An image that has been uploaded but not yet optimized.
-    if (isCloudProcessable(item) && original && !optimized) {
+    if (isCloudProcessable(item) && original && (!optimized || !oriented || !thumbnail)) {
 
       return new Promise(resolve => {
 
         listen(this, 'data-changed', (event, key) => { // Local event.
           const {optimized} = event.detail.data[uid];
 
-          if (optimized) { // Only present after processing.
+          if (optimized && oriented && thumbnail) { // Only present after processing.
             unlisten(key);
             resolve();
           }
@@ -555,81 +555,81 @@ class AppFileSystem extends EventsMixin(AppElement) {
   }
 
 
-  // async openList() {
-    
-  //   if (this.list === 'files') {
-  //     await import(
-  //       /* webpackChunkName: 'app-file-system-file-list' */ 
-  //       './lists/file-list.js'
-  //     );
-
-  //     return this.$.fileList.open();
-  //   }
-  //   else if (this.list === 'photos') {
-  //     await import(
-  //       /* webpackChunkName: 'app-file-system-camera-roll' */ 
-  //       './lists/camera-roll.js'
-  //     );
-      
-  //     return this.$.cameraRoll.open();
-  //   }
-
-  //   throw new Error('Cannot open the overlay without the list property being properly set.');
-  // }
-
-
-
-
-  // TESTING/DEV ONLY!!
-
   async openList() {
     
-    const measurements = {
-      "x": 189,
-      "y": 290,
-      "width": 183,
-      "height": 183,
-      "top": 290,
-      "right": 372,
-      "bottom": 473,
-      "left": 189
-    };
+    if (this.list === 'files') {
+      await import(
+        /* webpackChunkName: 'app-file-system-file-list' */ 
+        './lists/file-list.js'
+      );
 
-    this._dbData = {
-      "3o45Q4pf9yhClY6g7fVRI": {
-        "_tempUrl": "blob:http://localhost:3000/02f8e1ed-6fc7-44eb-87b5-ad81e06c13a2",
-        "basename": "bb8.jpg",
-        "category": "image",
-        "coll": "test",
-        "displayName": "bb8",
-        "doc": "3o45Q4pf9yhClY6g7fVRI",
-        "exif": {
-          "Orientation": 1
-        },
-        "ext": ".jpg",
-        "index": 49,
-        "lastModified": 1516980493685,
-        "optimized": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2F3o45Q4pf9yhClY6g7fVRI%2Foptim_bb8.jpg?generation=1583353908751507&alt=media",
-        "original": "https://firebasestorage.googleapis.com/v0/b/longlost-starter.appspot.com/o/test%2F3o45Q4pf9yhClY6g7fVRI%2Fbb8.jpg?alt=media&token=119719af-e03c-41bb-8084-002bbee9e68f",
-        "path": "test/3o45Q4pf9yhClY6g7fVRI/bb8.jpg",
-        "sharePath": "test/3o45Q4pf9yhClY6g7fVRI/optim_bb8.jpg",
-        "size": 1209112,
-        "sizeStr": "1.2MB",
-        "thumbnail": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2F3o45Q4pf9yhClY6g7fVRI%2Fthumb_bb8.jpg?generation=1583353908807300&alt=media",
-        "timestamp": 1583353891073,
-        "type": "image/jpeg",
-        "uid": "3o45Q4pf9yhClY6g7fVRI"
-      }
-    };
+      return this.$.fileList.open();
+    }
+    else if (this.list === 'photos') {
+      await import(
+        /* webpackChunkName: 'app-file-system-camera-roll' */ 
+        './lists/camera-roll.js'
+      );
+      
+      return this.$.cameraRoll.open();
+    }
 
-    this._liveUid = "3o45Q4pf9yhClY6g7fVRI";
-    
-    await import(
-      './carousel/photo-carousel.js'
-    );
-    
-    return this.$.carousel.open(measurements);
+    throw new Error('Cannot open the overlay without the list property being properly set.');
   }
+
+
+
+
+  // // TESTING/DEV ONLY!!
+
+  // async openList() {
+    
+  //   const measurements = {
+  //     "x": 189,
+  //     "y": 290,
+  //     "width": 183,
+  //     "height": 183,
+  //     "top": 290,
+  //     "right": 372,
+  //     "bottom": 473,
+  //     "left": 189
+  //   };
+
+  //   this._dbData = {
+  //     "3o45Q4pf9yhClY6g7fVRI": {
+  //       "_tempUrl": "blob:http://localhost:3000/02f8e1ed-6fc7-44eb-87b5-ad81e06c13a2",
+  //       "basename": "bb8.jpg",
+  //       "category": "image",
+  //       "coll": "test",
+  //       "displayName": "bb8",
+  //       "doc": "3o45Q4pf9yhClY6g7fVRI",
+  //       "exif": {
+  //         "Orientation": 1
+  //       },
+  //       "ext": ".jpg",
+  //       "index": 49,
+  //       "lastModified": 1516980493685,
+  //       "optimized": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2F3o45Q4pf9yhClY6g7fVRI%2Foptim_bb8.jpg?generation=1583353908751507&alt=media",
+  //       "original": "https://firebasestorage.googleapis.com/v0/b/longlost-starter.appspot.com/o/test%2F3o45Q4pf9yhClY6g7fVRI%2Fbb8.jpg?alt=media&token=119719af-e03c-41bb-8084-002bbee9e68f",
+  //       "path": "test/3o45Q4pf9yhClY6g7fVRI/bb8.jpg",
+  //       "sharePath": "test/3o45Q4pf9yhClY6g7fVRI/optim_bb8.jpg",
+  //       "size": 1209112,
+  //       "sizeStr": "1.2MB",
+  //       "thumbnail": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2F3o45Q4pf9yhClY6g7fVRI%2Fthumb_bb8.jpg?generation=1583353908807300&alt=media",
+  //       "timestamp": 1583353891073,
+  //       "type": "image/jpeg",
+  //       "uid": "3o45Q4pf9yhClY6g7fVRI"
+  //     }
+  //   };
+
+  //   this._liveUid = "3o45Q4pf9yhClY6g7fVRI";
+    
+  //   await import(
+  //     './carousel/photo-carousel.js'
+  //   );
+    
+  //   return this.$.carousel.open(measurements);
+  // }
 
 
 

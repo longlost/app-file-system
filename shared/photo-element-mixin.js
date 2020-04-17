@@ -34,15 +34,32 @@ export const PhotoElementMixin = superClass => {
 
 	      _imgLoadedListenerKey: Object,
 
+	      // _imgPlaceholder: {
+	      // 	type: String,
+	      // 	computed: '__computeImgPlaceholder(item.original, item.thumbnail, item._tempUrl, _isImg)'
+	      // },
+
+	      // _imgSrc: {
+	      // 	type: String,
+	      // 	computed: '__computeImgSrc(item.optimized, item.original, item.thumbnail, _isImg, _isThumbnail)'
+	      // },
+
+
 	      _imgPlaceholder: {
 	      	type: String,
-	      	computed: '__computeImgPlaceholder(item.original, item.thumbnail, item._tempUrl, _isImg)'
+	      	computed: '__computeImgPlaceholder(item.oriented, item.thumbnail, item._tempUrl, _isImg)'
 	      },
 
 	      _imgSrc: {
 	      	type: String,
-	      	computed: '__computeImgSrc(item.optimized, item.original, item.thumbnail, _isImg, _isThumbnail)'
+	      	computed: '__computeImgSrc(item.optimized, item.oriented, item.thumbnail, _isImg, _isThumbnail)'
 	      },
+
+
+
+
+
+
 
 	      _isImg: {
 	        type: Boolean,
@@ -115,26 +132,54 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeImgPlaceholder(original, thumbnail, temp, isImg) {
+	  // __computeImgPlaceholder(original, thumbnail, temp, isImg) {
+	  //   if (!isImg) { return; }	 
+
+	  //   if (thumbnail) { return thumbnail; }
+
+	  //   if (original) { return original; }
+
+	  //   return temp;
+	  // }
+
+
+	  // __computeImgSrc(optimized, original, thumbnail, isImg, isThumbnail) {
+	  //   if (!isImg) { return; }
+
+	  //   if (isThumbnail && thumbnail) { return thumbnail; }
+
+	  //   if (!isThumbnail && optimized) { return optimized; }
+
+	  //   return original;
+	  // }
+
+
+
+
+
+	  __computeImgPlaceholder(oriented, thumbnail, temp, isImg) {
 	    if (!isImg) { return; }	 
 
 	    if (thumbnail) { return thumbnail; }
 
-	    if (original) { return original; }
+	    if (oriented) { return oriented; }
 
 	    return temp;
 	  }
 
 
-	  __computeImgSrc(optimized, original, thumbnail, isImg, isThumbnail) {
+	  __computeImgSrc(optimized, oriented, thumbnail, isImg, isThumbnail) {
 	    if (!isImg) { return; }
 
 	    if (isThumbnail && thumbnail) { return thumbnail; }
 
 	    if (!isThumbnail && optimized) { return optimized; }
 
-	    return original;
+	    return oriented;
 	  }
+
+
+
 
 
 	  __computeOrientation(exif) {
