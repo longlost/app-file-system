@@ -76,15 +76,19 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
     try {
       await this.clicked(); 
 
-      const screenWidth  = window.innerWidth;
-      const screenHeight = window.innerHeight; 
-
       const {naturalHeight, naturalWidth} = await naturals(this._imgPlaceholder);
+
+      const bbox = this.getBoundingClientRect();
+
+      const sideways = this._orientation === 6 || this._orientation === 8;
+
+
+      const imgAspect = sideways ? naturalHeight / naturalWidth : naturalWidth / naturalHeight;
+
 
       const getHeightWidth = () => {
 
-        const deviceAspect = screenWidth  / screenHeight;
-        const imgAspect    = naturalWidth / naturalHeight;
+        const deviceAspect = bbox.width  / bbox.height;
 
         // Device is portriat.
         if (deviceAspect < 1) {
@@ -96,26 +100,25 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
             // and shorter than device screen.
             if (deviceAspect < imgAspect) {
 
-              const height = screenWidth / imgAspect;
+              const height = bbox.width / imgAspect;
 
-              return {height, width: screenWidth};
+              return {height, width: bbox.width};
             }
 
             // Assume the image is full height 
             // and narrower than device screen.
-            const width = screenHeight * imgAspect;
+            const width = bbox.height * imgAspect;
 
-            return {height: screenHeight, width};
+            return {height: bbox.height, width};
           }
 
           
           // Img is landscape.
           // Assume the image is full width 
           // and shorter than device screen.
-          const height = screenWidth / imgAspect;
+          const height = bbox.width / imgAspect;
 
-          return {height, width: screenWidth};
-
+          return {height, width: bbox.width};
         }
 
         // Device is landscape.
@@ -125,9 +128,9 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
         // and narrower than device screen.
         if (imgAspect < 1) {
 
-          const width = screenHeight * imgAspect;
+          const width = bbox.height * imgAspect;
 
-          return {height: screenHeight, width};
+          return {height: bbox.height, width};
         }
 
         // Img is landscape.
@@ -136,20 +139,19 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
         // and shorter than device screen.
         if (deviceAspect < imgAspect) {
 
-          const height = screenWidth / imgAspect;
+          const height = bbox.width / imgAspect;
 
-          return {height, width: screenWidth};
+          return {height, width: bbox.width};
         }
 
         // Assume the image is full height 
         // and narrower than device screen.
-        const width = screenHeight / imgAspect;
+        const width = bbox.height * imgAspect;
 
-        return {height: screenHeight, width};
+        return {height: bbox.height, width};
       };
 
-      const heightWidth = getHeightWidth();      
-      const bbox = this.getBoundingClientRect();
+      const heightWidth = getHeightWidth(); 
       const measurements = {...bbox, ...heightWidth};
 
       this.fire('photo-selected', {measurements, item: this.item});

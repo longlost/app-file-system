@@ -11,9 +11,16 @@
     z-index:          1;
   }
 
-  #content
-  pinch-to-zoom {
-    height: 100%;
+  #content {   
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
+    height:          100%;
+    overflow:        hidden;
+  }
+
+  pinch-to-zoom { 
+    min-height: 100%;
   }
 
   lazy-image {
@@ -47,15 +54,14 @@
 
   <div id="content">
 
-    <pinch-to-zoom>
-    
+    <pinch-to-zoom id="zoom">
+
       <lazy-image id="img"
                   alt="[[item.displayName]]"
                   orientation="[[_orientation]]" 
                   placeholder="[[_placeholder]]" 
-                  sizing="cover" 
-                  src="[[_src]]"
-                  on-lazy-image-loaded-changed="__loadedChanged">
+                  sizing="contain" 
+                  src="[[_src]]">
       </lazy-image>
 
     </pinch-to-zoom>
