@@ -57,11 +57,6 @@ class PhotoViewer extends AppElement {
       // Used for entry animation and inital setup.
       item: Object,
 
-      _orientation: {
-        type: Number,
-        computed: '__computeOrientation(item.exif)'
-      },
-
       _placeholder: {
         type: String,
         computed: '__computePlaceholder(item)'
@@ -76,24 +71,17 @@ class PhotoViewer extends AppElement {
   }
 
 
-  __computeOrientation(exif) {
-    if (!exif || !exif['Orientation']) { return 1; }
-
-    return exif['Orientation'];
-  }
-
-
   __computePlaceholder(item) {
     if (!item) return '#';
 
-    const {_tempUrl, optimized, original} = item;
+    const {_tempUrl, optimized, oriented} = item;
 
     if (optimized) {
       return optimized;
     }
 
-    if (original) {
-      return original;
+    if (oriented) {
+      return oriented;
     }
 
     return _tempUrl;
@@ -103,9 +91,9 @@ class PhotoViewer extends AppElement {
   __computeSrc(item) {
     if (!item) { return '#'; }
 
-    const {_tempUrl, original} = item;
+    const {_tempUrl, oriented} = item;
 
-    return original ? original : _tempUrl;
+    return oriented ? oriented : _tempUrl;
   }
 
 
@@ -146,12 +134,11 @@ class PhotoViewer extends AppElement {
     // of those measurements.  Css position: fixed with bottom: 0
     // does take this into account.
     const bbox            = this.$.content.getBoundingClientRect();
-    const deviceAspect    = bbox.width / bbox.height;
-    const sideways        = this._orientation === 6 || this._orientation === 8;
     const {height, width} = this._measurements;
-    const aspect          = sideways ? height / width : width / height;
+    const deviceAspect    = bbox.width / bbox.height;
+    const aspect          = width      / height;
     const heightDelta     = Math.round(bbox.height - height);
-    const widthDelta      = Math.round(bbox.width - width);
+    const widthDelta      = Math.round(bbox.width  - width);
 
     // Device is portrait.
     if (deviceAspect <= 1) {      
@@ -176,7 +163,7 @@ class PhotoViewer extends AppElement {
       // the limiting factor, otherwise set the img width
       // to fill the screen.
       const h = Math.max(bbox.height, widthAdjustment);
-      const w = sideways ? bbox.width * aspect : bbox.width + (heightDelta * aspect);
+      const w = bbox.width + (heightDelta * aspect);
 
       this.$.img.style['height'] = `${h}px`;
       this.$.img.style['width']  = `${w}px`;

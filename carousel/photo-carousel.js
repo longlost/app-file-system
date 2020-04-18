@@ -91,11 +91,6 @@ class PhotoCarousel extends AppElement {
 
       _opened: Boolean,
 
-      _orientation: {
-        type: Number,
-        computed: '__computeOrientation(item.exif)'
-      },
-
       _placeholder: {
         type: String,
         computed: '__computePlaceholder(item)'

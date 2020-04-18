@@ -78,12 +78,8 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
 
       const {naturalHeight, naturalWidth} = await naturals(this._imgPlaceholder);
 
-      const bbox = this.getBoundingClientRect();
-
-      const sideways = this._orientation === 6 || this._orientation === 8;
-
-
-      const imgAspect = sideways ? naturalHeight / naturalWidth : naturalWidth / naturalHeight;
+      const bbox      = this.getBoundingClientRect();
+      const imgAspect = naturalWidth / naturalHeight;
 
 
       const getHeightWidth = () => {

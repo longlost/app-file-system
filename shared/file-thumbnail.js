@@ -63,6 +63,7 @@ class FileThumbnail extends PhotoElementMixin(AppElement) {
 
   __computeIronIconStamp(type) {
     if (!type) { return false; }
+    
     return !type.includes('image') && !type.includes('video');
   }
 
