@@ -34,17 +34,6 @@ export const PhotoElementMixin = superClass => {
 
 	      _imgLoadedListenerKey: Object,
 
-	      // _imgPlaceholder: {
-	      // 	type: String,
-	      // 	computed: '__computeImgPlaceholder(item.original, item.thumbnail, item._tempUrl, _isImg)'
-	      // },
-
-	      // _imgSrc: {
-	      // 	type: String,
-	      // 	computed: '__computeImgSrc(item.optimized, item.original, item.thumbnail, _isImg, _isThumbnail)'
-	      // },
-
-
 	      _imgPlaceholder: {
 	      	type: String,
 	      	computed: '__computeImgPlaceholder(item.oriented, item.thumbnail, item._tempUrl, _isImg)'
@@ -54,12 +43,6 @@ export const PhotoElementMixin = superClass => {
 	      	type: String,
 	      	computed: '__computeImgSrc(item.optimized, item.oriented, item.thumbnail, _isImg, _isThumbnail)'
 	      },
-
-
-
-
-
-
 
 	      _isImg: {
 	        type: Boolean,
@@ -77,11 +60,6 @@ export const PhotoElementMixin = superClass => {
 	      _isThumbnail: {
 	      	type: Boolean,
 	      	value: false
-	      },
-
-	      _orientation: {
-	      	type: Number,
-	      	computed: '__computeOrientation(item.exif)'
 	      },
 
 	      _vidPlaceholder: {
@@ -132,31 +110,6 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  // __computeImgPlaceholder(original, thumbnail, temp, isImg) {
-	  //   if (!isImg) { return; }	 
-
-	  //   if (thumbnail) { return thumbnail; }
-
-	  //   if (original) { return original; }
-
-	  //   return temp;
-	  // }
-
-
-	  // __computeImgSrc(optimized, original, thumbnail, isImg, isThumbnail) {
-	  //   if (!isImg) { return; }
-
-	  //   if (isThumbnail && thumbnail) { return thumbnail; }
-
-	  //   if (!isThumbnail && optimized) { return optimized; }
-
-	  //   return original;
-	  // }
-
-
-
-
-
 	  __computeImgPlaceholder(oriented, thumbnail, temp, isImg) {
 	    if (!isImg) { return; }	 
 
@@ -176,14 +129,6 @@ export const PhotoElementMixin = superClass => {
 	    if (!isThumbnail && optimized) { return optimized; }
 
 	    return oriented;
-	  }
-
-
-
-
-
-	  __computeOrientation(exif) {
-	    return exif ? exif['Orientation'] : undefined;
 	  }
 
 
