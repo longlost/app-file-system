@@ -32,7 +32,7 @@
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
 import {firebase}         from '@longlost/boot/boot.js';
-import {isOnScreen, schedule, wait}       from '@longlost/utils/utils.js';
+import {isOnScreen}       from '@longlost/utils/utils.js';
 import htmlString         from './paginated-carousel.html';
 import '@longlost/app-carousel/app-carousel.js';
 import './carousel-item.js';
@@ -151,7 +151,11 @@ class PaginatedCarousel extends AppElement {
 
       // Show carousel nav buttons on large screens 
       // that may not have touch interface.
-      _nav: Boolean
+      _nav: Boolean,
+
+      // Used to fire 'carousel-ready' events once 
+      // the carousel is ready to be shown.
+      _ready: Boolean
 
     };
   }
@@ -172,7 +176,8 @@ class PaginatedCarousel extends AppElement {
       '__openedChanged(opened)',
 
       // Safari workaround for slotted carousel nodes with scroll-snap.
-      '__nodesChanged(_afterNodes, _beforeNodes)'
+      '__nodesChanged(_afterNodes, _beforeNodes)',
+      '__readyChanged(_ready)'
     ];
   }
 
@@ -379,6 +384,15 @@ class PaginatedCarousel extends AppElement {
     }
   }
 
+  // All initial data, dom nodes and shifting done.
+  // Ready to render the carousel.
+  __readyChanged(ready) {
+
+    if (ready) {
+      this.fire('carousel-ready');
+    }
+  }
+
 
   __updateItems(list, start, results) {
     this.splice(list, start, results.length, ...results); 
@@ -556,6 +570,7 @@ class PaginatedCarousel extends AppElement {
     this._beforeTriggered = false;
     this._centered        = false;
     this._lastShiftedPage = undefined;
+    this._ready           = false;
   }
 
 
@@ -627,7 +642,7 @@ class PaginatedCarousel extends AppElement {
           this._beforeEl      = undefined;
 
           if (this._beforePage === 0) {
-            this.fire('carousel-ready');
+            this._ready = true;
           }
 
         });
@@ -658,6 +673,12 @@ class PaginatedCarousel extends AppElement {
     // Wait for carousel to be settled for a few 
     // frames before lazy loading more items.
     this._centered = true;
+
+    // No before elements to add to dom, 
+    // so no shifting to wait for.
+    if (this._beforeItems.length === 0) {
+      this._ready = true;
+    }
   }
 
 
