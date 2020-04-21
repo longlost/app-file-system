@@ -104,29 +104,33 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
       return null;
     }
 
-    const fileName = path.basename(filePath);
-    const fileExt  = isVideo ? 'jpg' : path.extname(filePath);
+    const ext      = path.extname(filePath);
+    const fileExt  = isVideo ? '.jpeg' : ext;
+    const fileName = isVideo ? 
+      `${path.basename(filePath, ext)}${fileExt}` : // Replace video file ext with image ext.
+      path.basename(filePath);
 
     // Create random filenames with same extension as uploaded file.
     const randomFileName       = getRandomFileName(fileExt);
     const randomFileName2      = getRandomFileName(fileExt);
     const tempLocalFile        = getTempLocalFile(randomFileName);
-    const tempLocalDir         = path.dirname(tempLocalFile);
     const tempLocalConvertFile = getTempLocalFile(randomFileName2);
     const newPath              = getNewFilePath(fileDir, prefix, fileName);
     const bucket               = admin.storage().bucket(object.bucket);
     const fileRef              = bucket.file(filePath);
-
 
     // Allow the original version to be downloaded publicly.
     if (type === 'oriented') {
       await fileRef.makePublic();   
     }
 
-    // Create the temp directory where the storage file will be downloaded.
-    await mkdirp(tempLocalDir);
 
     if (isImg) {
+
+      const tempLocalDir = path.dirname(tempLocalFile);
+
+      // Create the temp directory where the storage file will be downloaded.
+      await mkdirp(tempLocalDir);
 
       // Download file from bucket.
       await fileRef.download({destination: tempLocalFile}); 
@@ -141,11 +145,6 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
     else {
 
       const fileUrl = await getUrl(bucket, filePath);
-
-
-      // const signedUrl = await fileRef.getSignedUrl({action: 'read', expires: '05-24-2999'});
-
-      // const fileUrl = signedUrl[0];
 
       // Extract a poster with ffmpeg.
       await spawn(ffmpegPath, [
@@ -184,9 +183,13 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
     });
 
     // Delete the local files to free up disk space.
-    fs.unlinkSync(tempLocalFile); 
+    if (isImg) {
+      fs.unlinkSync(tempLocalFile); 
+    }
+
     fs.unlinkSync(tempLocalConvertFile);
 
+    // Save new url to Firestore.
     const {coll, doc} = getCollAndDoc(fileDir); 
 
     const url = await getUrl(bucket, newPath); 
