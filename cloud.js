@@ -246,7 +246,10 @@ exports.orient = functions.
     ],
 
     // Video options.
-    []
+    [
+      '-qscale:v', // Quality scale flag.
+      '1',         // Quality scale val. (1 - 31, lower is better quality).
+    ]
   ));
   
 
@@ -289,7 +292,7 @@ exports.optimize = functions.
       '-vf',                         // Filter flag.
       `scale=${OPTIM_MAX_WIDTH}:-1`, // Filter scale val. -1 for height preserves aspect.
       '-qscale:v',                   // Quality scale flag.
-      '3',                           // Quality scale val. (2 - 31, lower is better quality).
+      '3',                           // Quality scale val. (1 - 31, lower is better quality).
     ]
   ));
 
@@ -321,7 +324,7 @@ exports.thumbnail = functions.
       '-vf',                         // Filter flag.
       `scale=${THUMB_MAX_WIDTH}:-1`, // Filter scale val. -1 for height preserves aspect.
       '-qscale:v',                   // Quality scale flag.
-      '5',                           // Quality scale val. (2 - 31, lower is better quality).
+      '5',                           // Quality scale val. (1 - 31, lower is better quality).
     ]
   ));
 
