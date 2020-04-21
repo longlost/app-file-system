@@ -1,12 +1,14 @@
 'use strict';
 
-
-const os     = require('os');
-const fs     = require('fs');
-const path   = require('path');
-const crypto = require('crypto');
-const mkdirp = require('mkdirp-promise');
-const spawn  = require('child-process-promise').spawn;
+const functions  = require('firebase-functions');
+const admin      = require('firebase-admin'); // Access Storage and Firestore.
+const os         = require('os');
+const fs         = require('fs');
+const path       = require('path');
+const crypto     = require('crypto');
+const mkdirp     = require('mkdirp-promise');
+const spawn      = require('child-process-promise').spawn;
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 
 
 const OPTIM_MAX_WIDTH = 1024;
@@ -43,82 +45,97 @@ const getCollAndDoc = dir => {
 };
 
 
+// After an image is uploaded to the 
+// Storage bucket:
+//
+// 1. Download to a temp directory.
+//
+// 2. Create an processed version.
+//
+// 3. Make the 'oriented' file available for public download.
+//    Expose 'optimized' as a shareable file. 
+//
+// 4. Save the public download urls for 
+//    newly processed versions into Firestore.
+//
+//
+// Uses ImageMagick to process images. 
+//
+// Auto orients all images and strips EXIF metadata so,
+// all images display correctly across all browsers.
+//
+// Dynamically merges the url data into 
+// the appropriate coll, doc.
+
+const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
+
+  // Outside of try block so 'fileDir' can be used by catch block.
+  const {
+    contentType,
+    metadata,
+    name: filePath,
+    size
+  } = object;
+
+  const fileDir  = path.dirname(filePath);
 
 
-exports.init = (admin, functions) => {
+  try {
 
-  // After an image is uploaded to the 
-  // Storage bucket:
-  //
-  // 1. Download to a temp directory.
-  //
-  // 2. Create an processed version.
-  //
-  // 3. Make the 'oriented' file available for public download.
-  //    Expose 'optimized' as a shareable file. 
-  //
-  // 4. Save the public download urls for 
-  //    newly processed versions into Firestore.
-  //
-  //
-  // Uses ImageMagick to process images. 
-  //
-  // Auto orients all images and strips EXIF metadata so,
-  // all images display correctly across all browsers.
-  //
-  // Dynamically merges the url data into 
-  // the appropriate coll, doc.
+    const isImg   = isOptimizable(contentType);
+    const isVideo = contentType.startsWith('video/');
 
-  const processImg = (type, prefix, options) => async object => {
-    try {
+    // Exit if this is triggered on a file that is not a jpeg or png image.
+    if (!isImg && !isVideo) {
+      console.log('This file is not a jpeg, png image or a video. Not optimizing.');
+      return null;
+    }
 
-      const {
-        contentType,
-        metadata,
-        name: filePath,
-        size
-      } = object;
+    // Exit if the image is already processed.
+    if (metadata && (metadata['oriented'] || metadata['optimized'] || metadata['thumbnail'])) {
+      console.log('Exiting. Already processed.');
+      return null;
+    }
 
-      // Exit if this is triggered on a file that is not a jpeg or png image.
-      if (!isOptimizable(contentType)) {
-        console.log('This file is not a jpeg or png image. Not optimizing.');
-        return null;
-      }
+    const fileName = path.basename(filePath);
+    const fileExt  = isVideo ? 'jpg' : path.extname(filePath);
 
-      // Exit if the image is already processed.
-      if (metadata && (metadata['oriented'] || metadata['optimized'] || metadata['thumbnail'])) {
-        console.log('Exiting. Already processed.');
-        return null;
-      }
+    // Exit if the image is already a thumbnail.
+    if (fileName.startsWith(THUMB_PREFIX)) {
+      console.log('Exiting. Already a thumbnail.');
+      return null;
+    }
 
-      const fileDir  = path.dirname(filePath);
-      const fileName = path.basename(filePath);
-      const fileExt  = path.extname(filePath);
+    // Exit if the image is already already optimized.
+    if (fileName.startsWith(OPTIM_PREFIX)) {
+      console.log('Exiting. Already an optimized version.');
+      return null;
+    }
 
-      // Exit if the image is already a thumbnail.
-      if (fileName.startsWith(THUMB_PREFIX)) {
-        console.log('Exiting. Already a thumbnail.');
-        return null;
-      }
+    // Create random filenames with same extension as uploaded file.
+    const randomFileName       = getRandomFileName(fileExt);
+    const randomFileName2      = getRandomFileName(fileExt);
+    const tempLocalFile        = getTempLocalFile(randomFileName);
+    const tempLocalDir         = path.dirname(tempLocalFile);
+    const tempLocalConvertFile = getTempLocalFile(randomFileName2);
 
-      // Exit if the image is already already optimized.
-      if (fileName.startsWith(OPTIM_PREFIX)) {
-        console.log('Exiting. Already an optimized version.');
-        return null;
-      }
+    // Original image files are replaced by the oriented 
+    // version since they are essentially identical. 
+    // This is to save storage space.
+    //
+    // Videos should not be replaced but rather 
+    // complimented with a full-fidelity poster.
+    const filePrefix = type === 'oriented' && isVideo ? 'orient_' : prefix;
 
-      // Create random filenames with same extension as uploaded file.
-      const randomFileName       = getRandomFileName(fileExt);
-      const randomFileName2      = getRandomFileName(fileExt);
-      const tempLocalFile        = getTempLocalFile(randomFileName);
-      const tempLocalDir         = path.dirname(tempLocalFile);
-      const tempLocalConvertFile = getTempLocalFile(randomFileName2); 
-      const newPath              = getNewFilePath(fileDir, prefix, fileName);
-      const bucket               = admin.storage().bucket(object.bucket);
-      const fileRef              = bucket.file(filePath);
+    const newPath = getNewFilePath(fileDir, filePrefix, fileName);
+    const bucket  = admin.storage().bucket(object.bucket);
+    const fileRef = bucket.file(filePath);
 
-      // Create the temp directory where the storage file will be downloaded.
-      await mkdirp(tempLocalDir);
+    // Create the temp directory where the storage file will be downloaded.
+    await mkdirp(tempLocalDir);
+
+
+    if (isImg) {
 
       // Download file from bucket.
       await fileRef.download({destination: tempLocalFile}); 
@@ -126,82 +143,138 @@ exports.init = (admin, functions) => {
       // Convert the image using ImageMagick.
       await spawn('convert', [
         tempLocalFile,
-        ...options,
+        ...imgOpts,
         tempLocalConvertFile
       ]);
-      
-      const newMetadata = {
+    }
+    else {
 
-        // Setting new contentDisposition here has no effect.
-        // Can only be done on client with Storage SDK.
-        metadata: {
-          [type]:         'true',
-          'originalSize': `${size}`,
-          'uid':           metadata.uid
-        }
-      };
+      const signedUrl = await fileRef.getSignedUrl({action: 'read', expires: '05-24-2999'});
 
-      // Upload new processed image. Replaces original version.
-      await bucket.upload(tempLocalConvertFile, {
-        destination:    newPath, 
-        predefinedAcl: 'publicRead', 
-        metadata:       newMetadata
-      });
+      const fileUrl = signedUrl[0];
 
-      // Delete the local files to free up disk space.
-      fs.unlinkSync(tempLocalFile); 
-      fs.unlinkSync(tempLocalConvertFile);
+      // Extract a poster with ffmpeg.
+      await spawn(ffmpegPath, [
+        '-ss',               // Seek to a position flag.
+        '0',                 // Seek to val.
+        '-i',                // File input flag.
+        fileUrl,             // File input val.
+        '-f',                // Output format flag.
+        'image2',            // Image output format val.
+        '-vframes',          // How many frames to handle flag.
+        '1',                 // How many frames val.
+        ...vidOpts,
+        tempLocalConvertFile // Output.
+      ]);
+    }
+    
+    const newMetadata = {
 
-      if (type === 'oriented') {
+      contentType: isVideo ? 'image/jpeg' : contentType,
 
-        // Allow the oriented version to be downloaded publicly.
-        await bucket.file(newPath).makePublic();   
+      // Setting new contentDisposition here has no effect.
+      // Can only be done on client with Storage SDK.
+      metadata: {
+        [type]:         'true',
+        'originalSize': `${size}`,
+        'uid':           metadata.uid
       }
+    };
 
-      const {coll, doc} = getCollAndDoc(fileDir); 
+    // Upload new processed image/poster.
+    await bucket.upload(tempLocalConvertFile, {
+      destination:    newPath, 
+      predefinedAcl: 'publicRead', 
+      metadata:       newMetadata
+    });
 
-      const url = await getUrl(bucket, newPath); 
+    // Delete the local files to free up disk space.
+    fs.unlinkSync(tempLocalFile); 
+    fs.unlinkSync(tempLocalConvertFile);
 
-      const download = {[type]: url};
-     
-      const data = type === 'optimized' ? 
-        Object.assign({sharePath: newPath}, download) :  // Used to get a shareable link.
-        download;
+    if (type === 'oriented') {
 
-      // Add oriented data to existing firestore doc.
-      await admin.firestore().collection(coll).doc(doc).set(
-        data, 
-        {merge: true}
-      );
-
-      return null;
+      // Allow the original version to be downloaded publicly.
+      await bucket.file(filePath).makePublic();   
     }
-    catch (error) {
-      console.error(error);
-      throw new functions.https.HttpsError('unknown', `image ${type} error`, error);
-    }
-  };
+
+    const {coll, doc} = getCollAndDoc(fileDir); 
+
+    const url = await getUrl(bucket, newPath); 
+
+    const download = {[type]: url};
+   
+    const data = type === 'optimized' ? 
+      Object.assign({sharePath: newPath}, download) :  // Used to get a shareable link.
+      download;
+
+    // Add download url data to existing firestore doc.
+    await admin.firestore().collection(coll).doc(doc).set(
+      data, 
+      {merge: true}
+    );
+
+    return null;
+  }
+  catch (error) {
+    console.error(error);
+
+    const {coll, doc} = getCollAndDoc(fileDir);
+
+    await admin.firestore().collection(coll).doc(doc).set(
+      {[`${type}Error`]: 'failed'}, 
+      {merge: true}
+    );
+
+    return null;
+  }
+};
 
 
-  const orient = functions.
-    runWith({
-      memory:        '1GB',
-      timeoutSeconds: 300, // Extended runtime of 5 min. for large files (default 60 sec).
-    }). 
-    storage.
-    object().
-    onFinalize(processImg('oriented', '', ['-auto-orient', '-strip']));
 
 
-  const optimize = functions.
-    runWith({
-      memory:        '1GB',
-      timeoutSeconds: 300, // Extended runtime of 5 min. for large files (default 60 sec).
-    }). 
-    storage.
-    object().
-    onFinalize(processImg('optimized', OPTIM_PREFIX, [
-      '-auto-orient',
+// Image files - Use ImageMagic's '-auto-orient' to create a full-fidelity copy 
+// that is right-side-up and ready to view in app.
+// Video files - Use ffmpeg to extract a full-fidelity poster image.
+exports.orient = functions.
+  runWith({
+    memory:        '1GB',
+    timeoutSeconds: 300, // Extended runtime of 5 min. for large files (default 60 sec).
+  }). 
+  storage.
+  object().
+  onFinalize(processMedia(
+    'oriented', // Type.
+    '',         // Url filename prefix.
+
+    // Image options.
+    [
+      '-auto-orient', // Places image upright for viewing.
+      '-strip'        // Removes all metadata.
+    ],
+
+    // Video options.
+    []
+  ));
+  
+
+// Image files - Use ImageMagic to create a medium-fidelity copy 
+// that is right-side-up and ready to view in app.
+// Video files - Use ffmpeg to extract a medium-fidelity poster image.
+exports.optimize = functions.
+  runWith({
+    memory:        '1GB',
+    timeoutSeconds: 300, // Extended runtime of 5 min. for large files (default 60 sec).
+  }). 
+  storage.
+  object().
+  onFinalize(processMedia(
+    'optimized',  // Type.
+    OPTIM_PREFIX, // Url filename prefix.
+
+    // Image options.
+    [
+      '-auto-orient',                       // Places image upright for viewing.
       '-filter',     'Triangle',
       '-define',     'filter:support=2',
       '-resize',     `${OPTIM_MAX_WIDTH}>`, // Keeps original aspect ratio.
@@ -216,69 +289,94 @@ exports.init = (admin, functions) => {
       '-define',     'png:exclude-chunk=all',
       '-interlace',  'none',
       '-colorspace', 'sRGB',
-      '-strip'
-    ]));
+      '-strip' // Removes all metadata.
+    ],
+
+    // Video options.
+    [
+      '-vf',                         // Filter flag.
+      `scale=${OPTIM_MAX_WIDTH}:-1`, // Filter scale val. -1 for height preserves aspect.
+      '-qscale:v',                   // Quality scale flag.
+      '3',                           // Quality scale val. (2 - 31, lower is better quality).
+    ]
+  ));
 
 
-  const thumbnail = functions.
-    runWith({
-      memory:        '1GB',
-      timeoutSeconds: 300, // Extended runtime of 5 min. for large files (default 60 sec).
-    }). 
-    storage.
-    object().
-    onFinalize(processImg('thumbnail', THUMB_PREFIX, [
-      '-auto-orient',
+// Image files - Use ImageMagic's '-thumbnail' to create a low-fidelity copy 
+// that is right-side-up and ready to view in app.
+// Video files - Use ffmpeg to extract a low-fidelity poster image.
+exports.thumbnail = functions.
+  runWith({
+    memory:        '1GB',
+    timeoutSeconds: 300, // Extended runtime of 5 min. for large files (default 60 sec).
+  }). 
+  storage.
+  object().
+  onFinalize(processMedia(
+    'thumbnail',  // Type.
+    THUMB_PREFIX, // Url filename prefix.
+
+    // Image options.
+    [ 
+      '-auto-orient',        // Places image upright for viewing.
       '-thumbnail', 
       `${THUMB_MAX_WIDTH}>`, // Keeps original aspect ratio.
-      '-strip'
-    ]));
+      '-strip'               // Removes all metadata.
+    ], 
+
+    // Video options.
+    [
+      '-vf',                         // Filter flag.
+      `scale=${THUMB_MAX_WIDTH}:-1`, // Filter scale val. -1 for height preserves aspect.
+      '-qscale:v',                   // Quality scale flag.
+      '5',                           // Quality scale val. (2 - 31, lower is better quality).
+    ]
+  ));
 
 
-  // Create a copy of the original file so that the client
-  // can update the metadata of the shareable copy to better
-  // suit viewing in a browser rather than dowloading.
-  const createShareable = functions.https.onCall(async data => {
-    try {
+// Create a copy of the original file so that the client
+// can update the metadata of the shareable copy to better
+// suit viewing in a browser rather than dowloading.
+exports.createShareable = functions.https.onCall(async data => {
+  try {
 
-      // Can pass a bucketName to use a different bucket than the default.
-      const {bucketName, path: filePath, type, uid} = data;
+    // Can pass a bucketName to use a different bucket than the default.
+    const {bucketName, path: filePath, type, uid} = data;
 
-      if (!filePath || !type || !uid) {
-        throw new functions.https.HttpsError('unknown', 'createShareable missing args.');
-      }
+    if (!filePath || !type || !uid) {
+      throw new functions.https.HttpsError('unknown', 'createShareable missing args.');
+    }
 
-      // Exit if this is triggered on a file that is a jpeg or png
-      // since the 'optimize' cloud function already provides a 
-      // link for these.
-      if (isOptimizable(type)) {
-        console.log('This file is an optimizable image. Not copying.');
-        return null;
-      }
-
-      const fileDir   = path.dirname(filePath);
-      const fileName  = path.basename(filePath);
-      const sharePath = getNewFilePath(fileDir, SHARE_PREFIX, fileName);      
-      const bucket    = admin.storage().bucket(bucketName); // 'bucketName' optional.
-      const original  = bucket.file(filePath);
-
-      await original.copy(sharePath);
-      
-      const {coll, doc} = getCollAndDoc(fileDir);
-
-      // Add data to existing firestore doc.
-      await admin.firestore().collection(coll).doc(doc).set(
-        {sharePath}, // Used to get a shareable link.
-        {merge: true}
-      );
-
+    // Exit if this is triggered on a file that is a jpeg or png
+    // since the 'optimize' cloud function already provides a 
+    // link for these.
+    if (isOptimizable(type)) {
+      console.log('This file is an optimizable image. Not copying.');
       return null;
     }
-    catch (error) {
-      console.error(error);
-      throw new functions.https.HttpsError('unknown', 'createShareable error', error);
-    }
-  });
 
-  return {createShareable, optimize, orient, thumbnail};
-};
+    const fileDir   = path.dirname(filePath);
+    const fileName  = path.basename(filePath);
+    const sharePath = getNewFilePath(fileDir, SHARE_PREFIX, fileName);      
+    const bucket    = admin.storage().bucket(bucketName); // 'bucketName' optional.
+    const original  = bucket.file(filePath);
+
+    await original.copy(sharePath);
+    
+    const {coll, doc} = getCollAndDoc(fileDir);
+
+    // Add data to existing firestore doc.
+    await admin.firestore().collection(coll).doc(doc).set(
+      {sharePath}, // Used to get a shareable link.
+      {merge: true}
+    );
+
+    return null;
+  }
+  catch (error) {
+    console.error(error);
+
+    // Return proper Firebase onCall error back to client.
+    throw new functions.https.HttpsError('unknown', 'createShareable error', error);
+  }
+});
