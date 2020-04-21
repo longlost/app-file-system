@@ -14,6 +14,7 @@ const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const OPTIM_MAX_WIDTH = 1024;
 const THUMB_MAX_WIDTH = 256;
 const OPTIM_PREFIX    = 'optim_';
+const ORIENT_PREFIX   = 'orient_';
 const SHARE_PREFIX    = 'share_';
 const THUMB_PREFIX    = 'thumb_';
 
@@ -73,6 +74,7 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
   const {
     contentType,
     metadata,
+    metageneration,
     name: filePath,
     size
   } = object;
@@ -93,24 +95,17 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
 
     // Exit if the image is already processed.
     if (metadata && (metadata['oriented'] || metadata['optimized'] || metadata['thumbnail'])) {
-      console.log('Exiting. Already processed.');
+      console.log('Exiting. Already processed - Metadata.');
+      return null;
+    }
+
+    if (metageneration > 1) {
+      console.log('Exiting. Already processed - Metageneration.');
       return null;
     }
 
     const fileName = path.basename(filePath);
     const fileExt  = isVideo ? 'jpg' : path.extname(filePath);
-
-    // Exit if the image is already a thumbnail.
-    if (fileName.startsWith(THUMB_PREFIX)) {
-      console.log('Exiting. Already a thumbnail.');
-      return null;
-    }
-
-    // Exit if the image is already already optimized.
-    if (fileName.startsWith(OPTIM_PREFIX)) {
-      console.log('Exiting. Already an optimized version.');
-      return null;
-    }
 
     // Create random filenames with same extension as uploaded file.
     const randomFileName       = getRandomFileName(fileExt);
@@ -118,22 +113,18 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
     const tempLocalFile        = getTempLocalFile(randomFileName);
     const tempLocalDir         = path.dirname(tempLocalFile);
     const tempLocalConvertFile = getTempLocalFile(randomFileName2);
+    const newPath              = getNewFilePath(fileDir, prefix, fileName);
+    const bucket               = admin.storage().bucket(object.bucket);
+    const fileRef              = bucket.file(filePath);
 
-    // Original image files are replaced by the oriented 
-    // version since they are essentially identical. 
-    // This is to save storage space.
-    //
-    // Videos should not be replaced but rather 
-    // complimented with a full-fidelity poster.
-    const filePrefix = type === 'oriented' && isVideo ? 'orient_' : prefix;
 
-    const newPath = getNewFilePath(fileDir, filePrefix, fileName);
-    const bucket  = admin.storage().bucket(object.bucket);
-    const fileRef = bucket.file(filePath);
+    // Allow the original version to be downloaded publicly.
+    if (type === 'oriented') {
+      await fileRef.makePublic();   
+    }
 
     // Create the temp directory where the storage file will be downloaded.
     await mkdirp(tempLocalDir);
-
 
     if (isImg) {
 
@@ -149,9 +140,12 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
     }
     else {
 
-      const signedUrl = await fileRef.getSignedUrl({action: 'read', expires: '05-24-2999'});
+      const fileUrl = await getUrl(bucket, filePath);
 
-      const fileUrl = signedUrl[0];
+
+      // const signedUrl = await fileRef.getSignedUrl({action: 'read', expires: '05-24-2999'});
+
+      // const fileUrl = signedUrl[0];
 
       // Extract a poster with ffmpeg.
       await spawn(ffmpegPath, [
@@ -163,13 +157,14 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
         'image2',            // Image output format val.
         '-vframes',          // How many frames to handle flag.
         '1',                 // How many frames val.
-        ...vidOpts,
+        ...vidOpts,          // Unique to each type.
         tempLocalConvertFile // Output.
       ]);
     }
     
     const newMetadata = {
 
+      // Images extracted from video are always jpegs.
       contentType: isVideo ? 'image/jpeg' : contentType,
 
       // Setting new contentDisposition here has no effect.
@@ -191,12 +186,6 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
     // Delete the local files to free up disk space.
     fs.unlinkSync(tempLocalFile); 
     fs.unlinkSync(tempLocalConvertFile);
-
-    if (type === 'oriented') {
-
-      // Allow the original version to be downloaded publicly.
-      await bucket.file(filePath).makePublic();   
-    }
 
     const {coll, doc} = getCollAndDoc(fileDir); 
 
@@ -245,7 +234,7 @@ exports.orient = functions.
   object().
   onFinalize(processMedia(
     'oriented', // Type.
-    '',         // Url filename prefix.
+     ORIENT_PREFIX,         // Url filename prefix.
 
     // Image options.
     [
@@ -270,7 +259,7 @@ exports.optimize = functions.
   object().
   onFinalize(processMedia(
     'optimized',  // Type.
-    OPTIM_PREFIX, // Url filename prefix.
+     OPTIM_PREFIX, // Url filename prefix.
 
     // Image options.
     [
@@ -314,7 +303,7 @@ exports.thumbnail = functions.
   object().
   onFinalize(processMedia(
     'thumbnail',  // Type.
-    THUMB_PREFIX, // Url filename prefix.
+     THUMB_PREFIX, // Url filename prefix.
 
     // Image options.
     [ 
