@@ -27,6 +27,10 @@ import {
   schedule,
   wait
 }                 from '@longlost/utils/utils.js';
+import {
+  allProcessingRan,
+  isCloudProcessable
+}                 from '../shared/utils.js';
 import htmlString from './processing-icon.html';
 import '@longlost/app-icons/app-icons.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -65,17 +69,12 @@ class ProcessingIcon extends AppElement {
   __computeAnimate(item) {
     if (!item || 'type' in item === false) { return false; }
 
-    const {optimized, oriented, original, thumbnail, type} = item;
-
-    // animate during image processing as well
-    if (
-      type.includes('image') && 
-      (type.includes('jpeg') || type.includes('jpg') || type.includes('png'))
-    ) {
-      return original && (!optimized || !oriented || !thumbnail);
+    // Animate during image processing as well.
+    if (isCloudProcessable(item)) {
+      return item.original && !allProcessingRan(item);
     }
 
-    // Other file types don't have futher processing
+    // Other file types don't have futher post-processing
     // so we are done animating.  
     return false;
   }

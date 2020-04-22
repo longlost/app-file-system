@@ -74,7 +74,7 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
 
   async __imgClicked() {
     try {
-      await this.clicked(); 
+      await this.clicked();
 
       const {naturalHeight, naturalWidth} = await naturals(this._imgPlaceholder);
 
@@ -157,35 +157,6 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
       console.error(error);
     }
   }
-
-
-  // async __vidClicked() {
-  //   try {
-  //     await this.clicked();     
-
-
-  //     // First and last elements are text nodes.
-  //     const bbox = this.getBoundingClientRect();
-
-
-  //     const getMeasurements = bbox => {
-
-  //       if (item.category === 'image') {
-  //         const {naturalHeight, naturalWidth} = await naturals(this._imgPlaceholder);
-  //       }
-        
-  //     };
-
-
-  //     console.log('child: ', children[1]);
-
-  //     this.fire('photo-selected', {measurements, item});
-  //   }
-  //   catch (error) {
-  //     if (error === 'click debounced') { return; }
-  //     console.error(error);
-  //   }
-  // } 
 
 }
 

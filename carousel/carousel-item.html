@@ -2,8 +2,9 @@
 <style>
 
   :host {
-    display:  block;
-    overflow: hidden; 
+    display:     flex;
+    align-items: center;
+    overflow:    hidden; 
 
     /*
       Margin will NOT work on iOS Safari,
@@ -24,13 +25,13 @@
   }
 
   .item {
-    height: 100%;
-    width:  100%;
+    width:            100%;
     background-color: black;
   }
 
   lazy-image {
     display: flex;
+    height:  100%;
   }
 
 </style>
@@ -41,7 +42,7 @@
   <!-- 
     Adjusted 'trigger' to start loading the 
     image before it becomes visible, but
-    to a scroll-snap point. 
+    closest to a scroll-snap point. 
   -->
   <lazy-image class="item"
               alt="[[item.displayName]]"
@@ -53,12 +54,18 @@
   </lazy-image>  
 </template>
 
+
 <template is="dom-if"
           if="[[_isVid]]">
+  <!-- 
+    Video controls have their own 
+    fullscreen mode button, so no
+    on-click handler here.
+  -->
   <lazy-video class="item"
               aspect-ratio="landscape"
               placeholder="[[_vidPlaceholder]]"
-              src="[[_vidSrc]]"
-              on-click="__vidClicked">
+              poster="[[_vidPoster]]"
+              src="[[_vidSrc]]">
   </lazy-video>
 </template>

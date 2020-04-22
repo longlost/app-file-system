@@ -1001,14 +1001,14 @@
   resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.2.0.tgz#f9ae362590222896d64272df580a281929081051"
   integrity sha512-hjwZPIcs1FPC1tHG6moCAX0bjtFHIRqVg/jBgsnLhGV0p3Dc0bGo1Z+lGYhEEKZnZFgxhxHY3+PBXw0brgPkPg==
 
-"@longlost/lazy-video@^2.3.2":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.3.2.tgz#a5c5251907adf28fc9f32baf8d3afdccad76e384"
-  integrity sha512-kE5MQxEDRkZoMcYKqp4oGyrhvhMdF2Wg4k/QL1h8lUvO32QtIQ9RnT/ela13xKyjHKWMEaGd41T1au0Ik2P6AA==
+"@longlost/lazy-video@^2.3.3":
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.3.3.tgz#e6aac99280d8922ecd41563bec8b8451aa8c745f"
+  integrity sha512-IZlCq+lyP+SiZlkQ54lczfopw3QFKyuIl73Gu33k8Ef8WkcgcCT0jHhD2q/tc7nH5C3z16NWippIgxQaepRHcg==
   dependencies:
     "@longlost/app-element" "^1.1.1"
     "@longlost/app-spinner" "^1.1.1"
-    "@longlost/utils" "^1.3.5"
+    "@longlost/utils" "^1.4.0"
     "@polymer/polymer" "^3.3.1"
 
 "@longlost/pencil-to-check-icon@^1.0.1":

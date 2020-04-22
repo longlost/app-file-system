@@ -236,8 +236,8 @@ exports.orient = functions.
   storage.
   object().
   onFinalize(processMedia(
-    'oriented', // Type.
-     ORIENT_PREFIX,         // Url filename prefix.
+    'oriented',     // Type.
+     ORIENT_PREFIX, // Url filename prefix.
 
     // Image options.
     [
@@ -264,7 +264,7 @@ exports.optimize = functions.
   storage.
   object().
   onFinalize(processMedia(
-    'optimized',  // Type.
+    'optimized',   // Type.
      OPTIM_PREFIX, // Url filename prefix.
 
     // Image options.
@@ -292,7 +292,7 @@ exports.optimize = functions.
       '-vf',                         // Filter flag.
       `scale=${OPTIM_MAX_WIDTH}:-1`, // Filter scale val. -1 for height preserves aspect.
       '-qscale:v',                   // Quality scale flag.
-      '3',                           // Quality scale val. (1 - 31, lower is better quality).
+      '4',                           // Quality scale val. (1 - 31, lower is better quality).
     ]
   ));
 
@@ -308,7 +308,7 @@ exports.thumbnail = functions.
   storage.
   object().
   onFinalize(processMedia(
-    'thumbnail',  // Type.
+    'thumbnail',   // Type.
      THUMB_PREFIX, // Url filename prefix.
 
     // Image options.

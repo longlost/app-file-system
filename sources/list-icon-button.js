@@ -27,6 +27,10 @@ import {
   schedule,
   wait
 }                 from '@longlost/utils/utils.js';
+import {
+  allProcessingRan,
+  isCloudProcessable
+}                 from '../shared/utils.js';
 import htmlString from './list-icon-button.html';
 import '@longlost/app-icons/app-icons.js';
 import '@longlost/badged-icon-button/badged-icon-button.js';
@@ -127,9 +131,9 @@ class ListIconButton extends AppElement {
     if (!Array.isArray(items) || items.length === 0) { return false; }
 
     const shouldAnimate = items.some(item => 
-      item.type.includes('image') && 
+      isCloudProcessable(item) && 
       item.original && 
-      !item.optimized
+      !allProcessingRan(item)
     );
 
     return shouldAnimate;
