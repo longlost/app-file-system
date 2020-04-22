@@ -817,6 +817,13 @@
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
 
+"@longlost/app-icons@^1.0.12":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@longlost/app-icons/-/app-icons-1.0.12.tgz#cf7509d1539807cf0420ba2460d78528311ca5a8"
+  integrity sha512-aW2oDQq6rWtxr50A7/1LsJUvAxG4CiNc7k+df84rcMdedWkI3QkjaCz7s4qp5FEASI1HZd9+Cbui7aWQpaTXQw==
+  dependencies:
+    "@polymer/iron-iconset-svg" "^3.0.1"
+
 "@longlost/app-images@^1.3.3":
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.3.3.tgz#2dc2cfb127ec553ed04a4d5618194e7b9edeb688"
@@ -1001,10 +1008,10 @@
   resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.2.0.tgz#f9ae362590222896d64272df580a281929081051"
   integrity sha512-hjwZPIcs1FPC1tHG6moCAX0bjtFHIRqVg/jBgsnLhGV0p3Dc0bGo1Z+lGYhEEKZnZFgxhxHY3+PBXw0brgPkPg==
 
-"@longlost/lazy-video@^2.3.3":
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.3.3.tgz#e6aac99280d8922ecd41563bec8b8451aa8c745f"
-  integrity sha512-IZlCq+lyP+SiZlkQ54lczfopw3QFKyuIl73Gu33k8Ef8WkcgcCT0jHhD2q/tc7nH5C3z16NWippIgxQaepRHcg==
+"@longlost/lazy-video@^2.3.4":
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.3.4.tgz#ed38469783c16d75fc4b61d0e5ea2423dfadfc34"
+  integrity sha512-KxjJyM844iwN2umPBWgl50A1+g4+eapDid46XSUo7dWBDfcLVpSWWoKEaOqkzF1CngTRmY3QZ5vkWJB/mGQjeA==
   dependencies:
     "@longlost/app-element" "^1.1.1"
     "@longlost/app-spinner" "^1.1.1"

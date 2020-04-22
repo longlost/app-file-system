@@ -87,6 +87,12 @@ class PhotoCarousel extends AppElement {
         computed: '__computeEditBtnDisabled(_currentItem)'
       },
 
+      _hideEditBtn: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideEditBtn(_currentItem.type)'
+      },
+
       _items: Array,
 
       _opened: Boolean,
@@ -121,10 +127,8 @@ class PhotoCarousel extends AppElement {
   }
 
 
-  __computeOrientation(exif) {
-    if (!exif || !exif['Orientation']) { return 1; }
-
-    return exif['Orientation'];
+  __computeHideEditBtn(type) {
+    return !type || !type.includes('image');
   }
 
 
