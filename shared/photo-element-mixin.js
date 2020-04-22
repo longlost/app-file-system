@@ -36,7 +36,7 @@ export const PhotoElementMixin = superClass => {
 
 	      _imgPlaceholder: {
 	      	type: String,
-	      	computed: '__computeImgPlaceholder(item.oriented, item.thumbnail, item._tempUrl, _isImg)'
+	      	computed: '__computeImgPlaceholder(item.thumbnail, item._tempUrl, _isImg)'
 	      },
 
 	      _imgSrc: {
@@ -65,6 +65,11 @@ export const PhotoElementMixin = superClass => {
 	      _vidPlaceholder: {
 	      	type: String,
 	      	computed: '__computeVidPlaceholder(item.original, item._tempUrl, _isVid)'
+	      },
+
+	      _vidPoster: {
+	      	type: String,
+	      	computed: '__computeVidPoster(item.optimized, item.oriented, item.thumbnail, _isVid, _isThumbnail)'
 	      },
 
 	      _vidSrc: {
@@ -110,12 +115,10 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeImgPlaceholder(oriented, thumbnail, temp, isImg) {
+	  __computeImgPlaceholder(thumbnail, temp, isImg) {
 	    if (!isImg) { return; }	 
 
 	    if (thumbnail) { return thumbnail; }
-
-	    if (oriented) { return oriented; }
 
 	    return temp;
 	  }
@@ -136,6 +139,17 @@ export const PhotoElementMixin = superClass => {
 	    if (!isVid) { return; }
 
 	    return original ? original : temp;
+	  }
+
+
+	  __computeVidPoster(optimized, oriented, thumbnail, isVid, isThumbnail) {
+	    if (!isVid) { return; }
+
+	    if (isThumbnail && thumbnail) { return thumbnail; }
+
+	    if (!isThumbnail && optimized) { return optimized; }
+
+	    return oriented;
 	  }
 
 

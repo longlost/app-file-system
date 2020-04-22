@@ -3,6 +3,41 @@ import {blobToFile} from '@longlost/lambda/lambda.js';
 import path         from 'path';
 
 
+// Returns true if the image item will
+// be post-processed in the cloud.
+const isProcessableImg = type => 
+  type.includes('image') && 
+  (
+    type.includes('jpeg') || 
+    type.includes('jpg')  || 
+    type.includes('png')
+  );
+
+// Png/jpeg images and video files are post-processed.
+const isCloudProcessable = ({type}) => 
+  type && (isProcessableImg(type) || type.includes('video'));
+
+// Returns true if there are no more cloud processes to complete.
+// Either processed successfully or failed for all three versions.
+const allProcessingRan = item => {
+
+  const {
+    optimized,
+    optimizedError,
+    oriented, 
+    orientedError,
+    thumbnail, 
+    thumbnailError
+  } = item;
+
+  const optimizeRan  = optimized || optimizedError;
+  const orientRan    = oriented  || orientedError;
+  const thumbnailRan = thumbnail || thumbnailError;
+
+  return optimizeRan && orientRan && thumbnailRan;
+};
+
+
 // 'callback' will be passed an object with the following properties:
 //
 //    cancel, loaded, progress, total, type
@@ -88,6 +123,8 @@ const fetchFile = async (url, callback, options) => {
 
 
 export {
+  allProcessingRan,
   fetchBlob,
-  fetchFile
+  fetchFile,
+  isCloudProcessable
 };

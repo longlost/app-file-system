@@ -132,6 +132,10 @@ import {
 import {
   EventsMixin
 }                 from './events-mixin.js';
+import {
+  allProcessingRan,
+  isCloudProcessable
+}                 from './shared/utils.js';
 import path       from 'path';
 import services   from '@longlost/services/services.js';
 import htmlString from './app-file-system.html';
@@ -143,21 +147,17 @@ const getImageFileDeletePaths = storagePath => {
   const base = path.basename(storagePath);
   const dir  = path.dirname(storagePath);
 
-  const optimPath = `${dir}/optim_${base}`;
-  const thumbPath = `${dir}/thumb_${base}`;
+  const optimPath  = `${dir}/optim_${base}`;
+  const orientPath = `${dir}/orient_${base}`;
+  const thumbPath  = `${dir}/thumb_${base}`;
 
   return [
     storagePath,
     optimPath,
+    orientPath,
     thumbPath
   ];
 };
-
-
-const isCloudProcessable = ({type}) => 
-  type && 
-  type.includes('image') && 
-  (type.includes('jpeg') || type.includes('jpg') || type.includes('png'));
 
 
 // Fails gracefully.
@@ -174,8 +174,8 @@ const deleteStorageFiles = async item => {
     if (storagePath) {
 
       // Test the file type.
-      // If its an image, 
-      // then delete the optim_ and 
+      // If its an image/video, 
+      // then delete the orient_, optim_ and 
       // thumb_ files from storage as well.
       if (isCloudProcessable(item)) {
         const paths    = getImageFileDeletePaths(storagePath);
@@ -334,19 +334,19 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   // Listen for data changes.
   // Resolve the promise when the 
-  // file item has an optimized prop.
+  // file item has fully processed.
   __waitForCloudProcessing(item) {
-    const {optimized, oriented, original, thumbnail, uid} = item;
+    const {original, uid} = item;    
 
-    // An image that has been uploaded but not yet optimized.
-    if (isCloudProcessable(item) && original && (!optimized || !oriented || !thumbnail)) {
+    // An image or video that has been uploaded but not yet processed.
+    if (isCloudProcessable(item) && original && !allProcessingRan(item)) {
 
       return new Promise(resolve => {
 
         listen(this, 'data-changed', (event, key) => { // Local event.
-          const {optimized} = event.detail.data[uid];
+          const match = event.detail.data[uid];
 
-          if (optimized && oriented && thumbnail) { // Only present after processing.
+          if (allProcessingRan(match)) { // Only present after processing.
             unlisten(key);
             resolve();
           }
