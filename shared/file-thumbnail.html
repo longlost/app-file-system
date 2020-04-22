@@ -4,15 +4,18 @@
   :host {
     display:         flex;
     justify-content: center;
-    align-items:     center;   
+    align-items:     center;
+    position:        relative;  
     height:          100%;
     overflow:        hidden;
     --thumbnail-border-radius: inherit; /* Another Safari fix. */
   }
 
-  iron-icon {
-    height: 50%;
-    width:  50%;
+  .watermark {
+    position: absolute;
+    height:   50%;
+    width:    50%;
+    opacity:  0.3;
   }
 
   .item {
@@ -25,16 +28,21 @@
   }
 
   lazy-video {
-    border-radius: var(--thumbnail-border-radius); /* Another Safari fix. */
+    border-radius: var(--thumbnail-border-radius); /* Safari fix. */
+  }
+
+  .movie-icon {
+    position: absolute;
+    top:      8px;
+    left:     8px;
   }
 
 </style>
 
 
-<template is="dom-if"
-          if="[[__computeIronIconStamp(item.type)]]">
-  <iron-icon icon="[[__computeIcon(item.type)]]"></iron-icon>
-</template>
+<iron-icon class="watermark" 
+           icon="[[__computeIcon(item.type)]]">
+</iron-icon>
 
 
 <template is="dom-if"
@@ -58,4 +66,10 @@
               presentation="[[presentation]]"
               src="[[_vidSrc]]">
   </lazy-video>
+
+  <iron-icon class="movie-icon"
+             hidden="[[_hideMovieIcon]]" 
+             icon="file-icons:movie">
+  </iron-icon>
+
 </template>

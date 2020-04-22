@@ -51,6 +51,14 @@ class FileThumbnail extends PhotoElementMixin(AppElement) {
       // Lazy-video controls.
       controls: Boolean,  
 
+      // Show a small icon in the top left corner 
+      // of video thumbnails that are not playing.
+      _hideMovieIcon: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideMovieIcon(item.type, presentation)'
+      },
+
       // Overwrite PhotoElementMixin prop.
       _isThumbnail: {
         type: Boolean,
@@ -60,16 +68,23 @@ class FileThumbnail extends PhotoElementMixin(AppElement) {
     };
   }
 
+  __computeHideMovieIcon(type, presentation) {
+    if (!type || presentation) { return true; }
 
-  __computeIronIconStamp(type) {
-    if (!type) { return false; }
-    
-    return !type.includes('image') && !type.includes('video');
+    return !type.includes('video');
   }
 
 
   __computeIcon(type) {
     if (!type) { return false; }
+
+    if (type.includes('image')) {
+      return 'file-icons:image';
+    }
+
+    if (type.includes('video')) {
+      return 'file-icons:movie';
+    }
 
     if (type.includes('audio')) {
       return 'file-icons:audio';

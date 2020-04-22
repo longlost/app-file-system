@@ -41,6 +41,8 @@ import '@longlost/app-images/flip-image.js';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/app-overlays/app-overlay.js';
 import '@longlost/pinch-to-zoom/pinch-to-zoom.js';
+import '@polymer/iron-icon/iron-icon.js';
+import '../shared/file-icons.js';
 
 
 class PhotoViewer extends AppElement {
@@ -97,6 +99,15 @@ class PhotoViewer extends AppElement {
   }
 
 
+  async __resetHintIcon() {    
+    this.$.hintIcon.style['display'] = 'none';
+
+    await schedule();
+
+    this.$.hintIcon.classList.remove('hint');
+  }
+
+
   __reset() {
     this.$.content.style['background-color'] = 'transparent';
     this.$.img.style['opacity'] = '0';
@@ -106,6 +117,8 @@ class PhotoViewer extends AppElement {
       x:     0,
       y:     0
     });
+
+    this.__resetHintIcon();
   }
 
 
@@ -127,7 +140,6 @@ class PhotoViewer extends AppElement {
 
 
   __setImgSize() {
-
 
     // Using content bbox instead of window.innerHeight/innerWidth
     // because of mobile Safari's bottom nav bar not being part
@@ -182,6 +194,8 @@ class PhotoViewer extends AppElement {
 
     this._measurements = measurements;
 
+    this.$.hintIcon.style['display'] = 'inline-block';
+
     await this.$.flip.play(); 
     await this.$.overlay.open();
 
@@ -190,6 +204,11 @@ class PhotoViewer extends AppElement {
     await schedule();
 
     this.__switchToImg();
+
+    await schedule();
+    
+    // Run hint animation.
+    this.$.hintIcon.classList.add('hint');
   }
 
 }
