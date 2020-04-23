@@ -143,9 +143,14 @@ import './sources/file-sources.js';
 // app-modal, app-spinner imports in events-mixin.js.
 
 
-const getImageFileDeletePaths = storagePath => {
-  const base = path.basename(storagePath);
-  const dir  = path.dirname(storagePath);
+const getImageFileDeletePaths = (storagePath, type) => {
+
+  // Replace video file ext with .jpeg for all poster images.
+  const base = type.includes('video') ? 
+    `${path.basename(storagePath, path.extname(storagePath))}.jpeg` : 
+    path.basename(storagePath);
+
+  const dir = path.dirname(storagePath);
 
   const optimPath  = `${dir}/optim_${base}`;
   const orientPath = `${dir}/orient_${base}`;
@@ -169,7 +174,7 @@ const deleteStorageFiles = async item => {
   // This sometimes happens with slow connections.
   try {
 
-    const {sharePath, path: storagePath} = item;
+    const {sharePath, path: storagePath, type} = item;
 
     if (storagePath) {
 
@@ -178,7 +183,7 @@ const deleteStorageFiles = async item => {
       // then delete the orient_, optim_ and 
       // thumb_ files from storage as well.
       if (isCloudProcessable(item)) {
-        const paths    = getImageFileDeletePaths(storagePath);
+        const paths    = getImageFileDeletePaths(storagePath, type);
         const promises = paths.map(p => services.deleteFile(p));
 
         // 'await' here to catch errors and fail gracefully.
