@@ -28,6 +28,7 @@
 
 
 import '../shared/file-thumbnail.js';
+import './processing-error-icon.js';
 import './processing-icon.js';
 import './select-checkbox.js';
 import './upload-controls.js';
