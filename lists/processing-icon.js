@@ -80,30 +80,35 @@ class ProcessingIcon extends AppElement {
   }
 
 
-  async __animateChanged(animate) {
+  __animateChanged(animate) {
 
     if (animate) {
-      this.style['display'] = 'block';
-      await wait(500); // Wait for <upload-controls> to hide.
       this.__startAnimation();
     }
     else {
-      await this.__stopAnimation();
-      this.style['display'] = 'none';
+      this.__stopAnimation();
     }
   }
 
 
-  __startAnimation() {
+  async __startAnimation() {
+    this.style['display'] = 'block';
+
+    // Wait for <upload-controls> to hide.
+    await wait(500); 
+
     this.style['transform'] = 'scale(1, 1)';
-    this.$.gear.classList.add('start');
+    this.$.gear.classList.add('rotate');
   }
 
 
   async __stopAnimation() {
     this.style['transform'] = 'scale(0, 0)';
-    this.$.gear.classList.remove('start');
+    this.$.gear.classList.remove('rotate');
+
     await wait(250);
+
+    this.style['display'] = 'none';
   }
 
 }

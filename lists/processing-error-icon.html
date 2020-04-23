@@ -1,0 +1,50 @@
+
+<style>
+
+	:host {
+		display: 	none;
+		position: absolute;
+    right: 		0px;
+    bottom: 	0px;
+    background-color: inherit;
+		color: 	 					var(--app-error-color);
+	}
+
+	paper-menu-button {
+		--paper-menu-button-dropdown-background: var(--app-background-color);
+	}
+
+	iron-icon {
+		margin: 					8px;
+		background-color: var(--constant-light-text, white);
+		border-radius: 		50%;
+	}
+
+	#content {
+		padding: 8px 16px;
+		color: 	 var(--dark-text-color);
+	}
+
+</style>
+
+
+<paper-menu-button id="menu">
+
+	<iron-icon icon="app-icons:error" 
+						 slot="dropdown-trigger">
+	</iron-icon>
+
+  <div id="content"
+  		 slot="dropdown-content"
+  		 on-click="__dropdownClicked">
+    <div>Errors occured during post-processing.</div>
+
+    <ul>
+    	<template is="dom-repeat"
+    						items="[[_errors]]">
+    		<li>[[item]]</li>
+    	</template>
+    </ul>
+  </div>
+
+</paper-menu-button>
