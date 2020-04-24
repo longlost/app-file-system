@@ -35,6 +35,7 @@
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
 import {ListOverlayMixin} from './list-overlay-mixin.js';
+import {schedule}         from '@longlost/utils/utils.js';
 import htmlString         from './camera-roll.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
@@ -53,6 +54,8 @@ class CameraRoll extends ListOverlayMixin(AppElement) {
 
   static get properties() {
     return {
+
+      _opened: Boolean,
 
       // This default is overridden by localstorage 
       // after initial interaction from user.
@@ -112,16 +115,18 @@ class CameraRoll extends ListOverlayMixin(AppElement) {
 
 
   async open() {
-    this.$.scale.style['display'] = 'flex';
 
     await this.$.overlay.open();
 
+    this.$.scale.style['display'] = 'flex';
     this._opened = true;
 
     await import(
       /* webpackChunkName: 'app-file-system-roll-items' */ 
       './roll-items.js'
     );
+
+    await schedule();
     
     this.__showScale();
   }

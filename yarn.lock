@@ -778,16 +778,16 @@
     "@longlost/lambda" "^2.2.0"
     "@longlost/utils" "^1.3.5"
 
-"@longlost/app-carousel@^2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@longlost/app-carousel/-/app-carousel-2.4.0.tgz#033f73e5aea722269da4b233c790d289b51d4e06"
-  integrity sha512-mJG2tQvpDsQ+hfEbao8WcP2ucSU5veSYyLd7iBjValI9B+CZKihpBKtOE/fOwuaNphc8DuosvsmDmVccih8mPw==
+"@longlost/app-carousel@^2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@longlost/app-carousel/-/app-carousel-2.4.1.tgz#8ebb74e1f2c526ecf765a3e6964df63a1548274f"
+  integrity sha512-dZOcKBSAe8gEaxv3btmonhUjm3amUpJ28X3xRC5yWkptFv91GiArnKr1OwMheax5s8Wq/ClXfXdcZQVxWFWgUg==
   dependencies:
     "@longlost/app-element" "^1.1.1"
-    "@longlost/app-icons" "^1.0.11"
+    "@longlost/app-icons" "^1.0.12"
     "@longlost/app-shared-styles" "^2.0.13"
     "@longlost/lambda" "^2.2.0"
-    "@longlost/utils" "^1.3.5"
+    "@longlost/utils" "^1.4.0"
     "@polymer/iron-icon" "^3.0.1"
     "@polymer/paper-icon-button" "^3.0.2"
     "@polymer/paper-ripple" "^3.0.2"
@@ -824,10 +824,10 @@
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
 
-"@longlost/app-images@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.3.3.tgz#2dc2cfb127ec553ed04a4d5618194e7b9edeb688"
-  integrity sha512-6hfH0CnebSGLdb1NX8xLBt6wm8D6FUS9cEO3pPPz1pGwovqbdDivMGXOhnj+0ZMrrRAAEa3FswVh4Sss7lFdjg==
+"@longlost/app-images@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.4.0.tgz#43415a56ebb6f43540a93b873936cd0e7dcd6f71"
+  integrity sha512-fJ8LmUYwCs/u96oyM4BzPSdZk3vuVG15Q08Twj1rYag55nDLTYItNLzqBHzdEmh+EV/WsTzNCcoiLPg1s5SInw==
   dependencies:
     "@longlost/animation" "^2.0.0"
     "@longlost/app-element" "^1.1.1"
@@ -894,14 +894,14 @@
     "@polymer/paper-card" "^3.0.1"
     "@polymer/paper-icon-button" "^3.0.2"
 
-"@longlost/app-overlays@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@longlost/app-overlays/-/app-overlays-1.2.1.tgz#a113a2c434191e8aaa3214d5abe287f89aa7fbde"
-  integrity sha512-vdpOkJ4PK9cJyPk+NEh3qf3HfRFcJCk2uiPQ2OnmEQNeUNZXDCU43XH8hnWghHT37uhWyKc/P6iPmH/JFZ5udQ==
+"@longlost/app-overlays@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-overlays/-/app-overlays-1.3.0.tgz#64f73d1a1768fe150da3dfd43d08de03362fa812"
+  integrity sha512-bfc+f0U/psjAB8obmUlFi+iAJ8py9BTTCtsGoFp3PCyYhY24hHVd1V2MOyUo7iV2mYCW5J2AVlsG4vjXs+s9Pw==
   dependencies:
     "@longlost/animation" "^2.0.0"
     "@longlost/app-element" "^1.1.1"
-    "@longlost/app-icons" "^1.0.11"
+    "@longlost/app-icons" "^1.0.12"
     "@longlost/app-shared-styles" "^2.0.13"
     "@longlost/utils" "^1.4.0"
     "@polymer/app-layout" "^3.1.0"
@@ -2463,17 +2463,17 @@ marked@~0.3.9:
   resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.19.tgz#5d47f709c4c9fc3c216b6d46127280f40b39d790"
   integrity sha512-ea2eGWOqNxPcXv8dyERdSr/6FmzvWwzjMxpfGB/sbMccXoct+xY+YukPD+QTUZwyvK7BZwcr4m21WBOW41pAkg==
 
-mime-db@1.43.0:
-  version "1.43.0"
-  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.43.0.tgz#0a12e0502650e473d735535050e7c8f4eb4fae58"
-  integrity sha512-+5dsGEEovYbT8UY9yD7eE4XTc4UwJ1jBYlgaQQF38ENsKR3wj/8q8RFZrF9WIZpB2V1ArTVFUva8sAul1NzRzQ==
+mime-db@1.44.0:
+  version "1.44.0"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.44.0.tgz#fa11c5eb0aca1334b4233cb4d52f10c5a6272f92"
+  integrity sha512-/NOTfLrsPBVeH7YtFPgsVWveuL+4SjjYxaQ1xtM1KMFj7HdxlBlxeyNLzhyJVx7r4rZGJAZ/6lkKCitSc/Nmpg==
 
-mime-types@^2.1.26:
-  version "2.1.26"
-  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.26.tgz#9c921fc09b7e149a65dfdc0da4d20997200b0a06"
-  integrity sha512-01paPWYgLrkqAyrlDorC1uDwl2p3qZT7yl806vW7DvDoxwXi46jsjFbg+WdwotBIk6/MbEhO/dh5aZ5sNj/dWQ==
+mime-types@^2.1.27:
+  version "2.1.27"
+  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.27.tgz#47949f98e279ea53119f5722e0f34e529bec009f"
+  integrity sha512-JIhqnCasI9yD+SsmkquHBxTSEuZdQX5BuQnS2Vc7puQQQ+8yiP5AY5uWhpdv4YL4VM5c6iliiYWPgJ/nJQLp7w==
   dependencies:
-    mime-db "1.43.0"
+    mime-db "1.44.0"
 
 minimatch@3.0.4, minimatch@^3.0.4:
   version "3.0.4"
