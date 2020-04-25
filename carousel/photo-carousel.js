@@ -145,13 +145,9 @@ class PhotoCarousel extends AppElement {
     return displayName ? displayName : ' ';
   }
 
-
-  __reset() {
-    this.$.carousel.style['opacity'] = '0';
-
-    this._carouselDisabled = true;
-    this._opened           = false;
-    this._start            = undefined;
+  // Overlay reset event handler.
+  __reset() { 
+    this.stop();
   }
 
 
@@ -210,6 +206,22 @@ class PhotoCarousel extends AppElement {
     ]);
 
     this._opened = true;
+  }
+
+  // Resume carousel updates once the image-editor is closed.
+  resume() {
+    this._start  = this.item;
+    this._opened = true;
+  }
+
+  // Stop carousel db updates when this overlay is closed
+  // and when the image-editor is opened over this element.
+  stop() {
+    this.$.carousel.style['opacity'] = '0';
+
+    this._carouselDisabled = true;
+    this._opened           = false;       
+    this._start            = undefined;
   }
 
 }

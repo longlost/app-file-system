@@ -57,6 +57,11 @@ class ImageEditor extends AppElement {
     };
   }
 
+  // Overlay reset handler.
+  __reset() {
+    this.fire('resume-carousel');
+  }
+
 
   open() {
     return this.$.overlay.open();
