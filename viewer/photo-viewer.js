@@ -34,9 +34,9 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {schedule}         from '@longlost/utils/utils.js';
-import htmlString         from './photo-viewer.html';
+import {AppElement, html}   from '@longlost/app-element/app-element.js';
+import {naturals, schedule} from '@longlost/utils/utils.js';
+import htmlString           from './photo-viewer.html';
 import '@longlost/app-images/flip-image.js';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/app-overlays/app-overlay.js';
@@ -141,16 +141,16 @@ class PhotoViewer extends AppElement {
 
   __setImgSize() {
 
-    // Using content bbox instead of window.innerHeight/innerWidth
-    // because of mobile Safari's bottom nav bar not being part
-    // of those measurements.  Css position: fixed with bottom: 0
-    // does take this into account.
-    const bbox            = this.$.content.getBoundingClientRect();
+    const screen = {
+      height: window.innerHeight, 
+      width:  window.innerWidth
+    };
+
     const {height, width} = this._measurements;
-    const deviceAspect    = bbox.width / bbox.height;
-    const aspect          = width      / height;
-    const heightDelta     = Math.round(bbox.height - height);
-    const widthDelta      = Math.round(bbox.width  - width);
+    const deviceAspect    = screen.width / screen.height;
+    const aspect          = width / height;
+    const heightDelta     = Math.round(screen.height - height);
+    const widthDelta      = Math.round(screen.width  - width);
 
     // Device is portrait.
     if (deviceAspect <= 1) {      
@@ -159,13 +159,14 @@ class PhotoViewer extends AppElement {
       // get the img height to fill the screen.
       // Use largest aspect ratio of landscape/portrait images.
       const heightAdjustment = (width + heightDelta) * Math.max(aspect, 1 / aspect);
+      const widthAdjustment  = (width + widthDelta)  * Math.max(aspect, 1 / aspect);
 
-      // Use the heightAdjustment if the image height is
-      // the limiting factor, otherwise set the img width
-      // to fill the screen.
-      const w = Math.max(bbox.width, heightAdjustment);
+      // Use the heightAdjustment if the image height is the limiting factor, 
+      // use widthAdjustment if the image width is the limiting factor, 
+      // otherwise set the img width to fill the screen.
+      const w = Math.max(screen.width, heightAdjustment, widthAdjustment);
 
-      this.$.img.style['height'] = `${bbox.height}px`;
+      this.$.img.style['height'] = `${screen.height}px`;
       this.$.img.style['width']  = `${w}px`;
     }
     else {
@@ -174,8 +175,8 @@ class PhotoViewer extends AppElement {
       // Use the widthAdjustment if the image height is
       // the limiting factor, otherwise set the img width
       // to fill the screen.
-      const h = Math.max(bbox.height, widthAdjustment);
-      const w = bbox.width + (heightDelta * aspect);
+      const h = Math.max(screen.height, widthAdjustment);
+      const w = Math.max(screen.width, screen.width + (heightDelta * aspect));
 
       this.$.img.style['height'] = `${h}px`;
       this.$.img.style['width']  = `${w}px`;
@@ -192,18 +193,37 @@ class PhotoViewer extends AppElement {
 
   async open(measurements) {
 
-    this._measurements = measurements;
-
     this.$.hintIcon.style['display'] = 'inline-block';
 
-    await this.$.flip.play(); 
-    await this.$.overlay.open();
+    // Run a FLIP animation that leads into the overlay entry.
+    if (measurements) {
 
-    this.__setImgSize();
+      this._measurements = measurements;
 
-    await schedule();
+      await this.$.flip.play();
+      await this.$.overlay.open();
 
-    this.__switchToImg();
+      this.__setImgSize();
+
+      await schedule();
+
+      this.__switchToImg();      
+    }
+
+    // No FLIP, just size the image and open the overlay.
+    else {
+
+      const {naturalHeight, naturalWidth} = await naturals(this._placeholder);
+
+      this._measurements = {height: naturalHeight, width: naturalWidth};
+
+      this.__setImgSize();
+      this.__switchToImg();
+
+      await schedule();
+
+      await this.$.overlay.open();      
+    }
 
     await schedule();
     

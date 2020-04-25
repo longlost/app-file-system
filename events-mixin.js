@@ -206,6 +206,7 @@ export const EventsMixin = superClass => {
 	      this.__itemsSorted.bind(this)
 	    );
 
+	    // <roll-item>
 	    this._openCarouselListenerKey = listen(
 	      this,
 	      'open-carousel',
@@ -245,6 +246,13 @@ export const EventsMixin = superClass => {
 	      this, 
 	      'request-delete-items', 
 	      this.__requestDeleteItems.bind(this)
+	    );
+
+	    // <image-editor>
+	    this._requestDeletesListenerKey = listen(
+	      this, 
+	      'resume-carousel', 
+	      this.__resumeCarousel.bind(this)
 	    );
 
 	    // <quick-options>, <file-editor>, <photo-carousel>
@@ -359,7 +367,6 @@ export const EventsMixin = superClass => {
 	    await import('./carousel/photo-carousel.js');
 	    this.$.carousel.open(measurements);
 	  }
-
 	  
 	  // From <file-item> (image files only) and <photo-carousel>
 	  async __openPhotoViewer(event) {
@@ -390,8 +397,14 @@ export const EventsMixin = superClass => {
 
 	  	await schedule();
 	    await import('./editors/image-editor.js');
+	    await this.$.imageEditor.open();
 
-	    this.$.imageEditor.open();
+	    this.$.carousel.stop();
+	  }
+
+
+	  __resumeCarousel() {
+	  	this.$.carousel.resume();
 	  }
 
 

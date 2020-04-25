@@ -314,13 +314,15 @@ class PaginatedCarousel extends AppElement {
 
   async __openedStartChanged(opened, start) {
 
-    if (!this.coll || !start) { return; }
+    if (!this.coll) { return; }
 
     // Reset if parent overlay is closed.
     if (!opened) {
       this.__reset();
       return; 
     }
+
+    if (!start) { return; }
 
     const doc = await db.collection(this.coll).doc(start.uid).get();
 
@@ -564,10 +566,13 @@ class PaginatedCarousel extends AppElement {
     this._beforeItems     = [];
     this._afterPage       = 0;
     this._beforePage      = 0;
+    this._afterNodes      = undefined;
+    this._beforeNodes     = undefined;
     this._afterTrigger    = undefined;
     this._beforeTrigger   = undefined;
     this._afterTriggered  = false;
     this._beforeTriggered = false;
+    this._beforeEl        = undefined;
     this._centered        = false;
     this._lastShiftedPage = undefined;
     this._ready           = false;

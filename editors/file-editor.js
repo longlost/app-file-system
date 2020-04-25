@@ -135,7 +135,7 @@ class FileEditor extends PhotoElementMixin(AppElement) {
     try {
       await this.clicked();
 
-      this.fire('open-carousel', {item: this.item});
+      this.fire('open-photo-viewer', {item: this.item});
     }
     catch (error) {
       if (error === 'click debounced') { return; }
