@@ -139,6 +139,8 @@ export const EventsMixin = superClass => {
 
 	      _requestDeletesListenerKey: Object,
 
+	      _resumeCarouselListenerKey: Object,
+
 	      _shareListenerKey: Object,
 
 	      // Using a seperate data-binding here
@@ -249,7 +251,7 @@ export const EventsMixin = superClass => {
 	    );
 
 	    // <image-editor>
-	    this._requestDeletesListenerKey = listen(
+	    this._resumeCarouselListenerKey = listen(
 	      this, 
 	      'resume-carousel', 
 	      this.__resumeCarousel.bind(this)
@@ -285,6 +287,7 @@ export const EventsMixin = superClass => {
 	    unlisten(this._printsListenerKey);
 	    unlisten(this._requestDeleteListenerKey);
 	    unlisten(this._requestDeletesListenerKey);
+	    unlisten(this._resumeCarouselListenerKey);
 	    unlisten(this._shareListenerKey);
 	    unlisten(this._sortedListenerKey);
 	    unlisten(this._updateListenerKey);
