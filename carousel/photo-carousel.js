@@ -212,8 +212,6 @@ class PhotoCarousel extends AppElement {
   resume() {
     this._start  = this.item;
     this._opened = true;
-
-    console.log('_start: ', this._start.displayName);
   }
 
   // Stop carousel db updates when this overlay is closed
