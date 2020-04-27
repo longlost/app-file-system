@@ -407,7 +407,12 @@ export const EventsMixin = superClass => {
 
 
 	  __resumeCarousel() {
-	  	this.$.carousel.resume();
+
+	  	// Only call resume if the carousel 
+	  	// has been opened before.
+	  	if (this.$.carousel.resume) {
+	  		this.$.carousel.resume();
+	  	}
 	  }
 
 

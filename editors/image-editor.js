@@ -38,7 +38,10 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import htmlString from './image-editor.html';
+import '@longlost/app-carousel/app-carousel.js';
 import '@longlost/app-overlays/app-header-overlay.js';
+import '@polymer/paper-tabs/paper-tabs.js';
+import '@polymer/paper-tabs/paper-tab.js';
 
 
 class ImageEditor extends AppElement {
@@ -52,7 +55,9 @@ class ImageEditor extends AppElement {
   static get properties() {
     return {
 
-      items: Array
+      item: Object,
+
+      list: String
 
     };
   }
@@ -60,6 +65,16 @@ class ImageEditor extends AppElement {
   // Overlay reset handler.
   __reset() {
     this.fire('resume-carousel');
+  }
+
+  // Paper tabs on-selected-changed handler.
+  __selectedChanged(event) {
+    const {value} = event.detail;
+
+
+    this.$.carousel.animateTo(value);
+
+    console.log('selected changed: ', value);
   }
 
 

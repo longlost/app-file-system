@@ -47,9 +47,10 @@
     "@polymer/paper-menu-button": "^3.0.1",
     "@polymer/paper-progress": "^3.0.1",
     "@polymer/paper-slider": "^3.0.1",
+    "@polymer/paper-tabs": "^3.1.0",
     "@polymer/polymer": "^3.3.1",
     "child-process-promise": "^2.2.1",
-    "comlink": "^4.2.0",
+    "comlink": "^4.2.1",
     "mime-types": "^2.1.27",
     "mkdirp-promise": "^5.0.1",
     "multi-download": "^3.0.0",
@@ -61,7 +62,7 @@
     "@polymer/test-fixture": "^4.0.2",
     "@webcomponents/webcomponentsjs": "^2.4.3",
     "chai": "^4.2.0",
-    "mocha": "^7.1.1",
+    "mocha": "^7.1.2",
     "wct-mocha": "^1.0.1"
   }
 }

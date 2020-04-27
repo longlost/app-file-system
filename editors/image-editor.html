@@ -1,5 +1,18 @@
 
-<style> 
+<style>
+
+  paper-tabs {
+    width:                            100%;
+    height:                           64px;
+    position:                         absolute;
+    left:                             0px;
+    --paper-tab-ink:                  var(--constant-light-text);
+    --paper-tabs-selection-bar-color: var(--constant-light-text);
+  }
+
+  paper-tab.iron-selected {
+
+  }
 
   *[hidden] {
     display: none;
@@ -9,15 +22,30 @@
 
 
 <app-header-overlay id="overlay"
-                    header-size="1"
+                    header-size="2"
                     prebuilt-animation="from-right"
-                    title="Image Editor"
+                    title="[[item.displayName]]"
                     on-overlay-reset="__reset">
 
-  <div slot="content">
 
-    Hi
+  <paper-tabs slot="bottom-toolbar-tabs-slot"
+              on-selected-changed="__selectedChanged">
+    <paper-tab>Crop</paper-tab>
+    <paper-tab>Filters</paper-tab>
+    <paper-tab>Text</paper-tab> 
+    <paper-tab>Meta</paper-tab> 
+  </paper-tabs>
 
-  </div>
+
+  <app-carousel id="carousel" 
+                slot="content">
+
+    <div>Crop</div>
+    <div>Filters</div>
+    <div>Text</div>
+    <div>Meta</div>
+
+  </app-carousel>
+
 
 </app-header-overlay>
