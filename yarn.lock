@@ -778,10 +778,10 @@
     "@longlost/lambda" "^2.2.0"
     "@longlost/utils" "^1.3.5"
 
-"@longlost/app-carousel@^2.4.2":
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/@longlost/app-carousel/-/app-carousel-2.4.2.tgz#2a6cc8448436a1cf71f2a61c89ea036229ceaf12"
-  integrity sha512-JPTLDNpPJm1jJj3puwvNpouli1l7tjA5RXa5ew25cvsxw3OgNq+wuliUEFwT2C2/JJBOE+bo5OQSiqonnBhmIw==
+"@longlost/app-carousel@^2.4.3":
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/@longlost/app-carousel/-/app-carousel-2.4.3.tgz#60d51126c35b279f0641d4050728f3099b425b08"
+  integrity sha512-5yAFeAH2ecFluqIkPQ8w4x2Kf9Rzx4NJZq+ApousZUWI7t/xIy/ZbUtw7S15Lf3+uOgs3A1Uhl07WsNzbvE3eQ==
   dependencies:
     "@longlost/app-element" "^1.1.1"
     "@longlost/app-icons" "^1.0.12"
@@ -791,7 +791,7 @@
     "@polymer/iron-icon" "^3.0.1"
     "@polymer/paper-icon-button" "^3.0.2"
     "@polymer/paper-ripple" "^3.0.2"
-    "@polymer/polymer" "^3.3.1"
+    "@polymer/polymer" "^3.4.0"
     scroll-behavior-polyfill "^2.0.13"
 
 "@longlost/app-element@^1.0.6":
@@ -894,10 +894,10 @@
     "@polymer/paper-card" "^3.0.1"
     "@polymer/paper-icon-button" "^3.0.2"
 
-"@longlost/app-overlays@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@longlost/app-overlays/-/app-overlays-1.3.0.tgz#64f73d1a1768fe150da3dfd43d08de03362fa812"
-  integrity sha512-bfc+f0U/psjAB8obmUlFi+iAJ8py9BTTCtsGoFp3PCyYhY24hHVd1V2MOyUo7iV2mYCW5J2AVlsG4vjXs+s9Pw==
+"@longlost/app-overlays@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@longlost/app-overlays/-/app-overlays-1.3.1.tgz#b4b72e750dd25d564eecd60a8eb5af25f6862662"
+  integrity sha512-Gdvek5hwKEiMnh5skEPOhqLMIq3fCHB3Y6Upqn85ZEUeGjBpt9qeB1RFy3XUQGgxKzbpd/GLiotXV86HbybIPw==
   dependencies:
     "@longlost/animation" "^2.0.0"
     "@longlost/app-element" "^1.1.1"
@@ -1552,6 +1552,13 @@
   dependencies:
     "@webcomponents/shadycss" "^1.9.1"
 
+"@polymer/polymer@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@polymer/polymer/-/polymer-3.4.0.tgz#2f6c85456214bfff987cf65883e6a7860d5ce2ff"
+  integrity sha512-f9fQ1RiEBmkFzuT6cCsfA0YGtdyKrvjF7f3HbvSY1uo2x7ON9Acc//dBLOROUrvXbw1ANT+LY/UeHw0+/KtGog==
+  dependencies:
+    "@webcomponents/shadycss" "^1.9.1"
+
 "@polymer/prism-element@^3.0.0-pre.25":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@polymer/prism-element/-/prism-element-3.0.1.tgz#b35d53eec9ecea5e5fec7c82c7e978e760e53501"
@@ -1880,10 +1887,10 @@ comlink@^4.2.0:
   resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.2.0.tgz#be9e968a19d797a44a042cf1eac03775d2ed39fe"
   integrity sha512-33hF3yYzZicIWLREuvluTGSZkbAXYwRmrA9IYQo0/P+0O45qgvzR0FHX4tRZztObFMTs/RhnN0G0UBNDAZSiCg==
 
-comlink@^4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.2.1.tgz#6172efe7e91780cd1f006f344ffc7e78b017ed38"
-  integrity sha512-YTUR6wJtb1t95YQdJ+299wRiqe4XIGLn7UKwTPL1PUzo3r78DQCsKncYUEBLx/0AjUc2T4mBiCWPORLEj/CZfw==
+comlink@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.3.0.tgz#80b3366baccd87897dab3638ebfcfae28b2f87c7"
+  integrity sha512-mu4KKKNuW8TvkfpW/H88HBPeILubBS6T94BdD1VWBXNXfiyqVtwUCVNO1GeNOBTsIswzsMjWlycYr+77F5b84g==
 
 concat-map@0.0.1:
   version "0.0.1"

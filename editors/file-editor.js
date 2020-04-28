@@ -38,72 +38,23 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import {
-  PhotoElementMixin
-}                 from '../shared/photo-element-mixin.js';
+  EditorMixin
+}                 from './editor-mixin.js';
 import {
   schedule
 }                 from '@longlost/utils/utils.js';
 import htmlString from './file-editor.html';
-import '@longlost/app-overlays/app-header-overlay.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-fab/paper-fab.js';
 import '../shared/file-icons.js';
 import '../shared/action-buttons.js';
-import './metadata-editor.js';
+// Map lazy loaded.
 
 
-class FileEditor extends PhotoElementMixin(AppElement) {
+class FileEditor extends EditorMixin(AppElement) {
   static get is() { return 'file-editor'; }
 
   static get template() {
     return html([htmlString]);
-  }
-
-
-  static get properties() {
-    return {
-
-      // Passed into <map-overlay> and <metadata-editor>
-      // which implements <app-map>.
-      darkMode: Boolean,
-
-      // Pass through to <metadata-editor>.
-      list: String,
-
-      _controls: {
-        type: Boolean,
-        value: false
-      },
-
-      _defaultZoom: {
-        type: Number,
-        value: 0
-      },
-
-      _editedDisplayName: String,
-
-      // From <map-overlay> to <metadata-editor>.
-      _geolocation: {
-        type: Object,
-        value: null
-      },
-
-      // <map-overlay> state for setting _defaultZoom.
-      _mapOpened: Boolean,
-
-      _title: {
-        type: String,
-        computed: '__computeTitle(item.displayName, _editedDisplayName)'
-      }
-
-    };
-  }
-
-
-  static get observers() {
-    return [
-      '__itemGeolocationChanged(item.geolocation, _mapOpened)'
-    ];
   }
 
 
@@ -112,22 +63,8 @@ class FileEditor extends PhotoElementMixin(AppElement) {
   }
 
 
-  __computeTitle(displayName, editedDisplayName) {
-    return editedDisplayName ? editedDisplayName : displayName;
-  }
-
-
   __computeHideLaunchBtn(isImg, isVid) {
     return !isImg && !isVid;
-  }
-
-  // Only set the default once per session.
-  __itemGeolocationChanged(geolocation, mapOpened) {
-
-    // Only set this when the overlay has been opened at least once.
-    if (geolocation && mapOpened && this._defaultZoom === 0) {
-      this._defaultZoom = 12;
-    }
   }
 
 
@@ -141,29 +78,6 @@ class FileEditor extends PhotoElementMixin(AppElement) {
       if (error === 'click debounced') { return; }
       console.error(error);
     }
-  }
-
-
-  __displayNameChanged(event) {
-    this._editedDisplayName = event.detail.value;
-  }
-
-
-  async __openMapOverlay() {
-
-    this._mapOpened = true;
-
-    await import(
-      /* webpackChunkName: 'map-overlay' */ 
-      '@longlost/app-map/map-overlay.js'
-    );
-
-    this.$.mapOverlay.open();
-  }
-
-
-  __mapOverlaySelectedChanged(event) {
-    this._geolocation = event.detail.selected;
   }
 
 

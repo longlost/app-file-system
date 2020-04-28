@@ -1,17 +1,43 @@
 
 <style>
 
+  #overlay {
+    --overlay-toolbar-backdrop-filter:            blur(10px);
+    --overlay-toolbar-background-parallax-height: 100%;
+    --overlay-toolbar-background-color:           transparent;
+    --overlay-toolbar-vignette-opacity:           0;
+  }
+
+  /*
+    Cannot have a background color and 
+    a backdrop-filter on same element.
+  */
+  #header-color-background {
+    position:         absolute;
+    top:              0px;
+    right:            0px;
+    bottom:           0px;
+    left:             0px;
+    pointer-events:   none;
+    z-index:         -1;
+    opacity:          0.7;
+    background-color: var(--app-primary-color);
+  }
+
   paper-tabs {
-    width:                            100%;
-    height:                           64px;
-    position:                         absolute;
-    left:                             0px;
+    height: 64px;
     --paper-tab-ink:                  var(--constant-light-text);
     --paper-tabs-selection-bar-color: var(--constant-light-text);
   }
 
-  paper-tab.iron-selected {
+  #carousel {
+    height: 100vh;
+  }
 
+  .page {
+    height:  100%;
+    width:   calc(100% - 32px);
+    padding: 16px;
   }
 
   *[hidden] {
@@ -22,30 +48,65 @@
 
 
 <app-header-overlay id="overlay"
+                    disable-background-effects
                     header-size="2"
+                    parent-controls-exits
                     prebuilt-animation="from-right"
+                    reset-scroll
                     title="[[item.displayName]]"
+                    on-header-overlay-back="__back"
                     on-overlay-reset="__reset">
+
+  
+  <div id="header-color-background"
+       slot="header-background-slot">
+  </div>
 
 
   <paper-tabs slot="bottom-toolbar-tabs-slot"
+              selected="0"
               on-selected-changed="__selectedChanged">
     <paper-tab>Crop</paper-tab>
     <paper-tab>Filters</paper-tab>
     <paper-tab>Text</paper-tab> 
-    <paper-tab>Meta</paper-tab> 
+    <paper-tab hidden="[[_hideMeta]]">Meta</paper-tab> 
   </paper-tabs>
 
 
-  <app-carousel id="carousel" 
+  <app-carousel id="carousel"
+                aspect-ratio="fill"
                 slot="content">
 
-    <div>Crop</div>
-    <div>Filters</div>
-    <div>Text</div>
-    <div>Meta</div>
+    <div class="page">Crop</div>
+    <div class="page">Filters</div>
+    <div class="page">Text</div>
+
+    <!-- <metadata-page class="page"
+                   dark-mode="[[darkMode]]"
+                   geolocation="[[_geolocation]]"
+                   hidden="[[_hideMeta]]"
+                   is-img="[[_isImg]]"
+                   item="[[item]]"
+                   list="[[list]]"
+                   on-display-name-changed="__displayNameChanged"
+                   on-open-map-overlay="__openMapOverlay">
+    </metadata-page> -->
+
+    <div class="page">Meta</div>
+
+
 
   </app-carousel>
 
 
 </app-header-overlay>
+
+
+<map-overlay id="mapOverlay"
+             dark-mode="[[darkMode]]"
+             draggable 
+             lat="[[item.geolocation.lat]]" 
+             lng="[[item.geolocation.lng]]"
+             zoom="[[_defaultZoom]]"
+             on-selected-changed="__mapOverlaySelectedChanged">
+</map-overlay>
