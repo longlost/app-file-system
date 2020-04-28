@@ -1,6 +1,6 @@
 
 /**
-  * `metadata-editor`
+  * `metadata-page`
   * 
   *   Display and update file metadata in a shared content section.
   *   Can edit file 'displayName', 'keywords', 'notes'.
@@ -38,7 +38,7 @@ import {
 import {
   isOnScreen
 }                 from '@longlost/utils/utils.js';
-import htmlString from './metadata-editor.html';
+import htmlString from './metadata-page.html';
 import '@longlost/app-icons/app-icons.js';
 import '@longlost/app-inputs/app-textarea.js';
 import '@longlost/app-shared-styles/app-shared-styles.js';
@@ -52,8 +52,8 @@ const normalize       = x => x.trim().toLowerCase();
 const toKeywordsArray = compose(split(' '), map(normalize));
 
 
-class MetadataEditor extends FileInfoMixin(AppElement) {
-  static get is() { return 'metadata-editor'; }
+class MetadataPage extends FileInfoMixin(AppElement) {
+  static get is() { return 'metadata-page'; }
 
   static get template() {
     return html([htmlString]);
@@ -167,7 +167,10 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
 
       await isOnScreen(this.$.map);
 
-      await import('@longlost/app-map/app-map.js');
+      await import(
+        /* webpackChunkName: 'app-map' */ 
+        '@longlost/app-map/app-map.js'
+      );
 
       this.$.map.resize();
     }
@@ -250,4 +253,4 @@ class MetadataEditor extends FileInfoMixin(AppElement) {
 
 }
 
-window.customElements.define(MetadataEditor.is, MetadataEditor);
+window.customElements.define(MetadataPage.is, MetadataPage);

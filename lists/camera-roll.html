@@ -6,6 +6,7 @@
   }
       
   #overlay {
+    --overlay-toolbar-backdrop-filter:  blur(10px);
     --overlay-toolbar-background-color: transparent;
     --overlay-toolbar-color:            var(--constant-light-text);
     --overlay-toolbar-pointer-events:   none;
@@ -20,11 +21,6 @@
     left:             0px;
     pointer-events:   none;
     z-index:         -1;
-  }
-
-  .blur {
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter:         blur(10px);
   }
 
   /*
@@ -56,6 +52,8 @@
     align-items:   center;
     padding:       0px 8px;
     border-radius: 16px;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter:         blur(10px);
   }
 
   /*
@@ -90,9 +88,6 @@
                     on-overlay-exiting="__hideScale"
                     on-reset="__reset">
 
-  <div class="background blur" 
-       slot="header-background-slot">
-  </div>
 
   <div id="header-color-background"
        class="background" 
@@ -124,7 +119,7 @@
 <div id="scale" 
      class="hide-scale">
   <div id="scale-wrapper" 
-       class="shared-border-radius-mask blur">
+       class="shared-border-radius-mask">
     <div id="scale-background" 
          class="background">
     </div>

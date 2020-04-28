@@ -367,7 +367,10 @@ export const EventsMixin = superClass => {
 
 	  	this._liveUid = item.uid;
 
-	    await import('./carousel/photo-carousel.js');
+	    await import(
+	    	/* webpackChunkName: 'app-file-system-photo-carousel' */ 
+	    	'./carousel/photo-carousel.js'
+	    );
 	    this.$.carousel.open(measurements);
 	  }
 	  
@@ -378,7 +381,10 @@ export const EventsMixin = superClass => {
 
 	  	this._liveUid = item.uid;
 
-	    await import('./viewer/photo-viewer.js');
+	    await import(
+	    	/* webpackChunkName: 'app-file-system-photo-viewer' */ 
+	    	'./viewer/photo-viewer.js'
+	    );
 	    this.$.viewer.open(measurements);
 	  }
 
@@ -388,7 +394,10 @@ export const EventsMixin = superClass => {
 	  	this._liveUid = item.uid;
 
 	  	await schedule();
-	    await import('./editors/file-editor.js');
+	    await import(
+	    	/* webpackChunkName: 'app-file-system-file-editor' */ 
+	    	'./editors/file-editor.js'
+	    );
 
 	    this.$.fileEditor.open();
 	  }
@@ -399,7 +408,10 @@ export const EventsMixin = superClass => {
 	  	this._liveUid = item.uid;
 
 	  	await schedule();
-	    await import('./editors/image-editor.js');
+	    await import(
+	    	/* webpackChunkName: 'app-file-system-image-editor' */ 
+	    	'./editors/image-editor.js'
+	    );
 	    await this.$.imageEditor.open();
 
 	    this.$.carousel.stop();
@@ -572,7 +584,10 @@ export const EventsMixin = superClass => {
 	  	this._liveUid = item.uid;
 
 	  	await schedule();
-	  	await import('./share-modal.js');
+	  	await import(
+	  		/* webpackChunkName: 'app-file-system-share-modal' */ 
+	  		'./share-modal.js'
+	  	);
 
 	  	this.$.shareModal.open();
 	  }

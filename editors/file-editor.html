@@ -59,7 +59,6 @@
   </lazy-image>
 
   <lazy-video aspect-ratio="fill"
-              controls="[[_controls]]"
               hidden="[[!_isVid]]" 
               placeholder="[[_vidPlaceholder]]"
               poster="[[_vidPoster]]"
@@ -78,15 +77,15 @@
   </paper-icon-button>
 
 
-  <metadata-editor dark-mode="[[darkMode]]"
-                   geolocation="[[_geolocation]]"
-                   is-img="[[_isImg]]"
-                   item="[[item]]"
-                   list="[[list]]"
-                   slot="content"
-                   on-display-name-changed="__displayNameChanged"
-                   on-open-map-overlay="__openMapOverlay">
-  </metadata-editor>
+  <metadata-page dark-mode="[[darkMode]]"
+                 geolocation="[[_geolocation]]"
+                 is-img="[[_isImg]]"
+                 item="[[item]]"
+                 list="[[list]]"
+                 slot="content"
+                 on-display-name-changed="__displayNameChanged"
+                 on-open-map-overlay="__openMapOverlay">
+  </metadata-page>
 
 
 </app-header-overlay>
