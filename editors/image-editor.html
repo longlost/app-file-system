@@ -30,14 +30,9 @@
     --paper-tabs-selection-bar-color: var(--constant-light-text);
   }
 
-  #carousel {
-    height: 100vh;
-  }
-
   .page {
-    height:  100%;
-    width:   calc(100% - 32px);
-    padding: 16px;
+    min-width: calc(100% - 32px);
+    padding:   16px;
   }
 
   *[hidden] {
@@ -75,13 +70,14 @@
 
   <app-carousel id="carousel"
                 aspect-ratio="fill"
+                disabled
                 slot="content">
 
     <div class="page">Crop</div>
     <div class="page">Filters</div>
     <div class="page">Text</div>
 
-    <!-- <metadata-page class="page"
+    <metadata-page class="page"
                    dark-mode="[[darkMode]]"
                    geolocation="[[_geolocation]]"
                    hidden="[[_hideMeta]]"
@@ -90,10 +86,7 @@
                    list="[[list]]"
                    on-display-name-changed="__displayNameChanged"
                    on-open-map-overlay="__openMapOverlay">
-    </metadata-page> -->
-
-    <div class="page">Meta</div>
-
+    </metadata-page>
 
 
   </app-carousel>

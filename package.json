@@ -18,7 +18,7 @@
   "homepage": "https://github.com/longlost/app-file-system#readme",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "@longlost/app-carousel": "^2.4.3",
+    "@longlost/app-carousel": "^3.0.0",
     "@longlost/app-element": "^1.1.1",
     "@longlost/app-icons": "^1.0.12",
     "@longlost/app-images": "^1.4.0",

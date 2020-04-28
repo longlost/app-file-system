@@ -778,10 +778,10 @@
     "@longlost/lambda" "^2.2.0"
     "@longlost/utils" "^1.3.5"
 
-"@longlost/app-carousel@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@longlost/app-carousel/-/app-carousel-2.4.3.tgz#60d51126c35b279f0641d4050728f3099b425b08"
-  integrity sha512-5yAFeAH2ecFluqIkPQ8w4x2Kf9Rzx4NJZq+ApousZUWI7t/xIy/ZbUtw7S15Lf3+uOgs3A1Uhl07WsNzbvE3eQ==
+"@longlost/app-carousel@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-carousel/-/app-carousel-3.0.0.tgz#52fad11f373c638fad649cb9c3e7d24b0868ccb2"
+  integrity sha512-wWAFhBAsB+N2WfTV1ug7wz/k1+pa7gnjTyTvY2k/58brhkmITzWO3QJR31MuvUQEXY4sFzi4u/qxXeR02RjkqA==
   dependencies:
     "@longlost/app-element" "^1.1.1"
     "@longlost/app-icons" "^1.0.12"
