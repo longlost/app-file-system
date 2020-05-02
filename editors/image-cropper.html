@@ -1,0 +1,260 @@
+
+<style include="app-shared-styles">
+
+	:host {
+		display: 					block;
+		background-color: var(--app-body-color);
+	}
+
+	#cropper {
+		position: 			 -webkit-sticky;
+		position: 				sticky;
+		top: 							0px;
+		margin-bottom:  	16px;
+		background-color: var(--app-background-color);
+		z-index:  				1;
+	}
+
+	.groups {
+		display: 				 flex;
+		justify-content: space-between;
+		align-items:  	 flex-end;
+	}
+
+	.group {
+		display: inline-flex;
+		margin:  8px 0px;
+	}
+
+	.full-width {
+		display: flex;
+	}
+
+	.full-width .grouped {		
+		flex-grow: 1;
+	}
+
+	.grouped {
+    display: 					inline-flex;
+    flex-direction: 	column;
+		margin: 					0px;
+    font-size: 				10px;
+		border-radius:  	0px;
+		background-color: var(--app-background-color);
+		color: 						var(--disabled-text-color);
+	}
+
+	.grouped::after {
+		content: 	' ';
+		position: absolute;
+		top: 			6px;
+		bottom: 	6px;
+		right: 	 -1px;
+		width: 		2px;
+		opacity: 	0.15;
+		background-color: var(--disabled-text-color);
+	}
+
+	.first {
+		border-radius: 3px 0px 0px 3px;
+	}
+
+	.last {
+		border-radius: 0px 3px 3px 0px;
+	}
+
+	.last::after {
+		display: none;
+	}
+	
+	.iron-selected {
+		background-color: var(--app-dark-color);
+		color: 						var(--constant-light-text);
+	}
+
+	#rotate {
+		height: 400px;
+		background-color: rebeccapurple;
+	}
+
+	#reset {
+		margin: 8px 0px;
+	}
+
+	.direction {
+		flex-wrap: wrap;
+		width: 		 120px;
+	}
+
+	#up-wrapper {
+		display: 				 flex;
+		justify-content: center;
+		flex-basis: 		 100%;
+	}
+
+	#up {
+		border-radius: 3px 3px 0px 0px;
+	}
+
+	#up::after {
+		top: 		 unset;
+		bottom: -1px;
+		right: 	 6px;
+		left: 	 6px;
+		height:  2px;
+		width: 	 unset;
+	}
+
+	#crop {
+		background-color: var(--app-accent-color);
+		color: 						var(--constant-dark-text);
+	}
+
+</style>
+
+
+<iron-a11y-keys id="a11y"
+                keys="left right down up"
+                on-keys-pressed="__a11yKeysPressed">
+</iron-a11y-keys>
+
+
+<crop-wrapper id="cropper"
+							class="shared-card-shadow"
+							name="[[_name]]"
+							src="[[_src]]">								
+</crop-wrapper>
+
+<!-- Top row of control buttons. -->
+<div class="groups">
+
+	<div class="group">
+		<paper-icon-button class="grouped first"
+											 icon="image-editor-icons:zoom-in"
+											 on-click="__zoomInClicked">
+		</paper-icon-button>
+
+		<paper-icon-button class="grouped last"
+											 icon="image-editor-icons:zoom-out"
+											 on-click="__zoomOutClicked">
+		</paper-icon-button>
+	</div>
+	
+
+	<iron-selector class="group"
+								 attr-for-selected="name"
+								 selected-values="[[_selectedFlips]]"
+								 multi>
+		<paper-icon-button class="grouped first"
+											 icon="image-editor-icons:image-flip"
+											 name="horz"
+											 on-click="__flipHorzClicked">
+		</paper-icon-button>
+
+		<paper-icon-button class="grouped last"
+											 icon="image-editor-icons:image-flip-90"
+											 name="vert"
+											 on-click="__flipVertClicked">
+		</paper-icon-button>
+	</iron-selector>
+
+
+	<iron-selector class="group"
+								 attr-for-selected="name" 
+								 selected="[[_selectedShape]]">
+		<paper-icon-button class="grouped first"
+											 icon="image-editor-icons:check-box-outline-blank"
+											 name="square"
+											 on-click="__squareClicked">
+		</paper-icon-button>
+
+		<paper-icon-button class="grouped last"
+											 icon="image-editor-icons:radio-button-unchecked"
+											 name="circle"
+											 on-click="__circleClicked">
+		</paper-icon-button>
+	</iron-selector>
+
+</div>
+
+<!-- Aspect ratio selection buttons. -->
+<iron-selector class="group full-width"
+							 attr-for-selected="name"
+							 selected="[[_selectedAspect]]" 
+							 on-selected-changed="__aspectRatioSelected">
+
+	<paper-button class="grouped first" 
+			 					name="free">
+		<iron-icon icon="image-editor-icons:crop-free"></iron-icon>
+		<div>Free</div>
+	</paper-button>
+	<paper-button class="grouped" 
+			 					name="16:9">
+		<iron-icon icon="image-editor-icons:crop-16-9"></iron-icon>
+		<div>16:9</div>
+	</paper-button>
+
+	<paper-button class="grouped" 
+			 					name="4:3">
+		<iron-icon icon="image-editor-icons:crop-3-2"></iron-icon>
+		<div>4:3</div>
+	</paper-button>
+	<paper-button class="grouped" 
+			 					name="square">
+		<iron-icon icon="image-editor-icons:crop-square"></iron-icon>
+		<div>Square</div>
+	</paper-button>
+	<paper-button class="grouped last" 
+			 					name="2:3">
+		<iron-icon icon="image-editor-icons:crop-portrait"></iron-icon>
+		<div>2:3</div>
+	</paper-button>
+
+</iron-selector>
+
+
+<div id="rotate"></div>
+
+
+<!-- Bottom row of control buttons. -->
+<div class="groups">
+
+	<!-- Reset button. -->
+	<paper-icon-button id="reset"
+										 class="grouped"
+										 icon="image-editor-icons:refresh"
+										 on-click="__resetClicked">
+	</paper-icon-button>
+
+	<!-- Direction buttons. -->
+	<div class="group direction">
+
+		<div id="up-wrapper">
+			<paper-icon-button id="up"
+												 class="grouped"
+												 icon="image-editor-icons:keyboard-arrow-up"
+												 on-click="__upClicked">
+			</paper-icon-button>
+		</div>
+
+		<paper-icon-button id="left"
+											 class="grouped first"
+											 icon="image-editor-icons:keyboard-arrow-left"
+											 on-click="__leftClicked">
+		</paper-icon-button>
+
+		<paper-icon-button id="down"
+											 class="grouped"
+											 icon="image-editor-icons:keyboard-arrow-down"
+											 on-click="__downClicked">
+		</paper-icon-button>
+
+		<paper-icon-button id="right"
+											 class="grouped last"
+											 icon="image-editor-icons:keyboard-arrow-right"
+											 on-click="__rightClicked">
+		</paper-icon-button>
+
+	</div>
+
+</div>
