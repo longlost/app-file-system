@@ -68,17 +68,25 @@
 	}
 	
 	.iron-selected {
+		outline: 					none;
 		background-color: var(--app-dark-color);
 		color: 						var(--constant-light-text);
 	}
 
-	#rotate {
-		height: 400px;
-		background-color: rebeccapurple;
+	#rotation {
+		margin: 24px 0px;
+	}
+
+	.single {		
+		border-radius: 3px;
 	}
 
 	#reset {
 		margin: 8px 0px;
+	}
+
+	#reset::after {
+		display: none;
 	}
 
 	.direction {
@@ -188,6 +196,7 @@
 		<iron-icon icon="image-editor-icons:crop-free"></iron-icon>
 		<div>Free</div>
 	</paper-button>
+
 	<paper-button class="grouped" 
 			 					name="16:9">
 		<iron-icon icon="image-editor-icons:crop-16-9"></iron-icon>
@@ -199,11 +208,13 @@
 		<iron-icon icon="image-editor-icons:crop-3-2"></iron-icon>
 		<div>4:3</div>
 	</paper-button>
+
 	<paper-button class="grouped" 
 			 					name="square">
 		<iron-icon icon="image-editor-icons:crop-square"></iron-icon>
 		<div>Square</div>
 	</paper-button>
+
 	<paper-button class="grouped last" 
 			 					name="2:3">
 		<iron-icon icon="image-editor-icons:crop-portrait"></iron-icon>
@@ -213,7 +224,33 @@
 </iron-selector>
 
 
-<div id="rotate"></div>
+<!-- Rotation control. -->
+<div id="rotation">
+
+	<rotation-slider id="slider" 
+									 on-degrees-changed="__fineDegreesChanged">
+	</rotation-slider>
+
+	<div class="groups">
+		
+		<paper-icon-button class="grouped single"
+											 icon="image-editor-icons:rotate-left"
+											 on-click="__rotateLeftClicked">
+		</paper-icon-button>
+
+		<paper-icon-button class="grouped single"
+											 icon="image-editor-icons:vertical-align-center-90"
+											 on-click="__centerSliderClicked">
+		</paper-icon-button>
+
+		<paper-icon-button class="grouped single"
+											 icon="image-editor-icons:rotate-right"
+											 on-click="__rotateRightClicked">
+		</paper-icon-button>
+
+	</div>
+
+</div>
 
 
 <!-- Bottom row of control buttons. -->
@@ -221,7 +258,7 @@
 
 	<!-- Reset button. -->
 	<paper-icon-button id="reset"
-										 class="grouped"
+										 class="grouped single"
 										 icon="image-editor-icons:refresh"
 										 on-click="__resetClicked">
 	</paper-icon-button>
