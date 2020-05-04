@@ -44,6 +44,7 @@ import htmlString from './image-editor.html';
 import '@longlost/app-carousel/app-carousel.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-tabs/paper-tab.js';
+import './image-cropper.js';
 // Map lazy loaded.
 
 
@@ -96,6 +97,13 @@ class ImageEditor extends EditorMixin(AppElement) {
     if (typeof value !== 'number') { return; }
 
     this.$.carousel.animateToSection(value);
+  }
+
+
+  __cropped(event) {
+    const file = event.detail.value;
+
+    console.log('cropped file: ', file);
   }
 
 

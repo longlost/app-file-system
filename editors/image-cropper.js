@@ -182,14 +182,16 @@ class ImageCropper extends AppElement {
   }
 
 
-  async __btnClicked(callback, ...args) {
+  async __btnClicked(fn, ...args) {
     try {
 
       if (!this.$.cropper.isReady) { return; }
 
       await this.clicked(100);
 
-      callback.bind(this.$.cropper)(...args);
+      const callback = this.$.cropper[fn];
+
+      return callback.bind(this.$.cropper)(...args);
     }
     catch (error) {
       if (error === 'click debounced') { return; }
@@ -199,34 +201,34 @@ class ImageCropper extends AppElement {
 
 
   __zoomInClicked() {
-    this.__btnClicked(this.$.cropper.zoom, 0.1);
+    this.__btnClicked('zoom', 0.1);
   }
 
 
   __zoomOutClicked() {
-    this.__btnClicked(this.$.cropper.zoom, -0.1);
+    this.__btnClicked('zoom', -0.1);
   }
 
 
   __flipHorzClicked() {
-    this.__btnClicked(this.$.cropper.flipHorz);
+    this.__btnClicked('flipHorz');
   }
 
 
   __flipVertClicked() {
-    this.__btnClicked(this.$.cropper.flipVert);
+    this.__btnClicked('flipVert');
   }
 
 
   __squareClicked() {
     this._selectedShape = 'square';
-    this.__btnClicked(this.$.cropper.setRound, false);
+    this.__btnClicked('setRound', false);
   }
 
 
   __circleClicked() {   
     this._selectedShape = 'circle';
-    this.__btnClicked(this.$.cropper.setRound, true);
+    this.__btnClicked('setRound', true);
   }
 
 
@@ -253,7 +255,7 @@ class ImageCropper extends AppElement {
 
     this._degrees -= 45;
 
-    this.__btnClicked(this.$.cropper.rotateTo, this._degrees + this._fineDegrees);
+    this.__btnClicked('rotateTo', this._degrees + this._fineDegrees);
   }
 
 
@@ -274,7 +276,7 @@ class ImageCropper extends AppElement {
 
     this._degrees += 45;
 
-    this.__btnClicked(this.$.cropper.rotateTo, this._degrees + this._fineDegrees);
+    this.__btnClicked('rotateTo', this._degrees + this._fineDegrees);
   }
 
 
@@ -285,27 +287,34 @@ class ImageCropper extends AppElement {
     this._selectedFlips  = [];
     this._selectedShape  = 'square';
     this.$.slider.center();
-    this.__btnClicked(this.$.cropper.reset);
+    this.__btnClicked('reset');
   }
 
 
   __upClicked() {
-    this.__btnClicked(this.$.cropper.move, 0, -10);
+    this.__btnClicked('move', 0, -10);
   }
 
 
   __leftClicked() {
-    this.__btnClicked(this.$.cropper.move, -10, 0);
+    this.__btnClicked('move', -10, 0);
   }
 
 
   __rightClicked() {
-    this.__btnClicked(this.$.cropper.move, 10, 0);
+    this.__btnClicked('move', 10, 0);
   }
 
 
   __downClicked() {
-    this.__btnClicked(this.$.cropper.move, 0, 10);
+    this.__btnClicked('move', 0, 10);
+  }
+
+
+  async __cropClicked() {
+    const file = await this.__btnClicked('getCrop');
+
+    this.fire('image-cropper-cropped', {value: file});
   }
 
 }
