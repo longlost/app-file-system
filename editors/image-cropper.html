@@ -6,6 +6,11 @@
 		background-color: var(--app-body-color);
 	}
 
+	.section {
+		margin-left:  16px;
+		margin-right: 16px;
+	}
+
 	#cropper {
 		position: 			 -webkit-sticky;
 		position: 				sticky;
@@ -22,8 +27,9 @@
 	}
 
 	.group {
-		display: inline-flex;
-		margin:  8px 0px;
+		display: 			 inline-flex;
+		margin-top:  	 8px;
+		margin-bottom: 8px;
 	}
 
 	.full-width {
@@ -67,6 +73,7 @@
 		display: none;
 	}
 	
+	paper-icon-button[pressed],
 	.iron-selected {
 		outline: 					none;
 		background-color: var(--app-dark-color);
@@ -74,19 +81,20 @@
 	}
 
 	#rotation {
-		margin: 24px 0px;
+		margin-top: 	 24px;
+		margin-bottom: 24px;
 	}
 
 	.single {		
 		border-radius: 3px;
 	}
 
-	#reset {
-		margin: 8px 0px;
+	.single::after {
+		display: none;
 	}
 
-	#reset::after {
-		display: none;
+	#reset {
+		margin: 8px 0px;
 	}
 
 	.direction {
@@ -113,7 +121,14 @@
 		width: 	 unset;
 	}
 
-	#crop {
+	#crop-btn-wrapper {
+		margin:  48px 0px;
+		padding: 48px 16px;
+	}
+
+	#crop-btn {
+		width: 	100%;
+		margin: 0px;
 		background-color: var(--app-accent-color);
 		color: 						var(--constant-dark-text);
 	}
@@ -128,13 +143,13 @@
 
 
 <crop-wrapper id="cropper"
-							class="shared-card-shadow"
+							class="section shared-card-shadow"
 							name="[[_name]]"
 							src="[[_src]]">								
 </crop-wrapper>
 
 <!-- Top row of control buttons. -->
-<div class="groups">
+<div class="section groups">
 
 	<div class="group">
 		<paper-icon-button class="grouped first"
@@ -186,7 +201,7 @@
 </div>
 
 <!-- Aspect ratio selection buttons. -->
-<iron-selector class="group full-width"
+<iron-selector class="section group full-width"
 							 attr-for-selected="name"
 							 selected="[[_selectedAspect]]" 
 							 on-selected-changed="__aspectRatioSelected">
@@ -225,7 +240,8 @@
 
 
 <!-- Rotation control. -->
-<div id="rotation">
+<div id="rotation" 
+		 class="section">
 
 	<rotation-slider id="slider" 
 									 on-degrees-changed="__fineDegreesChanged">
@@ -254,7 +270,7 @@
 
 
 <!-- Bottom row of control buttons. -->
-<div class="groups">
+<div class="section groups">
 
 	<!-- Reset button. -->
 	<paper-icon-button id="reset"
@@ -294,4 +310,17 @@
 
 	</div>
 
+</div>
+
+
+<div id="crop-btn-wrapper" 
+		 class="shared-divider">
+	<paper-button id="crop-btn"
+								class="shared-paper-button-with-icon"
+								on-click="__cropClicked">
+		<iron-icon class="shared-paper-button-with-icon" 
+							 icon="image-editor-icons:crop">
+		</iron-icon>
+		CROP
+	</paper-button>
 </div>
