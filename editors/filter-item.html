@@ -1,0 +1,42 @@
+
+<style>
+
+	:host {
+		display: 			 		block;
+		padding: 			 		8px;
+		border-radius: 		3px;
+		background-color: var(--app-background-color);
+	}
+
+	#container {
+		position: 			relative;
+		height: 				0px;
+		padding-bottom: 100%;
+	}
+
+	lazy-image {
+		position: absolute;
+		top: 			0px;
+		right: 		0px;
+		bottom: 	0px;
+		left: 		0px;
+		background-color: transparent;
+	}
+
+	#label {
+		margin-top: 8px;
+		text-align: center;
+	}
+
+</style>
+
+
+<div id="container">
+	<lazy-image alt="[[item.label]]"
+							sizing="contain" 
+							src="[[item.src]]">
+	</lazy-image>
+</div>
+
+
+<div id="label">[[item.label]]</div>
