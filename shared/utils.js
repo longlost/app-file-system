@@ -1,21 +1,8 @@
 
 import {blobToFile} from '@longlost/lambda/lambda.js';
 import path         from 'path';
+import mime         from 'mime-types';
 
-
-// Returns true if the image item will
-// be post-processed in the cloud.
-const isProcessableImg = type => 
-  type.includes('image') && 
-  (
-    type.includes('jpeg') || 
-    type.includes('jpg')  || 
-    type.includes('png')
-  );
-
-// Png/jpeg images and video files are post-processed.
-const isCloudProcessable = ({type}) => 
-  type && (isProcessableImg(type) || type.includes('video'));
 
 // Returns true if there are no more cloud processes to complete.
 // Either processed successfully or failed for all three versions.
@@ -37,6 +24,30 @@ const allProcessingRan = item => {
   return optimizeRan && orientRan && thumbnailRan;
 };
 
+
+// Pull any src url params from end of extention.
+const cleanExt = src => path.extname(src).split('?')[0];
+
+// Create a file from a canvas element's image data.
+// Need the original src to get the appropriate contentType.
+// Must provide the new file's name.
+const canvasFile = (src, name, canvas) => {
+  const ext      = cleanExt(src);
+  const filename = `${name}${ext}`;
+  const type     = mime.contentType(filename);
+
+  const promise = new Promise(resolve => {
+
+    canvas.toBlob(
+      blob => {
+        resolve(blobToFile(blob, filename, type));
+      }, 
+      type
+    );
+  });
+
+  return promise;
+};
 
 // 'callback' will be passed an object with the following properties:
 //
@@ -122,8 +133,24 @@ const fetchFile = async (url, callback, options) => {
 };
 
 
+// Returns true if the image item will
+// be post-processed in the cloud.
+const isProcessableImg = type => 
+  type.includes('image') && 
+  (
+    type.includes('jpeg') || 
+    type.includes('jpg')  || 
+    type.includes('png')
+  );
+
+// Png/jpeg images and video files are post-processed.
+const isCloudProcessable = ({type}) => 
+  type && (isProcessableImg(type) || type.includes('video'));
+
+
 export {
   allProcessingRan,
+  canvasFile,
   fetchBlob,
   fetchFile,
   isCloudProcessable

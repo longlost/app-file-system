@@ -1,0 +1,175 @@
+
+<style include="app-shared-styles">
+
+	:host {
+		display: 					block;
+		background-color: var(--app-body-color);
+	}
+
+	#preview {
+		display: 					block;
+		position: 			 -webkit-sticky;
+		position: 				sticky;
+		top: 							0px;
+		width:  					100%;
+		margin-bottom:  	16px;
+		background-color: var(--app-background-color);
+		z-index: 					1;
+	}
+
+	#content {
+		padding: 16px;
+	}
+
+	.wrapper {
+		margin-bottom: 		24px;
+		padding: 			 		16px 0px;
+		border-radius: 		3px;
+		background-color: var(--app-background-color);
+	}
+
+	.shared-paper-slider {
+		width: 100%;
+	}
+
+	.label {
+		display: 		 		 flex;
+		justify-content: center;
+		align-items: 		 center;
+	}
+
+	.label iron-icon {
+		margin-right: 8px;
+	}
+
+	#apply-btn-wrapper {
+		margin:  48px 0px;
+		padding: 48px 16px;
+	}
+
+	#apply-btn {
+		width: 	100%;
+		margin: 0px;
+		background-color: var(--app-accent-color);
+		color: 						var(--constant-dark-text);
+	}
+
+	#apply-btn[disabled] {
+		background-color: var(--app-disabled-color);
+		color: 						var(--disabled-text-color);
+	}
+
+</style>
+
+
+<!-- MUST set crossorigin to allow WebGL to securely load the downloaded image. -->
+<img id="preview"
+		 class="shared-card-shadow" 
+		 crossorigin 
+     src="[[_previewSrc]]"
+     on-load="__loaded"/>
+
+
+<div id="content">
+
+	<div class="wrapper">
+		<paper-slider class="shared-paper-slider"
+									max="100"
+									min="0" 
+									pin
+									value="[[_centeredVal]]"
+									on-immediate-value-changed="__brightnessChanged">
+		</paper-slider>
+		<div class="label">		
+			<iron-icon icon="image-editor-icons:brightness-4"></iron-icon>
+			<span>Brightness</span>
+		</div>
+	</div>
+
+	<div class="wrapper">
+		<paper-slider class="shared-paper-slider"
+									max="100"
+									min="0" 
+									pin
+									value="[[_centeredVal]]"
+									on-immediate-value-changed="__contrastChanged">
+		</paper-slider>
+		<div class="label">		
+			<iron-icon icon="image-editor-icons:exposure"></iron-icon>
+			<span>Contrast</span>
+		</div>
+	</div>
+
+	<div class="wrapper">
+		<paper-slider class="shared-paper-slider"
+									max="100"
+									min="0" 
+									pin
+									value="[[_centeredVal]]"
+									on-immediate-value-changed="__saturationChanged">
+		</paper-slider>
+		<div class="label">		
+			<iron-icon icon="image-editor-icons:tonality"></iron-icon>
+			<span>Saturation</span>
+		</div>
+	</div>
+
+	<div class="wrapper">
+		<paper-slider class="shared-paper-slider"
+									max="360"
+									min="0" 
+									pin
+									value="[[_zeroedVal]]"
+									on-immediate-value-changed="__hueChanged">
+		</paper-slider>
+		<div class="label">		
+			<iron-icon icon="image-editor-icons:palette"></iron-icon>
+			<span>Hue</span>
+		</div>
+	</div>
+
+	<div class="wrapper">
+		<paper-slider class="shared-paper-slider"
+									max="100"
+									min="0" 
+									pin
+									value="[[_zeroedVal]]"
+									on-immediate-value-changed="__sharpenChanged">
+		</paper-slider>
+		<div class="label">		
+			<iron-icon icon="image-editor-icons:texture"></iron-icon>
+			<span>Sharpness</span>
+		</div>
+	</div>
+
+	<div class="wrapper">
+		<paper-slider class="shared-paper-slider"
+									max="100"
+									min="0" 
+									pin
+									value="[[_zeroedVal]]"
+									on-immediate-value-changed="__blurChanged">
+		</paper-slider>
+		<div class="label">		
+			<iron-icon icon="image-editor-icons:blur-on"></iron-icon>
+			<span>Blur</span>
+		</div>
+	</div>
+
+</div>
+
+
+<div id="apply-btn-wrapper" 
+		 class="shared-divider">
+	<paper-button id="apply-btn"
+								class="shared-paper-button-with-icon"
+								disabled="[[_applyBtnDisabled]]"
+								on-click="__applyClicked">
+		<iron-icon class="shared-paper-button-with-icon" 
+							 icon="image-editor-icons:brush">
+		</iron-icon>
+		APPLY
+	</paper-button>
+</div>
+
+<app-spinner id="spinner" full-screen></app-spinner>
