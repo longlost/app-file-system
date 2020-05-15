@@ -62,12 +62,9 @@
 </style>
 
 
-<!-- MUST set crossorigin to allow WebGL to securely load the downloaded image. -->
-<img id="preview"
-		 class="shared-card-shadow" 
-		 crossorigin 
-     src="[[_previewSrc]]"
-     on-load="__loaded"/>
+<canvas id="preview"
+		 		class="shared-card-shadow">
+</canvas>
 
 
 <div id="content">
