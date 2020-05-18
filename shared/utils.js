@@ -133,6 +133,32 @@ const fetchFile = async (url, callback, options) => {
 };
 
 
+// Object, String, String --> Promise --> File
+// image-filters and image-adjuster output helper function.
+const highQualityFile = async (filter, src, displayName) => {
+
+ const img = new Image();
+
+ const promise = new Promise((resolve, reject) => {
+   img.onload = async () => {
+
+     const canvas = filter.apply(img);
+     const file   = await canvasFile(src, displayName, canvas); 
+
+     resolve(file);
+   };
+
+   img.onerror = reject;
+ }); 
+
+ // MUST set crossorigin to allow WebGL to securely load the downloaded image.
+ img.crossOrigin = '';
+ img.src = src;
+
+ return promise;
+};
+
+
 // Returns true if the image item will
 // be post-processed in the cloud.
 const isProcessableImg = type => 
@@ -150,8 +176,8 @@ const isCloudProcessable = ({type}) =>
 
 export {
   allProcessingRan,
-  canvasFile,
   fetchBlob,
   fetchFile,
+  highQualityFile,
   isCloudProcessable
 };

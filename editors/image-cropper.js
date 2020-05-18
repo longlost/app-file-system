@@ -33,16 +33,18 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
-import htmlString         from './image-cropper.html';
-import '@longlost/app-shared-styles/app-shared-styles.js';
+import {AppElement, html}     from '@longlost/app-element/app-element.js';
+import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
+import {warn}                 from '@longlost/utils/utils.js';
+import htmlString             from './image-cropper.html';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-selector/iron-selector.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
-import './crop-wrapper.js';
 import './image-editor-icons.js';
+import './image-editor-item.js';
+import './crop-wrapper.js';
 import './rotation-slider.js';
 
 
@@ -70,7 +72,7 @@ const getRatio = name => {
 
 
 
-class ImageCropper extends AppElement {
+class ImageCropper extends ImageEditorItemMixin(AppElement) {
   static get is() { return 'image-cropper'; }
 
   static get template() {
@@ -81,7 +83,10 @@ class ImageCropper extends AppElement {
   static get properties() {
     return {
 
-      item: Object,
+      _cropBtnDisabled: {
+        type: Boolean,
+        value: true
+      },
 
       // From rotation buttons.
       _degrees: {
@@ -93,13 +98,6 @@ class ImageCropper extends AppElement {
       _fineDegrees: {
         type: Number,
         value: 0
-      },
-
-      // This name becomes the new filename 
-      // for any exported crop files.
-      _name: {
-        type: String,
-        computed: '__computeName(item.displayName)'
       },
 
       _selectedAspect: {
@@ -117,10 +115,10 @@ class ImageCropper extends AppElement {
         value: 'square'
       },
 
-      // Input image source string.
-      _src: {
+      _type: {
         type: String,
-        computed: '__computeSrc(item)'
+        value: 'cropped',
+        readOnly: true
       }
 
     };
@@ -131,31 +129,6 @@ class ImageCropper extends AppElement {
     super.connectedCallback();
 
     this.$.a11y.target = document.body;
-  }
-
-
-  __computeName(displayName) {
-    return displayName ? `${displayName}-crop` : 'cropped';
-  }
-
-  // Use the optimized version if its present, 
-  // else fallback to a larger format.
-  // Favoring the lower memory version since 
-  // Cropperjs uses canvas for its heavy lifting.
-  // Canvas is known to crash Safari when dealing
-  // with large file sizes.
-  __computeSrc(item) {
-    if (!item) { return '#'; }
-
-    const {optimized, oriented, original, _tempUrl} = item;
-
-    if (optimized) { return optimized; }
-
-    if (oriented)  { return oriented; }
-
-    if (original)  { return original; }
-
-    return _tempUrl;
   }
 
 
@@ -189,6 +162,8 @@ class ImageCropper extends AppElement {
 
       await this.clicked(100);
 
+      this._cropBtnDisabled = false;
+
       const callback = this.$.cropper[fn];
 
       return callback.bind(this.$.cropper)(...args);
@@ -196,6 +171,7 @@ class ImageCropper extends AppElement {
     catch (error) {
       if (error === 'click debounced') { return; }
       console.error(error);
+      return warn('Oops! That did not work right.');
     }
   }
 
@@ -237,7 +213,8 @@ class ImageCropper extends AppElement {
 
     const {value: name} = event.detail;
 
-    this._selectedAspect = name;
+    this._cropBtnDisabled = false;
+    this._selectedAspect  = name;
     this.$.cropper.setAspectRatio(getRatio(name));
   }
 
@@ -245,7 +222,8 @@ class ImageCropper extends AppElement {
   __fineDegreesChanged(event) {
     if (!this.$.cropper.isReady) { return; }
 
-    this._fineDegrees = event.detail.value;
+    this._cropBtnDisabled = false;
+    this._fineDegrees     = event.detail.value;
 
     this.$.cropper.rotateTo(this._degrees + this._fineDegrees);
   }
@@ -281,13 +259,7 @@ class ImageCropper extends AppElement {
 
 
   __resetClicked() {
-    this._degrees        = 0;
-    this._fineDegrees    = 0;
-    this._selectedAspect = 'free';
-    this._selectedFlips  = [];
-    this._selectedShape  = 'square';
-    this.$.slider.center();
-    this.__btnClicked('reset');
+    this.__reset();
   }
 
 
@@ -315,6 +287,20 @@ class ImageCropper extends AppElement {
     const file = await this.__btnClicked('getCrop');
 
     this.fire('image-cropper-cropped', {value: file});
+
+    this.$.item.hideSpinner();
+  }
+
+
+  __reset() {
+    this._degrees         = 0;
+    this._fineDegrees     = 0;
+    this._cropBtnDisabled = true;
+    this._selectedAspect  = 'free';
+    this._selectedFlips   = [];
+    this._selectedShape   = 'square';
+    this.$.slider.center();
+    this.__btnClicked('reset');
   }
 
 }
