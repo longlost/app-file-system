@@ -1,0 +1,65 @@
+
+<style include="app-shared-styles">
+	
+	:host {
+		display: 					block;
+		background-color: var(--app-body-color);
+	}
+
+	#preview {
+		display: 					block;
+		width:  					100%;
+		position: 			 -webkit-sticky;
+		position: 				sticky;
+		top: 							0px;
+		margin-bottom:  	16px;
+		background-color: var(--app-background-color);
+		z-index: 					1;
+	}
+
+	#btn-wrapper {
+		margin:  48px 0px;
+		padding: 48px 16px;
+	}
+
+	#btn {
+		width: 	100%;
+		margin: 0px;
+		background-color: var(--app-accent-color);
+		color: 						var(--constant-dark-text);
+	}
+
+	#btn[disabled] {
+		background-color: var(--app-disabled-color);
+		color: 						var(--disabled-text-color);
+	}
+
+</style>
+
+
+<div id="preview" 
+		 class="shared-card-shadow">
+	<slot name="preview"></slot>
+</div>
+
+
+<slot></slot>
+
+
+<div id="btn-wrapper" 
+		 class="shared-divider">
+	<paper-button id="btn"
+								class="shared-paper-button-with-icon"
+								disabled="[[buttonDisabled]]"
+								on-click="__btnClicked">
+		<iron-icon class="shared-paper-button-with-icon" 
+							 icon="[[_icon]]">
+		</iron-icon>
+		[[buttonLabel]]
+	</paper-button>
+</div>
+
+<app-spinner id="spinner" 
+						 full-screen
+						 message="[[spinnerText]]">
+</app-spinner>

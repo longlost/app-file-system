@@ -1,23 +1,9 @@
 
-<style include="app-shared-styles">
-
-	:host {
-		display: 					block;
-		background-color: var(--app-body-color);
-	}
+<style>
 
 	.section {
 		margin-left:  16px;
 		margin-right: 16px;
-	}
-
-	#cropper {
-		position: 			 -webkit-sticky;
-		position: 				sticky;
-		top: 							0px;
-		margin-bottom:  	16px;
-		background-color: var(--app-background-color);
-		z-index:  				1;
 	}
 
 	.groups {
@@ -121,18 +107,6 @@
 		width: 	 unset;
 	}
 
-	#crop-btn-wrapper {
-		margin:  48px 0px;
-		padding: 48px 16px;
-	}
-
-	#crop-btn {
-		width: 	100%;
-		margin: 0px;
-		background-color: var(--app-accent-color);
-		color: 						var(--constant-dark-text);
-	}
-
 </style>
 
 
@@ -142,185 +116,182 @@
 </iron-a11y-keys>
 
 
-<crop-wrapper id="cropper"
-							class="section shared-card-shadow"
-							name="[[_name]]"
-							src="[[_src]]">								
-</crop-wrapper>
+<image-editor-item id="item" 
+									 button-disabled="[[_cropBtnDisabled]]" 
+									 button-icon="crop" 
+									 button-label="CROP"
+									 spinner-text="Applying crop."
+									 on-image-editor-item-btn-clicked="__cropClicked">
 
-<!-- Top row of control buttons. -->
-<div class="section groups">
+	<crop-wrapper id="cropper"
+								class="section"
+								name="[[_name]]"
+								slot="preview"
+								src="[[_src]]">								
+	</crop-wrapper>
 
-	<div class="group">
-		<paper-icon-button class="grouped first"
-											 icon="image-editor-icons:zoom-in"
-											 on-click="__zoomInClicked">
-		</paper-icon-button>
+	<!-- Top row of control buttons. -->
+	<div class="section groups">
 
-		<paper-icon-button class="grouped last"
-											 icon="image-editor-icons:zoom-out"
-											 on-click="__zoomOutClicked">
-		</paper-icon-button>
-	</div>
-	
+		<div class="group">
+			<paper-icon-button class="grouped first"
+												 icon="image-editor-icons:zoom-in"
+												 on-click="__zoomInClicked">
+			</paper-icon-button>
 
-	<iron-selector class="group"
-								 attr-for-selected="name"
-								 selected-values="[[_selectedFlips]]"
-								 multi>
-		<paper-icon-button class="grouped first"
-											 icon="image-editor-icons:image-flip"
-											 name="horz"
-											 on-click="__flipHorzClicked">
-		</paper-icon-button>
-
-		<paper-icon-button class="grouped last"
-											 icon="image-editor-icons:image-flip-90"
-											 name="vert"
-											 on-click="__flipVertClicked">
-		</paper-icon-button>
-	</iron-selector>
-
-
-	<iron-selector class="group"
-								 attr-for-selected="name" 
-								 selected="[[_selectedShape]]">
-		<paper-icon-button class="grouped first"
-											 icon="image-editor-icons:check-box-outline-blank"
-											 name="square"
-											 on-click="__squareClicked">
-		</paper-icon-button>
-
-		<paper-icon-button class="grouped last"
-											 icon="image-editor-icons:radio-button-unchecked"
-											 name="circle"
-											 on-click="__circleClicked">
-		</paper-icon-button>
-	</iron-selector>
-
-</div>
-
-<!-- Aspect ratio selection buttons. -->
-<iron-selector class="section group full-width"
-							 attr-for-selected="name"
-							 selected="[[_selectedAspect]]" 
-							 on-selected-changed="__aspectRatioSelected">
-
-	<paper-button class="grouped first" 
-			 					name="free">
-		<iron-icon icon="image-editor-icons:crop-free"></iron-icon>
-		<div>Free</div>
-	</paper-button>
-
-	<paper-button class="grouped" 
-			 					name="16:9">
-		<iron-icon icon="image-editor-icons:crop-16-9"></iron-icon>
-		<div>16:9</div>
-	</paper-button>
-
-	<paper-button class="grouped" 
-			 					name="4:3">
-		<iron-icon icon="image-editor-icons:crop-3-2"></iron-icon>
-		<div>4:3</div>
-	</paper-button>
-
-	<paper-button class="grouped" 
-			 					name="square">
-		<iron-icon icon="image-editor-icons:crop-square"></iron-icon>
-		<div>Square</div>
-	</paper-button>
-
-	<paper-button class="grouped last" 
-			 					name="2:3">
-		<iron-icon icon="image-editor-icons:crop-portrait"></iron-icon>
-		<div>2:3</div>
-	</paper-button>
-
-</iron-selector>
-
-
-<!-- Rotation control. -->
-<div id="rotation" 
-		 class="section">
-
-	<rotation-slider id="slider" 
-									 on-degrees-changed="__fineDegreesChanged">
-	</rotation-slider>
-
-	<div class="groups">
-		
-		<paper-icon-button class="grouped single"
-											 icon="image-editor-icons:rotate-left"
-											 on-click="__rotateLeftClicked">
-		</paper-icon-button>
-
-		<paper-icon-button class="grouped single"
-											 icon="image-editor-icons:vertical-align-center-90"
-											 on-click="__centerSliderClicked">
-		</paper-icon-button>
-
-		<paper-icon-button class="grouped single"
-											 icon="image-editor-icons:rotate-right"
-											 on-click="__rotateRightClicked">
-		</paper-icon-button>
-
-	</div>
-
-</div>
-
-
-<!-- Bottom row of control buttons. -->
-<div class="section groups">
-
-	<!-- Reset button. -->
-	<paper-icon-button id="reset"
-										 class="grouped single"
-										 icon="image-editor-icons:refresh"
-										 on-click="__resetClicked">
-	</paper-icon-button>
-
-	<!-- Direction buttons. -->
-	<div class="group direction">
-
-		<div id="up-wrapper">
-			<paper-icon-button id="up"
-												 class="grouped"
-												 icon="image-editor-icons:keyboard-arrow-up"
-												 on-click="__upClicked">
+			<paper-icon-button class="grouped last"
+												 icon="image-editor-icons:zoom-out"
+												 on-click="__zoomOutClicked">
 			</paper-icon-button>
 		</div>
+		
 
-		<paper-icon-button id="left"
-											 class="grouped first"
-											 icon="image-editor-icons:keyboard-arrow-left"
-											 on-click="__leftClicked">
-		</paper-icon-button>
+		<iron-selector class="group"
+									 attr-for-selected="name"
+									 selected-values="[[_selectedFlips]]"
+									 multi>
+			<paper-icon-button class="grouped first"
+												 icon="image-editor-icons:image-flip"
+												 name="horz"
+												 on-click="__flipHorzClicked">
+			</paper-icon-button>
 
-		<paper-icon-button id="down"
-											 class="grouped"
-											 icon="image-editor-icons:keyboard-arrow-down"
-											 on-click="__downClicked">
-		</paper-icon-button>
+			<paper-icon-button class="grouped last"
+												 icon="image-editor-icons:image-flip-90"
+												 name="vert"
+												 on-click="__flipVertClicked">
+			</paper-icon-button>
+		</iron-selector>
 
-		<paper-icon-button id="right"
-											 class="grouped last"
-											 icon="image-editor-icons:keyboard-arrow-right"
-											 on-click="__rightClicked">
-		</paper-icon-button>
+
+		<iron-selector class="group"
+									 attr-for-selected="name" 
+									 selected="[[_selectedShape]]">
+			<paper-icon-button class="grouped first"
+												 icon="image-editor-icons:check-box-outline-blank"
+												 name="square"
+												 on-click="__squareClicked">
+			</paper-icon-button>
+
+			<paper-icon-button class="grouped last"
+												 icon="image-editor-icons:radio-button-unchecked"
+												 name="circle"
+												 on-click="__circleClicked">
+			</paper-icon-button>
+		</iron-selector>
 
 	</div>
 
-</div>
+	<!-- Aspect ratio selection buttons. -->
+	<iron-selector class="section group full-width"
+								 attr-for-selected="name"
+								 selected="[[_selectedAspect]]" 
+								 on-selected-changed="__aspectRatioSelected">
+
+		<paper-button class="grouped first" 
+				 					name="free">
+			<iron-icon icon="image-editor-icons:crop-free"></iron-icon>
+			<div>Free</div>
+		</paper-button>
+
+		<paper-button class="grouped" 
+				 					name="16:9">
+			<iron-icon icon="image-editor-icons:crop-16-9"></iron-icon>
+			<div>16:9</div>
+		</paper-button>
+
+		<paper-button class="grouped" 
+				 					name="4:3">
+			<iron-icon icon="image-editor-icons:crop-3-2"></iron-icon>
+			<div>4:3</div>
+		</paper-button>
+
+		<paper-button class="grouped" 
+				 					name="square">
+			<iron-icon icon="image-editor-icons:crop-square"></iron-icon>
+			<div>Square</div>
+		</paper-button>
+
+		<paper-button class="grouped last" 
+				 					name="2:3">
+			<iron-icon icon="image-editor-icons:crop-portrait"></iron-icon>
+			<div>2:3</div>
+		</paper-button>
+
+	</iron-selector>
 
 
-<div id="crop-btn-wrapper" 
-		 class="shared-divider">
-	<paper-button id="crop-btn"
-								class="shared-paper-button-with-icon"
-								on-click="__cropClicked">
-		<iron-icon class="shared-paper-button-with-icon" 
-							 icon="image-editor-icons:crop">
-		</iron-icon>
-		CROP
-	</paper-button>
-</div>
+	<!-- Rotation control. -->
+	<div id="rotation" 
+			 class="section">
+
+		<rotation-slider id="slider" 
+										 on-degrees-changed="__fineDegreesChanged">
+		</rotation-slider>
+
+		<div class="groups">
+			
+			<paper-icon-button class="grouped single"
+												 icon="image-editor-icons:rotate-left"
+												 on-click="__rotateLeftClicked">
+			</paper-icon-button>
+
+			<paper-icon-button class="grouped single"
+												 icon="image-editor-icons:vertical-align-center-90"
+												 on-click="__centerSliderClicked">
+			</paper-icon-button>
+
+			<paper-icon-button class="grouped single"
+												 icon="image-editor-icons:rotate-right"
+												 on-click="__rotateRightClicked">
+			</paper-icon-button>
+
+		</div>
+
+	</div>
+
+
+	<!-- Bottom row of control buttons. -->
+	<div class="section groups">
+
+		<!-- Reset button. -->
+		<paper-icon-button id="reset"
+											 class="grouped single"
+											 icon="image-editor-icons:refresh"
+											 on-click="__resetClicked">
+		</paper-icon-button>
+
+		<!-- Direction buttons. -->
+		<div class="group direction">
+
+			<div id="up-wrapper">
+				<paper-icon-button id="up"
+													 class="grouped"
+													 icon="image-editor-icons:keyboard-arrow-up"
+													 on-click="__upClicked">
+				</paper-icon-button>
+			</div>
+
+			<paper-icon-button id="left"
+												 class="grouped first"
+												 icon="image-editor-icons:keyboard-arrow-left"
+												 on-click="__leftClicked">
+			</paper-icon-button>
+
+			<paper-icon-button id="down"
+												 class="grouped"
+												 icon="image-editor-icons:keyboard-arrow-down"
+												 on-click="__downClicked">
+			</paper-icon-button>
+
+			<paper-icon-button id="right"
+												 class="grouped last"
+												 icon="image-editor-icons:keyboard-arrow-right"
+												 on-click="__rightClicked">
+			</paper-icon-button>
+
+		</div>
+
+	</div>
+	
+</image-editor-item>

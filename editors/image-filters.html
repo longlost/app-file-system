@@ -1,16 +1,9 @@
 
-<style include="app-shared-styles">
-
-	:host {
-		display: 					block;
-		background-color: var(--app-body-color);
-	}
+<style>
 
 	#preview {
-		display: 					block;
-		width:  					100%;
-		margin-bottom:  	16px;
-		background-color: var(--app-background-color);
+		display: block;
+		width:   100%;
 	}
 
 	#selector {
@@ -26,63 +19,38 @@
 		color: 						var(--constant-light-text);
 	}
 
-	#apply-btn-wrapper {
-		margin:  48px 0px;
-		padding: 48px 16px;
-	}
-
-	#apply-btn {
-		width: 	100%;
-		margin: 0px;
-		background-color: var(--app-accent-color);
-		color: 						var(--constant-dark-text);
-	}
-
-	#apply-btn[disabled] {
-		background-color: var(--app-disabled-color);
-		color: 						var(--disabled-text-color);
-	}
-
 </style>
 
 
+<image-editor-item id="item" 
+									 button-disabled="[[_applyBtnDisabled]]" 
+									 button-icon="colorize" 
+									 button-label="APPLY"
+									 spinner-text="Applying filter."
+									 on-image-editor-item-btn-clicked="__applyClicked">
+
 <!-- MUST set crossorigin to allow WebGL to securely load the downloaded image. -->
-<img id="preview"
-		 class="shared-card-shadow" 
-		 crossorigin 
-     src="[[_previewSrc]]"
-     on-load="__loaded"/>
+	<img id="preview"
+			 crossorigin
+			 slot="preview"
+	     src="[[_previewSrc]]"
+	     on-load="__loaded"/>
 
 
-<iron-selector id="selector" 
-							 attr-for-selected="name"
-							 selected="[[_selectedFilter]]" 
-							 on-selected-changed="__filterSelected">
-	
-	<template is="dom-repeat" 
-						items="[[_filters]]">
+	<iron-selector id="selector" 
+								 attr-for-selected="name"
+								 selected="[[_selectedFilter]]" 
+								 on-selected-changed="__filterSelected">
 		
-		<filter-item item="[[item]]" 
-								 name="[[item.name]]">
-		</filter-item>
+		<template is="dom-repeat" 
+							items="[[_filters]]">
+			
+			<filter-item item="[[item]]" 
+									 name="[[item.name]]">
+			</filter-item>
 
-	</template>	 	
+		</template>	 	
 
-</iron-selector>	
+	</iron-selector>
 
-
-
-<div id="apply-btn-wrapper" 
-		 class="shared-divider">
-	<paper-button id="apply-btn"
-								class="shared-paper-button-with-icon"
-								disabled="[[_applyBtnDisabled]]"
-								on-click="__applyClicked">
-		<iron-icon class="shared-paper-button-with-icon" 
-							 icon="image-editor-icons:colorize">
-		</iron-icon>
-		APPLY
-	</paper-button>
-</div>
-
-<app-spinner id="spinner" full-screen></app-spinner>
+</image-editor-item>

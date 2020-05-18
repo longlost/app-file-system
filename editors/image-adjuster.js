@@ -33,53 +33,20 @@
   **/
 
 
-import {AppElement, html}             from '@longlost/app-element/app-element.js';
-import {scale}                        from '@longlost/lambda/lambda.js';
-import {isOnScreen, listen, unlisten} from '@longlost/utils/utils.js';
-import {canvasFile}                   from '../shared/utils.js';
-import webglFilter                    from '@longlost/webgl-filter/webgl-filter.js';
-import htmlString                     from './image-adjuster.html';
+import {AppElement, html}     from '@longlost/app-element/app-element.js';
+import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
+import {FilterMixin}          from './filter-mixin.js';
+import {scale}                from '@longlost/lambda/lambda.js';
+import {warn}                 from '@longlost/utils/utils.js';
+import {highQualityFile}      from '../shared/utils.js';
+import htmlString             from './image-adjuster.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
-import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-slider/paper-slider.js';
-import '@polymer/paper-button/paper-button.js';
-import './image-editor-icons.js';
+import './image-editor-item.js';
 
 
-
-// TODO:
-//      Apply all filters.
-
-// const highQualityFile = async (filter, name, src, displayName) => {
-
-//  const img = new Image();
-
-//  const promise = new Promise((resolve, reject) => {
-//    img.onload = async () => {
-
-//      filter.reset();
-//      filter.addFilter(name);
-
-//      const canvas = filter.apply(img);
-//      const file   = await canvasFile(src, displayName, canvas); 
-
-//      resolve(file);
-//    };
-
-//    img.onerror = reject;
-//  }); 
-
-
-//  // MUST set crossorigin to allow WebGL to securely load the downloaded image.
-//  img.crossOrigin = '';
-//  img.src = src;
-
-//  return promise;
-// };
-
-
-class ImageAdjuster extends AppElement {
+class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   static get is() { return 'image-adjuster'; }
 
   static get template() {
@@ -89,16 +56,6 @@ class ImageAdjuster extends AppElement {
 
   static get properties() {
     return {
-
-      item: Object,
-
-      selected: String,
-
-      _applyBtnDisabled: {
-        type: Boolean,
-        value: true,
-        computed: '__computeApplyBtnDisabled(item, _filter)'
-      },
 
       _blur: Number,
 
@@ -114,30 +71,13 @@ class ImageAdjuster extends AppElement {
       // Preview canvas 2d context reference.
       _ctx: Object,
 
-      // 'webgl-filter' instance.
-      _filter: Object,
-
-      _highQuality: {
-        type: String,
-        computed: '__computeHighQuality(item)'
-      },
-
       _hue: Number,
-
-      // This name becomes the new filename 
-      // for any exported crop files.
-      _name: {
-        type: String,
-        computed: '__computeName(item.displayName)'
-      },
 
       _page: {
         type: String,
         value: 'adjuster',
         readOnly: true
       },
-
-      _previewSrc: String,
 
       _readyForSource: {
         type: Boolean,
@@ -156,10 +96,11 @@ class ImageAdjuster extends AppElement {
       // Javascript Image object.
       _source: Object,
 
-      // Input image source string.
-      _src: {
+      // Used in _name computed method.
+      _type: {
         type: String,
-        computed: '__computeSrc(item)'
+        value: 'adjusted',
+        readOnly: true
       },
 
       _zeroedVal: {
@@ -173,8 +114,7 @@ class ImageAdjuster extends AppElement {
 
   static get observers() {
     return [
-      '__adjustmentsChanged(_filter, _source, _brightness, _contrast, _saturation, _hue, _sharpness, _blur)',
-      '__selectedPageChanged(selected, _page)'
+      '__adjustmentsChanged(_filter, _source, _brightness, _contrast, _saturation, _hue, _sharpness, _blur)'
     ];
   }
 
@@ -189,51 +129,8 @@ class ImageAdjuster extends AppElement {
   }
 
 
-  __computeApplyBtnDisabled(item, filter) {
-    return !Boolean(item && filter);
-  }
-
-
-  __computeHighQuality(item) {
-    if (!item) { return '#'; }
-
-    const {oriented, original, _tempUrl} = item;
-
-    if (oriented) { return oriented; }
-
-    if (original) { return original; }
-
-    return _tempUrl;
-  }
-
-
-  __computeName(displayName) {
-    return displayName ? `${displayName}-adjust` : 'adjusted';
-  }
-
-
   __computeReadyForSource(filter, src) {
     return Boolean(filter && src);
-  }
-
-  // Use the optimized version if its present, 
-  // else fallback to a larger format.
-  // Favoring the lower memory version since 
-  // webgl-filter uses canvas for its heavy lifting.
-  // Canvas is known to crash Safari when dealing
-  // with large file sizes.
-  __computeSrc(item) {
-    if (!item) { return '#'; }
-
-    const {optimized, oriented, original, _tempUrl} = item;
-
-    if (optimized) { return optimized; }
-
-    if (oriented)  { return oriented; }
-
-    if (original)  { return original; }
-
-    return _tempUrl;
   }
 
 
@@ -241,6 +138,9 @@ class ImageAdjuster extends AppElement {
     if (!filter || !source) { return; }
 
     window.requestAnimationFrame(() => {
+
+      filter.reset();
+
       filter.addFilter('brightness', brightness);
       filter.addFilter('contrast',   contrast);
       filter.addFilter('saturation', saturation);
@@ -252,7 +152,8 @@ class ImageAdjuster extends AppElement {
 
       this._ctx.drawImage(canvas, 0, 0);
 
-      filter.reset();
+      // Enable 'Apply' button.
+      this._selectedFilter = 'selected';
     });    
   }
 
@@ -284,30 +185,12 @@ class ImageAdjuster extends AppElement {
   }
 
 
-  __selectedPageChanged(selected, page) {
-    if (selected !== page) {
-      this.__reset();
-    }
-    else {
-      this.__init();
-    }
-  }
-
-
   __reset() {
     if (this._filter) {
-      this._filter.reset();
-
-      this._centeredVal = 50;     
-      this._filter      = undefined;
-      this._zeroedVal   = 0;
-    }
-  }
-
-
-  __init() {
-    if (!this._filter) {
-      this._filter = webglFilter();
+      this._centeredVal    = 50;     
+      this._filter         = undefined;
+      this._selectedFilter = undefined;
+      this._zeroedVal      = 0;
     }
   }
 
@@ -362,30 +245,21 @@ class ImageAdjuster extends AppElement {
 
   async __applyClicked() {
     try {
-      await this.clicked();
-
-      await this.$.spinner.show('Applying adjustments.'); 
-
-
-      // TODO:
-      //      Update this to work for entire filter chain.
-
     
-      // const file =  await highQualityFile(
-      //  this._filter, 
-      //  this._highQuality, 
-      //  this._name
-      // );
+      const file = await highQualityFile(
+        this._filter, 
+        this._highQuality, 
+        this._name
+      );
 
-      // this.fire('image-adjustments-applied', {value: file});
+      this.fire('image-adjustments-applied', {value: file});
     }
     catch (error) {
-      if (error === 'click debounced') { return; }
       console.error(error);
       await warn('Could not apply the adjustments.');
     }
     finally {
-      this.$.spinner.hide();
+      this.$.item.hideSpinner();
     }
   }
 
