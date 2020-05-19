@@ -2,6 +2,7 @@
 <style>
 
   #overlay {
+    padding: 0px;
     --overlay-toolbar-backdrop-filter:            blur(10px);
     --overlay-toolbar-background-parallax-height: 100%;
     --overlay-toolbar-background-color:           transparent;
@@ -31,8 +32,7 @@
   }
 
   .page {
-    min-width: calc(100% - 32px);
-    padding:   16px;
+    min-width: 100%;
   }
 
   *[hidden] {
@@ -43,7 +43,9 @@
 
 
 <app-header-overlay id="overlay"
+                    disable-auto-sticky
                     disable-background-effects
+                    disable-condense
                     header-size="2"
                     parent-controls-exits
                     prebuilt-animation="from-right"
@@ -58,39 +60,60 @@
   </div>
 
 
-  <paper-tabs slot="bottom-toolbar-tabs-slot"
-              selected="0"
-              on-selected-changed="__selectedChanged">
-    <paper-tab>Crop</paper-tab>
-    <paper-tab>Filters</paper-tab>
-    <paper-tab>Text</paper-tab> 
-    <paper-tab hidden="[[_hideMeta]]">Meta</paper-tab> 
+  <paper-tabs attr-for-selected="page"
+              slot="bottom-toolbar-tabs-slot"
+              selected="filters"
+              on-selected-changed="__selectedPageChanged">
+
+    <paper-tab page="filters">Filters</paper-tab>
+    <paper-tab page="adjust">Adjust</paper-tab> 
+    <paper-tab page="crop">Crop</paper-tab>
+    <paper-tab page="meta" 
+               hidden="[[_hideMeta]]">
+      Meta
+    </paper-tab> 
+
   </paper-tabs>
 
 
   <app-carousel id="carousel"
                 aspect-ratio="fill"
                 disabled
-                slot="content">
+                slot="content"
+                on-app-carousel-section-index-changed="__carouselIndexChanged">    
+    
+    <image-filters class="page" 
+                   item="[[item]]" 
+                   page="filters" 
+                   selected="[[_selected]]"
+                   on-image-filters-filter-applied="__filtered">
+    </image-filters>
+
+    <image-adjuster class="page" 
+                    item="[[item]]" 
+                    page="adjust" 
+                    selected="[[_selected]]"
+                    on-image-adjuster-adjustments-applied="__adjusted">                      
+    </image-adjuster>
 
     <image-cropper class="page" 
+                   item="[[item]]" 
+                   page="crop"
+                   selected="[[_selected]]"
                    on-image-cropper-cropped="__cropped">
     </image-cropper>
-    
-    <div class="page">Filters</div>
-    <div class="page">Text</div>
 
-    <metadata-page class="page"
-                   dark-mode="[[darkMode]]"
-                   geolocation="[[_geolocation]]"
-                   hidden="[[_hideMeta]]"
-                   is-img="[[_isImg]]"
-                   item="[[item]]"
-                   list="[[list]]"
-                   on-display-name-changed="__displayNameChanged"
-                   on-open-map-overlay="__openMapOverlay">
-    </metadata-page>
-
+    <div class="page">
+      <metadata-page dark-mode="[[darkMode]]"
+                     geolocation="[[_geolocation]]"
+                     hidden="[[_hideMeta]]"
+                     is-img="[[_isImg]]"
+                     item="[[item]]"
+                     list="[[list]]"
+                     on-display-name-changed="__displayNameChanged"
+                     on-open-map-overlay="__openMapOverlay">
+      </metadata-page>
+    </div>
 
   </app-carousel>
 

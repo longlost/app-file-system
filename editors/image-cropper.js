@@ -155,6 +155,19 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
   }
 
 
+  __cropperReady() {
+    
+    // Release edited file temp url resources.
+    // Quelsh errors if this fails.
+    if (this.editedSrc) {
+      try {
+        window.URL.revokeObjectURL(this.editedSrc);
+      }
+      catch (_) {}
+    }
+  }
+
+
   async __btnClicked(fn, ...args) {
     try {
 

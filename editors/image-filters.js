@@ -73,12 +73,6 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
       _loaded: Boolean,
 
-      _page: {
-        type: String,
-        value: 'filters',
-        readOnly: true
-      },
-
       // Preview img element reference.
       _preview: Object,
 
@@ -132,6 +126,16 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
   __loaded() {
     if (this._src && this._src !== '#') {
+
+      // Release edited file temp url resources.
+      // Quelsh errors if this fails.
+      if (this.editedSrc) {
+        try {
+          window.URL.revokeObjectURL(this.editedSrc);
+        }
+        catch (_) {}
+      }
+      
       this._loaded = true;
     }
   }
@@ -163,7 +167,7 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
         this._name
       );
 
-      this.fire('image-filters-applied', {value: file});
+      this.fire('image-filters-filter-applied', {value: file});
     }
     catch (error) {
       if (error === 'click debounced') { return; }

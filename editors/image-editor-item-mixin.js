@@ -11,6 +11,8 @@ export const ImageEditorItemMixin = superClass => {
 
       	item: Object,
 
+      	page: String,
+
       	selected: String,
 
       	_highQuality: {
@@ -28,7 +30,7 @@ export const ImageEditorItemMixin = superClass => {
 	      // Input image source string.
 	      _src: {
 	        type: String,
-	        computed: '__computeSrc(item)'
+	        computed: '__computeSrc(item, editedSrc)'
 	      }	      
 
 	    };
@@ -37,7 +39,7 @@ export const ImageEditorItemMixin = superClass => {
 
 	  static get observers() {
 	  	return [
-	  		'__selectedPageChanged(selected, _page)',
+	  		'__selectedPageChanged(selected, page)',
 	  		'__editedSrcChanged(editedSrc)'
 	  	];
 	  }
@@ -68,7 +70,10 @@ export const ImageEditorItemMixin = superClass => {
 	  // webgl-filter uses canvas for its heavy lifting.
 	  // Canvas is known to crash Safari when dealing
 	  // with large file sizes.
-	  __computeSrc(item) {
+	  __computeSrc(item, editedSrc) {
+
+	  	if (editedSrc) { return editedSrc; }
+
 	    if (!item) { return '#'; }
 
 	    const {optimized, oriented, original, _tempUrl} = item;
