@@ -73,12 +73,6 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
       _hue: Number,
 
-      _page: {
-        type: String,
-        value: 'adjuster',
-        readOnly: true
-      },
-
       _readyForSource: {
         type: Boolean,
         value: false,
@@ -169,6 +163,15 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   
     img.onload = () => {
 
+      // Release edited file temp url resources.
+      // Quelsh errors if this fails.
+      if (this.editedSrc) {
+        try {
+          window.URL.revokeObjectURL(this.editedSrc);
+        }
+        catch (_) {}
+      }
+
       this.$.preview['height'] = `${img.height}`;
       this.$.preview['width']  = `${img.width}`;
 
@@ -252,7 +255,7 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
         this._name
       );
 
-      this.fire('image-adjustments-applied', {value: file});
+      this.fire('image-adjuster-adjustments-applied', {value: file});
     }
     catch (error) {
       console.error(error);

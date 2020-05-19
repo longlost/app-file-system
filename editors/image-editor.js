@@ -44,7 +44,9 @@ import htmlString from './image-editor.html';
 import '@longlost/app-carousel/app-carousel.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-tabs/paper-tab.js';
+import './image-adjuster.js';
 import './image-cropper.js';
+import './image-filters.js';
 // Map lazy loaded.
 
 
@@ -59,18 +61,59 @@ class ImageEditor extends EditorMixin(AppElement) {
   static get properties() {
     return {
 
+      _editedFile: Object,
+
+      _editedSrc: {
+        type: String,
+        computed: '__computeEditedSrc(_editedFile)'
+      },
+
       _hideMeta: {
         type: Boolean,
         value: true,
         computed: '__computeHideMeta(list)'
-      }
+      },
+
+      _opened: Boolean,
+
+      _page: String,
+
+      _pages: {
+        type: Array,
+        value: [
+          'filters',
+          'adjust',
+          'crop',
+          'meta'
+        ]
+      },
+
+      // Selected tab page.
+      _selected: {
+        type: String,
+        computed: '__computeSelected(_page, _opened)'
+      },
 
     };
   }
 
 
+  __computeEditedSrc(file) {
+    if (!file) { return; }
+
+    return window.URL.createObjectURL(file);
+  }
+
+
   __computeHideMeta(list) {
     return list === 'files';
+  }
+
+
+  __computeSelected(page, opened) {
+    if (!page || !opened) { return; }
+
+    return page;
   }
 
   // Overlay back button event handler.
@@ -87,28 +130,49 @@ class ImageEditor extends EditorMixin(AppElement) {
 
   // Overlay reset handler.
   __reset() {
+    this._opened = false;
     this.fire('resume-carousel');
   }
 
   // Paper tabs on-selected-changed handler.
-  __selectedChanged(event) {
-    const {value} = event.detail;
+  __selectedPageChanged(event) {
 
-    if (typeof value !== 'number') { return; }
+    // Skip initialization.
+    if (!this._selected) { return; }
 
-    this.$.carousel.animateToSection(value);
+    const page  = event.detail.value;
+    const index = this._pages.indexOf(page);
+
+    this.$.carousel.animateToSection(index);
+  }
+
+
+  __carouselIndexChanged(event) {
+    const index = event.detail.value;
+
+    this._page = this._pages[index];
+  }
+
+
+  __adjusted(event) {
+    this._editedFile = event.detail.value;
   }
 
 
   __cropped(event) {
-    const file = event.detail.value;
-
-    console.log('cropped file: ', file);
+    this._editedFile = event.detail.value;
   }
 
 
-  open() {
-    return this.$.overlay.open();
+  __filtered(event) {
+    this._editedFile = event.detail.value;
+  }
+
+
+  async open() {
+    await this.$.overlay.open();
+
+    this._opened = true;
   }
 
 }

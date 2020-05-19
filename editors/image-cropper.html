@@ -124,10 +124,10 @@
 									 on-image-editor-item-btn-clicked="__cropClicked">
 
 	<crop-wrapper id="cropper"
-								class="section"
 								name="[[_name]]"
 								slot="preview"
-								src="[[_src]]">								
+								src="[[_src]]"
+								on-crop-wrapper-ready="__cropperReady">								
 	</crop-wrapper>
 
 	<!-- Top row of control buttons. -->
