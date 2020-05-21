@@ -36,7 +36,7 @@
 import {AppElement, html}     from '@longlost/app-element/app-element.js';
 import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
 import {FilterMixin}          from './filter-mixin.js';
-import {warn}                 from '@longlost/utils/utils.js';
+import {wait, warn}           from '@longlost/utils/utils.js';
 import {highQualityFile}      from '../shared/utils.js';
 import htmlString             from './image-filters.html';
 import '@polymer/iron-selector/iron-selector.js';
@@ -125,17 +125,7 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __loaded() {
-    if (this._src && this._src !== '#') {
-
-      // Release edited file temp url resources.
-      // Quelsh errors if this fails.
-      if (this.editedSrc) {
-        try {
-          window.URL.revokeObjectURL(this.editedSrc);
-        }
-        catch (_) {}
-      }
-      
+    if (this._src && this._src !== '#') {      
       this._loaded = true;
     }
   }
@@ -161,11 +151,14 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
       this._filter.reset();
       this._filter.addFilter(this._selectedFilter);
     
-      const file =  await highQualityFile(
-        this._filter, 
-        this._highQuality, 
-        this._name
-      );
+      const [file] = await Promise.all([
+        highQualityFile(
+          this._filter, 
+          this._highQuality, 
+          this._name
+        ),
+        wait(2000)
+      ]);
 
       this.fire('image-filters-filter-applied', {value: file});
     }

@@ -35,7 +35,7 @@
 
 import {AppElement, html}     from '@longlost/app-element/app-element.js';
 import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
-import {warn}                 from '@longlost/utils/utils.js';
+import {wait, warn}           from '@longlost/utils/utils.js';
 import htmlString             from './image-cropper.html';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -151,19 +151,6 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
         break;
       default:
         break;
-    }
-  }
-
-
-  __cropperReady() {
-    
-    // Release edited file temp url resources.
-    // Quelsh errors if this fails.
-    if (this.editedSrc) {
-      try {
-        window.URL.revokeObjectURL(this.editedSrc);
-      }
-      catch (_) {}
     }
   }
 
@@ -297,7 +284,10 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
 
   async __cropClicked() {
-    const file = await this.__btnClicked('getCrop');
+    const [file] = await Promise.all([
+      this.__btnClicked('getCrop'),
+      wait(2000)
+    ]);
 
     this.fire('image-cropper-cropped', {value: file});
 

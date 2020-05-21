@@ -11,10 +11,6 @@ export const ImageEditorItemMixin = superClass => {
 
       	item: Object,
 
-      	page: String,
-
-      	selected: String,
-
       	_highQuality: {
 	        type: String,
 	        computed: '__computeHighQuality(item)'
@@ -39,7 +35,6 @@ export const ImageEditorItemMixin = superClass => {
 
 	  static get observers() {
 	  	return [
-	  		'__selectedPageChanged(selected, page)',
 	  		'__editedSrcChanged(editedSrc)'
 	  	];
 	  }
@@ -85,18 +80,6 @@ export const ImageEditorItemMixin = superClass => {
 	    if (original)  { return original; }
 
 	    return _tempUrl;
-	  }
-
-
-	  __selectedPageChanged(selected, page) {
-	    if (selected !== page) {
-	      this.__reset();
-	    }
-
-	    // image-cropper.js does not have an init method.
-	    else if (this.__init) {
-	      this.__init();
-	    }
 	  }
 
 

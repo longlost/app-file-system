@@ -32,7 +32,8 @@
   }
 
   .page {
-    min-width: 100%;
+    min-width:    100%;
+    margin-right: 16px;
   }
 
   *[hidden] {
@@ -76,34 +77,34 @@
   </paper-tabs>
 
 
-  <app-carousel id="carousel"
-                aspect-ratio="fill"
-                disabled
-                slot="content"
-                on-app-carousel-section-index-changed="__carouselIndexChanged">    
+  <tab-pages id="pages"
+             attr-for-selected="page"
+             selected="[[_selectedPage]]"
+             slot="content">    
     
-    <image-filters class="page" 
+    <image-filters class="page"
+                   edited-src="[[_editedSrc]]"
                    item="[[item]]" 
-                   page="filters" 
-                   selected="[[_selected]]"
+                   page="filters"
                    on-image-filters-filter-applied="__filtered">
     </image-filters>
 
     <image-adjuster class="page" 
+                    edited-src="[[_editedSrc]]"
                     item="[[item]]" 
                     page="adjust" 
-                    selected="[[_selected]]"
                     on-image-adjuster-adjustments-applied="__adjusted">                      
     </image-adjuster>
 
-    <image-cropper class="page" 
+    <image-cropper class="page"
+                   edited-src="[[_editedSrc]]"
                    item="[[item]]" 
                    page="crop"
-                   selected="[[_selected]]"
                    on-image-cropper-cropped="__cropped">
     </image-cropper>
 
-    <div class="page">
+    <div class="page" 
+         page="meta">
       <metadata-page dark-mode="[[darkMode]]"
                      geolocation="[[_geolocation]]"
                      hidden="[[_hideMeta]]"
@@ -115,7 +116,7 @@
       </metadata-page>
     </div>
 
-  </app-carousel>
+  </tab-pages>
 
 
 </app-header-overlay>

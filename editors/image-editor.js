@@ -41,7 +41,7 @@ import {
   EditorMixin
 }                 from './editor-mixin.js';
 import htmlString from './image-editor.html';
-import '@longlost/app-carousel/app-carousel.js';
+import '@longlost/tab-pages/tab-pages.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-tabs/paper-tab.js';
 import './image-adjuster.js';
@@ -74,25 +74,7 @@ class ImageEditor extends EditorMixin(AppElement) {
         computed: '__computeHideMeta(list)'
       },
 
-      _opened: Boolean,
-
-      _page: String,
-
-      _pages: {
-        type: Array,
-        value: [
-          'filters',
-          'adjust',
-          'crop',
-          'meta'
-        ]
-      },
-
-      // Selected tab page.
-      _selected: {
-        type: String,
-        computed: '__computeSelected(_page, _opened)'
-      },
+      _selectedPage: String
 
     };
   }
@@ -107,13 +89,6 @@ class ImageEditor extends EditorMixin(AppElement) {
 
   __computeHideMeta(list) {
     return list === 'files';
-  }
-
-
-  __computeSelected(page, opened) {
-    if (!page || !opened) { return; }
-
-    return page;
   }
 
   // Overlay back button event handler.
@@ -136,21 +111,7 @@ class ImageEditor extends EditorMixin(AppElement) {
 
   // Paper tabs on-selected-changed handler.
   __selectedPageChanged(event) {
-
-    // Skip initialization.
-    if (!this._selected) { return; }
-
-    const page  = event.detail.value;
-    const index = this._pages.indexOf(page);
-
-    this.$.carousel.animateToSection(index);
-  }
-
-
-  __carouselIndexChanged(event) {
-    const index = event.detail.value;
-
-    this._page = this._pages[index];
+    this._selectedPage = event.detail.value;
   }
 
 
@@ -169,10 +130,8 @@ class ImageEditor extends EditorMixin(AppElement) {
   }
 
 
-  async open() {
-    await this.$.overlay.open();
-
-    this._opened = true;
+  open() {
+    return this.$.overlay.open();
   }
 
 }
