@@ -37,7 +37,7 @@ import {AppElement, html}     from '@longlost/app-element/app-element.js';
 import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
 import {FilterMixin}          from './filter-mixin.js';
 import {scale}                from '@longlost/lambda/lambda.js';
-import {warn}                 from '@longlost/utils/utils.js';
+import {wait, warn}           from '@longlost/utils/utils.js';
 import {highQualityFile}      from '../shared/utils.js';
 import htmlString             from './image-adjuster.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
@@ -163,15 +163,6 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   
     img.onload = () => {
 
-      // Release edited file temp url resources.
-      // Quelsh errors if this fails.
-      if (this.editedSrc) {
-        try {
-          window.URL.revokeObjectURL(this.editedSrc);
-        }
-        catch (_) {}
-      }
-
       this.$.preview['height'] = `${img.height}`;
       this.$.preview['width']  = `${img.width}`;
 
@@ -249,11 +240,14 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   async __applyClicked() {
     try {
     
-      const file = await highQualityFile(
-        this._filter, 
-        this._highQuality, 
-        this._name
-      );
+      const [file] = await Promise.all([
+        highQualityFile(
+          this._filter, 
+          this._highQuality, 
+          this._name
+        ),
+        wait(2000)
+      ]);
 
       this.fire('image-adjuster-adjustments-applied', {value: file});
     }

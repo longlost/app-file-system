@@ -24,15 +24,15 @@ export const FilterMixin = superClass => {
 	  }
 
 
-	  __computeApplyBtnDisabled(item, filter, selectedFilter) {
-	  	return !Boolean(item && filter && selectedFilter);
+	  connectedCallback() {
+	  	super.connectedCallback();
+
+	  	this._filter = webglFilter();
 	  }
 
 
-	  __init() {
-	    if (!this._filter) {
-	      this._filter = webglFilter();
-	    }
+	  __computeApplyBtnDisabled(item, filter, selectedFilter) {
+	  	return !Boolean(item && filter && selectedFilter);
 	  }
 
   };

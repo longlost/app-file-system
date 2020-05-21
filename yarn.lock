@@ -1073,6 +1073,14 @@
     "@longlost/boot" "^1.2.5"
     firebase "^7.14.1"
 
+"@longlost/tab-pages@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@longlost/tab-pages/-/tab-pages-1.0.1.tgz#a3ecbe6539da0bd096920144a619c9d1744b9c08"
+  integrity sha512-NN76VmAZJObSz/c7q81QqwNKOwyfukBegsK6Wps+sCeHPYj8bnnzTQlghc196XyiNaK7mWF+YyQHPkzC+iBO+g==
+  dependencies:
+    "@longlost/app-element" "^2.0.0"
+    "@longlost/utils" "^1.4.0"
+
 "@longlost/utils@^1.1.6", "@longlost/utils@^1.2.4", "@longlost/utils@^1.3.5":
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/@longlost/utils/-/utils-1.3.5.tgz#400f36c28acf4f63039fb3b400ffc9db52a0caca"
