@@ -33,12 +33,12 @@
   **/
 
 
-import {AppElement, html}     from '@longlost/app-element/app-element.js';
-import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
-import {FilterMixin}          from './filter-mixin.js';
-import {wait, warn}           from '@longlost/utils/utils.js';
-import {highQualityFile}      from '../shared/utils.js';
-import htmlString             from './image-filters.html';
+import {AppElement, html}            from '@longlost/app-element/app-element.js';
+import {ImageEditorItemMixin}        from './image-editor-item-mixin.js';
+import {FilterMixin}                 from './filter-mixin.js';
+import {wait, warn}                  from '@longlost/utils/utils.js';
+import {canvasFile, highQualityFile} from '../shared/utils.js';
+import htmlString                    from './image-filters.html';
 import '@polymer/iron-selector/iron-selector.js';
 import './image-editor-item.js';
 import './filter-item.js';
@@ -135,12 +135,11 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     this._selectedFilter = event.detail.value;
   }
 
-
+  // Called by image-editor-item-mixin
+  // when the editedSrc is changed.
   __reset() {
     if (this._filter) {
-      this._filter         = undefined;
-      this._loaded         = false;
-      this._selectedFilter = undefined;
+      this._loaded = false;
     }
   }
 
@@ -148,28 +147,50 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   async __applyClicked() {
     try {
 
+      this.fire('image-filters-show-spinner', {text: 'Applying filter.'});
+
       this._filter.reset();
       this._filter.addFilter(this._selectedFilter);
+
+      const img = new Image();
+
+      const loadPromise = () => new Promise((resolve, reject) => {
+        img.onload = async () => {
+
+          const canvas = this._filter.apply(img);
+          const file   = await canvasFile(this._src, this._name, canvas);
+
+          resolve(file);
+        };
+
+        img.onerror = reject;
+      });
+      
+      img.crossOrigin = '';
+      img.src = this._src;
     
       const [file] = await Promise.all([
-        highQualityFile(
-          this._filter, 
-          this._highQuality, 
-          this._name
-        ),
-        wait(2000)
+        loadPromise(),
+        wait(1500)
       ]);
 
       this.fire('image-filters-filter-applied', {value: file});
     }
     catch (error) {
-      if (error === 'click debounced') { return; }
       console.error(error);
       await warn('Could not apply the filter.');
     }
     finally {
-      this.$.item.hideSpinner();
+      this.fire('image-filters-hide-spinner');
     }
+  }
+
+
+  processHighQuality() {
+    this._filter.reset();
+    this._filter.addFilter(this._selectedFilter);
+
+    return highQualityFile(this._filter, this._highQuality, this._name);
   }
 
 }

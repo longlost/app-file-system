@@ -80,41 +80,56 @@
   <tab-pages id="pages"
              attr-for-selected="page"
              selected="[[_selectedPage]]"
-             slot="content">    
+             slot="content"
+             on-tab-pages-page-changed="__tabPageChanged">    
     
     <image-filters class="page"
+                   current="[[_currentPage]]"
                    edited-src="[[_editedSrc]]"
                    item="[[item]]" 
                    page="filters"
-                   on-image-filters-filter-applied="__filtered">
+                   selected="[[_selectedPage]]"
+                   on-image-filters-filter-applied="__filtered"
+                   on-image-filters-hide-spinner="__hideSpinner"
+                   on-image-filters-show-spinner="__showSpinner">
     </image-filters>
 
     <image-adjuster class="page" 
+                    current="[[_currentPage]]"
                     edited-src="[[_editedSrc]]"
-                    item="[[item]]" 
-                    page="adjust" 
-                    on-image-adjuster-adjustments-applied="__adjusted">                      
+                    item="[[_lazyItem]]" 
+                    page="adjust"
+                    selected="[[_selectedPage]]"
+                    on-image-adjuster-adjustments-applied="__adjusted"
+                    on-image-adjuster-hide-spinner="__hideSpinner"
+                    on-image-adjuster-show-spinner="__showSpinner">                      
     </image-adjuster>
 
     <image-cropper class="page"
+                   current="[[_currentPage]]"
                    edited-src="[[_editedSrc]]"
-                   item="[[item]]" 
-                   page="crop"
-                   on-image-cropper-cropped="__cropped">
+                   item="[[_lazyItem]]" 
+                   page="crop"                   
+                   selected="[[_selectedPage]]"
+                   on-image-cropper-cropped="__cropped"
+                   on-image-cropper-hide-spinner="__hideSpinner"
+                   on-image-cropper-show-spinner="__showSpinner">
     </image-cropper>
 
-    <div class="page" 
-         page="meta">
+    <image-meta class="page"
+                current="[[_currentPage]]"
+                page="meta"
+                selected="[[_selectedPage]]">
       <metadata-page dark-mode="[[darkMode]]"
                      geolocation="[[_geolocation]]"
                      hidden="[[_hideMeta]]"
                      is-img="[[_isImg]]"
-                     item="[[item]]"
+                     item="[[_lazyItem]]"
                      list="[[list]]"
                      on-display-name-changed="__displayNameChanged"
                      on-open-map-overlay="__openMapOverlay">
       </metadata-page>
-    </div>
+    </image-meta>
 
   </tab-pages>
 
@@ -130,3 +145,8 @@
              zoom="[[_defaultZoom]]"
              on-selected-changed="__mapOverlaySelectedChanged">
 </map-overlay>
+
+
+<app-spinner id="spinner" 
+             full-screen>
+</app-spinner>

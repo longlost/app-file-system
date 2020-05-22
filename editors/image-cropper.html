@@ -116,18 +116,15 @@
 </iron-a11y-keys>
 
 
-<image-editor-item id="item" 
-									 button-disabled="[[_cropBtnDisabled]]" 
+<image-editor-item button-disabled="[[_cropBtnDisabled]]" 
 									 button-icon="crop" 
 									 button-label="CROP"
-									 spinner-text="Applying crop."
 									 on-image-editor-item-btn-clicked="__cropClicked">
 
 	<crop-wrapper id="cropper"
 								name="[[_name]]"
 								slot="preview"
-								src="[[_src]]"
-								on-crop-wrapper-ready="__cropperReady">								
+								src="[[_src]]">								
 	</crop-wrapper>
 
 	<!-- Top row of control buttons. -->

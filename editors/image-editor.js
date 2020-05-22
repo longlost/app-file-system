@@ -38,15 +38,20 @@ import {
   html
 }                 from '@longlost/app-element/app-element.js';
 import {
+  schedule
+}                 from '@longlost/utils/utils.js';
+import {
   EditorMixin
 }                 from './editor-mixin.js';
 import htmlString from './image-editor.html';
+import '@longlost/app-spinner/app-spinner.js';
 import '@longlost/tab-pages/tab-pages.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-tabs/paper-tab.js';
 import './image-adjuster.js';
 import './image-cropper.js';
 import './image-filters.js';
+import './image-meta.js';
 // Map lazy loaded.
 
 
@@ -61,12 +66,17 @@ class ImageEditor extends EditorMixin(AppElement) {
   static get properties() {
     return {
 
-      _editedFile: Object,
+      // The selected tab value AFTER tab-pages animation finishes.
+      _currentPage: String,
 
-      _editedSrc: {
-        type: String,
-        computed: '__computeEditedSrc(_editedFile)'
+      _editedFile: {
+        type: Object,
+        observer: '__editedFileChanged'
       },
+
+      _editedSrc: String,
+
+      _highQuality: Object,
 
       _hideMeta: {
         type: Boolean,
@@ -80,15 +90,20 @@ class ImageEditor extends EditorMixin(AppElement) {
   }
 
 
-  __computeEditedSrc(file) {
-    if (!file) { return; }
-
-    return window.URL.createObjectURL(file);
+  __computeHideMeta(list) {
+    return list === 'files';
   }
 
 
-  __computeHideMeta(list) {
-    return list === 'files';
+  __editedFileChanged(newVal, oldVal) {
+
+    if (oldVal) {
+      window.URL.revokeObjectURL(oldVal);
+    }
+
+    if (!newVal) { return; }
+
+    this._editedSrc = window.URL.createObjectURL(newVal);
   }
 
   // Overlay back button event handler.
@@ -115,6 +130,24 @@ class ImageEditor extends EditorMixin(AppElement) {
   }
 
 
+  __tabPageChanged(event) {
+    this._currentPage = event.detail.value;
+  }
+
+
+  async __hideSpinner() {
+    await schedule();
+
+    this.$.spinner.hide();
+  }
+
+
+  __showSpinner(event) {
+    const {text} = event.detail;
+    this.$.spinner.show(text);
+  }
+
+
   __adjusted(event) {
     this._editedFile = event.detail.value;
   }
@@ -130,8 +163,10 @@ class ImageEditor extends EditorMixin(AppElement) {
   }
 
 
-  open() {
-    return this.$.overlay.open();
+  async open() {
+    await this.$.overlay.open();
+    await schedule();
+    this._lazyItem = this.item;
   }
 
 }

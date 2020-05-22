@@ -11,7 +11,7 @@
   *  Properites:
   *
   *
-  *			
+  *     
   *
   *
   *
@@ -34,14 +34,14 @@
 
 
 import {
-	AppElement, 
-	html
-} 								from '@longlost/app-element/app-element.js';
+  AppElement, 
+  html
+}                 from '@longlost/app-element/app-element.js';
 import {
-	listen, 
-	schedule, 
-	unlisten
-}	 								from '@longlost/utils/utils.js';
+  listen, 
+  schedule, 
+  unlisten
+}                 from '@longlost/utils/utils.js';
 import htmlString from './rotation-slider.html';
 
 // The total slider travel represents +/- 45 degrees.
@@ -59,10 +59,10 @@ class RotationSlider extends AppElement {
   static get properties() {
     return {
 
-    	_increment: {
-    		type: Number,
-    		computed: '__computeIncrement(_width)'
-    	},
+      _increment: {
+        type: Number,
+        computed: '__computeIncrement(_width)'
+      },
 
      _width: Number
 
@@ -70,42 +70,44 @@ class RotationSlider extends AppElement {
   }
 
 
-  connectedCallback() {
-  	super.connectedCallback();
+  async connectedCallback() {
+    super.connectedCallback();
 
-  	this.__measureWidth();
+    await schedule();
 
-  	// Center the scroller initially.
-  	this.center();
+    this.__measureWidth();
 
-  	this._resizeListenerKey = listen(window, 'resize', this.__measureWidth.bind(this));
+    // Center the scroller initially.
+    this.center();
+
+    this._resizeListenerKey = listen(window, 'resize', this.__measureWidth.bind(this));
   }
 
 
   __computeIncrement(width) {
-  	return typeof width === 'number' ? width / TOTAL_DEGREES : 1;
+    return typeof width === 'number' ? width / TOTAL_DEGREES : 1;
   }
 
 
   __measureWidth() {
-  	this._width  = this.$.scale.getBoundingClientRect().width;
-  	this._center = this._width / 2;
+    this._width  = this.$.scale.getBoundingClientRect().width;
+    this._center = this._width / 2;
   }
 
 
   async __scrollerScrolled() {
 
-  	await schedule();
+    await schedule();
 
-  	const dist = this.$.scroller.scrollLeft - this._center;
-  	this._degrees = Math.round(dist / this._increment);
+    const dist = this.$.scroller.scrollLeft - this._center;
+    this._degrees = Math.round(dist / this._increment);
 
-  	this.fire('degrees-changed', {value: this._degrees});
+    this.fire('degrees-changed', {value: this._degrees});
   }
 
 
   center() {
-  	this.$.scroller.scroll(this._center, 0);
+    this.$.scroller.scroll(this._center, 0);
   }
 
 }
