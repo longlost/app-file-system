@@ -284,17 +284,28 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
 
   async __cropClicked() {
-    const [file] = await Promise.all([
-      this.__btnClicked('getCrop'),
-      wait(2000)
-    ]);
+    try {      
 
-    this.fire('image-cropper-cropped', {value: file});
+      this.fire('image-cropper-show-spinner', {text: 'Cropping image.'});
 
-    this.$.item.hideSpinner();
+      const [file] = await Promise.all([
+        this.__btnClicked('getCrop'),
+        wait(1500)
+      ]);
+
+      this.fire('image-cropper-cropped', {value: file});
+    }
+    catch (error) {
+      console.error(error);
+      await warn('Could not crop the image.');
+    }
+    finally {
+      this.fire('image-cropper-hide-spinner');
+    }
   }
 
-
+  // Also called by image-editor-item-mixin
+  // when the editedSrc is changed.
   __reset() {
     this._degrees         = 0;
     this._fineDegrees     = 0;

@@ -176,6 +176,7 @@ const isCloudProcessable = ({type}) =>
 
 export {
   allProcessingRan,
+  canvasFile,
   fetchBlob,
   fetchFile,
   highQualityFile,
