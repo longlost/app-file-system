@@ -261,7 +261,8 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
     this.__btnClicked('rotateTo', this._degrees + this._fineDegrees);
   }
 
-
+  // Not awaiting this.clicked here
+  // because __reset uses it with __btnClicked.
   __resetClicked() {
     this.__reset();
   }
@@ -325,7 +326,7 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
   // Also called by image-editor-item-mixin
   // when the editedSrc is changed.
-  __reset() {  
+  async __reset() {  
     this._degrees        = 0;
     this._fineDegrees    = 0;
     this._selectedAspect = 'free';
@@ -334,6 +335,9 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
     this.$.slider.center();
     this.__btnClicked('reset');
+
+    // Wait until after rotation-slider fires its event.
+    await wait(50);
 
     this._cropBtnDisabled = true;
   }

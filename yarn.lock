@@ -930,6 +930,13 @@
   dependencies:
     "@polymer/polymer" "^3.3.1"
 
+"@longlost/app-shared-styles@^2.0.14":
+  version "2.0.14"
+  resolved "https://registry.yarnpkg.com/@longlost/app-shared-styles/-/app-shared-styles-2.0.14.tgz#9796163c9ec8de304864949101fc4362c6171117"
+  integrity sha512-Sw+Yf4tE0xH77aEar8iRy7DnsAWMhBbbz1ySGR7P5N/yikYvunjetImnpGHJ6c4LEESH6zGvLHbZ6GTGy3Aojg==
+  dependencies:
+    "@polymer/polymer" "^3.4.1"
+
 "@longlost/app-spinner@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@longlost/app-spinner/-/app-spinner-1.1.1.tgz#5bdcac193aaa30f21e8e9a3fd2c7a45626798ec0"
@@ -977,6 +984,18 @@
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/@longlost/boot/-/boot-1.2.6.tgz#329c89cdb9f17b9fa96cde98e466ad93b633dbf6"
   integrity sha512-Ew6q2HnkTtigkphfh7uNO+W0Ooa4PgYWpVJvQp+V12OIUIbHAilrnrFB1xwB+DMQqUUvQvON3inOgmoS25aTlQ==
+  dependencies:
+    "@longlost/utils" "^1.4.0"
+    "@polymer/paper-styles" "^3.0.1"
+    firebase "^7.14.5"
+    scroll-behavior-polyfill "^2.0.13"
+    web-animations-js "^2.3.2"
+    workbox-window "^5.1.3"
+
+"@longlost/boot@^1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@longlost/boot/-/boot-1.2.7.tgz#860fcf681654aff069b224afa24f76aed6f20c10"
+  integrity sha512-cUm/HpiU8fULeAjuCUNvFeMvWl3Ozz3mwBCRhZtfs3LSArzDp21q7cRcg6OY5ROE7BwaWCJA2Tu+lwFsZFUcQQ==
   dependencies:
     "@longlost/utils" "^1.4.0"
     "@polymer/paper-styles" "^3.0.1"
