@@ -200,11 +200,33 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     this._source    = undefined;
   }
 
+
   __clear() {
 
+    this.__reset();
+
+    // Change ready val.
+    this._ready = undefined;
+
+    // Reset ready so _source is renewed.
+    // This addresses and issue where blurring
+    // a cropped image creates a halo that is
+    // larger than the image. Renewing the _source
+    // clears the halo artifact.
+    this._ready = true;
+  }
+
+  // Called by image-editor-item-mixin
+  // when the editedSrc is changed.
+  __reset() {
+
     // Change slider default values.
-    this._centeredVal    = undefined;
-    this._zeroedVal      = undefined;
+    this._centeredVal = undefined;
+    this._zeroedVal   = undefined;
+
+    // Don't allow filters to run
+    // until a new source is established.
+    this._source = undefined;
 
     // Disable 'Apply' button.
     this._selectedFilter = undefined;
@@ -220,14 +242,6 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     // Force an update to reset sliders.
     this._centeredVal = 50;
     this._zeroedVal   = 0;
-  }
-
-  // Called by image-editor-item-mixin
-  // when the editedSrc is changed.
-  __reset() {
-    this._source = undefined;
-
-    this.__clear();
   }
 
 
@@ -334,8 +348,8 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
       this.fire('image-adjuster-show-spinner', {text: 'Applying adjustments.'});
 
       const process = async () => {
-        const low  = await imgFilterFile(this._filter, this._src,         this._name);
-        const high = await imgFilterFile(this._filter, this._highQuality, this._name);
+        const low  = await imgFilterFile(this._filter, this._src,        this._name);
+        const high = await imgFilterFile(this._filter, this.highQuality, this._name);
 
         return {high, low};
       };

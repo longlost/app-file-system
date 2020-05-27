@@ -296,7 +296,7 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
       const process = async () => {
         const low = await this.__btnClicked('getCrop');
 
-        this.$.cropper.replace(this._highQuality);
+        this.$.cropper.replace(this.highQuality);
 
         await listenOnce(this.$.cropper, 'crop-wrapper-ready');
 

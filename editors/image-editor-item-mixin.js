@@ -11,18 +11,15 @@ export const ImageEditorItemMixin = superClass => {
 
 	    	current: String,
 
-	    	editedSrc: String,
+	    	edited: String,
+
+      	highQuality: String,
 
       	item: Object,
 
       	page: String,
 
       	selected: String,
-
-      	_highQuality: {
-	        type: String,
-	        computed: '__computeHighQuality(item)'
-	      },
 
 	      // This name becomes the new filename 
 	      // for any exported files.
@@ -45,22 +42,9 @@ export const ImageEditorItemMixin = superClass => {
 
 	  static get observers() {
 	  	return [
-	  		'__editedSrcChanged(editedSrc)',
+	  		'__editedChanged(edited)',
 	  		'__currentPageSelectedChanged(current, page, selected)'
 	  	];
-	  }
-
-
-	  __computeHighQuality(item) {
-	    if (!item) { return '#'; }
-
-	    const {oriented, original, _tempUrl} = item;
-
-	    if (oriented) { return oriented; }
-
-	    if (original) { return original; }
-
-	    return _tempUrl;
 	  }
 
 
@@ -94,14 +78,14 @@ export const ImageEditorItemMixin = superClass => {
 	  }
 
 
-	  async __editedSrcChanged(src) {
+	  async __editedChanged(src) {
 	  	if (src) {
 	  		this.__reset();
 
 	  		await schedule();
-
-	  		this._newSrc = src;
 	  	}
+
+	  	this._newSrc = src;
 	  }
 
 	  // Make sure non-selected tab elements are not visible
