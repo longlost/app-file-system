@@ -76,7 +76,7 @@ class ImageEditor extends EditorMixin(AppElement) {
 
       _editedSrc: String,
 
-      _highQuality: Object,
+      _highQualityFile: Object,
 
       _hideMeta: {
         type: Boolean,
@@ -148,18 +148,24 @@ class ImageEditor extends EditorMixin(AppElement) {
   }
 
 
+  __filtered(event) {
+    const {high, low}     = event.detail;
+    this._editedFile      = low;
+    this._highQualityFile = high;
+  }
+
+
   __adjusted(event) {
-    this._editedFile = event.detail.value;
+    const {high, low}     = event.detail;
+    this._editedFile      = low;
+    this._highQualityFile = high;
   }
 
 
   __cropped(event) {
-    this._editedFile = event.detail.value;
-  }
-
-
-  __filtered(event) {
-    this._editedFile = event.detail.value;
+    const {high, low}     = event.detail;
+    this._editedFile      = low;
+    this._highQualityFile = high;
   }
 
 

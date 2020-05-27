@@ -33,13 +33,13 @@
   **/
 
 
-import {AppElement, html}            from '@longlost/app-element/app-element.js';
-import {ImageEditorItemMixin}        from './image-editor-item-mixin.js';
-import {FilterMixin}                 from './filter-mixin.js';
-import {scale}                       from '@longlost/lambda/lambda.js';
-import {wait, warn}                  from '@longlost/utils/utils.js';
-import {canvasFile, highQualityFile} from '../shared/utils.js';
-import htmlString                    from './image-adjuster.html';
+import {AppElement, html}     from '@longlost/app-element/app-element.js';
+import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
+import {FilterMixin}          from './filter-mixin.js';
+import {scale}                from '@longlost/lambda/lambda.js';
+import {wait, warn}           from '@longlost/utils/utils.js';
+import {imgFilterFile}        from '../shared/utils.js';
+import htmlString             from './image-adjuster.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-slider/paper-slider.js';
@@ -190,17 +190,22 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     this._source    = undefined;
   }
 
-  // Called by image-editor-item-mixin
-  // when the editedSrc is changed.
-  __reset() {
+  __clear() {
     this._centeredVal    = undefined;
     this._zeroedVal      = undefined;
     this._selectedFilter = undefined;
-    this._source         = undefined;
 
     // Force an update to reset sliders.
     this._centeredVal = 50;
     this._zeroedVal   = 0;
+  }
+
+  // Called by image-editor-item-mixin
+  // when the editedSrc is changed.
+  __reset() {
+    this._source = undefined;
+
+    this.__clear();
   }
 
 
@@ -252,17 +257,37 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   }
 
 
+  async __resetClicked() {
+    try {
+      await this.clicked();
+
+      this.__clear();
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
+
   async __applyClicked() {
     try {
 
       this.fire('image-adjuster-show-spinner', {text: 'Applying adjustments.'});
+
+      const process = async () => {
+        const low  = await imgFilterFile(this._filter, this._src,         this._name);
+        const high = await imgFilterFile(this._filter, this._highQuality, this._name);
+
+        return {high, low};
+      };
     
-      const [file] = await Promise.all([
-        canvasFile(this._src, this._name, this.$.preview),
+      const [detail] = await Promise.all([
+        process(),
         wait(1500)
       ]);
 
-      this.fire('image-adjuster-adjustments-applied', {value: file});
+      this.fire('image-adjuster-adjustments-applied', detail);
     }
     catch (error) {
       console.error(error);
@@ -271,11 +296,6 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     finally {
       this.fire('image-adjuster-hide-spinner');
     }
-  }
-
-
-  processHighQuality() {
-    return highQualityFile(this._filter, this._highQuality, this._name);
   }
 
 }

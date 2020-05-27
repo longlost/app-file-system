@@ -31,6 +31,22 @@
 		margin-right: 8px;
 	}
 
+	#reset {
+		display: 					inline-flex;
+    flex-direction: 	column;
+		margin: 					8px 0px;
+    font-size: 				10px;
+		border-radius:  	3px;
+		background-color: var(--app-background-color);
+		color: 						var(--disabled-text-color);
+	}
+
+	#reset[pressed] {
+		outline: 					none;
+		background-color: var(--app-dark-color);
+		color: 						var(--constant-light-text);
+	}
+
 </style>
 
 
@@ -129,6 +145,12 @@
 				<span>Blur</span>
 			</div>
 		</div>
+
+		<paper-button id="reset"
+									on-click="__resetClicked">
+			<iron-icon icon="image-editor-icons:refresh"></iron-icon>
+			<div>Reset</div>
+		</paper-button>
 
 	</div>
 

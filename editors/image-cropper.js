@@ -33,10 +33,10 @@
   **/
 
 
-import {AppElement, html}     from '@longlost/app-element/app-element.js';
-import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
-import {wait, warn}           from '@longlost/utils/utils.js';
-import htmlString             from './image-cropper.html';
+import {AppElement, html}       from '@longlost/app-element/app-element.js';
+import {ImageEditorItemMixin}   from './image-editor-item-mixin.js';
+import {listenOnce, wait, warn} from '@longlost/utils/utils.js';
+import htmlString               from './image-cropper.html';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-selector/iron-selector.js';
@@ -69,7 +69,6 @@ const getRatio = name => {
       return undefined;
   }
 };
-
 
 
 class ImageCropper extends ImageEditorItemMixin(AppElement) {
@@ -155,14 +154,19 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
   }
 
 
+  __cropperActive() {
+    this._cropBtnDisabled = false;
+  }
+
+
   async __btnClicked(fn, ...args) {
     try {
 
       if (!this.$.cropper.isReady) { return; }
 
-      await this.clicked(100);
-
       this._cropBtnDisabled = false;
+
+      await this.clicked(100);
 
       const callback = this.$.cropper[fn];
 
@@ -177,12 +181,12 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
 
   __zoomInClicked() {
-    this.__btnClicked('zoom', 0.1);
+    this.__btnClicked('zoomIn');
   }
 
 
   __zoomOutClicked() {
-    this.__btnClicked('zoom', -0.1);
+    this.__btnClicked('zoomOut');
   }
 
 
@@ -288,12 +292,27 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
       this.fire('image-cropper-show-spinner', {text: 'Cropping image.'});
 
-      const [file] = await Promise.all([
-        this.__btnClicked('getCrop'),
+      const process = async () => {
+        const low = await this.__btnClicked('getCrop');
+
+        this.$.cropper.replace(this._highQuality);
+
+        await listenOnce(this.$.cropper, 'crop-wrapper-ready');
+
+        const high = await this.$.cropper.getCrop();
+
+        // Allow new _editedSrc to replace existing img src.
+        this.$.cropper.destroy();
+
+        return {high, low};
+      };
+
+      const [detail] = await Promise.all([
+        process(),
         wait(1500)
       ]);
 
-      this.fire('image-cropper-cropped', {value: file});
+      this.fire('image-cropper-cropped', detail);
     }
     catch (error) {
       console.error(error);
@@ -306,15 +325,17 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
   // Also called by image-editor-item-mixin
   // when the editedSrc is changed.
-  __reset() {
-    this._degrees         = 0;
-    this._fineDegrees     = 0;
-    this._cropBtnDisabled = true;
-    this._selectedAspect  = 'free';
-    this._selectedFlips   = [];
-    this._selectedShape   = 'square';
+  __reset() {  
+    this._degrees        = 0;
+    this._fineDegrees    = 0;
+    this._selectedAspect = 'free';
+    this._selectedFlips  = [];
+    this._selectedShape  = 'square';
+
     this.$.slider.center();
     this.__btnClicked('reset');
+
+    this._cropBtnDisabled = true;
   }
 
 }
