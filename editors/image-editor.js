@@ -69,14 +69,26 @@ class ImageEditor extends EditorMixin(AppElement) {
       // The selected tab value AFTER tab-pages animation finishes.
       _currentPage: String,
 
+      // ObjectURL string for current low quality, diplayed file.
+      _edited: String,
+
       _editedFile: {
         type: Object,
         observer: '__editedFileChanged'
       },
 
-      _editedSrc: String,
+      _highQuality: {
+        type: String,
+        computed: '__computeHighQuality(item, _highQualityUrl)'
+      },
 
-      _highQualityFile: Object,
+      _highQualityFile: {
+        type: Object,
+        observer: '__highQualityFileChanged'
+      },
+
+      // ObjectURL string for current high quality file.
+      _highQualityUrl: String,
 
       _hideMeta: {
         type: Boolean,
@@ -95,6 +107,22 @@ class ImageEditor extends EditorMixin(AppElement) {
   }
 
 
+  __computeHighQuality(item, highQualityUrl) {
+
+    if (highQualityUrl) { return highQualityUrl; }
+
+    if (!item) { return '#'; }
+
+    const {oriented, original, _tempUrl} = item;
+
+    if (oriented) { return oriented; }
+
+    if (original) { return original; }
+
+    return _tempUrl;
+  }
+
+
   __editedFileChanged(newVal, oldVal) {
 
     if (oldVal) {
@@ -103,7 +131,19 @@ class ImageEditor extends EditorMixin(AppElement) {
 
     if (!newVal) { return; }
 
-    this._editedSrc = window.URL.createObjectURL(newVal);
+    this._edited = window.URL.createObjectURL(newVal);
+  }
+
+
+  __highQualityFileChanged(newVal, oldVal) {
+
+    if (oldVal) {
+      window.URL.revokeObjectURL(oldVal);
+    }
+
+    if (!newVal) { return; }
+
+    this._highQualityUrl = window.URL.createObjectURL(newVal);
   }
 
   // Overlay back button event handler.

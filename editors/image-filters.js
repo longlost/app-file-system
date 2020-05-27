@@ -153,8 +153,8 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
       this._filter.addFilter(this._selectedFilter);
 
       const process = async () => {
-        const low  = await imgFilterFile(this._filter, this._src,         this._name);
-        const high = await imgFilterFile(this._filter, this._highQuality, this._name);
+        const low  = await imgFilterFile(this._filter, this._src,        this._name);
+        const high = await imgFilterFile(this._filter, this.highQuality, this._name);
 
         return {high, low};
       };
