@@ -3,26 +3,8 @@
 
   #overlay {
     padding: 0px;
-    --overlay-toolbar-backdrop-filter:            blur(10px);
-    --overlay-toolbar-background-parallax-height: 100%;
-    --overlay-toolbar-background-color:           transparent;
-    --overlay-toolbar-vignette-opacity:           0;
-  }
-
-  /*
-    Cannot have a background color and 
-    a backdrop-filter on same element.
-  */
-  #header-color-background {
-    position:         absolute;
-    top:              0px;
-    right:            0px;
-    bottom:           0px;
-    left:             0px;
-    pointer-events:   none;
-    z-index:         -1;
-    opacity:          0.7;
-    background-color: var(--app-primary-color);
+    --overlay-toolbar-background-color: var(--app-primary-color);
+    --overlay-toolbar-vignette-opacity: 0;
   }
 
   paper-tabs {
@@ -54,12 +36,7 @@
                     title="[[item.displayName]]"
                     on-header-overlay-back="__back"
                     on-overlay-reset="__reset">
-
-  
-  <div id="header-color-background"
-       slot="header-background-slot">
-  </div>
-
+                    
 
   <paper-tabs attr-for-selected="page"
               slot="bottom-toolbar-tabs-slot"

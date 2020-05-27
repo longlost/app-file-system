@@ -33,13 +33,13 @@
   **/
 
 
-import {AppElement, html}     from '@longlost/app-element/app-element.js';
-import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
-import {FilterMixin}          from './filter-mixin.js';
-import {scale}                from '@longlost/lambda/lambda.js';
-import {wait, warn}           from '@longlost/utils/utils.js';
-import {imgFilterFile}        from '../shared/utils.js';
-import htmlString             from './image-adjuster.html';
+import {AppElement, html}          from '@longlost/app-element/app-element.js';
+import {ImageEditorItemMixin}      from './image-editor-item-mixin.js';
+import {FilterMixin}               from './filter-mixin.js';
+import {scale}                     from '@longlost/lambda/lambda.js';
+import {getRootTarget, wait, warn} from '@longlost/utils/utils.js';
+import {imgFilterFile}             from '../shared/utils.js';
+import htmlString                  from './image-adjuster.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-slider/paper-slider.js';
@@ -138,16 +138,26 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
       filter.reset();
 
-      filter.addFilter('brightness', brightness);
-      filter.addFilter('contrast',   contrast);
-      filter.addFilter('saturation', saturation);
-      filter.addFilter('hue',        hue);
-      filter.addFilter('sharpen',    sharpness);
-      filter.addFilter('blur',       blur);
+      filter.addFilter('brightness', brightness || 0);
+      filter.addFilter('contrast',   contrast   || 0);
+      filter.addFilter('saturation', saturation || 0);
+      filter.addFilter('hue',        hue        || 0);
+      filter.addFilter('sharpen',    sharpness  || 0);
+      filter.addFilter('blur',       blur       || 0);
 
       const canvas = filter.apply(source);
 
       this._ctx.drawImage(canvas, 0, 0);
+
+      // Undefined during initialization and clearing.
+      if (
+        brightness === undefined && 
+        contrast   === undefined && 
+        saturation === undefined && 
+        hue        === undefined && 
+        sharpness  === undefined && 
+        blur       === undefined
+      ) { return; }
 
       // Enable 'Apply' button.
       this._selectedFilter = 'selected';
@@ -191,9 +201,21 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   }
 
   __clear() {
+
+    // Change slider default values.
     this._centeredVal    = undefined;
     this._zeroedVal      = undefined;
+
+    // Disable 'Apply' button.
     this._selectedFilter = undefined;
+
+    // Reset filters.
+    this._brightness = undefined;
+    this._contrast   = undefined;
+    this._saturation = undefined; 
+    this._hue        = undefined;
+    this._sharpness  = undefined; 
+    this._blur       = undefined;
 
     // Force an update to reset sliders.
     this._centeredVal = 50;
@@ -210,6 +232,12 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __brightnessChanged(event) {
+
+    const {focused} = getRootTarget(event);
+
+    // Ignore if not by human interaction.
+    if (!focused) { return; }
+
     window.requestAnimationFrame(() => {
       const {value}    = event.detail;
       this._brightness = this._scaler(value);
@@ -218,6 +246,12 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __contrastChanged(event) {
+
+    const {focused} = getRootTarget(event);
+
+    // Ignore if not by human interaction.
+    if (!focused) { return; }
+
     window.requestAnimationFrame(() => {
       const {value}  = event.detail;
       this._contrast = this._scaler(value);
@@ -226,6 +260,12 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __saturationChanged(event) {
+
+    const {focused} = getRootTarget(event);
+
+    // Ignore if not by human interaction.
+    if (!focused) { return; }
+
     window.requestAnimationFrame(() => {
       const {value}    = event.detail;
       this._saturation = this._scaler(value);
@@ -234,6 +274,12 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __hueChanged(event) {
+
+    const {focused} = getRootTarget(event);
+
+    // Ignore if not by human interaction.
+    if (!focused) { return; }
+
     window.requestAnimationFrame(() => {
       const {value} = event.detail;
       this._hue     = value;
@@ -242,6 +288,12 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __sharpenChanged(event) {
+
+    const {focused} = getRootTarget(event);
+
+    // Ignore if not by human interaction.
+    if (!focused) { return; }
+
     window.requestAnimationFrame(() => {
       const {value}   = event.detail;
       this._sharpness = value / 100;
@@ -250,6 +302,12 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __blurChanged(event) {
+
+    const {focused} = getRootTarget(event);
+
+    // Ignore if not by human interaction.
+    if (!focused) { return; }
+
     window.requestAnimationFrame(() => {
       const {value} = event.detail;
       this._blur    = value / 2;

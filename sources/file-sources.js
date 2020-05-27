@@ -149,8 +149,14 @@ const getName = basename =>
 const addAdditionalData = async files => {
   try { 
 
-    const {default: Worker} = await import('./worker.js');
-    const {init, run}       = await import('@longlost/worker/worker.runner.js');
+    const {default: Worker} = await import(
+      /* webpackChunkName: 'app-file-system-sources-worker' */ 
+      './worker.js'
+    );
+    const {init, run} = await import(
+      /* webpackChunkName: 'worker.runner' */ 
+      '@longlost/worker/worker.runner.js'
+    );
 
     await init(Worker);
 
