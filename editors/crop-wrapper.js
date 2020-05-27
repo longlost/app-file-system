@@ -30,7 +30,8 @@ import Cropper from 'cropperjs';
 const cleanExt = src => path.extname(src).split('?')[0];
 
 
-// Returns a round clipping canvas instance.
+// Returns an elliptical clipping canvas instance.
+// Slightly modified to handle ovals, along with circles.
 // Pulled from the source code from:
 //    https://fengyuanchen.github.io/cropper.js/examples/crop-a-round-image.html
 const getRoundedCanvas = sourceCanvas => {
@@ -48,7 +49,12 @@ const getRoundedCanvas = sourceCanvas => {
   context.globalCompositeOperation = 'destination-in';
   context.beginPath();
 
-  context.arc(width / 2, height / 2, Math.min(width, height) / 2, 0, 2 * Math.PI, true);  
+  // Elliptical path. Crop circles and ovals.
+  const radiusX = width  / 2;
+  const radiusY = height / 2;
+
+  // Arguments: x, y, radiusX, radiusY, rotation, startAngle, endAngle.
+  context.ellipse(radiusX, radiusY, radiusX, radiusY, 0, 0, 2 * Math.PI);
   context.fill();
 
   return canvas;
@@ -119,10 +125,12 @@ class CropWrapper extends AppElement {
       <div id="wrapper">
         <img id="img"
              alt="[[alt]]"
-             src="[[src]]" 
+             src="[[src]]"
+             on-cropstart="__active"
              on-error="__error"
              on-load="__loaded"
-             on-ready="__ready"/>
+             on-ready="__ready"
+             on-zoom="__active"/>
       </div>
 
 
@@ -176,13 +184,28 @@ class CropWrapper extends AppElement {
       // Source string for image to be cropped.
       src: String,
 
+      // Used when the 'replace' method is called with
+      // an image of a different size.
+      _boxData: Object,
+
+      // Used when the 'replace' method is called with
+      // an image of a different size.
+      _canvasData: Object,
+
       // Cropper.js instance.
       _cropper: Object,
 
       _initialCropBoxData: Object,
 
+      _replacing: String,
+
       // Controls the shape of the crop area.
       _round: Boolean,
+
+      _rotateTo: {
+        type: Number,
+        value: 0
+      },
 
       _xScale: {
         type: Number,
@@ -216,6 +239,11 @@ class CropWrapper extends AppElement {
   }
 
 
+  __active() {
+    this.fire('crop-wrapper-active');
+  }
+
+
   __error() {
     this.destroy();
     warn('The image failed to load.');
@@ -224,6 +252,18 @@ class CropWrapper extends AppElement {
 
   __loaded() {
 
+    if (this._replacing) { 
+
+      if (this._replacing === 'same') {
+        this._replacing = undefined;
+        this.isReady    = true;
+
+        this.fire('crop-wrapper-ready');
+      }
+
+      return; 
+    }
+
     this.destroy();
     
     const preview = this.preview ? this.$.preview : '';    
@@ -231,7 +271,7 @@ class CropWrapper extends AppElement {
     const options = {
       aspectRatio: this.initialAspectRatio,
       dragMode:   'move',
-      preview    
+      preview 
     };
 
     this._round   = this.initialRound;
@@ -242,9 +282,28 @@ class CropWrapper extends AppElement {
   // Call public methods AFTER this event fires.
   __ready() {
 
-    this._initialCropBoxData = this._cropper.getCropBoxData();
+    if (!this._replacing) {
+      this._initialCropBoxData = this._cropper.getCropBoxData();
+    }
+    else {
 
-    this.isReady = true;
+      // Must manually set cropper to last known settings - 
+      //    placement, rotation, zoom, flip, cropBox, canvas, etc.
+      //
+      // Cropper rebuilds when receiving a new image when 
+      // the replacement image is a different size,
+      this._cropper.
+        rotateTo(this._rotateTo).
+        scaleX(this._xScale).
+        scaleY(this._yScale);
+
+      this._cropper.setCanvasData(this._canvasData);
+      this._cropper.setCropBoxData(this._boxData);
+    }
+
+    this._replacing = undefined;
+    this.isReady    = true;
+
     this.fire('crop-wrapper-ready');
   }
 
@@ -310,7 +369,7 @@ class CropWrapper extends AppElement {
 
   // Moves the canvas by relative offsets.
   // 'offsetY' optional.
-  move(offsetX, offsetY) {
+  move(offsetX = 0, offsetY = 0) {
     this._cropper.move(offsetX, offsetY);
   }
 
@@ -320,9 +379,31 @@ class CropWrapper extends AppElement {
     this._cropper.moveTo(x, y);
   }
 
+  // Replace the image url with a new one.
+  //
+  // hasSameSize is optional.
+  // If the new image has the same size as the old one, 
+  // then it will not rebuild the cropper and only update 
+  // the URLs of all related images. 
+  // This can be used for applying filters.
+  replace(url, hasSameSize = false) {
+    this.isReady     = false;
+    this._replacing  = hasSameSize ? 'same' : 'different';
+    this._canvasData = this._cropper.getCanvasData();
+    this._boxData    = this._cropper.getCropBoxData();
+
+    this._cropper.replace(url, hasSameSize);
+  }
+
   // Place image and crop area back to their initial positions.
   reset() {
-    this._round = this.initialRound;
+    this._canvasData = undefined;
+    this._boxData    = undefined;
+    this._rotateTo   = 0;
+    this._xScale     = 1;
+    this._yScale     = 1;
+    this._round      = this.initialRound;
+
     this._cropper.setCropBoxData(this._initialCropBoxData);
     this._cropper.reset();
 
@@ -337,6 +418,7 @@ class CropWrapper extends AppElement {
 
   // Rotate the image to an absolute degree.
   rotateTo(degree) {
+    this._rotateTo = degree;
     this._cropper.rotateTo(degree);
   }
 
@@ -356,8 +438,18 @@ class CropWrapper extends AppElement {
 
   // Zooms the canvas with a relative ratio.
   // ie. ratio === -0.1
-  zoom(ratio) {
+  zoom(ratio = 0) {
     this._cropper.zoom(ratio);
+  }
+
+
+  zoomIn() {
+    this.zoom(0.1);
+  }
+
+
+  zoomOut() {
+    this.zoom(-0.1);
   }
 
 }

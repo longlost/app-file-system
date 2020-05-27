@@ -135,7 +135,7 @@ const fetchFile = async (url, callback, options) => {
 
 // Object, String, String --> Promise --> File
 // image-filters and image-adjuster output helper function.
-const highQualityFile = async (filter, src, displayName) => {
+const imgFilterFile = async (filter, src, displayName) => {
 
  const img = new Image();
 
@@ -176,9 +176,8 @@ const isCloudProcessable = ({type}) =>
 
 export {
   allProcessingRan,
-  canvasFile,
   fetchBlob,
   fetchFile,
-  highQualityFile,
+  imgFilterFile,
   isCloudProcessable
 };

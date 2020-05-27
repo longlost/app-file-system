@@ -60,6 +60,7 @@
 	}
 	
 	paper-icon-button[pressed],
+	paper-button[pressed],
 	.iron-selected {
 		outline: 					none;
 		background-color: var(--app-dark-color);
@@ -124,7 +125,8 @@
 	<crop-wrapper id="cropper"
 								name="[[_name]]"
 								slot="preview"
-								src="[[_src]]">								
+								src="[[_src]]"
+								on-crop-wrapper-active="__cropperActive">
 	</crop-wrapper>
 
 	<!-- Top row of control buttons. -->
@@ -252,11 +254,12 @@
 	<div class="section groups">
 
 		<!-- Reset button. -->
-		<paper-icon-button id="reset"
-											 class="grouped single"
-											 icon="image-editor-icons:refresh"
-											 on-click="__resetClicked">
-		</paper-icon-button>
+		<paper-button id="reset"
+									class="grouped single"
+									on-click="__resetClicked">
+			<iron-icon icon="image-editor-icons:refresh"></iron-icon>
+			<div>Reset</div>
+		</paper-button>
 
 		<!-- Direction buttons. -->
 		<div class="group direction">
