@@ -125,7 +125,7 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __loaded() {
-    if (this._src && this._src !== '#') {      
+    if (this._src && this._src !== '#') {  
       this._loaded = true;
     }
   }
@@ -149,6 +149,9 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
       this.fire('image-filters-show-spinner', {text: 'Applying filter.'});
 
+      // Wait for spinner entry.
+      await wait(300);
+
       this._filter.reset();
       this._filter.addFilter(this._selectedFilter);
 
@@ -161,7 +164,7 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     
       const [detail] = await Promise.all([
         process(),
-        wait(1500)
+        wait(1200)
       ]);
 
       this.fire('image-filters-filter-applied', detail);

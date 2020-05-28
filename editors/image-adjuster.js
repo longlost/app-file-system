@@ -329,7 +329,7 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   }
 
 
-  async __resetClicked() {
+  async __clearClicked() {
     try {
       await this.clicked();
 
@@ -347,6 +347,9 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
       this.fire('image-adjuster-show-spinner', {text: 'Applying adjustments.'});
 
+      // Wait for spinner entry.
+      await wait(300);
+
       const process = async () => {
         const low  = await imgFilterFile(this._filter, this._src,        this._name);
         const high = await imgFilterFile(this._filter, this.highQuality, this._name);
@@ -356,7 +359,7 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     
       const [detail] = await Promise.all([
         process(),
-        wait(1500)
+        wait(1200)
       ]);
 
       this.fire('image-adjuster-adjustments-applied', detail);

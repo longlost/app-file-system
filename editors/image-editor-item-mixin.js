@@ -79,11 +79,9 @@ export const ImageEditorItemMixin = superClass => {
 
 
 	  async __editedChanged(src) {
-	  	if (src) {
-	  		this.__reset();
+  		this.__reset();
 
-	  		await schedule();
-	  	}
+  		await schedule();
 
 	  	this._newSrc = src;
 	  }

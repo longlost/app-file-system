@@ -31,7 +31,7 @@
 		margin-right: 8px;
 	}
 
-	#reset {
+	#clear {
 		display: 					inline-flex;
     flex-direction: 	column;
 		margin: 					8px 0px;
@@ -41,7 +41,7 @@
 		color: 						var(--disabled-text-color);
 	}
 
-	#reset[pressed] {
+	#clear[pressed] {
 		outline: 					none;
 		background-color: var(--app-dark-color);
 		color: 						var(--constant-light-text);
@@ -146,10 +146,10 @@
 			</div>
 		</div>
 
-		<paper-button id="reset"
-									on-click="__resetClicked">
-			<iron-icon icon="image-editor-icons:refresh"></iron-icon>
-			<div>Reset</div>
+		<paper-button id="clear"
+									on-click="__clearClicked">
+			<iron-icon icon="image-editor-icons:clear"></iron-icon>
+			<div>Clear</div>
 		</paper-button>
 
 	</div>

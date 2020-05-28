@@ -33,21 +33,17 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-}                 from '@longlost/app-element/app-element.js';
-import {
-  schedule
-}                 from '@longlost/utils/utils.js';
-import {
-  EditorMixin
-}                 from './editor-mixin.js';
-import htmlString from './image-editor.html';
+import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {schedule, wait}   from '@longlost/utils/utils.js';
+import {EditorMixin}      from './editor-mixin.js';
+import htmlString         from './image-editor.html';
 import '@longlost/app-spinner/app-spinner.js';
 import '@longlost/tab-pages/tab-pages.js';
+import '@polymer/iron-icon/iron-icon.js';
+import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-tabs/paper-tab.js';
+import './image-editor-icons.js';
 import './image-adjuster.js';
 import './image-cropper.js';
 import './image-filters.js';
@@ -77,6 +73,12 @@ class ImageEditor extends EditorMixin(AppElement) {
         observer: '__editedFileChanged'
       },
 
+      _hideToolbarBtns: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideToolbarBtns(_edited)'
+      },
+
       _highQuality: {
         type: String,
         computed: '__computeHighQuality(item, _highQualityUrl)'
@@ -104,6 +106,11 @@ class ImageEditor extends EditorMixin(AppElement) {
 
   __computeHideMeta(list) {
     return list === 'files';
+  }
+
+
+  __computeHideToolbarBtns(edited) {
+    return !Boolean(edited);
   }
 
 
@@ -147,21 +154,61 @@ class ImageEditor extends EditorMixin(AppElement) {
   }
 
   // Overlay back button event handler.
-  __back() {
+  async __back() {
 
+    if (this._edited) {
 
-    // TODO:
-    //      intercept this event if there are pending changes
-    //      to show a modal to user
-    
+      await import(
+        /* webpackChunkName: 'image-editor-save-modal' */ 
+        './image-editor-save-modal.js'
+      );
 
-    this.$.overlay.back();
+      this.$.saveModal.openUnsaved();
+    }
+    else {
+      this.$.overlay.back();
+    }
   }
 
   // Overlay reset handler.
   __reset() {
-    this._opened = false;
     this.fire('resume-carousel');
+  }
+
+
+  async __resetBtnClicked() {
+    try {
+      await this.clicked();
+
+      await import(
+        /* webpackChunkName: 'image-editor-reset-modal' */ 
+        './image-editor-reset-modal.js'
+      );
+
+      this.$.resetModal.open();
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; } 
+      console.error(error);
+    }
+  }
+
+  
+  async __saveBtnClicked() {
+    try {
+      await this.clicked();
+
+      await import(
+        /* webpackChunkName: 'image-editor-save-modal' */ 
+        './image-editor-save-modal.js'
+      );
+
+      this.$.saveModal.open();
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; } 
+      console.error(error);
+    }
   }
 
   // Paper tabs on-selected-changed handler.
@@ -209,10 +256,66 @@ class ImageEditor extends EditorMixin(AppElement) {
   }
 
 
+  __cleanup() {
+    if (this._highQualityUrl) {
+      window.URL.revokeObjectURL(this._highQualityUrl);
+      this._highQualityUrl  = undefined;
+      this._highQualityFile = undefined;
+    }
+
+    if (this._edited) {
+      window.URL.revokeObjectURL(this._edited);
+      this._edited     = undefined;
+      this._editedFile = undefined;
+    }
+  }
+
+
+  async __resetAll() {
+
+    await this.$.spinner.show('Cleaning up.');  
+
+    this.__cleanup();
+
+    await wait(200);
+
+    await this.$.resetModal.close();
+
+    await wait(800);
+
+    this.$.spinner.hide();
+  }
+
+  // Save modal when user chooses to not save edits.
+  __close() {
+    this.$.overlay.close();
+  }
+
+
+  __save() {
+    this.fire('image-editor-save', {value: this._highQualityFile});
+  }
+
+
+  async __saveAndClose() {
+    this.__save();
+
+    // Wait for app-file-system spinner entry.
+    await wait(300);
+
+    this.$.overlay.reset();
+  }
+
+
   async open() {
     await this.$.overlay.open();
     await schedule();
     this._lazyItem = this.item;
+  }
+
+
+  saved() {
+    this.__cleanup();
   }
 
 }

@@ -478,7 +478,19 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // Add one HTML5 File object or an array of File objects.
   async add(files) {
     try {
-      await this.$.spinner.show('Adding files.');
+
+      if (this.list === 'files') {
+
+        const str = Array.isArray(files) ? 'files' : 'file';
+
+        await this.$.spinner.show(`Saving ${str}.`);
+      }
+      else {
+
+        const str = Array.isArray(files) ? 'photos' : 'photo';
+
+        await this.$.spinner.show(`Saving ${str}.`);
+      }
 
       const array = Array.isArray(files) ? files : [files];   
       this.$.sources.addFiles(array);
