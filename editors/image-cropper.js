@@ -263,7 +263,7 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
   // Not awaiting this.clicked here
   // because __reset uses it with __btnClicked.
-  __resetClicked() {
+  __clearClicked() {
     this.__reset();
   }
 
@@ -293,6 +293,9 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
       this.fire('image-cropper-show-spinner', {text: 'Cropping image.'});
 
+      // Wait for spinner entry.
+      await wait(300);
+
       const process = async () => {
         const low = await this.__btnClicked('getCrop');
 
@@ -310,7 +313,7 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
       const [detail] = await Promise.all([
         process(),
-        wait(1500)
+        wait(1200)
       ]);
 
       this.fire('image-cropper-cropped', detail);

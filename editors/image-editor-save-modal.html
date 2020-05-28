@@ -1,0 +1,51 @@
+
+<style>
+
+	lazy-image {
+		height: 196px;
+	}
+
+  #dismiss-btn {
+    color: var(--app-primary-color);
+  }
+
+  #save-btn {
+  	background-color: var(--app-primary-color);
+  	color: 						var(--constant-light-text);
+  }
+
+</style>
+
+
+<app-modal id="modal"
+           heading="Save Edited Image">
+
+  <div id="content" 
+     slot="card-content-slot">
+
+    <lazy-image alt="Edited image preview." 
+    						src="[[src]]" 
+    						sizing="contain">
+    </lazy-image>
+
+    <p hidden="[[!_unsaved]]">
+    	Would you like to save your changes before closing?
+    </p>
+
+  </div>
+
+  <div slot="card-actions-slot">
+
+    <paper-button id="dismiss-btn" 
+                  on-click="__dismissBtnClicked">
+      [[_dismissBtnLabel]]
+    </paper-button>
+
+    <paper-button id="save-btn" 
+                  on-click="__saveBtnClicked">
+      SAVE
+    </paper-button> 
+
+  </div>
+
+</app-modal>

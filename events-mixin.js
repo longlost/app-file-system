@@ -123,6 +123,8 @@ export const EventsMixin = superClass => {
 
 	      _editImageListenerKey: Object,
 
+	      _saveImageListenerKey: Object,
+
 	      _itemsChangedListenerKey: Object,
 
 	      _itemDataChangedListenerKey: Object,
@@ -184,6 +186,13 @@ export const EventsMixin = superClass => {
 	      this, 
 	      'edit-image', 
 	      this.__editImage.bind(this)
+	    );
+
+	    // <image-editor>
+	    this._saveImageListenerKey = listen(
+	    	this,
+	    	'image-editor-save',
+	    	this.__saveImage.bind(this)
 	    );
 
 	    // <file-item>, <photo-carousel>
@@ -279,6 +288,7 @@ export const EventsMixin = superClass => {
 	    unlisten(this._downloadsListenerKey);
 	    unlisten(this._editFileListenerKey);
 	    unlisten(this._editImageListenerKey);
+	    unlisten(this._saveImageListenerKey);
 	    unlisten(this._itemsChangedListenerKey);
 	    unlisten(this._itemDataChangedListenerKey);
 	    unlisten(this._openCarouselListenerKey);
@@ -415,6 +425,13 @@ export const EventsMixin = superClass => {
 	    await this.$.imageEditor.open();
 
 	    this.$.carousel.stop();
+	  }
+
+
+	  async __saveImage(event) {
+	  	await this.add(event.detail.value);
+	  	
+	  	this.$.imageEditor.saved();
 	  }
 
 

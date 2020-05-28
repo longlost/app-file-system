@@ -7,6 +7,16 @@
     --overlay-toolbar-vignette-opacity: 0;
   }
 
+  paper-button {
+    display:        inline-flex;
+    flex-direction: column;
+    font-size:      10px;
+  }
+
+  paper-button[pressed] {
+    outline: none;
+  }
+
   paper-tabs {
     height: 64px;
     --paper-tab-ink:                  var(--constant-light-text);
@@ -36,6 +46,21 @@
                     title="[[item.displayName]]"
                     on-header-overlay-back="__back"
                     on-overlay-reset="__reset">
+
+
+  <paper-button hidden="[[_hideToolbarBtns]]"
+                slot="top-toolbar-buttons-slot"
+                on-click="__resetBtnClicked">
+    <iron-icon icon="image-editor-icons:refresh"></iron-icon>
+    <div>Reset</div>
+  </paper-button>
+
+  <paper-button hidden="[[_hideToolbarBtns]]"
+                slot="top-toolbar-buttons-slot"
+                on-click="__saveBtnClicked">
+    <iron-icon icon="image-editor-icons:cloud-upload"></iron-icon>
+    <div>Save</div>
+  </paper-button>
                     
 
   <paper-tabs attr-for-selected="page"
@@ -130,3 +155,16 @@
 <app-spinner id="spinner" 
              full-screen>
 </app-spinner>
+
+
+<image-editor-reset-modal id="resetModal"
+                          on-image-editor-reset-modal-reset="__resetAll">
+</image-editor-reset-modal>
+
+
+<image-editor-save-modal id="saveModal" 
+                         src="[[_edited]]"
+                         on-image-editor-save-modal-close="__close"
+                         on-image-editor-save-modal-save="__save"
+                         on-image-editor-save-modal-save-close="__saveAndClose">
+</image-editor-save-modal>
