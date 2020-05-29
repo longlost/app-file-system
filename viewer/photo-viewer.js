@@ -109,8 +109,9 @@ class PhotoViewer extends AppElement {
 
 
   __reset() {
+    this.$.background.style['opacity']       = '0';
     this.$.content.style['background-color'] = 'transparent';
-    this.$.img.style['opacity'] = '0';
+    this.$.img.style['opacity']              = '0';
 
     this.$.zoom.setTransform({
       scale: 1,
@@ -136,6 +137,15 @@ class PhotoViewer extends AppElement {
       if (error === 'click debounced') { return; }
       console.error(error);
     }
+  }
+
+
+  async __showBackground() {
+    this.$.background.style['display'] = 'block';
+
+    await schedule();
+
+    this.$.background.style['opacity'] = '1';
   }
 
 
@@ -185,8 +195,9 @@ class PhotoViewer extends AppElement {
 
 
   __switchToImg() {
+    this.$.background.style['display']       = 'none';
     this.$.content.style['background-color'] = 'black';
-    this.$.img.style['opacity'] = '1';
+    this.$.img.style['opacity']              = '1';
     this.$.flip.reset();
   }
 
@@ -201,6 +212,12 @@ class PhotoViewer extends AppElement {
       this._measurements = measurements;
 
       await this.$.flip.play();
+
+      // Fade a faux background in for a smooth
+      // entry effect for cropped images with a 
+      // transparent background.
+      await this.__showBackground();
+      
       await this.$.overlay.open();
 
       this.__setImgSize();
@@ -218,6 +235,7 @@ class PhotoViewer extends AppElement {
       this._measurements = {height: naturalHeight, width: naturalWidth};
 
       this.__setImgSize();
+
       this.__switchToImg();
 
       await schedule();

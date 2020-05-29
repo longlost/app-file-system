@@ -17,7 +17,7 @@
 import {AppElement, html} from '@longlost/app-element/app-element.js';
 import {htmlLiteral}      from '@polymer/polymer/lib/utils/html-tag.js';
 import {blobToFile}       from '@longlost/lambda/lambda.js';
-import {warn}             from '@longlost/utils/utils.js';
+import {schedule, warn}   from '@longlost/utils/utils.js';
 import path               from 'path';
 import mime               from 'mime-types';
 // Disable webpack config 'style-loader' so 
@@ -250,7 +250,7 @@ class CropWrapper extends AppElement {
   }
 
 
-  __loaded() {
+  async __loaded() {
 
     if (this._replacing) { 
 
@@ -265,6 +265,8 @@ class CropWrapper extends AppElement {
     }
 
     this.destroy();
+
+    await schedule();
     
     const preview = this.preview ? this.$.preview : '';    
 

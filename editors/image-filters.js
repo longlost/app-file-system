@@ -92,6 +92,13 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   }
 
 
+  static get observers() {
+    return [
+      '__previewSrcChanged(_previewSrc)'
+    ];
+  }
+
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -124,6 +131,11 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   }
 
 
+  __previewSrcChanged() {
+    this._loaded = false;
+  }
+
+
   __loaded() {
     if (this._src && this._src !== '#') {  
       this._loaded = true;
@@ -133,6 +145,11 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
   __filterSelected(event) {
     this._selectedFilter = event.detail.value;
+  }
+
+
+  __domChanged() {
+    this.fire('image-filters-stamped');
   }
 
   // Called by image-editor-item-mixin
