@@ -1,6 +1,19 @@
 
 <style>
 
+  #background {
+    display:    none;
+    position:   fixed;
+    top:        0px;
+    left:       0px;
+    height:     100vh;
+    width:      100vw;
+    z-index:    1;
+    opacity:    0;
+    transition: opacity 0.2s ease-out;
+    background-color: black;
+  }
+
   #overlay {
     box-shadow:       none;
     background-color: transparent;
@@ -11,6 +24,7 @@
     display:         flex;
     justify-content: center;
     align-items:     center;
+    position:        relative;
     height:          100%;
     overflow:        hidden;
   }
@@ -21,7 +35,7 @@
 
   lazy-image {
     height:           100%;   
-    background-color: black;
+    background-color: transparent;
     opacity:          0;
   }
 
@@ -76,6 +90,9 @@
   }
 
 </style>
+
+
+<div id="background"></div>
 
 
 <flip-image id="flip"

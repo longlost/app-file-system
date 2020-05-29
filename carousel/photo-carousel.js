@@ -145,9 +145,16 @@ class PhotoCarousel extends AppElement {
     return displayName ? displayName : ' ';
   }
 
+
+  __hideBackground() {
+    this.$.background.style['opacity'] = '0';
+    this.$.background.style['display'] = 'none';
+  }
+
   // Overlay reset event handler.
   __reset() { 
     this.stop();
+    this.__hideBackground();
   }
 
 
@@ -165,14 +172,15 @@ class PhotoCarousel extends AppElement {
 
 
   async __carouselReady() {
-    this.$.carousel.style['opacity']   = '1';
-    this.$.background.style['opacity'] = '0';
+
+    await wait(100);
+
+    this.$.carousel.style['opacity'] = '1';
 
     // Wait for carousel lazy-image fade-in.
     await wait(550);
 
     this._carouselDisabled = false;
-    this.$.background.style['display'] = 'none';
     this.$.flip.reset();
   }
 
@@ -187,6 +195,15 @@ class PhotoCarousel extends AppElement {
   }
 
 
+  async __showBackground() {
+    this.$.background.style['display'] = 'block';
+
+    await schedule();
+
+    this.$.background.style['opacity'] = '1';
+  }
+
+
   async open(measurements) {
 
     this._measurements = measurements;
@@ -194,11 +211,7 @@ class PhotoCarousel extends AppElement {
     // Avoid infinite loops by setting this once per open.
     this._start = this.item; 
 
-    this.$.background.style['display'] = 'block';
-
-    await schedule();
-
-    this.$.background.style['opacity'] = '1';
+    await this.__showBackground();
 
     await Promise.all([
       this.$.flip.play(), 

@@ -24,7 +24,6 @@
   }
 
   .page {
-    min-width:    100%;
     margin-right: 16px;
   }
 
@@ -65,79 +64,88 @@
 
   <paper-tabs attr-for-selected="page"
               slot="bottom-toolbar-tabs-slot"
-              selected="filters"
+              selected="[[_selectedTab]]"
               on-selected-changed="__selectedPageChanged">
 
     <paper-tab page="filters">Filters</paper-tab>
     <paper-tab page="adjust">Adjust</paper-tab> 
     <paper-tab page="crop">Crop</paper-tab>
-    <paper-tab page="meta" 
+    <paper-tab page="info" 
                hidden="[[_hideMeta]]">
-      Meta
+      Info
     </paper-tab> 
 
   </paper-tabs>
 
 
-  <tab-pages id="pages"
-             attr-for-selected="page"
-             selected="[[_selectedPage]]"
-             slot="content"
-             on-tab-pages-page-changed="__tabPageChanged">    
+  <template is="dom-if" 
+            if="[[_opened]]">  
+
+    <tab-pages id="pages"
+               attr-for-selected="page"
+               selected="[[_selectedPage]]"
+               slot="content"
+               on-tab-pages-page-changed="__tabPageChanged">
+
+      <image-filters class="page"
+                     current="[[_currentPage]]"
+                     edited="[[_edited]]"
+                     high-quality="[[_highQuality]]"
+                     item="[[item]]" 
+                     page="filters"
+                     selected="[[_selectedPage]]"
+                     on-image-filters-filter-applied="__filtered"
+                     on-image-filters-hide-spinner="__hideSpinner"
+                     on-image-filters-show-spinner="__showSpinner">
+      </image-filters>
     
-    <image-filters class="page"
-                   current="[[_currentPage]]"
-                   edited="[[_edited]]"
-                   high-quality="[[_highQuality]]"
-                   item="[[item]]" 
-                   page="filters"
-                   selected="[[_selectedPage]]"
-                   on-image-filters-filter-applied="__filtered"
-                   on-image-filters-hide-spinner="__hideSpinner"
-                   on-image-filters-show-spinner="__showSpinner">
-    </image-filters>
+      <image-adjuster class="adjust"
+                      current="[[_currentPage]]"
+                      edited="[[_edited]]"
+                      high-quality="[[_highQuality]]"
+                      item="[[item]]" 
+                      page="adjust"
+                      selected="[[_selectedPage]]"
+                      on-image-adjuster-adjustments-applied="__adjusted"
+                      on-image-adjuster-hide-spinner="__hideSpinner"
+                      on-image-adjuster-show-spinner="__showSpinner">                      
+      </image-adjuster>
+      
+      <image-cropper class="page"
+                     current="[[_currentPage]]"
+                     edited="[[_edited]]"
+                     high-quality="[[_highQuality]]"
+                     item="[[item]]" 
+                     page="crop"                   
+                     selected="[[_selectedPage]]"
+                     on-image-cropper-cropped="__cropped"
+                     on-image-cropper-hide-spinner="__hideSpinner"
+                     on-image-cropper-show-spinner="__showSpinner">
+      </image-cropper>
 
-    <image-adjuster class="page" 
-                    current="[[_currentPage]]"
-                    edited="[[_edited]]"
-                    high-quality="[[_highQuality]]"
-                    item="[[_lazyItem]]" 
-                    page="adjust"
-                    selected="[[_selectedPage]]"
-                    on-image-adjuster-adjustments-applied="__adjusted"
-                    on-image-adjuster-hide-spinner="__hideSpinner"
-                    on-image-adjuster-show-spinner="__showSpinner">                      
-    </image-adjuster>
+      <image-meta class="page"
+                  current="[[_currentPage]]"
+                  page="info"
+                  selected="[[_selectedPage]]">
+        <metadata-page dark-mode="[[darkMode]]"
+                       geolocation="[[_geolocation]]"
+                       hidden="[[_hideMeta]]"
+                       is-img="[[_isImg]]"
+                       item="[[item]]"
+                       list="[[list]]"
+                       on-display-name-changed="__displayNameChanged"
+                       on-open-map-overlay="__openMapOverlay">
+        </metadata-page>
+      </image-meta>
 
-    <image-cropper class="page"
-                   current="[[_currentPage]]"
-                   edited="[[_edited]]"
-                   high-quality="[[_highQuality]]"
-                   item="[[_lazyItem]]" 
-                   page="crop"                   
-                   selected="[[_selectedPage]]"
-                   on-image-cropper-cropped="__cropped"
-                   on-image-cropper-hide-spinner="__hideSpinner"
-                   on-image-cropper-show-spinner="__showSpinner">
-    </image-cropper>
+    </tab-pages>
 
-    <image-meta class="page"
-                current="[[_currentPage]]"
-                page="meta"
-                selected="[[_selectedPage]]">
-      <metadata-page dark-mode="[[darkMode]]"
-                     geolocation="[[_geolocation]]"
-                     hidden="[[_hideMeta]]"
-                     is-img="[[_isImg]]"
-                     item="[[_lazyItem]]"
-                     list="[[list]]"
-                     on-display-name-changed="__displayNameChanged"
-                     on-open-map-overlay="__openMapOverlay">
-      </metadata-page>
-    </image-meta>
+  </template>
 
-  </tab-pages>
-
+  <app-spinner id="pagesSpinner" 
+               full-screen
+               slot="content">
+  </app-spinner>
 
 </app-header-overlay>
 

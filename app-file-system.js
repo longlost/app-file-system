@@ -572,70 +572,27 @@ class AppFileSystem extends EventsMixin(AppElement) {
   }
 
 
-  // async openList() {
+  async openList() {
     
-  //   if (this.list === 'files') {
-  //     await import(
-  //       /* webpackChunkName: 'app-file-system-file-list' */ 
-  //       './lists/file-list.js'
-  //     );
+    if (this.list === 'files') {
+      await import(
+        /* webpackChunkName: 'app-file-system-file-list' */ 
+        './lists/file-list.js'
+      );
 
-  //     return this.$.fileList.open();
-  //   }
-  //   else if (this.list === 'photos') {
-  //     await import(
-  //       /* webpackChunkName: 'app-file-system-camera-roll' */ 
-  //       './lists/camera-roll.js'
-  //     );
+      return this.$.fileList.open();
+    }
+    else if (this.list === 'photos') {
+      await import(
+        /* webpackChunkName: 'app-file-system-camera-roll' */ 
+        './lists/camera-roll.js'
+      );
       
-  //     return this.$.cameraRoll.open();
-  //   }
+      return this.$.cameraRoll.open();
+    }
 
-  //   throw new Error('Cannot open the overlay without the list property being properly set.');
-  // }
-
-
-  async openList() {    
-    
-    this._dbData = {
-      "pFWu6cPL-IKK26aqBw3Yr": {
-        "oriented": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2FpFWu6cPL-IKK26aqBw3Yr%2Fimage.jpg?generation=1587162465646751&alt=media",
-        "exif": {
-          "Orientation": 1
-        },
-        "category": "image",
-        "size": 2236196,
-        "optimized": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2FpFWu6cPL-IKK26aqBw3Yr%2Foptim_image.jpg?generation=1587162472158630&alt=media",
-        "displayName": "Keys",
-        "coll": "test",
-        "sharePath": "test/pFWu6cPL-IKK26aqBw3Yr/optim_image.jpg",
-        "doc": "pFWu6cPL-IKK26aqBw3Yr",
-        "ext": ".jpg",
-        "type": "image/jpeg",
-        "uid": "pFWu6cPL-IKK26aqBw3Yr",
-        "path": "test/pFWu6cPL-IKK26aqBw3Yr/image.jpg",
-        "sizeStr": "2.1MB",
-        "_tempUrl": "blob:http://192.168.1.2:3000/a7de86f6-6592-422c-9164-7c1abd63bf46",
-        "timestamp": 1587162429370,
-        "original": "https://firebasestorage.googleapis.com/v0/b/longlost-starter.appspot.com/o/test%2FpFWu6cPL-IKK26aqBw3Yr%2Fimage.jpg?alt=media&token=ef75bec2-d5dd-4fd0-9528-acb86610f00c",
-        "index": 0,
-        "thumbnail": "https://storage.googleapis.com/download/storage/v1/b/longlost-starter.appspot.com/o/test%2FpFWu6cPL-IKK26aqBw3Yr%2Fthumb_image.jpg?generation=1587162464417740&alt=media",
-        "lastModified": 1587162428000,
-        "basename": "image.jpg"
-      }
-    };
-    
-    this._liveUid = 'pFWu6cPL-IKK26aqBw3Yr';
-
-    await schedule();
-
-    await import(
-      /* webpackChunkName: 'app-file-system-image-editor' */ 
-      './editors/image-editor.js'
-    );
-    await this.$.imageEditor.open();
+    throw new Error('Cannot open the overlay without the list property being properly set.');
   }
-
 
 
   openSources() {

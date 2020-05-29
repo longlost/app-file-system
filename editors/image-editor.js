@@ -33,22 +33,24 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {schedule, wait}   from '@longlost/utils/utils.js';
-import {EditorMixin}      from './editor-mixin.js';
-import htmlString         from './image-editor.html';
+import {AppElement, html}           from '@longlost/app-element/app-element.js';
+import {listenOnce, schedule, wait} from '@longlost/utils/utils.js';
+import {EditorMixin}                from './editor-mixin.js';
+import htmlString                   from './image-editor.html';
 import '@longlost/app-spinner/app-spinner.js';
-import '@longlost/tab-pages/tab-pages.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-tabs/paper-tab.js';
 import './image-editor-icons.js';
-import './image-adjuster.js';
-import './image-cropper.js';
 import './image-filters.js';
 import './image-meta.js';
-// Map lazy loaded.
+// tab-pages, image-adjuster, image-cropper and map-overlay lazy loaded.
+
+import '@longlost/tab-pages/tab-pages.js';
+import './image-adjuster.js';
+import './image-cropper.js';
+
 
 
 class ImageEditor extends EditorMixin(AppElement) {
@@ -63,7 +65,10 @@ class ImageEditor extends EditorMixin(AppElement) {
     return {
 
       // The selected tab value AFTER tab-pages animation finishes.
-      _currentPage: String,
+      _currentPage: {
+        type: String,
+        value: 'filters'
+      },
 
       // ObjectURL string for current low quality, diplayed file.
       _edited: String,
@@ -98,7 +103,19 @@ class ImageEditor extends EditorMixin(AppElement) {
         computed: '__computeHideMeta(list)'
       },
 
-      _selectedPage: String
+      _opened: {
+        type: Boolean,
+        value: false
+      },
+
+      _selectedPage: {
+        type: String,
+        value: 'filters'
+      },
+
+      // Only used for initialization of paper-tabs
+      // once all pages have been lazy-loaded.
+      _selectedTab: String
 
     };
   }
@@ -172,6 +189,9 @@ class ImageEditor extends EditorMixin(AppElement) {
 
   // Overlay reset handler.
   __reset() {
+
+    this._opened = false;
+
     this.fire('resume-carousel');
   }
 
@@ -308,9 +328,26 @@ class ImageEditor extends EditorMixin(AppElement) {
 
 
   async open() {
+
     await this.$.overlay.open();
     await schedule();
-    this._lazyItem = this.item;
+
+    if (!this._selectedTab) {
+
+      // Give filters time to process on initialization.
+      await this.$.pagesSpinner.show('Loading.');
+
+      this._opened = true;
+
+      await listenOnce(this, 'image-filters-stamped');
+
+      this._selectedTab = 'filters';
+
+      this.$.pagesSpinner.hide();
+    }
+    else {
+      this._opened = true;
+    } 
   }
 
 
