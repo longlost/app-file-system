@@ -1,5 +1,5 @@
 
-<style include="app-shared-styles">
+<style>
 
   #background,
   #carousel {
@@ -50,21 +50,8 @@
     background-color: var(--app-primary-color);
   }
 
-  #bottom-toolbar-btns {
-    display:         flex;
-    justify-content: flex-end;
-    align-items:     flex-end;
-    position:        absolute;
-    top:            -64px;
-    bottom:          0px;
-    left:            0px;
-    right:           0px;
-    padding:         12px 16px;
-    pointer-events:  none;
-  }
-
-  .toolbar-buttons {
-    pointer-events: auto;
+  #top-toolbar-btns {
+    display: inline-flex;
   }
 
   paper-icon-button[disabled] {
@@ -101,9 +88,8 @@
 <app-header-overlay id="overlay"
                     disable-background-effects
                     prebuilt-animation="from-top"
-                    header-size="2"
+                    header-size="1"
                     reset-scroll
-                    sticky-bottom-toolbar
                     title="[[_title]]"
                     top-title
                     on-overlay-reset="__reset">
@@ -113,22 +99,20 @@
        slot="header-background-slot">
   </div>
 
-  <div id="bottom-toolbar-btns"
-       class="shared-card-shadow"
-       slot="bottom-toolbar-buttons-slot">
 
-    <action-buttons class="toolbar-buttons" 
-                    item="[[_currentItem]]">
-    </action-buttons>
+  <div id="top-toolbar-btns"
+       slot="top-toolbar-buttons-slot">
 
-    <paper-icon-button class="toolbar-buttons"
-                       disabled="[[_editBtnDisabled]]"
+    <action-buttons item="[[_currentItem]]"></action-buttons>
+
+    <paper-icon-button disabled="[[_editBtnDisabled]]"
                        hidden="[[_hideEditBtn]]"
                        icon="file-icons:tune"
                        on-click="__editBtnClicked">
     </paper-icon-button>
 
   </div>
+
     
   <paginated-carousel id="carousel"
                       coll="[[coll]]"

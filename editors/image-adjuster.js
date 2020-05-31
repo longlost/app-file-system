@@ -188,6 +188,8 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
       this.$.preview['width']  = `${img.width}`;
 
       this._source = img;
+
+      this.fire('image-adjuster-loaded');
     };
 
     img.onerror = () => {

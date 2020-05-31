@@ -64,6 +64,11 @@ class ImageEditor extends EditorMixin(AppElement) {
   static get properties() {
     return {
 
+      item: {
+        type: Object,
+        observer: '__itemChanged'
+      },
+
       // The selected tab value AFTER tab-pages animation finishes.
       _currentPage: {
         type: String,
@@ -167,7 +172,64 @@ class ImageEditor extends EditorMixin(AppElement) {
 
     if (!newVal) { return; }
 
+
+    // TESTING FILE SIZE ONLY!!!!!!!!!!!
+
+    const KILOBYTE = 1024;
+    const MEGABYTE = 1048576;
+    // Create a human-readable file size display string.
+    const formatFileSize = size => {
+
+      if (size < KILOBYTE) {
+        return `${size}bytes`;
+      }
+
+      if (size >= KILOBYTE && size < MEGABYTE) {
+        return `${Number((size / KILOBYTE).toFixed(1))}KB`;
+      } 
+
+      if (size >= MEGABYTE) {
+        return `${Number((size / MEGABYTE).toFixed(1))}MB`;
+      }
+    };
+
+
+    console.log('original size: ', this.item.sizeStr, ' type: ', this.item.type);
+    console.log('new size: ', formatFileSize(newVal.size), ' type: ', newVal.type);
+
+
+
     this._highQualityUrl = window.URL.createObjectURL(newVal);
+  }
+
+  // Garbage collect if the image item has changed, 
+  // otherwise, keep previous edits in tact.
+  async __itemChanged(newVal, oldVal) {
+
+    if (!newVal || !oldVal) { return; }
+
+    // A different image was selected to open editor.
+    if (newVal.uid !== oldVal.uid) {
+      this.__cleanup();
+
+      if (!this._selectedPage) { return; }
+
+      this.$.pagesSpinner.show('Loading.');
+
+      if (this._selectedPage === 'filters') {
+        await listenOnce(this, 'image-filters-loaded');
+      }
+
+      if (this._selectedPage === 'adjust') {
+        await listenOnce(this, 'image-adjuster-loaded');
+      }
+
+      if (this._selectedPage === 'crop') {
+        await listenOnce(this, 'image-cropper-loaded');
+      }
+
+      this.$.pagesSpinner.hide();
+    }
   }
 
   // Overlay back button event handler.
@@ -342,6 +404,8 @@ class ImageEditor extends EditorMixin(AppElement) {
       await listenOnce(this, 'image-filters-stamped');
 
       this._selectedTab = 'filters';
+
+      await schedule();
 
       this.$.pagesSpinner.hide();
     }

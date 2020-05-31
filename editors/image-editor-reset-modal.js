@@ -4,7 +4,7 @@
   * `image-editor-reset-modal`
   * 
   *   This ui informs the user that they will lose their work, 
-  * 	if not saved, and allows them to confirm their choice.
+  *   if not saved, and allows them to confirm their choice.
   *
   *
   *   
@@ -42,7 +42,10 @@ import {
 }                 from '@longlost/app-element/app-element.js';
 import htmlString from './image-editor-reset-modal.html';
 import '@longlost/app-overlays/app-modal.js';
+import '@longlost/app-shared-styles/app-shared-styles.js';
+import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
+import './image-editor-icons.js';
 
 
 class ResetModal extends AppElement {
@@ -89,7 +92,7 @@ class ResetModal extends AppElement {
 
 
   close() {
-  	return this.$.modal.close();
+    return this.$.modal.close();
   }
 
 

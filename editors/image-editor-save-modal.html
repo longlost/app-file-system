@@ -1,5 +1,5 @@
 
-<style>
+<style include="app-shared-styles">
 
   lazy-image {
     height: 196px;
@@ -32,20 +32,26 @@
       Would you like to save your changes before closing?
     </p>
 
-  </div>
-
-  <div slot="card-actions-slot">
-
-    <paper-button id="dismiss-btn" 
-                  on-click="__dismissBtnClicked">
-      [[_dismissBtnLabel]]
-    </paper-button>
-
-    <paper-button id="save-btn" 
-                  on-click="__saveBtnClicked">
-      SAVE
-    </paper-button> 
+    <p>
+      This image will be saved as a new file.
+    </p>
 
   </div>
+
+  <paper-button id="dismiss-btn"
+                slot="card-actions-slot"
+                on-click="__dismissBtnClicked">
+    [[_dismissBtnLabel]]
+  </paper-button>
+
+  <paper-button id="save-btn"
+                class="shared-paper-button-with-icon"
+                slot="card-actions-slot" 
+                on-click="__saveBtnClicked">
+    <iron-icon class="shared-iron-icon-inside-paper-button" 
+               icon="image-editor-icons:cloud-upload">
+    </iron-icon>
+    <span>SAVE NEW</span>
+  </paper-button> 
 
 </app-modal>

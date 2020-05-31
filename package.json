@@ -1,6 +1,6 @@
 {
   "name": "@longlost/app-file-system",
-  "version": "1.5.13",
+  "version": "1.5.14",
   "description": "This custom element handles all aspects of handling files for an app. Processing, uploading, viewing and editing.",
   "main": "app-file-system.js",
   "scripts": {
@@ -57,7 +57,7 @@
     "comlink": "^4.3.0",
     "cropperjs": "^1.5.7",
     "mime-types": "^2.1.27",
-    "mkdirp-promise": "^5.0.1",
+    "mkdirp": "^1.0.4",
     "multi-download": "^3.0.0",
     "nanoid": "^3.1.9",
     "print-js": "^1.0.63"
