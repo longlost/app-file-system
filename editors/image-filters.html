@@ -41,7 +41,9 @@
 								 on-selected-changed="__filterSelected">
 		
 		<template is="dom-repeat" 
-							items="[[_filters]]">
+							items="[[_filters]]"
+							strip-whitespace
+							on-dom-change="__domChanged">
 			
 			<filter-item item="[[item]]" 
 									 name="[[item.name]]">

@@ -1,13 +1,13 @@
 
-<style>
+<style include="app-shared-styles">
 
   #dismiss-btn {
     color: var(--app-primary-color);
   }
 
   #reset-btn {
-  	background-color: var(--app-primary-color);
-  	color: 						var(--constant-light-text);
+    background-color: var(--app-primary-color);
+    color:            var(--constant-light-text);
   }
 
 </style>
@@ -25,18 +25,20 @@
 
   </div>
 
-  <div slot="card-actions-slot">
+  <paper-button id="dismiss-btn"
+                slot="card-actions-slot"
+                on-click="__dismissBtnClicked">
+    DISMISS
+  </paper-button>
 
-    <paper-button id="dismiss-btn" 
-                  on-click="__dismissBtnClicked">
-      DISMISS
-    </paper-button>
-
-    <paper-button id="reset-btn" 
-                  on-click="__resetBtnClicked">
-      RESET ALL
-    </paper-button> 
-
-  </div>
+  <paper-button id="reset-btn"
+                class="shared-paper-button-with-icon"
+                slot="card-actions-slot"
+                on-click="__resetBtnClicked">
+    <iron-icon class="shared-iron-icon-inside-paper-button" 
+               icon="image-editor-icons:refresh">
+    </iron-icon>
+    <span>RESET ALL</span>
+  </paper-button>
 
 </app-modal>

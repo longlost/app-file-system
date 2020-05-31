@@ -45,7 +45,6 @@ import {
 import htmlString from './photo-carousel.html';
 import '@longlost/app-images/flip-image.js';
 import '@longlost/app-overlays/app-header-overlay.js';
-import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/action-buttons.js';
 import './paginated-carousel.js';

@@ -159,6 +159,11 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
   }
 
 
+  __cropperReady() {
+    this.fire('image-cropper-loaded');
+  }
+
+
   async __btnClicked(fn, ...args) {
     try {
 

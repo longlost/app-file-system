@@ -137,8 +137,10 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __loaded() {
+    
     if (this._src && this._src !== '#') {  
       this._loaded = true;
+      this.fire('image-filters-loaded');
     }
   }
 

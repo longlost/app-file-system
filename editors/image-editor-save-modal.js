@@ -4,7 +4,7 @@
   * `image-editor-save-modal`
   * 
   *   This ui displays a preview of the image that is to be saved and
-  * 	gives the user the option to save the file or dismiss the modal.
+  *   gives the user the option to save the file or dismiss the modal.
   *
   *
   *   
@@ -43,7 +43,10 @@ import {
 import htmlString from './image-editor-save-modal.html';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/app-overlays/app-modal.js';
+import '@longlost/app-shared-styles/app-shared-styles.js';
+import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
+import './image-editor-icons.js';
 
 
 class SaveModal extends AppElement {
@@ -57,25 +60,25 @@ class SaveModal extends AppElement {
   static get properties() {
     return {
 
-    	src: String,
+      src: String,
 
-    	_dismissBtnLabel: {
-    		type: String,
-    		value: 'DISMISS',
-    		computed: '__computeDismissBtnLabel(_unsaved)'
-    	},
+      _dismissBtnLabel: {
+        type: String,
+        value: 'DISMISS',
+        computed: '__computeDismissBtnLabel(_unsaved)'
+      },
 
-    	_unsaved: {
-    		type: Boolean,
-    		value: false
-    	},
+      _unsaved: {
+        type: Boolean,
+        value: false
+      },
 
     };
   }
 
 
   __computeDismissBtnLabel(unsaved) {
-  	return unsaved ? `DON'T SAVE` : 'DISMISS';
+    return unsaved ? `DON'T SAVE` : 'DISMISS';
   }
 
 
@@ -85,8 +88,8 @@ class SaveModal extends AppElement {
       await this.$.modal.close();
 
       if (this._unsaved) {
-      	this._unsaved = false;
-      	this.fire('image-editor-save-modal-close');
+        this._unsaved = false;
+        this.fire('image-editor-save-modal-close');
       }
     }
     catch (error) {
@@ -104,11 +107,11 @@ class SaveModal extends AppElement {
       await this.$.modal.close();
 
       if (this._unsaved) {
-      	this._unsaved = false;
-      	this.fire('image-editor-save-modal-save-close');
+        this._unsaved = false;
+        this.fire('image-editor-save-modal-save-close');
       }
       else {
-      	this.fire('image-editor-save-modal-save');
+        this.fire('image-editor-save-modal-save');
       }
     }
     catch (error) {
@@ -119,14 +122,14 @@ class SaveModal extends AppElement {
 
 
   open() {
-  	this._unsaved = false;
+    this._unsaved = false;
 
     return this.$.modal.open();
   }
 
 
   openUnsaved() {
-  	this._unsaved = true;
+    this._unsaved = true;
 
     return this.$.modal.open();
   }

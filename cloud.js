@@ -6,7 +6,7 @@ const os         = require('os');
 const fs         = require('fs');
 const path       = require('path');
 const crypto     = require('crypto');
-const mkdirp     = require('mkdirp-promise');
+const mkdirp     = require('mkdirp');
 const spawn      = require('child-process-promise').spawn;
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 

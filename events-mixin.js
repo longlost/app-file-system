@@ -312,6 +312,8 @@ export const EventsMixin = superClass => {
 
 	  // Will NOT download multiple files in Chrome when dev tools is open!!
 	  async __downloadItems(event) {
+	  	hijackEvent(event);
+
 	  	try {
 	      await this.$.spinner.show('Preparing downloads.');
 
@@ -335,6 +337,7 @@ export const EventsMixin = superClass => {
 
 
 	  __itemsChanged(event) {
+	  	hijackEvent(event);
 
 	  	const items = event.detail.value;
 
@@ -348,6 +351,7 @@ export const EventsMixin = superClass => {
 
 	  // From <paginated-roll-items> and <paginated-file-items>
 	  __itemDataChanged(event) {
+	  	hijackEvent(event);
 
 	  	// Merge incomming data with existing data.
 	  	this._dbData = {...this._dbData, ...event.detail.value};
@@ -356,6 +360,7 @@ export const EventsMixin = superClass => {
 	  // 'file-items-sorted' events from <file-items>
 	  // which is a child of <preview-lists>
 	  __itemsSorted(event) {
+	  	hijackEvent(event);
 
 	    // An array of uid's ordered by user
 	    // by drag and drop reordering.
@@ -372,6 +377,7 @@ export const EventsMixin = superClass => {
 
 	  // From <file-item> (image files only) and <roll-item>
 	  async __openCarousel(event) {
+	  	hijackEvent(event);
 
 	  	const {item, measurements} = event.detail;
 
@@ -386,6 +392,7 @@ export const EventsMixin = superClass => {
 	  
 	  // From <file-item> (image files only) and <photo-carousel>
 	  async __openPhotoViewer(event) {
+	  	hijackEvent(event);
 
 	  	const {item, measurements} = event.detail;
 
@@ -400,6 +407,8 @@ export const EventsMixin = superClass => {
 
 	  // From <quick-options>, <file-item>
 	  async __editFile(event) {
+	  	hijackEvent(event);
+
 	  	const {item} 	= event.detail;
 	  	this._liveUid = item.uid;
 
@@ -414,6 +423,8 @@ export const EventsMixin = superClass => {
 
 	  // From <photo-carousel>
 	  async __editImage(event) {
+	  	hijackEvent(event);
+
 	  	const {item} 	= event.detail;
 	  	this._liveUid = item.uid;
 
@@ -429,13 +440,16 @@ export const EventsMixin = superClass => {
 
 
 	  async __saveImage(event) {
+	  	hijackEvent(event);
+
 	  	await this.add(event.detail.value);
 	  	
 	  	this.$.imageEditor.saved();
 	  }
 
 
-	  __resumeCarousel() {
+	  __resumeCarousel(event) {
+	  	hijackEvent(event);
 
 	  	// Only call resume if the carousel 
 	  	// has been opened before.
@@ -446,6 +460,8 @@ export const EventsMixin = superClass => {
 
 
 	  async __printItem(event) {
+	  	hijackEvent(event);
+
 	    try {
 	      await this.$.spinner.show('Preparing file for printing.');
 
@@ -466,6 +482,8 @@ export const EventsMixin = superClass => {
 
 
 	  async __printImages(event) {
+	  	hijackEvent(event);
+
 	    try {
 	      await this.$.spinner.show('Preparing images for printing.');
 
@@ -536,8 +554,9 @@ export const EventsMixin = superClass => {
 
 	  // <drag-drop> delete area modal.
 	  async __confirmDeleteBtnClicked(event) {
+			hijackEvent(event);
+
 	    try {
-	      hijackEvent(event);
 	      await this.clicked();
 
 	      await this.$.deleteConfirmModal.close();
@@ -575,9 +594,9 @@ export const EventsMixin = superClass => {
 
 
 	  async __dismissDeleteBtnClicked(event) {
-	    try {
-	      hijackEvent(event);
+	    hijackEvent(event);
 
+	    try {
 	      await this.clicked();
 	      await this.$.deleteConfirmModal.close();
 	    }
@@ -597,6 +616,8 @@ export const EventsMixin = superClass => {
 
 
 	  async __shareItem(event) {
+	  	hijackEvent(event);
+
 	  	const {item} 	= event.detail;
 	  	this._liveUid = item.uid;
 
@@ -634,6 +655,8 @@ export const EventsMixin = superClass => {
 
 	  // From <share-modal>, <metadata-editor> and <image-editor>.
 	  async __updateItem(event) {
+	  	hijackEvent(event);
+
 	  	try {
 
 		  	const {item} = event.detail;
