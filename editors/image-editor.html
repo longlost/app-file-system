@@ -90,6 +90,7 @@
       <image-filters class="page"
                      current="[[_currentPage]]"
                      edited="[[_edited]]"
+                     ext="[[_ext]]"
                      high-quality="[[_highQuality]]"
                      item="[[item]]" 
                      page="filters"
@@ -102,6 +103,7 @@
       <image-adjuster class="adjust"
                       current="[[_currentPage]]"
                       edited="[[_edited]]"
+                      ext="[[_ext]]"
                       high-quality="[[_highQuality]]"
                       item="[[item]]" 
                       page="adjust"
@@ -114,12 +116,14 @@
       <image-cropper class="page"
                      current="[[_currentPage]]"
                      edited="[[_edited]]"
+                     ext="[[_ext]]"
                      high-quality="[[_highQuality]]"
                      item="[[item]]" 
                      page="crop"                   
                      selected="[[_selectedPage]]"
                      on-image-cropper-cropped="__cropped"
                      on-image-cropper-hide-spinner="__hideSpinner"
+                     on-image-cropper-round-changed="__cropRoundChanged"
                      on-image-cropper-show-spinner="__showSpinner">
       </image-cropper>
 

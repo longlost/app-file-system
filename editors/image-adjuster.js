@@ -353,8 +353,8 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
       await wait(300);
 
       const process = async () => {
-        const low  = await imgFilterFile(this._filter, this._src,        this._name);
-        const high = await imgFilterFile(this._filter, this.highQuality, this._name);
+        const low  = await imgFilterFile(this._filter, this._src,        this._name, this.ext);
+        const high = await imgFilterFile(this._filter, this.highQuality, this._name, this.ext);
 
         return {high, low};
       };

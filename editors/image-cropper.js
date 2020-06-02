@@ -129,6 +129,7 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
 
     this.$.a11y.target = document.body;
   }
+  
 
 
   __a11yKeysPressed(event) {
@@ -208,12 +209,16 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
   __squareClicked() {
     this._selectedShape = 'square';
     this.__btnClicked('setRound', false);
+
+    this.fire('image-cropper-round-changed', {value: false});
   }
 
 
   __circleClicked() {   
     this._selectedShape = 'circle';
     this.__btnClicked('setRound', true);
+
+    this.fire('image-cropper-round-changed', {value: true});
   }
 
 
@@ -302,13 +307,13 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
       await wait(300);
 
       const process = async () => {
-        const low = await this.__btnClicked('getCrop');
+        const low = await this.__btnClicked('getCrop', this.ext);
 
         this.$.cropper.replace(this.highQuality);
 
         await listenOnce(this.$.cropper, 'crop-wrapper-ready');
 
-        const high = await this.$.cropper.getCrop();
+        const high = await this.$.cropper.getCrop(this.ext);
 
         // Allow new _editedSrc to replace existing img src.
         this.$.cropper.destroy();

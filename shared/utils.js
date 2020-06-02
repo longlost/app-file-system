@@ -25,14 +25,9 @@ const allProcessingRan = item => {
 };
 
 
-// Pull any src url params from end of extention.
-const cleanExt = src => path.extname(src).split('?')[0];
-
 // Create a file from a canvas element's image data.
-// Need the original src to get the appropriate contentType.
-// Must provide the new file's name.
-const canvasFile = (src, name, canvas) => {
-  const ext      = cleanExt(src);
+// Must provide the new file's name and extension.
+const canvasFile = (name, ext, canvas) => {
   const filename = `${name}${ext}`;
   const type     = mime.contentType(filename);
 
@@ -48,6 +43,7 @@ const canvasFile = (src, name, canvas) => {
 
   return promise;
 };
+
 
 // 'callback' will be passed an object with the following properties:
 //
@@ -117,6 +113,7 @@ const fetchBlob = async (url, callback, options) => {
   return {blob, name, type};
 };
 
+
 // 'callback' will be passed an object with the following properties:
 //
 //    cancel, loaded, progress, total, type
@@ -135,27 +132,27 @@ const fetchFile = async (url, callback, options) => {
 
 // Object, String, String --> Promise --> File
 // image-filters and image-adjuster output helper function.
-const imgFilterFile = async (filter, src, displayName) => {
+const imgFilterFile = async (filter, src, displayName, ext) => {
 
- const img = new Image();
+  const img = new Image();
 
- const promise = new Promise((resolve, reject) => {
-   img.onload = async () => {
+  const promise = new Promise((resolve, reject) => {
+    img.onload = async () => {
 
-     const canvas = filter.apply(img);
-     const file   = await canvasFile(src, displayName, canvas); 
+      const canvas = filter.apply(img);      
+      const file   = await canvasFile(displayName, ext, canvas); 
 
-     resolve(file);
-   };
+      resolve(file);
+    };
 
-   img.onerror = reject;
- }); 
+    img.onerror = reject;
+  }); 
 
- // MUST set crossorigin to allow WebGL to securely load the downloaded image.
- img.crossOrigin = '';
- img.src = src;
+  // MUST set crossorigin to allow WebGL to securely load the downloaded image.
+  img.crossOrigin = '';
+  img.src         = src;
 
- return promise;
+  return promise;
 };
 
 
@@ -168,6 +165,7 @@ const isProcessableImg = type =>
     type.includes('jpg')  || 
     type.includes('png')
   );
+
 
 // Png/jpeg images and video files are post-processed.
 const isCloudProcessable = ({type}) => 

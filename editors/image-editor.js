@@ -38,19 +38,17 @@ import {listenOnce, schedule, wait} from '@longlost/utils/utils.js';
 import {EditorMixin}                from './editor-mixin.js';
 import htmlString                   from './image-editor.html';
 import '@longlost/app-spinner/app-spinner.js';
+import '@longlost/tab-pages/tab-pages.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-tabs/paper-tab.js';
+import './image-adjuster.js';
+import './image-cropper.js';
 import './image-editor-icons.js';
 import './image-filters.js';
 import './image-meta.js';
-// tab-pages, image-adjuster, image-cropper and map-overlay lazy loaded.
-
-import '@longlost/tab-pages/tab-pages.js';
-import './image-adjuster.js';
-import './image-cropper.js';
-
+// map-overlay lazy loaded.
 
 
 class ImageEditor extends EditorMixin(AppElement) {
@@ -69,6 +67,8 @@ class ImageEditor extends EditorMixin(AppElement) {
         observer: '__itemChanged'
       },
 
+      _cropIsRound: Boolean,
+
       // The selected tab value AFTER tab-pages animation finishes.
       _currentPage: {
         type: String,
@@ -81,6 +81,11 @@ class ImageEditor extends EditorMixin(AppElement) {
       _editedFile: {
         type: Object,
         observer: '__editedFileChanged'
+      },
+
+      _ext: {
+        type: String,
+        computed: '__computeExt(item.ext, _cropIsRound)'
       },
 
       _hideToolbarBtns: {
@@ -123,6 +128,22 @@ class ImageEditor extends EditorMixin(AppElement) {
       _selectedTab: String
 
     };
+  }
+
+  // Use the incoming item's ext or switch
+  // to png if the image is cropped elliptically.
+  // Must manually set this since temporary files
+  // created after each applied edit do not carry
+  // this information in the url returned by
+  // window.URL.createObjectURL.
+  // If this is not handled, the output file will 
+  // automatically be set to image/png and the
+  // file size will thus explode by 5x.
+  // This should be avoided for perfomance reasons
+  // as well as errors that occur when uploading
+  // and cloud processing images larger than 10MB.
+  __computeExt(ext, cropIsRound) {
+    return cropIsRound ? '.png' : ext;
   }
 
 
@@ -171,33 +192,6 @@ class ImageEditor extends EditorMixin(AppElement) {
     }
 
     if (!newVal) { return; }
-
-
-    // TESTING FILE SIZE ONLY!!!!!!!!!!!
-
-    const KILOBYTE = 1024;
-    const MEGABYTE = 1048576;
-    // Create a human-readable file size display string.
-    const formatFileSize = size => {
-
-      if (size < KILOBYTE) {
-        return `${size}bytes`;
-      }
-
-      if (size >= KILOBYTE && size < MEGABYTE) {
-        return `${Number((size / KILOBYTE).toFixed(1))}KB`;
-      } 
-
-      if (size >= MEGABYTE) {
-        return `${Number((size / MEGABYTE).toFixed(1))}MB`;
-      }
-    };
-
-
-    console.log('original size: ', this.item.sizeStr, ' type: ', this.item.type);
-    console.log('new size: ', formatFileSize(newVal.size), ' type: ', newVal.type);
-
-
 
     this._highQualityUrl = window.URL.createObjectURL(newVal);
   }
@@ -335,6 +329,11 @@ class ImageEditor extends EditorMixin(AppElement) {
     const {high, low}     = event.detail;
     this._editedFile      = low;
     this._highQualityFile = high;
+  }
+
+
+  __cropRoundChanged(event) {
+    this._cropIsRound = event.detail.value;
   }
 
 

@@ -337,7 +337,7 @@ class CropWrapper extends AppElement {
 
   // Returns a promise which resolves 
   // to the generated crop file.
-  getCrop() {
+  getCrop(extension) {
 
     // Setting max sizes as per warning in cropperjs docs.
     // Should avoid getting a blank image returned.
@@ -348,8 +348,13 @@ class CropWrapper extends AppElement {
 
     // Force round crops to be png so they 
     // will have a transparent background.
-    // 
-    const ext  = this._round ? '.png' : cleanExt(this.src);
+    const getExt = () => {
+      if (this._round) { return '.png'; }
+
+      return extension ? extension : cleanExt(this.src);
+    };
+
+    const ext  = getExt();
     const name = `${this.name}${ext}`;
     const type = this._round ? 'image/png' : mime.contentType(name);
 
