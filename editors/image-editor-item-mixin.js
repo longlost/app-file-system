@@ -13,6 +13,8 @@ export const ImageEditorItemMixin = superClass => {
 
 	    	edited: String,
 
+	    	ext: String,
+
       	highQuality: String,
 
       	item: Object,
