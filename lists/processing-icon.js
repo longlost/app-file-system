@@ -34,6 +34,7 @@ import {
 import htmlString from './processing-icon.html';
 import '@longlost/app-icons/app-icons.js';
 import '@polymer/iron-icon/iron-icon.js';
+import '../shared/file-icons.js';
 
 
 class ProcessingIcon extends AppElement {

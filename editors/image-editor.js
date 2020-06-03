@@ -196,9 +196,30 @@ class ImageEditor extends EditorMixin(AppElement) {
     this._highQualityUrl = window.URL.createObjectURL(newVal);
   }
 
+
+  async __showPageSpinner() {
+    if (!this._selectedPage) { return; }
+
+    this.$.pagesSpinner.show('Loading.');
+
+    if (this._selectedPage === 'filters') {
+      await listenOnce(this, 'image-filters-loaded');
+    }
+
+    if (this._selectedPage === 'adjust') {
+      await listenOnce(this, 'image-adjuster-loaded');
+    }
+
+    if (this._selectedPage === 'crop') {
+      await listenOnce(this, 'image-cropper-loaded');
+    }
+
+    this.$.pagesSpinner.hide();
+  }
+
   // Garbage collect if the image item has changed, 
   // otherwise, keep previous edits in tact.
-  async __itemChanged(newVal, oldVal) {
+  __itemChanged(newVal, oldVal) {
 
     if (!newVal || !oldVal) { return; }
 
@@ -206,23 +227,7 @@ class ImageEditor extends EditorMixin(AppElement) {
     if (newVal.uid !== oldVal.uid) {
       this.__cleanup();
 
-      if (!this._selectedPage) { return; }
-
-      this.$.pagesSpinner.show('Loading.');
-
-      if (this._selectedPage === 'filters') {
-        await listenOnce(this, 'image-filters-loaded');
-      }
-
-      if (this._selectedPage === 'adjust') {
-        await listenOnce(this, 'image-adjuster-loaded');
-      }
-
-      if (this._selectedPage === 'crop') {
-        await listenOnce(this, 'image-cropper-loaded');
-      }
-
-      this.$.pagesSpinner.hide();
+      this.__showPageSpinner();
     }
   }
 
@@ -373,16 +378,21 @@ class ImageEditor extends EditorMixin(AppElement) {
   }
 
 
-  __save() {
+  async __save() {
+
+    this.__showPageSpinner();
+
+    await schedule();
+
     this.fire('image-editor-save', {value: this._highQualityFile});
   }
 
 
   async __saveAndClose() {
-    this.__save();
+    await this.__save();
 
     // Wait for app-file-system spinner entry.
-    await wait(300);
+    await wait(500);
 
     this.$.overlay.reset();
   }
