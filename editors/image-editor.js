@@ -139,7 +139,7 @@ class ImageEditor extends EditorMixin(AppElement) {
   // If this is not handled, the output file will 
   // automatically be set to image/png and the
   // file size will thus explode by 5x.
-  // This should be avoided for perfomance reasons
+  // This should be avoided for perfromance reasons
   // as well as errors that occur when uploading
   // and cloud processing images larger than 10MB.
   __computeExt(ext, cropIsRound) {
