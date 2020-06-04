@@ -1,16 +1,11 @@
 
 <style>
 
-	#preview {
-		display: block;
-		width:   100%;
-	}
-
 	#selector {
 		display: 							 grid;
 		grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
 		grid-gap: 						 8px;
-		padding: 							 8px;
+		padding: 							 16px;
 	}
 	
 	.iron-selected {
@@ -27,12 +22,9 @@
 									 button-label="APPLY"
 									 on-image-editor-item-btn-clicked="__applyClicked">
 
-<!-- MUST set crossorigin to allow WebGL to securely load the downloaded image. -->
 	<img id="preview"
-			 crossorigin
 			 slot="preview"
-	     src="[[_previewSrc]]"
-	     on-load="__loaded"/>
+	     src="[[_previewSrc]]"/>
 
 
 	<iron-selector id="selector" 

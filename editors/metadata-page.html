@@ -2,10 +2,18 @@
 <style include="app-shared-styles">
 
   :host {
+    display:   block;    
+    max-width: 768px;
+    margin:    32px auto 0px auto;
+  }
+
+  section {
+    padding: 16px;
+  }
+
+  #first-section {
     display:        flex;
     flex-direction: column;
-    margin-top:     32px;
-    padding:        16px;
   }
 
   iron-icon {
@@ -51,10 +59,6 @@
     color:            var(--disabled-text-color);
   }
 
-  #info {
-    padding-top: 16px;
-  }
-
   .info-item {
     margin: 16px 0px;
   }
@@ -71,70 +75,87 @@
     display: none;
   }
 
+  @media (min-width: 568px) {
+
+    :host {
+      display: flex;
+    }
+
+    .shared-divider {
+      border: none;
+    }
+  
+  }
+
 </style>
 
 
-<paper-input class="shared-paper-input"
-             allowed-pattern="[^/\f/\n/\r/\t/\v]"
-             autocapitalize
-             autocomplete
-             autocorrect
-             auto-validate
-             label="Display name"
-             tabindex="0"
-             value="[[_displayName]]"
-             on-value-changed="__displayNameInputValueChanged">
-  <iron-icon icon="app-icons:label" 
-             slot="prefix">
-  </iron-icon>
-</paper-input>
+<section id="first-section">
 
-<paper-input class="shared-paper-input"
-             allowed-pattern="[a-zA-Z0-9\s]"
-             autocomplete
-             autocorrect
-             auto-validate
-             label="Keywords"
-             tabindex="0"
-             value="[[_rawKeywords]]"
-             on-value-changed="__keywordsInputValueChanged">
-  <iron-icon icon="file-icons:find-in-page" 
-             slot="prefix">
-  </iron-icon>
-</paper-input>
+  <paper-input class="shared-paper-input"
+               allowed-pattern="[^/\f/\n/\r/\t/\v]"
+               autocapitalize
+               autocomplete
+               autocorrect
+               auto-validate
+               label="Display name"
+               tabindex="0"
+               value="[[_displayName]]"
+               on-value-changed="__displayNameInputValueChanged">
+    <iron-icon icon="app-icons:label" 
+               slot="prefix">
+    </iron-icon>
+  </paper-input>
 
-<p class="explainer">
-  <strong>Keywords</strong>, also called <strong>tags</strong>, allow for powerful searches.  These should be single words that are highly relevant to the file subject matter. Example - 'coffee whole rich roasted bold arabica'
-</p>
-<p class="explainer">
-  Seperate keywords with a space. Do not use punctuation. Common words, such as 'a', 'and', 'is', 'or', 'very', etc., are ignored.
-</p>
+  <paper-input class="shared-paper-input"
+               allowed-pattern="[a-zA-Z0-9\s]"
+               autocomplete
+               autocorrect
+               auto-validate
+               label="Keywords"
+               tabindex="0"
+               value="[[_rawKeywords]]"
+               on-value-changed="__keywordsInputValueChanged">
+    <iron-icon icon="file-icons:find-in-page" 
+               slot="prefix">
+    </iron-icon>
+  </paper-input>
 
-
-<app-textarea value="[[_notes]]" 
-              on-value-changed="__notesChanged">
-</app-textarea>
+  <p class="explainer">
+    <strong>Keywords</strong>, also called <strong>tags</strong>, allow for powerful searches.  These should be single words that are highly relevant to the file subject matter. Example - 'coffee whole rich roasted bold arabica'
+  </p>
+  <p class="explainer">
+    Seperate keywords with a space. Do not use punctuation. Common words, such as 'a', 'and', 'is', 'or', 'very', etc., are ignored.
+  </p>
 
 
-<paper-button id="geolocation-btn" 
-              class="shared-paper-button-with-icon"
-              hidden="[[_hideGeolocationEditBtn]]"
-              on-click="__editGeolocationBtnClicked">
-  <iron-icon class="shared-iron-icon-inside-paper-button" 
-             icon="[[_geoLocationBtnIcon]]">
-  </iron-icon>
-  [[_geoLocationBtnText]]
-</paper-button>
+  <app-textarea value="[[_notes]]" 
+                on-value-changed="__notesChanged">
+  </app-textarea>
 
 
-<paper-button class$="save-btn [[__computeSaveBtnClass(isImg)]]"
-              disabled="[[!_changes]]" 
-              raised 
-              on-click="__saveBtnClicked">
-  UPDATE
-</paper-button>
+  <paper-button id="geolocation-btn" 
+                class="shared-paper-button-with-icon"
+                hidden="[[_hideGeolocationEditBtn]]"
+                on-click="__editGeolocationBtnClicked">
+    <iron-icon class="shared-iron-icon-inside-paper-button" 
+               icon="[[_geoLocationBtnIcon]]">
+    </iron-icon>
+    [[_geoLocationBtnText]]
+  </paper-button>
 
-<div id="info" class="shared-divider">
+
+  <paper-button class$="save-btn [[__computeSaveBtnClass(isImg)]]"
+                disabled="[[!_changes]]" 
+                raised 
+                on-click="__saveBtnClicked">
+    UPDATE
+  </paper-button>
+
+</section>
+
+
+<section class="shared-divider">
 
   <div class="info-item" 
        hidden="[[__computeHideOrder(list)]]">
@@ -183,4 +204,4 @@
            lng="[[_lng]]">
   </app-map>
 
-</div>
+</section>
