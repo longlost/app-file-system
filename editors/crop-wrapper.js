@@ -337,13 +337,26 @@ class CropWrapper extends AppElement {
 
   // Returns a promise which resolves 
   // to the generated crop file.
-  getCrop(extension) {
+  getCrop(extension, transformToPng) {
+
+    // Set max width/height on cropper canvas.
+    // In the case of taking an elliptical crop of a 
+    // non-png image, and thus transfoming it to a png
+    // the canvas will increase the file size by ~ 5x.
+    // Limiting the size of the canvas size to no more than
+    // 1536px is an acceptable compromize as it does not
+    // increase or decrease the file size too much and is
+    // still large enough for most applications.
+    // When there is no file type transformation, limit
+    // the canvas so it does not exceed its natural limits
+    // and fail to draw the image. 
+    const max = transformToPng ? 1536 : 4096;
 
     // Setting max sizes as per warning in cropperjs docs.
     // Should avoid getting a blank image returned.
     const options = {
-      maxWidth:  4096,
-      maxHeight: 4096
+      maxWidth:  max,
+      maxHeight: max
     };
 
     // Force round crops to be png so they 

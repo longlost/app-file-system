@@ -114,6 +114,15 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
         value: 'square'
       },
 
+      // True when the cropper will output a png
+      // when a jpeg is the input. ie. Elliptical
+      // crop with transparent background.
+      _transformFileType: {
+        type: Boolean,
+        value: false,
+        computed: '__computeTransformFileType(item.ext, ext)'
+      },
+
       _type: {
         type: String,
         value: 'cropped',
@@ -128,6 +137,19 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
     super.connectedCallback();
 
     this.$.a11y.target = document.body;
+  }
+
+  // There should only be a mismatch when performing
+  // an elliptical crop on a non-png image.
+  // Doing so will transform the file type to png in
+  // order to perserve a transparent crop area.
+  // Unfortunately this can dramatically increase the
+  // size of the file by ~ 5x, so limit the dimensions
+  // of the output to compensate.
+  __computeTransformFileType(originalExt, newExt) {
+    if (!originalExt || !newExt) { return false; }
+
+    return originalExt !== newExt;
   }
   
 
@@ -307,13 +329,13 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
       await wait(300);
 
       const process = async () => {
-        const low = await this.__btnClicked('getCrop', this.ext);
+        const low = await this.__btnClicked('getCrop', this.ext, this._transformFileType);
 
         this.$.cropper.replace(this.highQuality);
 
         await listenOnce(this.$.cropper, 'crop-wrapper-ready');
 
-        const high = await this.$.cropper.getCrop(this.ext);
+        const high = await this.$.cropper.getCrop(this.ext, this._transformFileType);
 
         // Allow new _editedSrc to replace existing img src.
         this.$.cropper.destroy();
