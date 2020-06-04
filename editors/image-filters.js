@@ -73,7 +73,11 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
       _loaded: Boolean,
 
-      // Preview img element reference.
+      // Hidden javascript Image element reference.
+      // Not using the <img> that's in the light dom
+      // in order to get the correct dimensions (natural sizes)
+      // set for the filter's underlying canvas, so as
+      // not to distort the image's aspect ratio.
       _preview: Object,
 
       _previewSrc: {
@@ -96,13 +100,6 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     return [
       '__previewSrcChanged(_previewSrc)'
     ];
-  }
-
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    this._preview = this.$.preview;
   }
 
 
@@ -131,17 +128,25 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   }
 
 
-  __previewSrcChanged() {
+  __previewSrcChanged(src) {
     this._loaded = false;
-  }
 
-
-  __loaded() {
-    
-    if (this._src && this._src !== '#') {  
-      this._loaded = true;
-      this.fire('image-filters-loaded');
+    if (!src || src === '#') {
+      this._preview = undefined;
     }
+
+    const img = new Image();
+
+    img.onload = () => {
+      this._loaded  = true;
+      this._preview = img;
+
+      this.fire('image-filters-loaded');
+    };
+
+    // Must set crossOrigin to allow WebGl to load the image.
+    img.crossOrigin = '';
+    img.src         = src;
   }
 
 

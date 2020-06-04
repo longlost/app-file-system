@@ -7,24 +7,36 @@
 	}
 
 	#preview {
-		display: 					block;
-		width:  					100%;
+		display: 					flex;
+		justify-content:  center;
 		position: 			 -webkit-sticky;
 		position: 				sticky;
 		top: 							0px;
+		height:  					33.333vmax;
 		margin-bottom:  	16px;
+		padding:  				16px;
 		background-color: var(--app-background-color);
 		z-index: 					2;
 	}
 
+	#preview-slot::slotted(*) {
+		display: 				 block;
+		width: 					 100%;
+		object-fit: 		 contain;
+    object-position: center;
+	}
+
 	#btn-wrapper {
-		margin-top: 48px;
-		padding: 		48px 16px;
+		display: 				 flex;
+		justify-content: center;
+		margin-top: 		 48px;
+		padding: 				 48px 16px;
 	}
 
 	#btn {
-		width: 	100%;
-		margin: 0px;
+		width: 		 100%;
+		max-width: 414px;
+		margin: 	 0px;
 		background-color: var(--app-accent-color);
 		color: 						var(--constant-dark-text);
 	}
@@ -34,27 +46,51 @@
 		color: 						var(--disabled-text-color);
 	}
 
+
+  @media (min-width: 568px) {
+
+  	:host {
+  		display: flex;
+  	}
+
+    #preview {
+    	width: 	 			 calc(50% - 32px);
+    	height: 			 unset;
+    	max-height:  	 calc(100vh - 32px);
+    	margin-bottom: 0px;
+    }
+
+    #content {
+    	width:  calc(50% - 16px);
+    	margin: 32px 8px 8px 8px;
+    }
+
+  }
+
 </style>
 
 
 <div id="preview" 
 		 class="shared-card-shadow">
-	<slot name="preview"></slot>
+	<slot id="preview-slot" name="preview"></slot>
 </div>
 
 
-<slot></slot>
+<div id="content">
 
+	<slot></slot>
 
-<div id="btn-wrapper" 
-		 class="shared-divider">
-	<paper-button id="btn"
-								class="shared-paper-button-with-icon"
-								disabled="[[buttonDisabled]]"
-								on-click="__btnClicked">
-		<iron-icon class="shared-paper-button-with-icon" 
-							 icon="[[_icon]]">
-		</iron-icon>
-		[[buttonLabel]]
-	</paper-button>
+	<div id="btn-wrapper" 
+			 class="shared-divider">
+		<paper-button id="btn"
+									class="shared-paper-button-with-icon"
+									disabled="[[buttonDisabled]]"
+									on-click="__btnClicked">
+			<iron-icon class="shared-paper-button-with-icon" 
+								 icon="[[_icon]]">
+			</iron-icon>
+			[[buttonLabel]]
+		</paper-button>
+	</div>
+
 </div>

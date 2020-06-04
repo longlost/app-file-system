@@ -3,6 +3,7 @@
 
   #overlay {
     padding: 0px;
+    --overlay-background-color:         var(--app-body-color);
     --overlay-toolbar-background-color: var(--app-primary-color);
     --overlay-toolbar-vignette-opacity: 0;
   }
@@ -18,13 +19,19 @@
   }
 
   paper-tabs {
-    height: 64px;
+    height:    64px;
+    max-width: 414px;
+    margin:    0px auto;
     --paper-tab-ink:                  var(--constant-light-text);
     --paper-tabs-selection-bar-color: var(--constant-light-text);
   }
 
   .page {
     margin-right: 16px;
+  }
+
+  app-spinner {
+    z-index: 2;
   }
 
   *[hidden] {
@@ -79,7 +86,8 @@
 
 
   <template is="dom-if" 
-            if="[[_opened]]">  
+            if="[[_opened]]"
+            restamp>  
 
     <tab-pages id="pages"
                attr-for-selected="page"
@@ -100,7 +108,7 @@
                      on-image-filters-show-spinner="__showSpinner">
       </image-filters>
     
-      <image-adjuster class="adjust"
+      <image-adjuster class="page"
                       current="[[_currentPage]]"
                       edited="[[_edited]]"
                       ext="[[_ext]]"

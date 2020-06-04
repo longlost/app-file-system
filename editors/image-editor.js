@@ -396,31 +396,27 @@ class ImageEditor extends EditorMixin(AppElement) {
 
     this.$.overlay.reset();
   }
-
+  
 
   async open() {
 
     await this.$.overlay.open();
     await schedule();
 
+    // Give filters time to process on initialization.
+    await this.$.pagesSpinner.show('Loading.');
+
+    this._opened = true;
+
+    await listenOnce(this, 'image-filters-stamped');
+
     if (!this._selectedTab) {
-
-      // Give filters time to process on initialization.
-      await this.$.pagesSpinner.show('Loading.');
-
-      this._opened = true;
-
-      await listenOnce(this, 'image-filters-stamped');
-
       this._selectedTab = 'filters';
-
-      await schedule();
-
-      this.$.pagesSpinner.hide();
     }
-    else {
-      this._opened = true;
-    } 
+
+    await schedule();
+
+    this.$.pagesSpinner.hide();
   }
 
 
