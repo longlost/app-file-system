@@ -125,6 +125,7 @@ class CropWrapper extends AppElement {
       <div id="wrapper">
         <img id="img"
              alt="[[alt]]"
+             crossorigin="[[crossorigin]]"
              src="[[src]]"
              on-cropstart="__active"
              on-error="__error"
@@ -153,6 +154,11 @@ class CropWrapper extends AppElement {
       alt: {
         type: String,
         value: 'Image to crop.'
+      },
+
+      crossorigin: {
+        type: String,
+        value: 'anonymous'
       },
 
       // By default the crop area aspect ratio is free

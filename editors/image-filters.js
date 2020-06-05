@@ -145,7 +145,7 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     };
 
     // Must set crossOrigin to allow WebGl to load the image.
-    img.crossOrigin = '';
+    img.crossOrigin = 'anonymous';
     img.src         = src;
   }
 

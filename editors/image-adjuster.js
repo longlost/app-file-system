@@ -197,7 +197,7 @@ class ImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     };
 
     // MUST set crossorigin to allow WebGL to securely load the downloaded image.
-    img.crossOrigin = '';
+    img.crossOrigin = 'anonymous';
     img.src         = this._src;
     this._source    = undefined;
   }
