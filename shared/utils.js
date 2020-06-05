@@ -149,7 +149,7 @@ const imgFilterFile = async (filter, src, displayName, ext) => {
   }); 
 
   // MUST set crossorigin to allow WebGL to securely load the downloaded image.
-  img.crossOrigin = '';
+  img.crossOrigin = 'anonymous';
   img.src         = src;
 
   return promise;
