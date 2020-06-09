@@ -123,15 +123,23 @@ class CropWrapper extends AppElement {
 
 
       <div id="wrapper">
+
+        <!-- 
+          MUST set crossorigin directly here for cropperjs to 
+          properly add this property to the cloned version of 
+          this element!
+        -->
+        
         <img id="img"
              alt="[[alt]]"
-             crossorigin="[[crossorigin]]"
+             crossorigin="anonymous"
              src="[[src]]"
              on-cropstart="__active"
              on-error="__error"
              on-load="__loaded"
              on-ready="__ready"
              on-zoom="__active"/>
+
       </div>
 
 
@@ -154,11 +162,6 @@ class CropWrapper extends AppElement {
       alt: {
         type: String,
         value: 'Image to crop.'
-      },
-
-      crossorigin: {
-        type: String,
-        value: 'anonymous'
       },
 
       // By default the crop area aspect ratio is free
