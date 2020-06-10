@@ -35,7 +35,7 @@
     "@longlost/pinch-to-zoom": "^1.0.0",
     "@longlost/services": "^3.2.3",
     "@longlost/tab-pages": "^1.0.2",
-    "@longlost/utils": "^1.4.1",
+    "@longlost/utils": "^1.5.0",
     "@longlost/webgl-filter": "^1.0.0",
     "@longlost/worker": "^3.0.4",
     "@polymer/app-storage": "^3.0.3",
