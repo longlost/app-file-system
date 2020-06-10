@@ -1121,6 +1121,13 @@
   dependencies:
     "@longlost/lambda" "^2.2.0"
 
+"@longlost/utils@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@longlost/utils/-/utils-1.5.0.tgz#1b17fa40262ce14495adef60effe8a692143bdf6"
+  integrity sha512-kekx5f2GCiQo0pnrCs/QN+C+zeuCe0XW81CIKHo0lZ9YS1LR8UoOiLHjJi81btRT6bD71b8YBBtkKn1aJNswGA==
+  dependencies:
+    "@longlost/lambda" "^2.2.0"
+
 "@longlost/webgl-filter@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@longlost/webgl-filter/-/webgl-filter-1.0.0.tgz#200d28f8b50d93b02d491626c27feab853978f74"

@@ -22,7 +22,7 @@
 
 
 import {AppElement, html}  from '@longlost/app-element/app-element.js';
-import {naturals}          from '@longlost/utils/utils.js';
+import {getBBox, naturals} from '@longlost/utils/utils.js';
 import {PhotoElementMixin} from '../shared/photo-element-mixin.js';
 import htmlString          from './carousel-item.html';
 
@@ -78,7 +78,17 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
 
       const {naturalHeight, naturalWidth} = await naturals(this._imgPlaceholder);
 
-      const bbox      = this.getBoundingClientRect();
+      const raw = getBBox(this);
+
+      // Adjust for the fact that the carousel is offset 4px left and right.
+      const bbox = {
+        ...raw,
+        left:  raw.left  + 4, 
+        right: raw.right - 4,
+        width: raw.width - 8,
+        x:     raw.x     + 4
+      };
+
       const imgAspect = naturalWidth / naturalHeight;
 
 
@@ -147,8 +157,18 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
         return {height: bbox.height, width};
       };
 
-      const heightWidth = getHeightWidth(); 
-      const measurements = {...bbox, ...heightWidth};
+      const heightWidth = getHeightWidth();
+
+      // Use the image's measurements rather than the container's.
+      const top = (bbox.height / 2) - (heightWidth.height / 2);
+
+      const measurements = {
+        ...bbox, 
+        ...heightWidth,
+        bottom: top + heightWidth.height,
+        top,
+        x:      top
+      };
 
       this.fire('photo-selected', {measurements, item: this.item});
     }
