@@ -145,34 +145,86 @@ const formatFileSize = size => {
 const getName = basename => 
   path.basename(basename, path.extname(basename));
 
+
+
+let uidTagsRunner;
+let compressRunner;
+
+
+
 // Read all jpg files to extract their exif information.
 const addAdditionalData = async files => {
-  try { 
+  try {
 
-    const {default: Worker} = await import(
-      /* webpackChunkName: 'app-file-system-sources-worker' */ 
-      './worker.js'
-    );
-    const {init, run} = await import(
-      /* webpackChunkName: 'worker.runner' */ 
-      '@longlost/worker/worker.runner.js'
-    );
+    if (!uidTagsRunner) {
 
-    await init(Worker);
+      const {default: workerRunner} = await import(
+        /* webpackChunkName: 'worker-runner' */ 
+        '@longlost/worker/worker-runner.js'
+      );
 
-    const promises = files.map(file => {
+      const {default: UidTagsWorker} = await import(
+        /* webpackChunkName: 'app-file-system-uid-tags-worker' */ 
+        './uid-tags.worker.js'
+      );
+
+      const {default: CompressWorker} = await import(
+        /* webpackChunkName: 'app-file-system-img-compress-worker' */ 
+        './img-compress.worker.js'
+      );
+
+      uidTagsRunner  = await workerRunner(UidTagsWorker);
+      compressRunner = await workerRunner(CompressWorker);
+    }
+
+    const uidTagsPromises = files.map(file => {
 
       // Send jpg files to worker to read 
       // exif data and get a uid.
       if (file.type.includes('jpg') || file.type.includes('jpeg')) {
-        return run('getUidAndTags', file, EXIF_TAGS);
+        return uidTagsRunner.run('getUidAndTags', file, EXIF_TAGS);
       }
 
       // Don't send file to worker, just get a uid.
-      return run('getUidAndTags'); 
+      return uidTagsRunner.run('getUidAndTags'); 
     });
     
-    const data = await Promise.all(promises);
+    const data = await Promise.all(uidTagsPromises);
+
+
+
+
+    // TODO:
+    //      compress image files that are larger than 1MB.
+
+
+
+
+    const compressPromises = files.map(file => {
+
+      
+      console.log('original size: ', formatFileSize(file.size));
+
+
+
+      if (file.type.includes('jpeg') || file.type.includes('jpg') || file.type.includes('png')) { 
+        return compressRunner.run('compress', file); 
+      }
+
+      return Promise.resolve(file);
+    });
+
+    const compressedFiles = await Promise.all(compressPromises);
+
+    
+    compressedFiles.forEach(file => {
+      console.log('compressed size: ', formatFileSize(file.size));
+      console.log('compressed instanceof file: ', file instanceof File);
+    });
+
+
+
+
 
     return files.map((file, index) => {
       const {tags, uid} = data[index];
@@ -282,14 +334,6 @@ class FileSources extends AppElement {
         value: () => ({})
       },
 
-      // Overlay opened state.
-      // Controls wether to subscribe to db for 
-      // file items count or not.
-      _opened: {
-        type: Boolean,
-        value: false
-      },
-
       _unsubscribe: Object
 
     };
@@ -298,8 +342,15 @@ class FileSources extends AppElement {
 
   static get observers() {
     return [
-      '__collOpenedChanged(coll, _opened)'
+      '__collChanged(coll)'
     ];
+  }
+
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    this.__unsub();
   }
 
 
@@ -386,8 +437,9 @@ class FileSources extends AppElement {
   }
 
 
-  async __collOpenedChanged(coll, opened) {
-    if (!coll || !opened) {
+  async __collChanged(coll) {
+
+    if (!coll) {
       this.__unsub();
       this._dbCount = undefined;
       return;
@@ -424,11 +476,6 @@ class FileSources extends AppElement {
         direction: 'desc'
       }
     });
-  }
-
-
-  __reset() {
-    this._opened = false;
   }
 
 
@@ -780,9 +827,8 @@ class FileSources extends AppElement {
   }
 
 
-  async open() {
-    await this.$.overlay.open();
-    this._opened = true;
+  open() {
+    return this.$.overlay.open();
   }
 
 }
