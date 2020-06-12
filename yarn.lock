@@ -1399,12 +1399,12 @@
   resolved "https://registry.yarnpkg.com/@longlost/webgl-filter/-/webgl-filter-1.0.0.tgz#200d28f8b50d93b02d491626c27feab853978f74"
   integrity sha512-OSJ3nfQvNx4r4dcdAwTKlpebLyI7ggwySGTGzYUj1KV9JQpayR70QY4jl2eYhSDXTX8wKNfK/Oez4+UF1NfvRQ==
 
-"@longlost/worker@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@longlost/worker/-/worker-4.0.0.tgz#b5088587daff69b206b6e93279b875331af3b704"
-  integrity sha512-fYFl2yrCebV24B08RKQrtdS95cRGkbwGxhNzETANJ+N3ybgR3CPfKgbbuPKagxR6Q0C5qRaqUFSaQ9LplfoVNw==
+"@longlost/worker@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@longlost/worker/-/worker-4.0.1.tgz#853ebbd2122a36546314605432b51e687ec35d6a"
+  integrity sha512-0FxbsOWEamOw2eoscsvtIL2HM4y3Sasfpjj3bab34/c29ofOznuIq6G/Vw6jDRl0Tndtc+eZ5ODwoE1IefE+KA==
   dependencies:
-    comlink "^4.2.0"
+    comlink "^4.3.0"
     exifreader "^3.12.0"
 
 "@polymer/app-layout@^3.1.0":
@@ -2255,11 +2255,6 @@ colour@~0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/colour/-/colour-0.7.1.tgz#9cb169917ec5d12c0736d3e8685746df1cadf778"
   integrity sha1-nLFpkX7F0SwHNtPoaFdG3xyt93g=
-
-comlink@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.2.0.tgz#be9e968a19d797a44a042cf1eac03775d2ed39fe"
-  integrity sha512-33hF3yYzZicIWLREuvluTGSZkbAXYwRmrA9IYQo0/P+0O45qgvzR0FHX4tRZztObFMTs/RhnN0G0UBNDAZSiCg==
 
 comlink@^4.3.0:
   version "4.3.0"

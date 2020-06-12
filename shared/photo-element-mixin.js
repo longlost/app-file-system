@@ -36,7 +36,7 @@ export const PhotoElementMixin = superClass => {
 
 	      _imgPlaceholder: {
 	      	type: String,
-	      	computed: '__computeImgPlaceholder(item.thumbnail, item._tempUrl, _isImg)'
+	      	computed: '__computeImgPlaceholder(item.thumbnail, item._tempUrl, _isImg, _isThumbnail)'
 	      },
 
 	      _imgSrc: {
@@ -115,10 +115,17 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeImgPlaceholder(thumbnail, temp, isImg) {
+	  __computeImgPlaceholder(thumbnail, temp, isImg, isThumbnail) {
 	    if (!isImg) { return; }	 
 
-	    if (thumbnail) { return thumbnail; }
+	    // Allow the thumbnail url to be set as the 
+	    // main src so the image fades in.
+	    if (thumbnail) { 
+
+	    	if (isThumbnail) { return; }
+
+	    	return thumbnail; 
+	    }
 
 	    return temp;
 	  }

@@ -21,6 +21,30 @@
   *
   *
   *
+  *   Add this to the project's package.json for a smaller, custom 'exifreader' build.
+  *
+  *     "exifreader": {
+  *       "include": {
+  *         "exif": [
+  *           "DateTimeOriginal",   
+  *           "GPSAltitude",        
+  *           "GPSAltitudeRef",     
+  *           "GPSDateStamp",       
+  *           "GPSImgDirection",    
+  *           "GPSImgDirectionRef", 
+  *           "GPSLatitude",        
+  *           "GPSLatitudeRef",     
+  *           "GPSLongitude",       
+  *           "GPSLongitudeRef",    
+  *           "GPSTimeStamp",       
+  *           "ImageDescription",   
+  *           "Orientation"
+  *         ]
+  *       }
+  *     },
+  *
+  *
+  *
   *
   *  Properites:
   *
