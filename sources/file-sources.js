@@ -10,6 +10,29 @@
   *   File url input.
   *
   *
+  *   Add this to the project's package.json for a smaller, custom 'exifreader' build.
+  *
+  *     "exifreader": {
+  *       "include": {
+  *         "exif": [
+  *           "DateTimeOriginal",   
+  *           "GPSAltitude",        
+  *           "GPSAltitudeRef",     
+  *           "GPSDateStamp",       
+  *           "GPSImgDirection",    
+  *           "GPSImgDirectionRef", 
+  *           "GPSLatitude",        
+  *           "GPSLatitudeRef",     
+  *           "GPSLongitude",       
+  *           "GPSLongitudeRef",    
+  *           "GPSTimeStamp",       
+  *           "ImageDescription",   
+  *           "Orientation"
+  *         ]
+  *       }
+  *     },
+  *
+  *
   *  Properites:
   *
   *
@@ -83,6 +106,7 @@ import path         from 'path'; // webpack includes this by default!
 import mime         from 'mime-types';
 import descriptions from './mime-descriptions.json';
 import services     from '@longlost/services/services.js';
+import workerRunner from '@longlost/worker/worker-runner.js';
 import htmlString   from './file-sources.html';
 import '@longlost/app-overlays/app-header-overlay.js';
 import '@longlost/app-overlays/app-modal.js';
@@ -146,112 +170,117 @@ const getName = basename =>
   path.basename(basename, path.extname(basename));
 
 
-
 let uidTagsRunner;
-let compressRunner;
 
+// Assign a uid to each file.
+// Read supported image files to extract their exif information.
+const assignUidsReadTagData = async files => {
 
+  if (!uidTagsRunner) {
 
-// Read all jpg files to extract their exif information.
-const addAdditionalData = async files => {
-  try {
+    const {default: UidTagsWorker} = await import(
+      /* webpackChunkName: 'app-file-system-uid-tags-worker' */ 
+      './uid-tags.worker.js'
+    );
 
-    if (!uidTagsRunner) {
+    uidTagsRunner  = await workerRunner(UidTagsWorker);
+  }
 
-      const {default: workerRunner} = await import(
-        /* webpackChunkName: 'worker-runner' */ 
-        '@longlost/worker/worker-runner.js'
-      );
+  const uidTagsPromises = files.map(file => {
 
-      const {default: UidTagsWorker} = await import(
-        /* webpackChunkName: 'app-file-system-uid-tags-worker' */ 
-        './uid-tags.worker.js'
-      );
-
-      const {default: CompressWorker} = await import(
-        /* webpackChunkName: 'app-file-system-img-compress-worker' */ 
-        './img-compress.worker.js'
-      );
-
-      uidTagsRunner  = await workerRunner(UidTagsWorker);
-      compressRunner = await workerRunner(CompressWorker);
+    // Send supported image files to worker to read 
+    // exif data and get a uid.
+    if (
+      file.type.includes('jpg')  || 
+      file.type.includes('jpeg') ||
+      file.type.includes('png')  ||
+      file.type.includes('tiff') ||
+      file.type.includes('webp')
+    ) {
+      return uidTagsRunner.run('getUidAndTags', file, EXIF_TAGS);
     }
 
-    const uidTagsPromises = files.map(file => {
-
-      // Send jpg files to worker to read 
-      // exif data and get a uid.
-      if (file.type.includes('jpg') || file.type.includes('jpeg')) {
-        return uidTagsRunner.run('getUidAndTags', file, EXIF_TAGS);
-      }
-
-      // Don't send file to worker, just get a uid.
-      return uidTagsRunner.run('getUidAndTags'); 
-    });
-    
-    const data = await Promise.all(uidTagsPromises);
+    // Don't send file to worker, just get a uid.
+    return uidTagsRunner.run('getUidAndTags'); 
+  });
+  
+  // Resolves to an array of objects containing uid and exif tag info.
+  return Promise.all(uidTagsPromises);
+};
 
 
+let compressRunner;
 
+// Use 'jimp' to compress image files.
+const compressImages = async (data, files) => {
 
-    // TODO:
-    //      compress image files that are larger than 1MB.
+  if (!compressRunner) {
 
+    const {default: CompressWorker} = await import(
+      /* webpackChunkName: 'app-file-system-img-compress-worker' */ 
+      './img-compress.worker.js'
+    );
 
-
-
-    const compressPromises = files.map(file => {
-
-      
-      console.log('original size: ', formatFileSize(file.size));
-
-
-
-      if (file.type.includes('jpeg') || file.type.includes('jpg') || file.type.includes('png')) { 
-        return compressRunner.run('compress', file); 
-      }
-
-      return Promise.resolve(file);
-    });
-
-    const compressedFiles = await Promise.all(compressPromises);
-
-    
-    compressedFiles.forEach(file => {
-      console.log('compressed size: ', formatFileSize(file.size));
-      console.log('compressed instanceof file: ', file instanceof File);
-    });
-
-
-
-
-
-    return files.map((file, index) => {
-      const {tags, uid} = data[index];
-
-      if (file.type.includes('image') || file.type.includes('video')) { 
-        file._tempUrl = window.URL.createObjectURL(file);
-      }
-      else {
-        file._tempUrl = null; // Firestore does not accept undefined vals;
-      }
-    
-      file.basename  = file.name;
-      file.category  = path.dirname(file.type);
-      file.exif      = tags ? tags : null; // Firestore does not accept undefined vals;
-      file.ext       = path.extname(file.name);
-      file.index     = index;
-      file.sizeStr   = formatFileSize(file.size);
-      file.timestamp = Date.now();
-      file.uid       = uid;
-
-      return file;
-    });
+    compressRunner = await workerRunner(CompressWorker);
   }
-  catch (error) {
-    console.error(error);
-    return files;
-  }
+
+
+  const compressPromises = files.map(file => {
+
+    
+    console.log('original size: ', formatFileSize(file.size));
+
+
+    // Compress image types supported by 'jimp' package.
+    //
+    // Jimp docs claim support for gif's but
+    // after looking at thier issues page, they
+    // say that gif support is sketchy at best, so
+    // NOT running gifs at this time (June 12, 2020). 
+    if (
+      file.type.includes('bmp')  ||
+      file.type.includes('jpeg') || 
+      file.type.includes('jpg')  || 
+      file.type.includes('png')  ||
+      file.type.includes('tiff')
+    ) { 
+      return compressRunner.run('compress', file); 
+    }
+
+    return Promise.resolve(file);
+  });
+
+  const compressedFiles = await Promise.all(compressPromises);
+
+  return compressedFiles.map((file, index) => {
+
+
+
+    console.log('compressed size: ', formatFileSize(file.size));
+
+
+
+
+    const {tags, uid} = data[index];
+
+    if (file.type.includes('image') || file.type.includes('video')) { 
+      file._tempUrl = window.URL.createObjectURL(file);
+    }
+    else {
+      file._tempUrl = null; // Firestore does not accept undefined vals;
+    }
+  
+    file.basename  = file.name;
+    file.category  = path.dirname(file.type);
+    file.exif      = tags ? tags : null; // Firestore does not accept undefined vals;
+    file.ext       = path.extname(file.name);
+    file.index     = index;
+    file.sizeStr   = formatFileSize(file.size);
+    file.timestamp = Date.now();
+    file.uid       = uid;
+
+    return file;
+  });
 };
 
 
@@ -749,10 +778,16 @@ class FileSources extends AppElement {
     try {
       await this.$.spinner.show('Reading files.');
 
+      // Array of objects containing uid and exif tag info.
+      const data = await assignUidsReadTagData(files);
+
+      this.$.spinner.show('Optimizing images.');
+
       // Drives modal repeater.
-      this._filesToRename = await addAdditionalData(files);
+      this._filesToRename = await compressImages(data, files);
 
       this.$.deviceFileCard.clearFeedback();
+
       await schedule();
       await this.$.renameFilesModal.open();
     }

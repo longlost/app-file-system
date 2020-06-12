@@ -3,87 +3,83 @@
 // for a file in preparation for display and upload.
 
 import * as Comlink from 'comlink';
-import Jimp 				from 'jimp/es';
+import Jimp 				from 'jimp';
 
 
-const IMAGE_QUALITY 	= 75; // 0 - 100, 100 is no change in quality. Used for jpeg/bmp/tiff/gif.
-const PNG_COMPRESSION = 5;  // 0 - 9, 0 is no compression. Used for png only.
+const IMAGE_QUALITY 	= 80; 	// 0 - 100, 100 is no change in quality. Used for jpeg/bmp/tiff/gif.
+const PNG_COMPRESSION = 9;  	// 0 - 9, 0 is no compression. Used for png only.
+const MAX_MB 					= 1;  	// Target max file size.
+const MAX_SIZE 				= 2048; // Maximum image dimensions.
+const MIN_SCALE 	 		= 0.75;	// Reduce large image file dimensions at least this much.
 
 
-const imageCompression = (file, orientation = 0) => {
-
-	const mime 	 = file.type;
-  // const width  = (orientation === 6 || orientation === 8) ? Jimp.AUTO : IMAGE_SIZE;
-  // const height = (orientation === 6 || orientation === 8) ? IMAGE_SIZE : Jimp.AUTO;
-
-	const reader = new FileReader(); // Jimp does not accept raw files.
-  reader.readAsArrayBuffer(file);
-
-  const promise = new Promise((resolve, reject) => {
-
-  	reader.onload = async () => {
-
-  		if (reader.error) {
-  			reject(reader.error);
-  		}
-
-  		try {
-
-	  		const image = await Jimp.read(reader.result);
-
-	  		// image.resize(width, height).quality(IMAGE_QUALITY);
-
-	  		if (mime.includes('png')) {
-	  			image.deflateLevel(PNG_COMPRESSION); // 0 - 9, 0 is no compression.
-	  		}
-	  		else {
-	  			image.quality(IMAGE_QUALITY);
-	  		}
+const reader = new FileReaderSync();
 
 
-	  		const buffer = await image.getBufferAsync(mime);
+const imageCompression = async file => {
 
-	  		// TODO:
-	  		// 			Check if File is available on iOS Safari, it wasn't 3 years ago.
+  const buffer = reader.readAsArrayBuffer(file);
+	const image  = await Jimp.read(buffer);
 
-	  		const compressed = new File([buffer], file.name, {type: mime});
+	const sizeMB = file.size / 1024 / 1024;
 
-	  		resolve(compressed);
+	// Aggresively reduce the size of images larger than 1MB.
+	// Take twice the inverse of the size in MB.
+	// The further a file's size is away from MAX_MB, 
+	// the more the image dimensions are reduced.
+	if (sizeMB > MAX_MB) {
+		const scale = Math.min(2 / sizeMB, MIN_SCALE);
 
+		image.scale(scale);
+	}
 
-	  		
+	// If an image is already less then MAX_MB, then make sure it is
+	// smaller than MAX_SIZE in pixels in either dimension.
+	else if ((image.bitmap.width > MAX_SIZE) || (image.bitmap.height > MAX_SIZE)) {
+		image.scaleToFit(MAX_SIZE, MAX_SIZE);
+	}
 
-	    	// const blob = new Blob([buffer], {type: mime});
+	const mime = file.type;
 
-	    	// resolve(blob);
-  		}
-  		catch (error) {
-  			reject(error);
-  		}  			
-    };
+	// Maximum filtering and deflating for png's.
+	if (mime.includes('png')) {
+		image.
+			filterType(Jimp.PNG_FILTER_AUTO).
+			deflateLevel(PNG_COMPRESSION);
+	}
+	else {
+		image.quality(IMAGE_QUALITY);
+	}
 
-    reader.onerror = reject;
+	const processedBuffer = await image.getBufferAsync(mime);
+	const compressed 			= new File([processedBuffer], file.name, {type: mime});
 
-  });
+	// Jimp sometimes increases the size of small files, 
+	// so use the original instead.
+	const smallest = compressed.size < file.size ? compressed : file;
 
-	return promise;
+	return smallest;
 };
 
 
-const compress = (file, orientation) => {
+const compress = file => {
 
 	if (!file) { return; }
 
 	// Only process image files that jimp supports.
+	//
+	// Jimp docs claim support for gif's but
+	// after looking at thier issues page, they
+	// say that gif support is sketchy at best, so
+	// NOT running gifs at this time (June 12, 2020). 
 	if (
 		file.type.includes('bmp')  ||
-		file.type.includes('gif')  || 
 		file.type.includes('jpeg') || 
 		file.type.includes('jpg')  || 
 		file.type.includes('png')  ||
 		file.type.includes('tiff')
 	) { 
-		return imageCompression(file, orientation); 
+		return imageCompression(file); 
 	}
 
 	return file;
