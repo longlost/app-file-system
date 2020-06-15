@@ -2,10 +2,17 @@
 <style>
 
   :host {
-    display:            block;
-    height:             100%;
-    background-color:   var(--app-light-color);
-    --dz-hover-bgcolor: var(--app-primary-color);
+    display:             block;
+    height:              100%;
+    background-color:    var(--app-light-color);
+    --dz-active-bgcolor: var(--paper-indigo-50);
+    --dz-active-color:   var(--paper-indigo-600);
+    --dz-color:          var(--paper-grey-600);
+    --dz-disabled-color: var(--paper-grey-400);
+    --dz-feedback-color: var(--app-error-color, var(--paper-red-600));
+    --dz-hover-bgcolor:  var(--app-primary-color);
+    --dz-hover-color:    var(--paper-grey-600);
+    --dz-icon-size:      40px;
   }
 
   :host([disabled]) {
@@ -19,32 +26,32 @@
     align-items:     center;
     height:          calc(100% - 8px);
     cursor:          pointer;
-    color:           var(--dz-color, var(--paper-grey-600));
-    border:          4px dashed var(--dz-color, var(--paper-grey-600));
+    color:           var(--dz-color);
+    border:          4px dashed var(--dz-color);
   }
 
   :host([disabled]) #label {
     pointer-events:  none;
     text-decoration: line-through;
-    color:           var(--dz-disabled-color, var(--paper-grey-400));
-    border-color:    var(--dz-disabled-color, var(--paper-grey-400));
+    color:           var(--dz-disabled-color);
+    border-color:    var(--dz-disabled-color);
   }
 
   #label:hover {
-    color:            var(--dz-hover-color, var(--paper-grey-600));
-    border-color:     var(--dz-hover-color, var(--paper-grey-600));
-    background-color: var(--dz-hover-bgcolor, var(--paper-grey-50));
+    color:            var(--dz-hover-color);
+    border-color:     var(--dz-hover-color);
+    background-color: var(--dz-hover-bgcolor);
   }
 
   #label.highlight {
-    color:            var(--dz-active-color, var(--paper-indigo-600));
-    border-color:     var(--dz-active-color, var(--paper-indigo-600));
-    background-color: var(--dz-active-bgcolor, var(--paper-indigo-50));
+    color:            var(--dz-active-color);
+    border-color:     var(--dz-active-color);
+    background-color: var(--dz-active-bgcolor);
   }
 
   #icon {
-    height: var(--dz-icon-height, 40px);
-    width:  var(--dz-icon-width, 40px);
+    height: var(--dz-icon-size);
+    width:  var(--dz-icon-size);
   }
 
   #input {
@@ -53,7 +60,7 @@
 
   #feedback {
     font-weight: bold;
-    color:       var(--dz-feedback-color, var(--paper-red-600));
+    color:       var(--dz-feedback-color);
   }
 
 </style>
