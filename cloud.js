@@ -11,12 +11,12 @@ const spawn      = require('child-process-promise').spawn;
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 
 
-const OPTIM_MAX_WIDTH = 1024;
-const THUMB_MAX_WIDTH = 256;
-const OPTIM_PREFIX    = 'optim_';
-const ORIENT_PREFIX   = 'orient_';
-const SHARE_PREFIX    = 'share_';
-const THUMB_PREFIX    = 'thumb_';
+const OPTIM_MAX_SIZE = 1024;
+const THUMB_MAX_SIZE = 256;
+const OPTIM_PREFIX   = 'optim_';
+const ORIENT_PREFIX  = 'orient_';
+const SHARE_PREFIX   = 'share_';
+const THUMB_PREFIX   = 'thumb_';
 
 
 const isOptimizable = type => 
@@ -268,11 +268,12 @@ exports.optimize = functions.
      OPTIM_PREFIX, // Url filename prefix.
 
     // Image options.
+    // see https://www.smashingmagazine.com/2015/06/efficient-image-resizing-with-imagemagick/
     [
-      '-auto-orient',                       // Places image upright for viewing.
+      '-auto-orient', // Places image upright for viewing.
       '-filter',     'Triangle',
       '-define',     'filter:support=2',
-      '-resize',     `${OPTIM_MAX_WIDTH}>`, // Keeps original aspect ratio.
+      '-resize',     `${OPTIM_MAX_SIZE}x${OPTIM_MAX_SIZE}>`, // Keeps original aspect ratio.
       '-unsharp',    '0.25x0.25+8+0.065',
       '-dither',     'None',
       '-posterize',  '136',
@@ -289,10 +290,10 @@ exports.optimize = functions.
 
     // Video options.
     [
-      '-vf',                         // Filter flag.
-      `scale=${OPTIM_MAX_WIDTH}:-1`, // Filter scale val. -1 for height preserves aspect.
-      '-qscale:v',                   // Quality scale flag.
-      '4',                           // Quality scale val. (1 - 31, lower is better quality).
+      '-vf',                        // Filter flag.
+      `scale=${OPTIM_MAX_SIZE}:-1`, // Filter scale val. -1 for height preserves aspect.
+      '-qscale:v',                  // Quality scale flag.
+      '4',                          // Quality scale val. (1 - 31, lower is better quality).
     ]
   ));
 
@@ -313,21 +314,19 @@ exports.thumbnail = functions.
 
     // Image options.
     [ 
-      '-auto-orient',        // Places image upright for viewing.
+      '-auto-orient', // Places image upright for viewing.
       '-thumbnail', 
-      `${THUMB_MAX_WIDTH}>`, // Keeps original aspect ratio.
-      '-strip'               // Removes all metadata.
-    ], 
+      '-resize', `${THUMB_MAX_SIZE}x${THUMB_MAX_SIZE}>`, // Keeps original aspect ratio.
+      '-strip' // Removes all metadata.
+    ],
 
     // Video options.
     [
-      '-vf',                         // Filter flag.
-      `scale=${THUMB_MAX_WIDTH}:-1`, // Filter scale val. -1 for height preserves aspect.
-      '-qscale:v',                   // Quality scale flag.
-      '5',                           // Quality scale val. (1 - 31, lower is better quality).
-    ]
-  ));
-
+     '-vf',                         // Filter flag.
+      `scale=${THUMB_MAX_SIZE}:-1`, // Filter scale val. -1 for height preserves aspect.
+      '-qscale:v',                  // Quality scale flag.
+      '5',                          // Quality scale val. (1 - 31, lower is better quality).
+    ]  ));
 
 // Create a copy of the original file so that the client
 // can update the metadata of the shareable copy to better
