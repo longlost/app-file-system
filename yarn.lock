@@ -657,6 +657,33 @@
     "@longlost/utils" "^1.4.1"
     "@polymer/iron-image" "^3.0.2"
 
+"@longlost/app-inputs@^1.3.10":
+  version "1.3.10"
+  resolved "https://registry.yarnpkg.com/@longlost/app-inputs/-/app-inputs-1.3.10.tgz#9b238a451e45643494b4799cf3740645481151e3"
+  integrity sha512-QiRySRFCF6CpdWLpjKH1ba/7cnpWKUxNnqTY/2A+9OIRTLeyMkZ+ptjC4dJUVsscl7ISX3vZhy02lI2ISaOl3A==
+  dependencies:
+    "@longlost/app-element" "^2.0.0"
+    "@longlost/app-icons" "^1.0.12"
+    "@longlost/app-shared-styles" "^2.0.14"
+    "@longlost/icon-to-spinner" "^1.0.2"
+    "@longlost/lambda" "^2.2.0"
+    "@longlost/pencil-to-check-icon" "^1.0.2"
+    "@longlost/utils" "^1.5.0"
+    "@polymer/gold-phone-input" "^3.0.1"
+    "@polymer/iron-a11y-keys" "^3.0.1"
+    "@polymer/iron-form-element-behavior" "^3.0.1"
+    "@polymer/iron-icon" "^3.0.1"
+    "@polymer/iron-iconset-svg" "^3.0.1"
+    "@polymer/iron-input" "^3.0.1"
+    "@polymer/paper-button" "^3.0.1"
+    "@polymer/paper-dropdown-menu" "^3.1.0"
+    "@polymer/paper-icon-button" "^3.0.2"
+    "@polymer/paper-input" "^3.2.1"
+    "@polymer/paper-item" "^3.0.1"
+    "@polymer/paper-listbox" "^3.0.1"
+    "@polymer/paper-ripple" "^3.0.2"
+    "@polymer/polymer" "^3.4.1"
+
 "@longlost/app-inputs@^1.3.9":
   version "1.3.9"
   resolved "https://registry.yarnpkg.com/@longlost/app-inputs/-/app-inputs-1.3.9.tgz#11c8665533232e4fc416d42465a381d029801661"
@@ -900,10 +927,10 @@
   resolved "https://registry.yarnpkg.com/@longlost/webgl-filter/-/webgl-filter-1.0.0.tgz#200d28f8b50d93b02d491626c27feab853978f74"
   integrity sha512-OSJ3nfQvNx4r4dcdAwTKlpebLyI7ggwySGTGzYUj1KV9JQpayR70QY4jl2eYhSDXTX8wKNfK/Oez4+UF1NfvRQ==
 
-"@longlost/worker@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@longlost/worker/-/worker-4.0.1.tgz#853ebbd2122a36546314605432b51e687ec35d6a"
-  integrity sha512-0FxbsOWEamOw2eoscsvtIL2HM4y3Sasfpjj3bab34/c29ofOznuIq6G/Vw6jDRl0Tndtc+eZ5ODwoE1IefE+KA==
+"@longlost/worker@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@longlost/worker/-/worker-4.0.2.tgz#468a5d742c46010a87ba2d316fce151c56cee5fb"
+  integrity sha512-71Yjh2rOpKFpOL80km6v7RQJEKoviw9qnxAnx5r5uvmx03O9mPVRzFSFrks6KWwZw/BZl2qpJiH4B6E7b7pvBg==
   dependencies:
     comlink "^4.3.0"
     exifreader "^3.12.0"

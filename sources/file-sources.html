@@ -5,6 +5,44 @@
     --overlay-background-color: var(--app-body-color);
   }
 
+  #toolbar-background-container,
+  #compressQueueTracker {
+    position: absolute;
+    top:      0px;
+    right:    0px;
+    bottom:   0px;
+    left:     0px;
+    z-index: -1;
+  }
+
+  #compressQueueTracker {
+    padding:    16px;
+    font-size:  16px;
+    transition: transform 0.3s var(--custom-ease);
+    background-color: var(--app-primary-color);
+    color:            var(--app-primary-color-text);
+  }
+
+  .show-tracker {
+    transform: translateY(100%);
+  }
+
+  #tracker-label {
+    margin-bottom: 4px;
+  }
+
+  #toolbar-background {
+    height: 100%;
+    background-color: var(--app-dark-color);
+    color:            var(--app-dark-color-text);
+  }
+
+  paper-progress {
+    width:     100%;
+    max-width: 414px;
+    --paper-progress-active-color: var(--app-accent-color);
+  }
+
   #content {
     padding: 32px 16px;
     height:  calc(100vh - 128px);
@@ -59,12 +97,31 @@
                     fixed-header
                     title="Add Files">
 
+
+  <div id="toolbar-background-container"
+       slot="header-background-slot">
+
+    <div id="compressQueueTracker"
+         class$="[[_trackerClass]]">
+      <div id="tracker-label">
+        Optimized [[_compressQueueCount]] of [[_compressQueueTotal]] images.
+      </div>
+      <paper-progress indeterminate="[[_runProgressBar]]"></paper-progress>
+    </div>
+
+    <div id="toolbar-background"></div>
+
+  </div>
+
+
+
   <list-icon-button count="[[_dbCount]]"
                     data="[[data]]"
                     list="[[list]]"
                     slot="top-toolbar-buttons-slot"
                     on-click="__listBtnClicked">
   </list-icon-button>
+
 
   <div id="content"
        hidden="[[_hideContent]]" 
@@ -140,11 +197,11 @@
   <div slot="card-actions-slot">
     <paper-button id="skip-btn"
                   on-click="__dismissRenameFilesModalButtonClicked">
-      skip
+      SKIP AND SAVE
     </paper-button>   
     <paper-button class="cta-btn"               
                   on-click="__saveNamesButtonClicked">
-      save name
+      SAVE WITH NEW [[__computeRenameModalSaveBtnPlural(_filesToRename)]]
     </paper-button> 
   </div>
 </app-modal>
