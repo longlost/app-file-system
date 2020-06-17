@@ -114,6 +114,7 @@ import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
+import '@polymer/paper-progress/paper-progress.js';
 import '../shared/file-thumbnail.js';
 import './list-icon-button.js';
 import './web-file-card.js';
@@ -208,11 +209,29 @@ const assignUidsReadTagData = async files => {
   return Promise.all(uidTagsPromises);
 };
 
+// Compress image types supported by 'jimp' package.
+//
+// Jimp docs claim support for gif's but
+// after looking at thier issues page, they
+// say that gif support is sketchy at best, so
+// NOT running gifs at this time (June 12, 2020). 
+const compressionSupports = file => {
+  const {type} = file;
+
+  return (
+    type.includes('bmp')  ||
+    type.includes('jpeg') || 
+    type.includes('jpg')  || 
+    type.includes('png')  ||
+    type.includes('tiff')
+  );
+};
+
 
 let compressRunner;
 
 // Use 'jimp' to compress image files.
-const compressImages = async (data, files) => {
+const compressImages = async (data, files, callback) => {
 
   if (!compressRunner) {
 
@@ -231,20 +250,35 @@ const compressImages = async (data, files) => {
     console.log('original size: ', formatFileSize(file.size));
 
 
-    // Compress image types supported by 'jimp' package.
-    //
-    // Jimp docs claim support for gif's but
-    // after looking at thier issues page, they
-    // say that gif support is sketchy at best, so
-    // NOT running gifs at this time (June 12, 2020). 
-    if (
-      file.type.includes('bmp')  ||
-      file.type.includes('jpeg') || 
-      file.type.includes('jpg')  || 
-      file.type.includes('png')  ||
-      file.type.includes('tiff')
-    ) { 
-      return compressRunner.run('compress', file); 
+    // Compress image types supported by compression worker.
+    if (compressionSupports(file)) {      
+
+      const compress = async () => {
+
+
+        // TESTING!!
+        const start = Date.now();
+
+
+
+        const compressed = await compressRunner.run('compress', file);
+
+
+
+        // TESTING ONLY!!
+        const end = Date.now();
+        const secs = (end - start) / 1000;
+        console.log(`${file.name} took ${secs} sec`);
+
+
+
+        // Update compression tracker ui.
+        callback();
+
+        return compressed;
+      };
+
+      return compress();
     }
 
     return Promise.resolve(file);
@@ -327,6 +361,16 @@ class FileSources extends AppElement {
         computed: '__computeAcceptableTypes(_mimes)'
       },
 
+      _compressQueueCount: {
+        type: Number,
+        value: 0
+      },
+
+      _compressQueueTotal: {
+        type: Number,
+        value: 0
+      },
+
       // Used to issue new item indexes and
       // display total file count to user.
       _dbCount: Number,
@@ -361,6 +405,17 @@ class FileSources extends AppElement {
       _newDisplayNames: {
         type: Object,
         value: () => ({})
+      },
+
+      _runProgressBar: {
+        type: Boolean,
+        value: false,
+        computed: '__computeRunProgressBar(_compressQueueTotal)'
+      },
+
+      _trackerClass: {
+        type: String,
+        computed: '__computeTrackerClass(_compressQueueTotal)'
       },
 
       _unsubscribe: Object
@@ -453,8 +508,25 @@ class FileSources extends AppElement {
   }
 
 
+  __computeRenameModalSaveBtnPlural(files) {
+    if (!Array.isArray(files)) { return ''; }
+
+    return files.length > 1 ? 'NAMES' : 'NAME';
+  }
+
+
   __computePlaceholderName(name) {
     return getName(name);
+  }
+
+
+  __computeRunProgressBar(total) {
+    return total > 0;
+  }
+
+
+  __computeTrackerClass(total) {
+    return total > 0 ? 'show-tracker' : '';
   }
 
 
@@ -775,29 +847,71 @@ class FileSources extends AppElement {
 
 
   async __filesAdded(files) {
+
+    // These values are outside of try/catch since they
+    // are needed for the catch block to roll back queue
+    // in case of an error.
+    let batchCount   = 0;
+    const batchTotal = files.map(compressionSupports).length;
+    const queueTotal = this._compressQueueTotal + batchTotal;
+
     try {
       await this.$.spinner.show('Reading files.');
+
+      this.$.deviceFileCard.clearFeedback();
 
       // Array of objects containing uid and exif tag info.
       const data = await assignUidsReadTagData(files);
 
-      this.$.spinner.show('Optimizing images.');
+      await this.$.spinner.hide();
+
+      // Show queue tracker ui.
+      this._compressQueueTotal = queueTotal;
+
+      const callback = () => {
+        batchCount += 1;
+        this._compressQueueCount += 1;
+      };
+
+      const compressed = await compressImages(data, files, callback);
 
       // Drives modal repeater.
-      this._filesToRename = await compressImages(data, files);
+      // Add new files to queue (existing modal items).
+      if (Array.isArray(this._filesToRename)) {
+        this.push('_filesToRename', ...compressed);
+      }
+      else {
+        this._filesToRename = compressed;
+      }
 
-      this.$.deviceFileCard.clearFeedback();
+      // Hides the compression queue tracker.
+      if (this._compressQueueCount === this._compressQueueTotal) {
+        this._compressQueueTotal = 0;
 
-      await schedule();
-      await this.$.renameFilesModal.open();
+        await schedule();
+        await this.$.renameFilesModal.open();
+      }
+
     }
     catch (error) {
       console.error(error);
+
+      // Roll-back queue by number of failed items. 
+      this._compressQueueTotal = queueTotal - batchTotal;
+      this._compressQueueCount = this._compressQueueCount - batchCount;
+
       await warn('An error occured while gathering your files.');
-    }
-    finally {
+
       this.$.spinner.hide();
-    }  
+    }
+    finally { 
+
+      // Reset queue tracker values.
+      if (this._compressQueueCount === this._compressQueueTotal) {           
+        this._compressQueueTotal = 0;
+        this._compressQueueCount = 0;
+      } 
+    }
   }
 
 
