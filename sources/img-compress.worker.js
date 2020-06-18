@@ -16,7 +16,7 @@ const MIN_SCALE 	 		= 0.75;	// Reduce large image file dimensions at least this 
 const reader = new FileReaderSync();
 
 
-const imageCompression = async file => {
+const compressor = async file => {
 
   const buffer = reader.readAsArrayBuffer(file);
 	const image  = await Jimp.read(buffer);
@@ -79,7 +79,7 @@ const compress = file => {
 		file.type.includes('png')  ||
 		file.type.includes('tiff')
 	) { 
-		return imageCompression(file); 
+		return compressor(file); 
 	}
 
 	return file;

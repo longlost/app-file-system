@@ -228,20 +228,15 @@ const compressionSupports = file => {
 };
 
 
-let compressRunner;
+
 
 // Use 'jimp' to compress image files.
 const compressImages = async (data, files, callback) => {
 
-  if (!compressRunner) {
-
-    const {default: CompressWorker} = await import(
-      /* webpackChunkName: 'app-file-system-img-compress-worker' */ 
-      './img-compress.worker.js'
-    );
-
-    compressRunner = await workerRunner(CompressWorker);
-  }
+  const {default: compressor} = await import(
+    /* webpackChunkName: 'app-file-system-img-compress' */
+    './img-compress.js'
+  );
 
 
   const compressPromises = files.map(file => {
@@ -261,7 +256,7 @@ const compressImages = async (data, files, callback) => {
 
 
 
-        const compressed = await compressRunner.run('compress', file);
+        const compressed = await compressor(file);
 
 
 
@@ -316,6 +311,95 @@ const compressImages = async (data, files, callback) => {
     return file;
   });
 };
+
+// let compressRunner;
+
+// // Use 'jimp' to compress image files.
+// const compressImages = async (data, files, callback) => {
+
+//   if (!compressRunner) {
+
+//     const {default: CompressWorker} = await import(
+//       /* webpackChunkName: 'app-file-system-img-compress-worker' */ 
+//       './img-compress.worker.js'
+//     );
+
+//     compressRunner = await workerRunner(CompressWorker);
+//   }
+
+
+//   const compressPromises = files.map(file => {
+
+    
+//     console.log('original size: ', formatFileSize(file.size));
+
+
+//     // Compress image types supported by compression worker.
+//     if (compressionSupports(file)) {      
+
+//       const compress = async () => {
+
+
+//         // TESTING!!
+//         const start = Date.now();
+
+
+
+//         const compressed = await compressRunner.run('compress', file);
+
+
+
+//         // TESTING ONLY!!
+//         const end = Date.now();
+//         const secs = (end - start) / 1000;
+//         console.log(`${file.name} took ${secs} sec`);
+
+
+
+//         // Update compression tracker ui.
+//         callback();
+
+//         return compressed;
+//       };
+
+//       return compress();
+//     }
+
+//     return Promise.resolve(file);
+//   });
+
+//   const compressedFiles = await Promise.all(compressPromises);
+
+//   return compressedFiles.map((file, index) => {
+
+
+
+//     console.log('compressed size: ', formatFileSize(file.size));
+
+
+
+
+//     const {tags, uid} = data[index];
+
+//     if (file.type.includes('image') || file.type.includes('video')) { 
+//       file._tempUrl = window.URL.createObjectURL(file);
+//     }
+//     else {
+//       file._tempUrl = null; // Firestore does not accept undefined vals;
+//     }
+  
+//     file.basename  = file.name;
+//     file.category  = path.dirname(file.type);
+//     file.exif      = tags ? tags : null; // Firestore does not accept undefined vals;
+//     file.ext       = path.extname(file.name);
+//     file.index     = index;
+//     file.sizeStr   = formatFileSize(file.size);
+//     file.timestamp = Date.now();
+//     file.uid       = uid;
+
+//     return file;
+//   });
+// };
 
 
 class FileSources extends AppElement {
@@ -505,13 +589,6 @@ class FileSources extends AppElement {
     if (!Array.isArray(files)) { return ''; }
 
     return files.length > 1 ? 'these files' : 'this file';
-  }
-
-
-  __computeRenameModalSaveBtnPlural(files) {
-    if (!Array.isArray(files)) { return ''; }
-
-    return files.length > 1 ? 'NAMES' : 'NAME';
   }
 
 
