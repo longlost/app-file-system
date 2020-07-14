@@ -1,64 +1,50 @@
 
-// Extract EXIF tags and generate a random hash
-// for a file in preparation for display and upload.
+/**
+	* Use ImageMagick to process images in an 
+	* attempt to reduce the size of the file
+	* without loosing too much quality.
+	*
+	* This on-device processing is especially necessary
+	* due to the low memory of mobile devices, which can
+	* be exceeded when live editing large image files (> 1MB)
+	* in the `image-editor`.
+	*
+	* Though doing so trades off battery life, it reduces
+	* upload times, and data usage for each user. This is 
+	* also good for app owners as it eliminates the utilization 
+	* of 1 of 3 image processing cloud functions.
+	*
+	**/
 
 import * as Comlink from 'comlink';
-import Jimp 				from 'jimp';
+import magick       from '@longlost/wasm-imagemagick/wasm-imagemagick.js';
 
 
-const IMAGE_QUALITY 	= 80; 	// 0 - 100, 100 is no change in quality. Used for jpeg/bmp/tiff/gif.
-const PNG_COMPRESSION = 9;  	// 0 - 9, 0 is no compression. Used for png only.
-const MAX_MB 					= 1;  	// Target max file size.
-const MAX_SIZE 				= 2048; // Maximum image dimensions.
-const MIN_SCALE 	 		= 0.75;	// Reduce large image file dimensions at least this much.
-
-
-const reader = new FileReaderSync();
+const IMAGE_QUALITY = '82';  // 0 - 100, 100 is no change in quality.
+const RESIZE_FACTOR = '60%'; // Not recommended to be lower than 50%.
 
 
 const compressor = async file => {
 
-  const buffer = reader.readAsArrayBuffer(file);
-	const image  = await Jimp.read(buffer);
+  const inputName  = `input_${file.name}`;
+  const outputName = file.name;
 
-	const sizeMB = file.size / 1024 / 1024;
+  const commands  = [
+    'convert', 
+    inputName,
+    '-auto-orient',
+    '-sampling-factor', '4:2:0',
+    '-strip', 
+    '-auto-gamma', 
+    '-adaptive-resize', RESIZE_FACTOR, 
+    '-quality', 				IMAGE_QUALITY, 
+    '-unsharp', 			 '0x0.75+0.75+0.008', 
+    outputName
+  ];
 
-	// Aggresively reduce the size of images larger than 1MB.
-	// Take twice the inverse of the size in MB.
-	// The further a file's size is away from MAX_MB, 
-	// the more the image dimensions are reduced.
-	if (sizeMB > MAX_MB) {
-		const scale = Math.min(2 / sizeMB, MIN_SCALE);
+  const compressed = await magick([{file, inputName}], outputName, commands);
 
-		image.scale(scale);
-	}
-
-	// If an image is already less then MAX_MB, then make sure it is
-	// smaller than MAX_SIZE in pixels in either dimension.
-	else if ((image.bitmap.width > MAX_SIZE) || (image.bitmap.height > MAX_SIZE)) {
-		image.scaleToFit(MAX_SIZE, MAX_SIZE);
-	}
-
-	const mime = file.type;
-
-	// Maximum filtering and deflating for png's.
-	if (mime.includes('png')) {
-		image.
-			filterType(Jimp.PNG_FILTER_AUTO).
-			deflateLevel(PNG_COMPRESSION);
-	}
-	else {
-		image.quality(IMAGE_QUALITY);
-	}
-
-	const processedBuffer = await image.getBufferAsync(mime);
-	const compressed 			= new File([processedBuffer], file.name, {type: mime});
-
-	// Jimp sometimes increases the size of small files, 
-	// so use the original instead.
-	const smallest = compressed.size < file.size ? compressed : file;
-
-	return smallest;
+  return compressed;
 };
 
 
@@ -66,12 +52,14 @@ const compress = file => {
 
 	if (!file) { return; }
 
-	// Only process image files that jimp supports.
+	// Only process image files that ImageMagick supports.
+
+
+	// TODO:
 	//
-	// Jimp docs claim support for gif's but
-	// after looking at thier issues page, they
-	// say that gif support is sketchy at best, so
-	// NOT running gifs at this time (June 12, 2020). 
+	// 			Update this for new ImageMagick library.
+
+
 	if (
 		file.type.includes('bmp')  ||
 		file.type.includes('jpeg') || 
