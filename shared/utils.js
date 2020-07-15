@@ -1,7 +1,8 @@
 
-import {blobToFile} from '@longlost/lambda/lambda.js';
-import path         from 'path';
-import mime         from 'mime-types';
+import {blobToFile}  from '@longlost/lambda/lambda.js';
+import path          from 'path';
+import mime          from 'mime-types';
+import * as imgUtils from './img-utils.js';
 
 
 // Returns true if there are no more cloud processes to complete.
@@ -156,20 +157,12 @@ const imgFilterFile = async (filter, src, displayName, ext) => {
 };
 
 
-// Returns true if the image item will
-// be post-processed in the cloud.
-const isProcessableImg = type => 
-  type.includes('image') && 
-  (
-    type.includes('jpeg') || 
-    type.includes('jpg')  || 
-    type.includes('png')
-  );
-
-
 // Png/jpeg images and video files are post-processed.
-const isCloudProcessable = ({type}) => 
-  type && (isProcessableImg(type) || type.includes('video'));
+const isCloudProcessable = file => {
+  const {type} = file;
+
+  return type && (imgUtils.canProcess(file) || type.includes('video'));
+};
 
 
 export {

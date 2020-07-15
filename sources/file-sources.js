@@ -89,25 +89,29 @@
 import {
   AppElement, 
   html
-}                   from '@longlost/app-element/app-element.js';
+} from '@longlost/app-element/app-element.js';
+
 import {
   capitalize,
   compose,
   head,
   map,
   split
-}                   from '@longlost/lambda/lambda.js';
+} from '@longlost/lambda/lambda.js';
+
 import {
   hijackEvent,
   schedule,
   warn
-}                   from '@longlost/utils/utils.js';
-import path         from 'path'; // webpack includes this by default!
-import mime         from 'mime-types';
-import descriptions from './mime-descriptions.json';
-import services     from '@longlost/services/services.js';
-import runner       from '@longlost/worker/worker-runner.js';
-import htmlString   from './file-sources.html';
+} from '@longlost/utils/utils.js';
+
+import path          from 'path'; // webpack includes this by default!
+import mime          from 'mime-types';
+import descriptions  from './mime-descriptions.json';
+import services      from '@longlost/services/services.js';
+import runner        from '@longlost/worker/runner.js';
+import * as imgUtils from '../shared/img-utils.js';
+import htmlString    from './file-sources.html';
 import '@longlost/app-overlays/app-header-overlay.js';
 import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-shared-styles/app-shared-styles.js';
@@ -171,132 +175,67 @@ const getName = basename =>
   path.basename(basename, path.extname(basename));
 
 
-let uidTagsRunner;
+let processRunner;
 
-// Assign a uid to each file.
-// Read supported image files to extract their exif information.
-const assignUidsReadTagData = async files => {
+const processFiles = async (files, callback) => {
 
-  if (!uidTagsRunner) {
+  if (!processRunner) {
 
-    const {default: UidTagsWorker} = await import(
-      /* webpackChunkName: 'app-file-system-uid-tags-worker' */ 
-      './uid-tags.worker.js'
+    const {default: Worker} = await import(
+      /* webpackChunkName: 'app-file-system-processing-worker' */ 
+      './processing.worker.js'
     );
 
-    uidTagsRunner  = await runner(UidTagsWorker);
-  }
-
-  const uidTagsPromises = files.map(file => {
-
-    // Send supported image files to worker to read 
-    // exif data and get a uid.
-    if (
-      file.type.includes('jpg')  || 
-      file.type.includes('jpeg') ||
-      file.type.includes('png')  ||
-      file.type.includes('tiff') ||
-      file.type.includes('webp')
-    ) {
-      return uidTagsRunner('getUidAndTags', file, EXIF_TAGS);
-    }
-
-    // Don't send file to worker, just get a uid.
-    return uidTagsRunner('getUidAndTags'); 
-  });
-  
-  // Resolves to an array of objects containing uid and exif tag info.
-  return Promise.all(uidTagsPromises);
-};
-
-// Compress image types supported by 'jimp' package.
-//
-// Jimp docs claim support for gif's but
-// after looking at thier issues page, they
-// say that gif support is sketchy at best, so
-// NOT running gifs at this time (June 12, 2020). 
-const compressionSupports = file => {
-  const {type} = file;
-
-  return (
-    type.includes('bmp')  ||
-    type.includes('jpeg') || 
-    type.includes('jpg')  || 
-    type.includes('png')  ||
-    type.includes('tiff')
-  );
-};
-
-
-
-let compressRunner;
-
-// Use 'jimp' to compress image files.
-const compressImages = async (data, files, callback) => {
-
-  if (!compressRunner) {
-
-    const {default: CompressWorker} = await import(
-      /* webpackChunkName: 'app-file-system-img-compress-worker' */ 
-      './img-compress.worker.js'
-    );
-
-    compressRunner = await runner(CompressWorker);
+    processRunner = await runner(Worker);
   }
 
 
-  const compressPromises = files.map(file => {
+  const processPromises = files.map(file => {
 
     
     console.log('original size: ', formatFileSize(file.size));
 
 
-    // Compress image types supported by compression worker.
-    if (compressionSupports(file)) {      
 
-      const compress = async () => {
+    const process = async () => {
 
 
-        // TESTING!!
-        const start = Date.now();
+      // TESTING!!
+      const start = Date.now();
 
-        runner
 
-        const compressed = await compressRunner('compress', file);
+      const processed = await processRunner('process', file, EXIF_TAGS);
 
 
 
-        // TESTING ONLY!!
-        const end = Date.now();
-        const secs = (end - start) / 1000;
-        console.log(`${file.name} took ${secs} sec`);
+      // TESTING ONLY!!
+      const end = Date.now();
+      const secs = (end - start) / 1000;
+      console.log(`${file.name} took ${secs} sec`);
 
 
 
-        // Update compression tracker ui.
-        callback();
+      // Update processing tracker ui.
+      callback();
 
-        return compressed;
-      };
+      return processed;
+    };
 
-      return compress();
-    }
-
-    return Promise.resolve(file);
+    return process();
   });
 
-  const compressedFiles = await Promise.all(compressPromises);
+  const processedItems = await Promise.all(processPromises);
 
-  return compressedFiles.map((file, index) => {
+  return processedItems.map((item, index) => {
+    const {exif, file, uid} = item;
 
 
 
     console.log('compressed size: ', formatFileSize(file.size));
 
+    console.log('file: ', file);
 
 
-
-    const {tags, uid} = data[index];
 
     if (file.type.includes('image') || file.type.includes('video')) { 
       file._tempUrl = window.URL.createObjectURL(file);
@@ -307,7 +246,7 @@ const compressImages = async (data, files, callback) => {
   
     file.basename  = file.name;
     file.category  = path.dirname(file.type);
-    file.exif      = tags ? tags : null; // Firestore does not accept undefined vals;
+    file.exif      = exif ? exif : null; // Firestore does not accept undefined vals;
     file.ext       = path.extname(file.name);
     file.index     = index;
     file.sizeStr   = formatFileSize(file.size);
@@ -846,18 +785,11 @@ class FileSources extends AppElement {
     // are needed for the catch block to roll back queue
     // in case of an error.
     let batchCount   = 0;
-    const batchTotal = files.map(compressionSupports).length;
+    const batchTotal = files.length;
     const queueTotal = this._compressQueueTotal + batchTotal;
 
     try {
-      await this.$.spinner.show('Reading files.');
-
       this.$.deviceFileCard.clearFeedback();
-
-      // Array of objects containing uid and exif tag info.
-      const data = await assignUidsReadTagData(files);
-
-      await this.$.spinner.hide();
 
       // Show queue tracker ui.
       this._compressQueueTotal = queueTotal;
@@ -867,15 +799,15 @@ class FileSources extends AppElement {
         this._compressQueueCount += 1;
       };
 
-      const compressed = await compressImages(data, files, callback);
+      const processed = await processFiles(files, callback);
 
       // Drives modal repeater.
       // Add new files to queue (existing modal items).
       if (Array.isArray(this._filesToRename)) {
-        this.push('_filesToRename', ...compressed);
+        this.push('_filesToRename', ...processed);
       }
       else {
-        this._filesToRename = compressed;
+        this._filesToRename = processed;
       }
 
       // Hides the compression queue tracker.
@@ -895,8 +827,6 @@ class FileSources extends AppElement {
       this._compressQueueCount = this._compressQueueCount - batchCount;
 
       await warn('An error occured while gathering your files.');
-
-      this.$.spinner.hide();
     }
     finally { 
 
