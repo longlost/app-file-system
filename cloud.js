@@ -9,6 +9,7 @@ const crypto     = require('crypto');
 const mkdirp     = require('mkdirp');
 const spawn      = require('child-process-promise').spawn;
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const imgUtils   = require('./shared/img-utils.js');
 
 
 const OPTIM_MAX_SIZE = 1024;
@@ -17,11 +18,6 @@ const OPTIM_PREFIX   = 'optim_';
 const ORIENT_PREFIX  = 'orient_';
 const SHARE_PREFIX   = 'share_';
 const THUMB_PREFIX   = 'thumb_';
-
-
-const isOptimizable = type => 
-  type.startsWith('image/') && 
-  (type.includes('jpeg') || type.includes('jpg') || type.includes('png'));
 
 
 const getRandomFileName = ext => `${crypto.randomBytes(20).toString('hex')}${ext}`;
@@ -84,10 +80,10 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
 
   try {
 
-    const isImg   = isOptimizable(contentType);
+    const isImg   = imgUtils.canProcess({type: contentType});
     const isVideo = contentType.startsWith('video/');
 
-    // Exit if this is triggered on a file that is not a jpeg or png image.
+    // Exit if this is triggered on a file that is not processable.
     if (!isImg && !isVideo) {
       console.log('This file is not a jpeg, png image or a video. Not optimizing.');
       return null;
@@ -344,7 +340,7 @@ exports.createShareable = functions.https.onCall(async data => {
     // Exit if this is triggered on a file that is a jpeg or png
     // since the 'optimize' cloud function already provides a 
     // link for these.
-    if (isOptimizable(type)) {
+    if (imgUtils.canProcess({type})) {
       console.log('This file is an optimizable image. Not copying.');
       return null;
     }

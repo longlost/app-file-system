@@ -16,8 +16,8 @@
 	*
 	**/
 
-import * as Comlink from 'comlink';
-import magick       from '@longlost/wasm-imagemagick/wasm-imagemagick.js';
+import magick 			 from '@longlost/wasm-imagemagick/wasm-imagemagick.js';
+import * as imgUtils from '../shared/img-utils.js';
 
 
 const IMAGE_QUALITY = '82';  // 0 - 100, 100 is no change in quality.
@@ -33,8 +33,8 @@ const compressor = async file => {
     'convert', 
     inputName,
     '-auto-orient',
-    '-sampling-factor', '4:2:0',
     '-strip', 
+    '-sampling-factor', '4:2:0',
     '-auto-gamma', 
     '-adaptive-resize', RESIZE_FACTOR, 
     '-quality', 				IMAGE_QUALITY, 
@@ -42,36 +42,22 @@ const compressor = async file => {
     outputName
   ];
 
-  const compressed = await magick([{file, inputName}], outputName, commands);
+  const compressed = await magick({
+  	commands,
+  	fileCollection: [{file, inputName}], 
+  	outputName,
+  	outputType: file.type
+  });
 
   return compressed;
 };
 
 
-const compress = file => {
+export default file => {
 
-	if (!file) { return; }
-
-	// Only process image files that ImageMagick supports.
-
-
-	// TODO:
-	//
-	// 			Update this for new ImageMagick library.
-
-
-	if (
-		file.type.includes('bmp')  ||
-		file.type.includes('jpeg') || 
-		file.type.includes('jpg')  || 
-		file.type.includes('png')  ||
-		file.type.includes('tiff')
-	) { 
+	if (imgUtils.canProcess(file)) { 
 		return compressor(file); 
 	}
 
-	return file;
+	return Promise.resolve(file);
 };
-
-
-Comlink.expose({compress});
