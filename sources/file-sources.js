@@ -52,10 +52,8 @@
   *
   *
   *
-  *    'files-received' - Fired after user interacts with renameFileModal and before the file upload process begins.
-  *                       detail -> {name, size, type, uid, <, _tempUrl>}
-  *                                   name     - 'filename' (name.ext)
-  *                                   _tempUrl - window.URL.createObjectURL
+  *    'app-file-system-ready-to-upload' - Fired after added files are read and processed, 
+  *                                        but before the file upload process begins.
   *
   *  
   *
@@ -100,8 +98,10 @@ import {
 } from '@longlost/lambda/lambda.js';
 
 import {
+  fsToast,
   hijackEvent,
   schedule,
+  wait,
   warn
 } from '@longlost/utils/utils.js';
 
@@ -118,8 +118,8 @@ import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-progress/paper-progress.js';
 import '../shared/file-thumbnail.js';
+import './file-sources-progress-bar.js';
 import './list-icon-button.js';
 import './web-file-card.js';
 import './device-file-card.js';
@@ -151,7 +151,7 @@ const getAcceptEntries = compose(split(','), map(trim));
 const removeWildCards  = compose(split('/*'), head);
 
 // Use arrow function here to block extra arguments 
-// that map passes in to the map function.
+// that map passes into the map function.
 const getMimeTypes = map(str => removeWildCards(str));
 
 // Create a human-readable file size display string.
@@ -258,7 +258,7 @@ const processFiles = async (files, callback) => {
 };
 
 
-class FileSources extends AppElement {
+class AppFileSystemFileSources extends AppElement {
   static get is() { return 'file-sources'; }
 
   static get template() {
@@ -301,16 +301,6 @@ class FileSources extends AppElement {
         computed: '__computeAcceptableTypes(_mimes)'
       },
 
-      _compressQueueCount: {
-        type: Number,
-        value: 0
-      },
-
-      _compressQueueTotal: {
-        type: Number,
-        value: 0
-      },
-
       // Used to issue new item indexes and
       // display total file count to user.
       _dbCount: Number,
@@ -347,15 +337,24 @@ class FileSources extends AppElement {
         value: () => ({})
       },
 
-      _runProgressBar: {
-        type: Boolean,
-        value: false,
-        computed: '__computeRunProgressBar(_compressQueueTotal)'
+      _processed: {
+        type: Number,
+        value: 0
       },
 
-      _trackerClass: {
-        type: String,
-        computed: '__computeTrackerClass(_compressQueueTotal)'
+      _processing: {
+        type: Number,
+        value: 0
+      },
+
+      _read: {
+        type: Number,
+        value: 0
+      },
+
+      _reading: {
+        type: Number,
+        value: 0
       },
 
       _unsubscribe: Object
@@ -434,32 +433,8 @@ class FileSources extends AppElement {
   }
 
 
-  __computeRenameModalHeading(files) {
-    if (!Array.isArray(files)) { return ''; }
-
-    return files.length > 1 ? 'Rename Files' : 'Rename File';
-  }
-
-
-  __computeRenameModalPural(files) {    
-    if (!Array.isArray(files)) { return ''; }
-
-    return files.length > 1 ? 'these files' : 'this file';
-  }
-
-
   __computePlaceholderName(name) {
     return getName(name);
-  }
-
-
-  __computeRunProgressBar(total) {
-    return total > 0;
-  }
-
-
-  __computeTrackerClass(total) {
-    return total > 0 ? 'show-tracker' : '';
   }
 
 
@@ -757,19 +732,24 @@ class FileSources extends AppElement {
   }
 
 
+  async __skipRenaming() {
+    const files = this._filesToRename.map(file => {
+      file.displayName = getName(file.name);
+      return file;
+    });
+
+    await this.__resetRenameFilesModal();
+    await this.__addNewFiles(files);
+  }
+
+
   async __dismissRenameFilesModalButtonClicked(event) {
     try {
       hijackEvent(event);
 
       await this.clicked();
 
-      const files = this._filesToRename.map(file => {
-        file.displayName = getName(file.name);
-        return file;
-      });
-
-      await this.__resetRenameFilesModal();
-      await this.__addNewFiles(files);
+      await this.__skipRenaming();
     }
     catch (error) {
       if (error === 'click debounced') { return; }
@@ -784,56 +764,81 @@ class FileSources extends AppElement {
     // These values are outside of try/catch since they
     // are needed for the catch block to roll back queue
     // in case of an error.
-    let batchCount   = 0;
-    const batchTotal = files.length;
-    const queueTotal = this._compressQueueTotal + batchTotal;
+    let read      = 0;
+    let processed = 0;
+
+    const newToRead = files.length;
+    const reading   = this._reading + newToRead;
+
+    const newToProcess = files.filter(imgUtils.canProcess).length;
+    const processing   = this._processing + newToProcess;
 
     try {
       this.$.deviceFileCard.clearFeedback();
 
       // Show queue tracker ui.
-      this._compressQueueTotal = queueTotal;
+      this._reading    = reading;
+      this._processing = processing;
+      this.$.progress.show();
 
       const callback = () => {
-        batchCount += 1;
-        this._compressQueueCount += 1;
+        read      += 1;
+        processed += 1;
+
+        this._read      += 1;
+        this._processed += 1;
       };
 
-      const processed = await processFiles(files, callback);
+      const processedFiles = await processFiles(files, callback);
 
       // Drives modal repeater.
       // Add new files to queue (existing modal items).
       if (Array.isArray(this._filesToRename)) {
-        this.push('_filesToRename', ...processed);
+        this.push('_filesToRename', ...processedFiles);
       }
       else {
-        this._filesToRename = processed;
+        this._filesToRename = processedFiles;
       }
-
-      // Hides the compression queue tracker.
-      if (this._compressQueueCount === this._compressQueueTotal) {
-        this._compressQueueTotal = 0;
-
-        await schedule();
-        await this.$.renameFilesModal.open();
-      }
-
     }
     catch (error) {
       console.error(error);
 
-      // Roll-back queue by number of failed items. 
-      this._compressQueueTotal = queueTotal - batchTotal;
-      this._compressQueueCount = this._compressQueueCount - batchCount;
+      // Roll-back queues by number of failed items. 
+      this._reading    = reading - newToRead - read;
+      this._processing = processing - newToProcess - processed;
 
       await warn('An error occured while gathering your files.');
     }
     finally { 
 
       // Reset queue tracker values.
-      if (this._compressQueueCount === this._compressQueueTotal) {           
-        this._compressQueueTotal = 0;
-        this._compressQueueCount = 0;
+      if (this._read === this._reading) {
+        await wait(1200); // Give time for `paper-gauge` animation.
+        await this.$.progress.hide();
+        await schedule();
+
+        const toastStr = this._read > 1 ? 'Files' : 'File';
+
+        this._read       = 0;       
+        this._reading    = 0;
+        this._processed  = 0;
+        this._processing = 0;
+
+        // Show interactive toast from <app-shell>.
+        const toastEvent = await fsToast(`${toastStr} ready to upload.`);
+        const {canceled, closed} = toastEvent.detail;
+
+        // User clicked 'Rename' button.
+        // Allow user to rename the files before uploading.
+        if (canceled) {
+          this.$.renameFilesModal.open();          
+        }
+
+        // User clicked 'Go' button. 
+        // Skip the renaming process, start uploading.
+        else if (closed) {
+          this.__skipRenaming();
+        }
       } 
     }
   }
@@ -906,4 +911,4 @@ class FileSources extends AppElement {
 
 }
 
-window.customElements.define(FileSources.is, FileSources);
+window.customElements.define(AppFileSystemFileSources.is, AppFileSystemFileSources);
