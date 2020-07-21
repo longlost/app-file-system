@@ -52,9 +52,6 @@
   *
   *
   *
-  *    'app-file-system-ready-to-upload' - Fired after added files are read and processed, 
-  *                                        but before the file upload process begins.
-  *
   *  
   *
   *  
@@ -105,44 +102,19 @@ import {
   warn
 } from '@longlost/utils/utils.js';
 
-import path          from 'path'; // webpack includes this by default!
+import {stripExt}    from '../shared/utils.js';
 import mime          from 'mime-types';
 import descriptions  from './mime-descriptions.json';
 import services      from '@longlost/services/services.js';
-import runner        from '@longlost/worker/runner.js';
 import * as imgUtils from '../shared/img-utils.js';
+import processFiles  from './processing.js';
 import htmlString    from './file-sources.html';
 import '@longlost/app-overlays/app-header-overlay.js';
-import '@longlost/app-overlays/app-modal.js';
-import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@longlost/app-spinner/app-spinner.js';
-import '@polymer/paper-button/paper-button.js';
-import '@polymer/paper-input/paper-input.js';
-import '../shared/file-thumbnail.js';
 import './file-sources-progress-bar.js';
 import './list-icon-button.js';
 import './web-file-card.js';
 import './device-file-card.js';
-
-
-const KILOBYTE = 1024;
-const MEGABYTE = 1048576;
-
-const EXIF_TAGS = [
-  'DateTimeOriginal',   // Date and time string when image was originally created.
-  'GPSAltitude',        // Meters.
-  'GPSAltitudeRef',     // '0' - above sea level, '1' - below sea level.
-  'GPSDateStamp',       // UTC. 'YYYY:MM:DD'.
-  'GPSImgDirection',    // 'T' true north, or 'M' for magnetic north.
-  'GPSImgDirectionRef', // 0 - 359.99, degrees of rotation from north.
-  'GPSLatitude',        // Degrees, minutes, and seconds (ie. With secs - dd/1,mm/1,ss/1, or without secs dd/1,mmmm/100,0/1).
-  'GPSLatitudeRef',     // 'N' for north latitudes, 'S' for south latitudes.
-  'GPSLongitude',       // Degrees, minutes, and seconds (ie. With secs - dd/1,mm/1,ss/1, or without secs dd/1,mmmm/100,0/1).
-  'GPSLongitudeRef',    // 'E' for east longitudes, 'W' for west longitudes.
-  'GPSTimeStamp',       // UTC. hour, minute, sec.
-  'ImageDescription',   // User generated string for image (ie. 'Company picnic').
-  'Orientation'         // One of 8 values, most common are 1, 3, 6 and 8 since other are 'flipped' versions.
-];
 
 
 // These helpers used to compute _mimes.
@@ -153,109 +125,6 @@ const removeWildCards  = compose(split('/*'), head);
 // Use arrow function here to block extra arguments 
 // that map passes into the map function.
 const getMimeTypes = map(str => removeWildCards(str));
-
-// Create a human-readable file size display string.
-const formatFileSize = size => {
-
-  if (size < KILOBYTE) {
-    return `${size}bytes`;
-  }
-
-  if (size >= KILOBYTE && size < MEGABYTE) {
-    return `${Number((size / KILOBYTE).toFixed(1))}KB`;
-  } 
-
-  if (size >= MEGABYTE) {
-    return `${Number((size / MEGABYTE).toFixed(1))}MB`;
-  }
-};
-
-
-const getName = basename => 
-  path.basename(basename, path.extname(basename));
-
-
-let processRunner;
-
-const processFiles = async (files, callback) => {
-
-  if (!processRunner) {
-
-    const {default: Worker} = await import(
-      /* webpackChunkName: 'app-file-system-processing-worker' */ 
-      './processing.worker.js'
-    );
-
-    processRunner = await runner(Worker);
-  }
-
-
-  const processPromises = files.map(file => {
-
-    
-    console.log('original size: ', formatFileSize(file.size));
-
-
-
-    const process = async () => {
-
-
-      // TESTING!!
-      const start = Date.now();
-
-
-      const processed = await processRunner('process', file, EXIF_TAGS);
-
-
-
-      // TESTING ONLY!!
-      const end = Date.now();
-      const secs = (end - start) / 1000;
-      console.log(`${file.name} took ${secs} sec`);
-
-
-
-      // Update processing tracker ui.
-      callback();
-
-      return processed;
-    };
-
-    return process();
-  });
-
-  const processedItems = await Promise.all(processPromises);
-
-  return processedItems.map((item, index) => {
-    const {exif, file, uid} = item;
-
-
-
-    console.log('compressed size: ', formatFileSize(file.size));
-
-    console.log('file: ', file);
-
-
-
-    if (file.type.includes('image') || file.type.includes('video')) { 
-      file._tempUrl = window.URL.createObjectURL(file);
-    }
-    else {
-      file._tempUrl = null; // Firestore does not accept undefined vals;
-    }
-  
-    file.basename  = file.name;
-    file.category  = path.dirname(file.type);
-    file.exif      = exif ? exif : null; // Firestore does not accept undefined vals;
-    file.ext       = path.extname(file.name);
-    file.index     = index;
-    file.sizeStr   = formatFileSize(file.size);
-    file.timestamp = Date.now();
-    file.uid       = uid;
-
-    return file;
-  });
-};
 
 
 class AppFileSystemFileSources extends AppElement {
@@ -305,7 +174,7 @@ class AppFileSystemFileSources extends AppElement {
       // display total file count to user.
       _dbCount: Number,
 
-      _filesToRename: Array,
+      _filesToUpload: Array,
 
       // Hide actions when _dbCount is unavailable
       // because it is neccessary for issuing indexes
@@ -329,12 +198,6 @@ class AppFileSystemFileSources extends AppElement {
       _mimes: {
         type: Array,
         computed: '__computeMimeTypes(accept)'
-      },
-
-      // Cached rename modal input values.
-      _newDisplayNames: {
-        type: Object,
-        value: () => ({})
       },
 
       _processed: {
@@ -430,11 +293,6 @@ class AppFileSystemFileSources extends AppElement {
     const mimes = getMimeTypes(types);
 
     return mimes;
-  }
-
-
-  __computePlaceholderName(name) {
-    return getName(name);
   }
 
 
@@ -657,7 +515,7 @@ class AppFileSystemFileSources extends AppElement {
   }
 
 
-  async __addNewFiles(files) {
+  async __uploadFiles(files) {
 
     // Start File upload to storage.
     // Add upload controls, progress and 
@@ -669,93 +527,6 @@ class AppFileSystemFileSources extends AppElement {
     await this.__saveItems(files);
 
     this.$.deviceFileCard.clearFeedback();
-  }
-
-
-  __renameInputChanged(event) {
-    hijackEvent(event);
-    
-    const {value}     = event.detail;
-    const {uid}       = event.model.file;
-    const displayName = value.trim();
-
-    // Don't save empty name values, 
-    // use file name instead.
-    if (!displayName) {
-      delete this._newDisplayNames[uid];
-    }
-    else {
-      this._newDisplayNames[uid] = displayName;
-    }
-  }
-
-
-  async __resetRenameFilesModal() {
-    await schedule();       
-    await this.$.renameFilesModal.close();
-    this._filesToRename   = undefined;
-    this._newDisplayNames = {};
-  }
-
-
-  async __saveNamesButtonClicked(event) {
-    try {
-      hijackEvent(event);
-
-      await this.clicked();
-
-      const renamedFiles = this._filesToRename.map(file => {
-
-        // Use user edits from modal input.
-        if (this._newDisplayNames[file.uid]) {
-
-          // Cannot use object spread notation on object-like File.
-          file.displayName = this._newDisplayNames[file.uid];
-        }
-
-        // Fallback to existing filename if user has
-        // not provided an alternative.
-        else {
-          file.displayName = getName(file.name);
-        }
-        return file;
-      });
-
-      await this.__resetRenameFilesModal();
-      await this.__addNewFiles(renamedFiles);
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
-      warn('An error occured while adding files.');
-    }
-  }
-
-
-  async __skipRenaming() {
-    const files = this._filesToRename.map(file => {
-      file.displayName = getName(file.name);
-      return file;
-    });
-
-    await this.__resetRenameFilesModal();
-    await this.__addNewFiles(files);
-  }
-
-
-  async __dismissRenameFilesModalButtonClicked(event) {
-    try {
-      hijackEvent(event);
-
-      await this.clicked();
-
-      await this.__skipRenaming();
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
-      warn('An error occured while adding files.');
-    }
   }
 
 
@@ -793,11 +564,11 @@ class AppFileSystemFileSources extends AppElement {
 
       // Drives modal repeater.
       // Add new files to queue (existing modal items).
-      if (Array.isArray(this._filesToRename)) {
-        this.push('_filesToRename', ...processedFiles);
+      if (Array.isArray(this._filesToUpload)) {
+        this.push('_filesToUpload', ...processedFiles);
       }
       else {
-        this._filesToRename = processedFiles;
+        this._filesToUpload = processedFiles;
       }
     }
     catch (error) {
@@ -815,30 +586,31 @@ class AppFileSystemFileSources extends AppElement {
       if (this._read === this._reading) {
         await wait(1200); // Give time for `paper-gauge` animation.
         await this.$.progress.hide();
-        await schedule();
-
-        const toastStr = this._read > 1 ? 'Files' : 'File';
+        await schedule();        
 
         this._read       = 0;       
         this._reading    = 0;
         this._processed  = 0;
-        this._processing = 0;
+        this._processing = 0;   
 
-        // Show interactive toast from <app-shell>.
+        const qty      = this._filesToUpload.length;
+        const toastStr = qty > 1 ? 'Files' : 'File';     
+
+        // Show interactive toast from `app-shell`.
         const toastEvent = await fsToast(`${toastStr} ready to upload.`);
-        const {canceled, closed} = toastEvent.detail;
-
-        // User clicked 'Rename' button.
-        // Allow user to rename the files before uploading.
-        if (canceled) {
-          this.$.renameFilesModal.open();          
-        }
+        const {canceled} = toastEvent.detail;          
 
         // User clicked 'Go' button. 
         // Skip the renaming process, start uploading.
-        else if (closed) {
-          this.__skipRenaming();
+        if (!canceled) {
+          this.skipRenaming();
         }
+
+        // User clicked 'Rename' button.
+        // Allow user to rename the files before uploading.
+        else { 
+          this.fire('open-save-as-modal', {files: this._filesToUpload});
+        } 
       } 
     }
   }
@@ -907,6 +679,27 @@ class AppFileSystemFileSources extends AppElement {
 
   open() {
     return this.$.overlay.open();
+  }
+
+  // Start uploading processed files as is,
+  // without user editing file names.
+  skipRenaming() {
+    const files = this._filesToUpload.map(file => {
+      file.displayName = stripExt(file.name);
+      return file;
+    });
+
+    this._filesToUpload = undefined;
+
+    return this.__uploadFiles(files);
+  }
+
+  // Start uploading processed files that have 
+  // user edited/updated file names.
+  uploadRenamed(files) {
+    this._filesToUpload = undefined;
+
+    return this.__uploadFiles(files);
   }
 
 }

@@ -94,11 +94,6 @@
   *                                     detail -> {[uid]: 'File item', ...}
   *
   *
-  *    
-  *    'app-file-system-ready-to-upload' - Fired after added files are read and processed, 
-  *                                        but before the file upload process begins.
-  *
-  *
   *
   *    'app-file-system-items-deleted' - Fired after user deletes one or more file items.
   *                                      detail -> {uids}
@@ -156,7 +151,7 @@ import path       from 'path';
 import services   from '@longlost/services/services.js';
 import htmlString from './app-file-system.html';
 import './sources/file-sources.js';
-// app-modal, app-spinner imports in events-mixin.js.
+// Modals, app-spinner imports in events-mixin.js.
 
 
 const getImageFileDeletePaths = (storagePath, type) => {

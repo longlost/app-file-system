@@ -5,20 +5,6 @@
     z-index: 2;
   }
 
-  strong {
-    color:     var(--app-primary-color);
-    font-size: 20px;
-  }
-
-  #dismiss-btn {
-    color: var(--app-primary-color);
-  }
-
-  #delete-btn {
-    background-color: var(--app-error-color, red);
-    color:            var(--constant-light-text);
-  }
-
 </style>
 
 
@@ -34,6 +20,7 @@
               unit="[[unit]]"
               on-delete-previous="__deletePrevious"
               on-open-list="openList"
+              on-open-save-as-modal="__openSaveAsModal"
               on-upload-done="__uploadDone"
               on-upload-updated="__uploadUpdated">
 </file-sources>
@@ -85,39 +72,19 @@
 </app-spinner>
 
 
-<share-modal id="shareModal"
-             item="[[_liveItem]]">
-</share-modal>
+<app-file-system-share-modal id="shareModal"
+                             item="[[_liveItem]]">
+</app-file-system-share-modal>
 
 
-<app-modal id="deleteConfirmModal"
-           heading="Confirm Delete">
+<app-file-system-delete-modal id="deleteConfirmModal"
+                              on-delete="__deleteModalDelete"
+                              on-canceled="__deleteModalCanceled">                                
+</app-file-system-delete-modal>
 
-  <div slot="card-content-slot">
-    <template is="dom-repeat"
-              items="[[_deleteItems]]">
-      <p>
-        <strong>[[item.displayName]]</strong>
-      </p>
-    </template>
-    
-    <p>
-      This action CANNOT be undone!
-    </p>
-  </div>
 
-  <div slot="card-actions-slot">
-
-    <paper-button id="dismiss-btn" 
-                  on-click="__dismissDeleteBtnClicked">
-      dismiss
-    </paper-button> 
-
-    <paper-button id="delete-btn" 
-                  on-click="__confirmDeleteBtnClicked">
-      delete
-    </paper-button> 
-
-  </div>
-
-</app-modal>
+<app-file-system-save-as-modal id="saveAsModal"
+                               list="[[list]]"
+                               on-skip="__saveAsModalSkip"
+                               on-update="__saveAsModalUpdate">                                 
+</app-file-system-save-as-modal>

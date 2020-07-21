@@ -1,0 +1,121 @@
+
+
+/**
+  * `app-file-system-delete-modal`
+  * 
+  *   This UI modal asks the user to confirm delete actions,
+  * 	in an attempt to mitigate accidental taps of delete buttons.
+  *
+  *
+  *   
+  *
+  *
+  *
+  *
+  *  Properites:
+  *
+  *
+  * 
+  *
+  *
+  *  Events:
+  *
+  *
+  *    
+  *
+  *  
+  *  Methods:
+  *
+  *
+  *    
+  *
+  *   @customElement
+  *   @polymer
+  *   @demo demo/index.html
+  *
+  **/
+
+
+import {
+  AppElement, 
+  html
+} from '@longlost/app-element/app-element.js';
+
+import {
+	hijackEvent,
+	listenOnce,
+  schedule
+} from '@longlost/utils/utils.js';
+
+import htmlString from './app-file-system-delete-modal.html';
+import '@longlost/app-overlays/app-modal.js';
+import '@longlost/app-shared-styles/app-shared-styles.js';
+import '@polymer/paper-button/paper-button.js';
+import '../shared/file-thumbnail.js';
+
+
+class AppFileSystemDeleteModal extends AppElement {
+  static get is() { return 'app-file-system-delete-modal'; }
+
+  static get template() {
+    return html([htmlString]);
+  }
+
+
+  static get properties() {
+    return {
+
+    	_items: Array
+
+    };
+  }
+
+
+  async __deleteBtnClicked(event) {
+		hijackEvent(event);
+
+    try {
+      await this.clicked();
+      await this.$.modal.close();
+
+      this._items = undefined;
+
+      this.fire('delete');
+    }
+    catch (error) {
+      if (error === 'click disabled') { return; }
+      console.error(error);
+    }
+  }
+
+
+  async __dismissBtnClicked(event) {
+    hijackEvent(event);
+
+    try {
+      await this.clicked();
+      await this.$.modal.close();
+
+      this._items = undefined;
+
+      this.fire('canceled');
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
+
+  async open(items) {
+  	this._items = items;
+
+  	await listenOnce(this.$.repeater, 'dom-change');
+  	await schedule();
+
+  	return this.$.modal.open();
+  }
+
+}
+
+window.customElements.define(AppFileSystemDeleteModal.is, AppFileSystemDeleteModal);
