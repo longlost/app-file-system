@@ -1,0 +1,74 @@
+
+<style include="app-shared-styles">
+
+	.item {
+		display: 		 flex;
+		align-items: center;
+		margin: 		 16px 0px;
+	}
+
+  file-thumbnail {
+    height:       64px;
+    min-height: 	64px;
+    width:        64px;
+    min-width:    64px;
+    margin-right: 8px;
+  }
+
+  strong {
+    color:     var(--app-primary-color);
+    font-size: 20px;
+  }
+
+  #dismiss-btn {
+    color: var(--app-primary-color);
+  }
+
+  #delete-btn {
+    background-color: var(--app-error-color, red);
+    color:            var(--constant-light-text);
+  }
+
+</style>
+
+
+<app-modal id="modal"
+           heading="Confirm Delete">
+
+  <div slot="card-content-slot">
+    <template id="repeater"
+    					is="dom-repeat"
+              items="[[_items]]">
+
+      <div class="item">
+        <file-thumbnail item="[[item]]" 
+				                presentation 
+				                sizing="contain">
+				</file-thumbnail>
+				<strong class="shared-no-select shared-single-line-truncate">
+					[[item.displayName]]
+				</strong>
+      </div>
+
+    </template>
+    
+    <p>
+      This action CANNOT be undone!
+    </p>
+  </div>
+
+  <div slot="card-actions-slot">
+
+    <paper-button id="dismiss-btn" 
+                  on-click="__dismissBtnClicked">
+      DISMISS
+    </paper-button> 
+
+    <paper-button id="delete-btn" 
+                  on-click="__deleteBtnClicked">
+      DELETE
+    </paper-button> 
+
+  </div>
+
+</app-modal>

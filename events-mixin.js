@@ -13,8 +13,10 @@ import services 		 from '@longlost/services/services.js';
 import multiDownload from 'multi-download';
 // Will NOT print pdf's in Chrome when dev tools is open!!
 import printJS  		 from 'print-js'; 
-import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';
+import './modals/app-file-system-delete-modal.js';
+// Not lazy loaded so that afs may work in the background.
+import './modals/app-file-system-save-as-modal.js';
 
 
 // From items array/collection back to a Firestore data obj.
@@ -375,6 +377,27 @@ export const EventsMixin = superClass => {
 	    services.saveItems(newIndexes);
 	  }
 
+
+	  __openSaveAsModal(event) {
+	  	hijackEvent(event);
+
+	  	this.$.saveAsModal.open(event.detail.files);
+	  }
+
+
+	  __saveAsModalSkip(event) {
+	  	hijackEvent(event);
+
+	  	this.$.sources.skipRenaming();
+	  }
+
+
+	  __saveAsModalUpdate(event) {
+	  	hijackEvent(event);
+
+	  	this.$.sources.uploadRenamed(event.detail.files);
+	  }
+
 	  // From <file-item> (image files only) and <roll-item>
 	  async __openCarousel(event) {
 	  	hijackEvent(event);
@@ -533,7 +556,7 @@ export const EventsMixin = superClass => {
 
 	    await schedule();
 
-	    this.$.deleteConfirmModal.open();
+	    this.$.deleteConfirmModal.open([item]);
 	  }
 
 
@@ -549,19 +572,16 @@ export const EventsMixin = superClass => {
 
 	    await schedule();
 
-	    this.$.deleteConfirmModal.open();
+	    this.$.deleteConfirmModal.open(items);
 	  }
 
-	  // <drag-drop> delete area modal.
-	  async __confirmDeleteBtnClicked(event) {
-			hijackEvent(event);
 
-	    try {
-	      await this.clicked();
+	  async __deleteModalDelete(event) {
+	  	hijackEvent(event);
 
-	      await this.$.deleteConfirmModal.close();
+	  	try { 		
 
-	      // Close editors since their item is now gone.
+		  	// Close editors since their item is now gone.
 	      // Test for close method since these elements
 	      // are lazy loaded and may not yet exist.
 	      if (this.$.fileEditor.reset) {
@@ -582,36 +602,24 @@ export const EventsMixin = superClass => {
 	      else {
 	      	await this.delete(this._deleteItems[0].uid);
 	      }
-	    }
-	    catch (error) {
-	      if (error === 'click disabled') { return; }
-	      console.error(error);
-	    }
-	    finally {
-	      this._deleteItems = undefined;
-	    }
+	  	}
+	  	catch (error) {
+	  		console.error(error);
+	  	}
+	  	finally {
+	  		this._deleteItems = undefined;
+	  	}
 	  }
 
 
-	  async __dismissDeleteBtnClicked(event) {
-	    hijackEvent(event);
+	  __deleteModalCanceled(event) {
+	  	hijackEvent(event);
 
-	    try {
-	      await this.clicked();
-	      await this.$.deleteConfirmModal.close();
-	    }
-	    catch (error) {
-	      if (error === 'click debounced') { return; }
-	      console.error(error);
-	    }
-	    finally {
+	  	const uids = this._deleteItems.map(item => item.uid);
 
-	    	const uids = this._deleteItems.map(item => item.uid);
+    	this.__resumeUploads(uids);
 
-	    	this.__resumeUploads(uids);
-
-	      this._deleteItems = undefined;
-	    }
+      this._deleteItems = undefined;
 	  }
 
 
@@ -624,7 +632,7 @@ export const EventsMixin = superClass => {
 	  	await schedule();
 	  	await import(
 	  		/* webpackChunkName: 'app-file-system-share-modal' */ 
-	  		'./share-modal.js'
+	  		'./modals/app-file-system-share-modal.js'
 	  	);
 
 	  	this.$.shareModal.open();

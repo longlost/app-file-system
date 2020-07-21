@@ -5,6 +5,11 @@ import mime          from 'mime-types';
 import * as imgUtils from './img-utils.js';
 
 
+// Removes the extention from a given filename.
+const stripExt = basename => 
+  path.basename(basename, path.extname(basename));
+  
+
 // Returns true if there are no more cloud processes to complete.
 // Either processed successfully or failed for all three versions.
 const allProcessingRan = item => {
@@ -170,5 +175,6 @@ export {
   fetchBlob,
   fetchFile,
   imgFilterFile,
-  isCloudProcessable
+  isCloudProcessable,
+  stripExt
 };

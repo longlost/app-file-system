@@ -1,7 +1,7 @@
 
 
 /**
-  * `share-modal`
+  * `app-file-system-share-modal`
   * 
   *   Displays a shareable link for a given file.  
   *   Allows user to easily save link to clipboard.
@@ -39,24 +39,26 @@
 import {
   AppElement, 
   html
-}                 from '@longlost/app-element/app-element.js';
+} from '@longlost/app-element/app-element.js';
+
 import {
   message,
   schedule,
   warn
-}                 from '@longlost/utils/utils.js';
+} from '@longlost/utils/utils.js';
+
 import services   from '@longlost/services/services.js';
-import htmlString from './share-modal.html';
+import htmlString from './app-file-system-share-modal.html';
 import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
-import './shared/file-icons.js';
+import '../shared/file-icons.js';
 
 
-class ShareModal extends AppElement {
-  static get is() { return 'share-modal'; }
+class AppFileSystemShareModal extends AppElement {
+  static get is() { return 'app-file-system-share-modal'; }
 
   static get template() {
     return html([htmlString]);
@@ -156,6 +158,7 @@ class ShareModal extends AppElement {
     }
     catch (error) {
       if (error === 'click debounced') { return; }
+      
       console.error(error);
       warn('Could not copy the link.');
     }
@@ -190,4 +193,4 @@ class ShareModal extends AppElement {
 
 }
 
-window.customElements.define(ShareModal.is, ShareModal);
+window.customElements.define(AppFileSystemShareModal.is, AppFileSystemShareModal);
