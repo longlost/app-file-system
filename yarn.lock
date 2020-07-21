@@ -563,6 +563,16 @@
     "@longlost/utils" "^1.4.0"
     "@polymer/polymer" "^3.3.1"
 
+"@longlost/paper-gauge@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@longlost/paper-gauge/-/paper-gauge-1.0.1.tgz#a2b0f00a7de650824c1368949bd6d2638d18a34a"
+  integrity sha512-wdO6ltDhDjDdZiyJ4I+nQ2s9j2OfQkc6AEoo8sOxlhKcqIMTtS9VuIlAneV/0vFrc4LpVB28yEeoDOndRzz8Jw==
+  dependencies:
+    "@longlost/animation" "^2.0.0"
+    "@longlost/app-element" "^2.0.0"
+    "@longlost/lambda" "^2.2.0"
+    "@polymer/polymer" "^3.4.1"
+
 "@longlost/pencil-to-check-icon@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@longlost/pencil-to-check-icon/-/pencil-to-check-icon-1.0.2.tgz#20230b74052fc6434a261ec11519d19bd21ae900"
@@ -622,6 +632,13 @@
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@longlost/utils/-/utils-1.5.0.tgz#1b17fa40262ce14495adef60effe8a692143bdf6"
   integrity sha512-kekx5f2GCiQo0pnrCs/QN+C+zeuCe0XW81CIKHo0lZ9YS1LR8UoOiLHjJi81btRT6bD71b8YBBtkKn1aJNswGA==
+  dependencies:
+    "@longlost/lambda" "^2.2.0"
+
+"@longlost/utils@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@longlost/utils/-/utils-1.5.1.tgz#01bb49e6a2d12dd56f941f51d2cb67a3e5e2691f"
+  integrity sha512-4VE0pQ04oNlKK1k1bYqWTMm4KMpUeiHRUcWGvwEdEOY7zlK7BnPacpULNYFdW21M22gAG4sNWCRNvpNPuHaoQw==
   dependencies:
     "@longlost/lambda" "^2.2.0"
 
@@ -1220,10 +1237,10 @@
   resolved "https://registry.yarnpkg.com/@webcomponents/shadycss/-/shadycss-1.9.3.tgz#74ee4be13f5374724aecb3d2c2de77523e01ada9"
   integrity sha512-fRuET+UGrH84hG0UF4iHbFqWZKUoan4/ki+iCOJ/vnKltPSHv/ZVbcA6sT/pRreznt8aKEGqN2KdHvgRxn4xjA==
 
-"@webcomponents/webcomponentsjs@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-2.4.3.tgz#384f4f6d54563ba465fb4df21fe89e78a76fc530"
-  integrity sha512-cV4+sAmshf8ysU2USutrSRYQkJzEYKHsRCGa0CkMElGpG5747VHtkfsW3NdVIBV/m2MDKXTDydT4lkrysH7IFA==
+"@webcomponents/webcomponentsjs@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-2.4.4.tgz#14b7e78da47f8f0071ff96c35335b871534179bc"
+  integrity sha512-UWXZYbaDLLfhm+xONXTiDciyhOSwKRrZieGQHFMSMGSxY4mbjZ5uYzOKgnuX0luYFvjJw32G3r0sCwQZPJIR4Q==
 
 ansi-colors@4.1.1:
   version "4.1.1"

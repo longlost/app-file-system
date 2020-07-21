@@ -44,7 +44,9 @@
   *     },
   *
   *
-  *
+  *  'File item': {basename, coll, doc, ext, index, name, path, size, sizeStr, timestamp, type, uid <, _tempUrl, optimized, original, thumbnail>}
+  *                 _tempUrl - window.URL.createObjectURL, do not use
+  *                 index    - used for multiple files ordering
   *
   *  Properites:
   *
@@ -88,29 +90,18 @@
   *  Events:
   *
   *
-  *    'data-changed' - Fired any time file(s) data changes.
-  *                     detail -> {[uid]: {coll, doc, ext, index, name, path, size, sizeStr, type, uid, _tempUrl <, optimized, original, thumbnail>}, ...}
-  *                                _tempUrl - window.URL.createObjectURL
-  *                                index    - used for multiple files ordering
+  *    'app-file-system-data-changed' - Fired any time file(s) data changes.
+  *                                     detail -> {[uid]: 'File item', ...}
   *
   *
-  *    'files-received' - Fired after user interacts with renameFileModal and before the file upload process begins.
-  *                       detail -> {name, size, type, uid, <, _tempUrl>}
-  *                                   name     - 'filename' (name.ext)
-  *                                   _tempUrl - window.URL.createObjectURL
-  *
-  *  
-  *    'file-uploaded' - Fired after successful upload operation.
-  *                      detail -> {coll, doc, ext, name, original, path, size, sizeStr, type, uid, _tempUrl}
-  *                                 original - public download url for full size original
+  *    
+  *    'app-file-system-ready-to-upload' - Fired after added files are read and processed, 
+  *                                        but before the file upload process begins.
   *
   *
-  *    'items-deleted' - Fired after user deletes one or more file items.
-  *                     detail -> {uids}
   *
-  *     
-  *    'upload-cancelled' - Fired if user cancels the upload process.
-  *                         detail -> {coll, doc, ext, index, name, path, size, sizeStr, type, uid, _tempUrl}          
+  *    'app-file-system-items-deleted' - Fired after user deletes one or more file items.
+  *                                      detail -> {uids}
   *
   *
   *  
@@ -141,10 +132,10 @@
 import {
   AppElement, 
   html
-}                 from '@longlost/app-element/app-element.js';
-import {
-  deepClone
-}                 from '@longlost/lambda/lambda.js';
+} from '@longlost/app-element/app-element.js';
+
+import {deepClone} from '@longlost/lambda/lambda.js';
+
 import {
   hijackEvent,
   listen,  
@@ -152,14 +143,15 @@ import {
   unlisten,
   wait,
   warn
-}                 from '@longlost/utils/utils.js';
-import {
-  EventsMixin
-}                 from './events-mixin.js';
+} from '@longlost/utils/utils.js';
+
+import {EventsMixin} from './events-mixin.js';
+
 import {
   allProcessingRan,
   isCloudProcessable
-}                 from './shared/utils.js';
+} from './shared/utils.js';
+
 import path       from 'path';
 import services   from '@longlost/services/services.js';
 import htmlString from './app-file-system.html';
@@ -262,7 +254,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
       // Passed into <map-overlay> and <app-map>
       darkMode: Boolean,
 
-      // Set to true to hide the add and delete dropzones.
+      // Set to true to hide the 'device-file-card' dropzone.
       hideDropzone: {
         type: Boolean,
         value: false
@@ -331,7 +323,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   __dbDataChanged(data) {
 
-    this.fire('data-changed', {data});
+    this.fire('app-file-system-data-changed', {data});
   }
 
 
@@ -372,7 +364,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
       return new Promise(resolve => {
 
-        listen(this, 'data-changed', (event, key) => { // Local event.
+        listen(this, 'app-file-system-data-changed', (event, key) => { // Local event.
           const match = event.detail.data[uid];
 
           if (allProcessingRan(match)) { // Only present after processing.
@@ -463,7 +455,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
     await services.saveItems(collapsed);
 
-    this.fire('items-deleted', {uids});
+    this.fire('app-file-system-items-deleted', {uids});
   }
 
   // From file-sources.
@@ -477,6 +469,8 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // From file-sources.
   // Upload successful, canceled or failed.
   __uploadDone(event) {
+    hijackEvent(event);
+
     const {uid} = event.detail;
 
     this.set(`_uploads.${uid}`, null);
@@ -486,6 +480,8 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // From file-sources.
   // Upload controls, state or progress updates.
   __uploadUpdated(event) {
+    hijackEvent(event);
+
     const {upload} = event.detail;
 
     if (this._uploads[upload.uid]) {
