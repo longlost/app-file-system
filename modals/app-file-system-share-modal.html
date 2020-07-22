@@ -1,0 +1,62 @@
+
+<style>
+
+  #content {
+    display:     flex;
+    align-items: center;
+  }
+
+  iron-icon {
+    min-height: 	24px;
+    min-width:  	24px;
+    margin-right: 8px;
+  }
+
+  p {
+    width:       100%;
+    max-width:   calc(100vw - 138px);
+    overflow-y:  auto;
+    white-space: nowrap;
+  }
+
+  paper-icon-button {
+    min-width: 40px;
+  }
+
+  paper-icon-button,
+  #dismiss-btn {
+    color: var(--app-primary-color);
+  }
+
+</style>
+
+
+<app-modal id="modal"
+           heading="Here's Your Link">
+
+  <div id="content" 
+       slot="card-content-slot">
+
+    <iron-icon icon="file-icons:link"></iron-icon>
+    <p>[[_shareLink]]</p>
+    <paper-icon-button hidden="[[_hideCopyBtn]]"
+                       icon="file-icons:content-copy"
+                       on-click="__copyBtnClicked">
+    </paper-icon-button>
+
+  </div>
+
+  <div slot="card-actions-slot">
+
+    <paper-button id="dismiss-btn" 
+                  on-click="__dismissBtnClicked">
+      DISMISS
+    </paper-button> 
+
+  </div>
+
+  <app-spinner id="spinner" 
+               slot="card-overlay-slot">
+  </app-spinner>
+
+</app-modal>

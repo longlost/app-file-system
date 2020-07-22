@@ -1,6 +1,6 @@
 {
   "name": "@longlost/app-file-system",
-  "version": "1.5.31",
+  "version": "1.5.32",
   "description": "This custom element handles all aspects of handling files for an app. Processing, uploading, viewing and editing.",
   "main": "app-file-system.js",
   "scripts": {
@@ -46,6 +46,7 @@
     "@polymer/iron-iconset-svg": "^3.0.1",
     "@polymer/iron-selector": "^3.0.1",
     "@polymer/paper-button": "^3.0.1",
+    "@polymer/paper-card": "^3.0.1",
     "@polymer/paper-checkbox": "^3.1.0",
     "@polymer/paper-fab": "^3.0.1",
     "@polymer/paper-icon-button": "^3.0.2",

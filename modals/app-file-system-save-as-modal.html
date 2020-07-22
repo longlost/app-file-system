@@ -12,12 +12,12 @@
   }
 
   #skip-btn {
-    color: var(--app-primary-color);
+    color: var(--app-accent-color);
   }
 
   #update-btn {
-    background-color: var(--app-primary-color);
-    color:            var(--app-primary-color-text);
+    background-color: var(--app-accent-color);
+    color:            var(--app-accent-color-text);
   }
 
 </style>
@@ -31,11 +31,11 @@
 
     <div id="modal-items">
       <template id="repeater"
-      					is="dom-repeat" 
+                is="dom-repeat" 
                 items="[[_files]]">
 
         <save-as-modal-input-item item="[[item]]"
-        													on-input-item-value-changed="__itemValueChanged">
+                                  on-input-item-value-changed="__itemValueChanged">
         </save-as-modal-input-item>
 
       </template>

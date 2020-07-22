@@ -1,0 +1,66 @@
+
+<style include="app-shared-styles">
+
+	:host {
+		display: 			none;
+		position: 		fixed;
+    top: 					100vh;
+    left: 				0px;
+		width: 		 		100%;
+		max-width: 		414px;
+		touch-action: none;
+    transition: 	transform 0.3s var(--custom-ease);
+	}
+
+	.shared-paper-card {
+		margin: 0px;
+	}
+
+	strong {
+		font-size: 18px;
+	}
+
+	#note {
+    color:     var(--secondary-text-color);
+    font-size: 14px;
+  }
+
+	#rename-btn {
+		color: var(--app-accent-color);
+	}
+
+	#go-btn {
+		background-color: var(--app-accent-color);
+		color: 						var(--app-accent-color-text);
+	}
+
+</style>
+
+
+<paper-card class="shared-paper-card" 
+						heading="Ready">
+
+	<div class="card-content">
+		<p>
+			[[_readyQtyStr]] ready to <strong>save</strong> and <strong>upload</strong>.
+		</p>
+		<p>
+			Would you like to <strong>rename</strong> [[_renameQtyStr]] before uploading begins? Or <strong>go</strong> ahead as they are?
+		</p>
+		<p id="note">
+	    Note that you can rename saved files anytime in the [[_editorType]] editor.
+	  </p>
+	</div>
+
+	<div class="card-actions">
+		<paper-button id="rename-btn"
+									on-click="__renameBtnClicked">
+			RENAME
+		</paper-button>
+		<paper-button id="go-btn"
+									on-click="__goBtnClicked">
+			GO
+		</paper-button>
+	</div>
+
+</paper-card>
