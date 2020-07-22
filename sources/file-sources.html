@@ -22,8 +22,7 @@
   }
 
   #content {
-    padding: 32px 16px;
-    height:  calc(100vh - 128px);
+    height: calc(100vh - 128px);
   }
 
   #content[hidden] {
@@ -35,6 +34,7 @@
     grid-template-rows: min-content min-content 24px 1fr;
     grid-row-gap:       16px;
     height:             100%;
+    padding:            32px 16px;
   }
 
   #or {
@@ -48,63 +48,75 @@
 </style>
 
 
-<app-header-overlay id="overlay"
-                    header-size="1"
-                    prebuilt-animation="from-top"
-                    fixed-header
-                    title="Add Files">
+<template id="stamper" 
+          is="dom-if" 
+          if="[[_stamp]]" 
+          restamp>
 
 
-  <div id="toolbar-background-container"
-       slot="header-background-slot">
-
-    <file-sources-progress-bar id="progress"
-                               processed="[[_processed]]"
-                               processing="[[_processing]]"
-                               read="[[_read]]"
-                               reading="[[_reading]]">
-    </file-sources-progress-bar>
-
-    <div id="toolbar-background"></div>
-  </div>
+  <app-header-overlay id="overlay"
+                      header-size="1"
+                      prebuilt-animation="from-top"
+                      fixed-header
+                      title="Add Files"
+                      on-overlay-reset="__reset">
 
 
-  <list-icon-button count="[[_dbCount]]"
-                    data="[[data]]"
-                    list="[[list]]"
-                    slot="top-toolbar-buttons-slot"
-                    on-click="__listBtnClicked">
-  </list-icon-button>
+    <div id="toolbar-background-container"
+         slot="header-background-slot">
+
+      <file-sources-progress-bar id="progress"
+                                 processed="[[_processed]]"
+                                 processing="[[_processing]]"
+                                 read="[[_read]]"
+                                 reading="[[_reading]]">
+      </file-sources-progress-bar>
+
+      <div id="toolbar-background"></div>
+    </div>
 
 
-  <div id="content"
-       hidden="[[_hideContent]]" 
-       slot="content">
+    <list-icon-button count="[[_dbCount]]"
+                      data="[[data]]"
+                      list="[[list]]"
+                      slot="top-toolbar-buttons-slot"
+                      on-click="__listBtnClicked">
+    </list-icon-button>
 
-    <div id="grid">
 
-      <div>[[_acceptableTypes]]</div>
+    <div id="content"
+         hidden="[[_hideContent]]" 
+         slot="content">
 
-      <web-file-card mimes="[[_mimes]]"
-                     on-file-added="__webFileAdded">
-      </web-file-card>
+      <div id="grid">
+        <div>[[_acceptableTypes]]</div>
 
-      <div id="or">OR</div>
+        <web-file-card mimes="[[_mimes]]"
+                       on-file-added="__webFileAdded">
+        </web-file-card>
 
-      <device-file-card id="deviceFileCard"
-                        accept="[[accept]]"
-                        hide-dropzone="[[hideDropzone]]"
-                        maxfiles="[[maxfiles]]"
-                        maxsize="[[maxsize]]"
-                        multiple="[[multiple]]"
-                        unit="[[unit]]"
-                        on-files-added="__deviceFilesAdded">
-      </device-file-card>
+        <div id="or">OR</div>
+
+        <device-file-card id="deviceFileCard"
+                          accept="[[accept]]"
+                          hide-dropzone="[[hideDropzone]]"
+                          maxfiles="[[maxfiles]]"
+                          maxsize="[[maxsize]]"
+                          multiple="[[multiple]]"
+                          unit="[[unit]]"
+                          on-files-added="__deviceFilesAdded">
+        </device-file-card>
+      </div>
+
+      <file-sources-upload-actions-card id="actions"
+                                        list="[[list]]"
+                                        qty="[[_filesToUploadQty]]"
+                                        on-go="__uploadActionsGo"
+                                        on-rename="__uploadActionsRename">                                        
+      </file-sources-upload-actions-card>
 
     </div>
 
-    <app-spinner id="spinner"></app-spinner>
+  </app-header-overlay>
 
-  </div>
-
-</app-header-overlay>
+</template>

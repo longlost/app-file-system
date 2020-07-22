@@ -97,6 +97,8 @@ import {
 import {
   fsToast,
   hijackEvent,
+  isDisplayed,
+  listenOnce,
   schedule,
   wait,
   warn
@@ -110,8 +112,8 @@ import * as imgUtils from '../shared/img-utils.js';
 import processFiles  from './processing.js';
 import htmlString    from './file-sources.html';
 import '@longlost/app-overlays/app-header-overlay.js';
-import '@longlost/app-spinner/app-spinner.js';
 import './file-sources-progress-bar.js';
+import './file-sources-upload-actions-card.js';
 import './list-icon-button.js';
 import './web-file-card.js';
 import './device-file-card.js';
@@ -175,6 +177,12 @@ class AppFileSystemFileSources extends AppElement {
       _dbCount: Number,
 
       _filesToUpload: Array,
+
+      _filesToUploadQty: {
+        type: Number,
+        value: 0,
+        computed: '__computeFilesToUploadQty(_filesToUpload)'
+      },
 
       // Hide actions when _dbCount is unavailable
       // because it is neccessary for issuing indexes
@@ -254,6 +262,13 @@ class AppFileSystemFileSources extends AppElement {
     }, '');
 
     return `${capitalize(description)}.`;
+  }
+
+
+  __computeFilesToUploadQty(files) {
+    if (!Array.isArray(files)) { return 0; }
+
+    return files.length;
   }
 
 
@@ -499,7 +514,6 @@ class AppFileSystemFileSources extends AppElement {
         merge: false
       };
     });
-
     
     // Replacement operation. Delete previous file and its data.
     if (!this.multiple && this.data) {
@@ -526,7 +540,12 @@ class AppFileSystemFileSources extends AppElement {
 
     await this.__saveItems(files);
 
-    this.$.deviceFileCard.clearFeedback();
+    const cardEl = this.select('#deviceFileCard');
+
+    // `file-sources` can work without its light dom stamped.
+    if (cardEl) {
+      cardEl.clearFeedback();
+    }
   }
 
 
@@ -544,13 +563,23 @@ class AppFileSystemFileSources extends AppElement {
     const newToProcess = files.filter(imgUtils.canProcess).length;
     const processing   = this._processing + newToProcess;
 
+    const cardEl     = this.select('#deviceFileCard');
+    const progressEl = this.select('#progress');
+
     try {
-      this.$.deviceFileCard.clearFeedback();
+      // `file-sources` can work without its light dom stamped.
+      if (cardEl) {
+        cardEl.clearFeedback();
+      }
 
       // Show queue tracker ui.
       this._reading    = reading;
       this._processing = processing;
-      this.$.progress.show();
+
+      // `file-sources` can work without its light dom stamped.
+      if (progressEl) {
+        progressEl.show();
+      }
 
       const callback = () => {
         read      += 1;
@@ -585,34 +614,61 @@ class AppFileSystemFileSources extends AppElement {
       // Reset queue tracker values.
       if (this._read === this._reading) {
         await wait(1200); // Give time for `paper-gauge` animation.
-        await this.$.progress.hide();
+
+        // `file-sources` can work without its light dom stamped.
+        if (progressEl) {
+          await progressEl.hide();
+        }
+
         await schedule();        
 
         this._read       = 0;       
         this._reading    = 0;
         this._processed  = 0;
-        this._processing = 0;   
+        this._processing = 0;
 
-        const qty      = this._filesToUpload.length;
-        const toastStr = qty > 1 ? 'Files' : 'File';     
+        // Content will be 'display: none' when the 'app-header-overlay'
+        // is either not opened, or when any other overlays are open above it.
+        // So if the user is not currently viewing this element, then show
+        // the less intrusive fsToast instead.
+        if (isDisplayed(this.select('#overlay').content)) {
+          this.select('#actions').show();
+        }  
+        else {  
+          const toastStr = this._filesToUploadQty > 1 ? 'Files' : 'File';     
 
-        // Show interactive toast from `app-shell`.
-        const toastEvent = await fsToast(`${toastStr} ready to upload.`);
-        const {canceled} = toastEvent.detail;          
+          // Show interactive toast from `app-shell`.
+          const toastEvent = await fsToast(`${toastStr} ready to upload.`);
+          const {canceled} = toastEvent.detail;          
 
-        // User clicked 'Go' button. 
-        // Skip the renaming process, start uploading.
-        if (!canceled) {
-          this.skipRenaming();
+          // User clicked 'Go' button. 
+          // Skip the renaming process, start uploading.
+          if (!canceled) {
+            this.skipRenaming();
+          }
+
+          // User clicked 'Rename' button.
+          // Allow user to rename the files before uploading.
+          else { 
+            this.fire('open-save-as-modal', {files: this._filesToUpload});
+          } 
         }
-
-        // User clicked 'Rename' button.
-        // Allow user to rename the files before uploading.
-        else { 
-          this.fire('open-save-as-modal', {files: this._filesToUpload});
-        } 
       } 
     }
+  }
+
+
+  __uploadActionsGo(event) {
+    hijackEvent(event);
+
+    this.skipRenaming();
+  }
+
+
+  __uploadActionsRename(event) {
+    hijackEvent(event);
+
+    this.fire('open-save-as-modal', {files: this._filesToUpload});
   }
 
 
@@ -631,9 +687,14 @@ class AppFileSystemFileSources extends AppElement {
 
 
   async __showFeedback(type) {
-    this.$.deviceFileCard.createFeedback(type);
-    await warn('Could not add those files.');
-    return this.$.spinner.hide();
+    const cardEl = this.select('#deviceFileCard');
+
+    // `file-sources` can work without its light dom stamped.
+    if (cardEl) {
+      cardEl.createFeedback(type);      
+    }
+
+    return warn('Could not add those files.');
   }
 
 
@@ -677,13 +738,25 @@ class AppFileSystemFileSources extends AppElement {
   }
 
 
-  open() {
-    return this.$.overlay.open();
+  __reset(event) {
+    this._stamp = false;
+  }
+
+
+  async open() {
+    this._stamp = true;
+
+    await listenOnce(this.$.stamper, 'dom-change');
+    await schedule();
+
+    return this.select('#overlay').open();
   }
 
   // Start uploading processed files as is,
   // without user editing file names.
   skipRenaming() {
+    if (!Array.isArray(this._filesToUpload)) { return; }
+
     const files = this._filesToUpload.map(file => {
       file.displayName = stripExt(file.name);
       return file;
@@ -697,6 +770,8 @@ class AppFileSystemFileSources extends AppElement {
   // Start uploading processed files that have 
   // user edited/updated file names.
   uploadRenamed(files) {
+    if (!Array.isArray(this._filesToUpload)) { return; }
+
     this._filesToUpload = undefined;
 
     return this.__uploadFiles(files);

@@ -7,6 +7,15 @@
   *   uploading/saving/optimization/deleting/previewing/rearranging.
   *
   *
+  *   Stacking Context:
+  *
+  *     This element should be in a higher stack context than the rest 
+  *     of the app elements so the `file-sources-save-as-modal` can be 
+  *     reached during other workflows. Only mission critical elements 
+  *     should be placed above, and allowed to overlay this element.
+  *
+  *
+  *
   *   Setup Firebase Storage for downloads:
   *
   *     Must configure CORS for each seperate storage bucket - 
@@ -21,7 +30,9 @@
   *
   *
   *
-  *   Add this to the project's package.json for a smaller, custom 'exifreader' build.
+  *   Build Config:
+  *
+  *     Add this to the project's package.json for a smaller, custom 'exifreader' build.
   *
   *     "exifreader": {
   *       "include": {
