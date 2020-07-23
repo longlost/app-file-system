@@ -2,14 +2,22 @@
 <style include="app-shared-styles">
 
 	:host {
-		display: 			none;
-		position: 		fixed;
-    top: 					100vh;
+		display: 	none;
+		position: fixed;
+
+		/* 
+	  	This negative bottom value allows the card to be 
+	  	extended down below the bottom of the screen, 
+	  	so the card can be 'nudged' when the user taps 
+	  	the overlay back button with the card displayed.
+	  */
+    bottom: 		 -48px;
     left: 				0px;
 		width: 		 		100%;
 		max-width: 		414px;
 		touch-action: none;
     transition: 	transform 0.3s var(--custom-ease);
+    transform: 		translateY(100%);
 	}
 
 	.shared-paper-card {
@@ -23,6 +31,16 @@
 	#note {
     color:     var(--secondary-text-color);
     font-size: 14px;
+  }
+
+  /* 
+  	This extra padding allows the card to be extended
+  	down below the bottom of the screen, so the card 
+  	can be 'nudged' when the user taps the overlay
+  	back button with the card displayed.
+  */
+  .card-actions {
+  	padding-bottom: 64px;
   }
 
 	#rename-btn {
