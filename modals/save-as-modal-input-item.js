@@ -41,8 +41,8 @@ import {
 } from '@longlost/app-element/app-element.js';
 
 import {hijackEvent} from '@longlost/utils/utils.js';
-import {stripExt} 	 from '../shared/utils.js';
-import htmlString 	 from './save-as-modal-input-item.html';
+import {stripExt}    from '../shared/utils.js';
+import htmlString    from './save-as-modal-input-item.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/paper-input/paper-input.js';
 import '../shared/file-thumbnail.js';
@@ -69,28 +69,24 @@ class SaveAsModalInputItem extends AppElement {
     return stripExt(name);
   }
 
-
-  async __thumbnailClicked() {
-  	try {
-  		await this.clicked();
-
-  		this.$.input.focus();
-  	}
-  	catch (error) {
-  		if (error === 'click debounced') { return; }
-  		console.error(error);
-  	}
+  // WARNING!! 
+  // Cannot use await this.clicked() here!
+  // Doing so will trigger the keyboard on mobile.
+  // Focus MUST be called immediately in a click
+  // handler for this to work as intended.
+  __thumbnailClicked() {
+    this.$.input.focus();
   }
 
 
   __valueChanged(event) {
-  	hijackEvent(event);
+    hijackEvent(event);
     
     const {value} = event.detail;
 
     this.fire('input-item-value-changed', {
-    	uid: 	 this.item.uid,
-    	value: value.trim()
+      uid:   this.item.uid,
+      value: value.trim()
     });
   }
 

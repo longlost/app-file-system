@@ -228,6 +228,16 @@ class AppFileSystemFileSources extends AppElement {
         value: 0
       },
 
+      // Only invoke toast once at a time, since 
+      // the user is allowed to continue adding 
+      // files while others are being processed.
+      _showingUploadActions: Boolean,
+
+      // Controls the <template> dom-if.
+      // Reduce dom footprint when not in use,
+      // or when AFS is used in the background.
+      _stamp: Boolean,
+
       _unsubscribe: Object
 
     };
@@ -551,9 +561,9 @@ class AppFileSystemFileSources extends AppElement {
 
   async __filesAdded(files) {
 
-    // These values are outside of try/catch since they
-    // are needed for the catch block to roll back queue
-    // in case of an error.
+    // These values are cached outside of try/catch since 
+    // they are needed for the catch block to roll back 
+    // queue in case of an error.
     let read      = 0;
     let processed = 0;
 
@@ -627,11 +637,17 @@ class AppFileSystemFileSources extends AppElement {
         this._processed  = 0;
         this._processing = 0;
 
+        if (this._showingUploadActions) { return; }
+
+        this._showingUploadActions = true;
+
         // Content will be 'display: none' when the 'app-header-overlay'
         // is either not opened, or when any other overlays are open above it.
         // So if the user is not currently viewing this element, then show
         // the less intrusive fsToast instead.
-        if (isDisplayed(this.select('#overlay').content)) {
+        const overlay = this.select('#overlay');
+
+        if (overlay && isDisplayed(overlay.content)) {
           this.select('#actions').show();
         }  
         else {  
@@ -639,7 +655,9 @@ class AppFileSystemFileSources extends AppElement {
 
           // Show interactive toast from `app-shell`.
           const toastEvent = await fsToast(`${toastStr} ready to upload.`);
-          const {canceled} = toastEvent.detail;          
+          const {canceled} = toastEvent.detail;
+
+          this._showingUploadActions = false;      
 
           // User clicked 'Go' button. 
           // Skip the renaming process, start uploading.
@@ -661,12 +679,16 @@ class AppFileSystemFileSources extends AppElement {
   __uploadActionsGo(event) {
     hijackEvent(event);
 
+    this._showingUploadActions = false;
+
     this.skipRenaming();
   }
 
 
   __uploadActionsRename(event) {
     hijackEvent(event);
+
+    this._showingUploadActions = false;
 
     this.fire('open-save-as-modal', {files: this._filesToUpload});
   }
@@ -723,6 +745,29 @@ class AppFileSystemFileSources extends AppElement {
     }
   }
 
+
+  async __back() {
+    try {
+      await this.clicked();
+
+      if (this._showingUploadActions) {
+        this.select('#actions').nudge();
+      }
+      else {
+        await this.select('#overlay').back();
+      }
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
+
+
+  __reset() {
+    this._stamp = false;
+  }
+
   
   addFiles(files) {
     
@@ -735,11 +780,6 @@ class AppFileSystemFileSources extends AppElement {
     else {
       this.__showFeedback('single');
     }
-  }
-
-
-  __reset(event) {
-    this._stamp = false;
   }
 
 
@@ -770,8 +810,6 @@ class AppFileSystemFileSources extends AppElement {
   // Start uploading processed files that have 
   // user edited/updated file names.
   uploadRenamed(files) {
-    if (!Array.isArray(this._filesToUpload)) { return; }
-
     this._filesToUpload = undefined;
 
     return this.__uploadFiles(files);

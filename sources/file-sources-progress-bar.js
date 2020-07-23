@@ -11,8 +11,8 @@
   **/
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {schedule, wait} 	from '@longlost/utils/utils.js';
-import htmlString 				from './file-sources-progress-bar.html';
+import {schedule, wait}   from '@longlost/utils/utils.js';
+import htmlString         from './file-sources-progress-bar.html';
 import '@longlost/paper-gauge/paper-gauge.js';
 import '@polymer/paper-progress/paper-progress.js';
 
@@ -28,61 +28,61 @@ class FileSourcesProgressBar extends AppElement {
   static get properties() {
     return {
 
-    	processed: {
-    		type: Number,
-    		value: 0
-    	},
+      processed: {
+        type: Number,
+        value: 0
+      },
 
-    	processing: {
-    		type: Number,
-    		value: 0
-    	},
+      processing: {
+        type: Number,
+        value: 0
+      },
 
-    	read: {
-    		type: Number,
-    		value: 0
-    	},
+      read: {
+        type: Number,
+        value: 0
+      },
 
-    	reading: {
-    		type: Number,
-    		value: 0
-    	},
+      reading: {
+        type: Number,
+        value: 0
+      },
 
-    	_indeterminate: {
-    		type: Boolean,
-    		value: false
-    	}
+      _indeterminate: {
+        type: Boolean,
+        value: false
+      }
 
     };
   }
 
 
   __computeNotUsedClass(max) {
-  	return max > 0 ? '' : 'not-used';
+    return max > 0 ? '' : 'not-used';
   }
 
 
   async hide() {
     if (!this._indeterminate) { return; } // Already hidden.
 
-  	this.style['transform'] = '';
+    this.style['transform'] = '';
 
-  	await wait(350);
+    await wait(350);
 
-  	this._indeterminate 	= false;
-  	this.style['display'] = 'none';
+    this._indeterminate   = false;
+    this.style['display'] = 'none';
   }
 
 
   async show() {
     if (this._indeterminate) { return; } // Already shown.
 
-  	this._indeterminate 	= true;
-  	this.style['display'] = 'flex';
+    this._indeterminate   = true;
+    this.style['display'] = 'flex';
 
-  	await schedule();
+    await schedule();
 
-  	this.style['transform'] = 'translateY(100%)';
+    this.style['transform'] = 'translateY(100%)';
   }
 
 }
