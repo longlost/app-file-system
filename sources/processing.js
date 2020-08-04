@@ -1,11 +1,9 @@
 
 
-import path   from 'path'; // webpack includes this by default!
-import runner from '@longlost/worker/runner.js';
+import path          from 'path'; // webpack includes this by default!
+import runner        from '@longlost/worker/runner.js';
+import * as imgUtils from '../shared/img-utils.js';
 
-
-const KILOBYTE = 1024;
-const MEGABYTE = 1048576;
 
 const EXIF_TAGS = [
   'DateTimeOriginal',   // Date and time string when image was originally created.
@@ -22,6 +20,9 @@ const EXIF_TAGS = [
   'ImageDescription',   // User generated string for image (ie. 'Company picnic').
   'Orientation'         // One of 8 values, most common are 1, 3, 6 and 8 since other are 'flipped' versions.
 ];
+
+const KILOBYTE = 1024;
+const MEGABYTE = 1048576;
 
 // Create a human-readable file size display string.
 const formatFileSize = size => {
@@ -56,20 +57,21 @@ export default async (files, callback) => {
 
 
   const processPromises = files.map(file => {
-
-    
-    console.log('original size: ', formatFileSize(file.size));
-
-
-
     const process = async () => {
 
 
-      // TESTING!!
+      // TESTING!!    
+      console.log(file.name, ' original size: ', formatFileSize(file.size));
       const start = Date.now();
 
 
-      const processed = await processRunner('process', file, EXIF_TAGS);
+
+      // No need to transfer file accross contexts if it won't be processed.
+      const processed = imgUtils.canProcess(file) ? 
+                          await processRunner('process', file, EXIF_TAGS) :
+                          await processRunner('process');
+
+      processed.file = processed.file || file;
 
 
 
@@ -96,9 +98,7 @@ export default async (files, callback) => {
 
 
 
-    console.log('compressed size: ', formatFileSize(file.size));
-
-    console.log('file: ', file);
+    console.log(file.name, ' processed size: ', formatFileSize(file.size));
 
 
 

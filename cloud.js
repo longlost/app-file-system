@@ -8,14 +8,13 @@ const path       = require('path');
 const crypto     = require('crypto');
 const mkdirp     = require('mkdirp');
 const spawn      = require('child-process-promise').spawn;
-const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const imgUtils   = require('./shared/img-utils.js');
 
 
 const OPTIM_MAX_SIZE = 1024;
 const THUMB_MAX_SIZE = 256;
 const OPTIM_PREFIX   = 'optim_';
-const ORIENT_PREFIX  = 'orient_';
+const POSTER_PREFIX  = 'poster_';
 const SHARE_PREFIX   = 'share_';
 const THUMB_PREFIX   = 'thumb_';
 
@@ -49,7 +48,7 @@ const getCollAndDoc = dir => {
 //
 // 2. Create an processed version.
 //
-// 3. Make the 'oriented' file available for public download.
+// 3. Make each video file available for public download.
 //    Expose 'optimized' as a shareable file. 
 //
 // 4. Save the public download urls for 
@@ -85,12 +84,18 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
 
     // Exit if this is triggered on a file that is not processable.
     if (!isImg && !isVideo) {
-      console.log('This file is not a jpeg, png image or a video. Not optimizing.');
+      console.log('This file is not a supported image or a video. Not optimizing.');
+      return null;
+    }
+
+    // Exit if this is the original image that has already been processed on the client.
+    if (isImg && !imgOpts) {
+      console.log('Exiting. Already processed - Original.');
       return null;
     }
 
     // Exit if the image is already processed.
-    if (metadata && (metadata['oriented'] || metadata['optimized'] || metadata['thumbnail'])) {
+    if (metadata && (metadata['poster'] || metadata['optimized'] || metadata['thumbnail'])) {
       console.log('Exiting. Already processed - Metadata.');
       return null;
     }
@@ -115,8 +120,8 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
     const bucket               = admin.storage().bucket(object.bucket);
     const fileRef              = bucket.file(filePath);
 
-    // Allow the original version to be downloaded publicly.
-    if (type === 'oriented') {
+    // Allow the video to be downloaded publicly.
+    if (type === 'poster') {
       await fileRef.makePublic();   
     }
 
@@ -139,6 +144,7 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
       ]);
     }
     else {
+      const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 
       const fileUrl = await getUrl(bucket, filePath);
 
@@ -221,10 +227,9 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
 
 
 
-// Image files - Use ImageMagic's '-auto-orient' to create a full-fidelity copy 
-// that is right-side-up and ready to view in app.
+// Image files - Ignored since they are processed on the client.
 // Video files - Use ffmpeg to extract a full-fidelity poster image.
-exports.orient = functions.
+exports.poster = functions.
   runWith({
     memory:        '1GB',
     timeoutSeconds: 300, // Extended runtime of 5 min. for large files (default 60 sec).
@@ -232,14 +237,11 @@ exports.orient = functions.
   storage.
   object().
   onFinalize(processMedia(
-    'oriented',     // Type.
-     ORIENT_PREFIX, // Url filename prefix.
+    'poster',       // Type.
+     POSTER_PREFIX, // Url filename prefix.
 
-    // Image options.
-    [
-      '-auto-orient', // Places image upright for viewing.
-      '-strip'        // Removes all metadata.
-    ],
+    // Image options. 'Original' version is processed on the client.
+    undefined,
 
     // Video options.
     [
@@ -249,8 +251,7 @@ exports.orient = functions.
   ));
   
 
-// Image files - Use ImageMagic to create a medium-fidelity copy 
-// that is right-side-up and ready to view in app.
+// Image files - Use ImageMagic to create a medium-fidelity copy.
 // Video files - Use ffmpeg to extract a medium-fidelity poster image.
 exports.optimize = functions.
   runWith({

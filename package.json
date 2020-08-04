@@ -1,6 +1,6 @@
 {
   "name": "@longlost/app-file-system",
-  "version": "1.5.33",
+  "version": "1.5.34",
   "description": "This custom element handles all aspects of handling files for an app. Processing, uploading, viewing and editing.",
   "main": "app-file-system.js",
   "scripts": {
@@ -37,7 +37,7 @@
     "@longlost/services": "^3.2.3",
     "@longlost/tab-pages": "^1.0.2",
     "@longlost/utils": "^1.5.1",
-    "@longlost/wasm-imagemagick": "^2.1.0",
+    "@longlost/wasm-imagemagick": "^2.2.0",
     "@longlost/webgl-filter": "^1.0.0",
     "@longlost/worker": "^5.0.1",
     "@polymer/app-storage": "^3.0.3",
@@ -63,7 +63,7 @@
     "mime-types": "^2.1.27",
     "mkdirp": "^1.0.4",
     "multi-download": "^3.0.0",
-    "nanoid": "^3.1.10",
+    "nanoid": "^3.1.12",
     "print-js": "^1.0.63"
   },
   "devDependencies": {
@@ -71,7 +71,7 @@
     "@polymer/test-fixture": "^4.0.2",
     "@webcomponents/webcomponentsjs": "^2.4.4",
     "chai": "^4.2.0",
-    "mocha": "^8.0.1",
+    "mocha": "^8.1.1",
     "wct-mocha": "^1.1.0"
   }
 }

@@ -614,14 +614,24 @@ class AppFileSystemFileSources extends AppElement {
       console.error(error);
 
       // Roll-back queues by number of failed items. 
-      this._reading    = reading - newToRead - read;
+      this._reading    = reading    - newToRead    - read;
       this._processing = processing - newToProcess - processed;
+
+      // An error occured that stopped all files from being processed.
+      // Checking progressEl since `file-sources` can work without 
+      // its light dom stamped.
+      if (this._read === 0 && progressEl) {
+        progressEl.hide();
+      } 
 
       await warn('An error occured while gathering your files.');
     }
-    finally { 
+    finally {
 
-      // Reset queue tracker values.
+      // An error occured that stopped all files from being processed.
+      if (this._read === 0) { return; } 
+      
+      // Done processing for now.
       if (this._read === this._reading) {
         await wait(1200); // Give time for `paper-gauge` animation.
 
@@ -630,8 +640,9 @@ class AppFileSystemFileSources extends AppElement {
           await progressEl.hide();
         }
 
-        await schedule();        
+        await schedule();
 
+        // Reset queue tracker values.
         this._read       = 0;       
         this._reading    = 0;
         this._processed  = 0;
