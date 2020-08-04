@@ -20,8 +20,9 @@ import {nanoid}			 from 'nanoid/non-secure'; // https://github.com/ai/nanoid
 const process = async (file, exifTags) => {	
 	const uid = nanoid(); // ie. 'Uakgb_J5m9g-0JDMbcJqLJ'.
 
-	// Don't need to transfer a file accross 
-	// contexts just to get a uid issued.
+	// The file may not be passed since there is
+	// no need to transfer a file accross contexts 
+	// just to get a uid issued if it cannot be processed.
 	// Don't process unsupported file types either.
 	if (!file || !imgUtils.canProcess(file)) { 
 		return {uid}; 
