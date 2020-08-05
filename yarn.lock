@@ -447,6 +447,20 @@
     "@polymer/paper-card" "^3.0.1"
     "@polymer/paper-icon-button" "^3.0.2"
 
+"@longlost/app-overlays@^1.3.4":
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/@longlost/app-overlays/-/app-overlays-1.3.4.tgz#54cd179a0c4a0ead2c3c83ba0364a47bf1f9223c"
+  integrity sha512-CrcpPhCorZy55UzxGxAwX8Sh5lh2VwbsWfV+jPsn2HrX8richYu6JI0ATJKhymy7LcJTyyDenbbVziHL7Sm+PQ==
+  dependencies:
+    "@longlost/animation" "^2.0.0"
+    "@longlost/app-element" "^2.0.0"
+    "@longlost/app-icons" "^1.0.12"
+    "@longlost/app-shared-styles" "^2.0.15"
+    "@longlost/utils" "^1.5.1"
+    "@polymer/app-layout" "^3.1.0"
+    "@polymer/paper-card" "^3.0.1"
+    "@polymer/paper-icon-button" "^3.0.2"
+
 "@longlost/app-shared-styles@^2.0.13":
   version "2.0.13"
   resolved "https://registry.yarnpkg.com/@longlost/app-shared-styles/-/app-shared-styles-2.0.13.tgz#7a800d088a19bcda6288ff20d19cc9772ff36223"

@@ -41,7 +41,7 @@ export const PhotoElementMixin = superClass => {
 
 	      _imgSrc: {
 	      	type: String,
-	      	computed: '__computeImgSrc(item.optimized, item.oriented, item.thumbnail, _isImg, _isThumbnail)'
+	      	computed: '__computeImgSrc(item.original, item.optimized, item.thumbnail, _isImg, _isThumbnail)'
 	      },
 
 	      _isImg: {
@@ -69,7 +69,7 @@ export const PhotoElementMixin = superClass => {
 
 	      _vidPoster: {
 	      	type: String,
-	      	computed: '__computeVidPoster(item.optimized, item.oriented, item.thumbnail, _isVid, _isThumbnail)'
+	      	computed: '__computeVidPoster(item.poster, item.optimized, item.thumbnail, _isVid, _isThumbnail)'
 	      },
 
 	      _vidSrc: {
@@ -131,14 +131,14 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeImgSrc(optimized, oriented, thumbnail, isImg, isThumbnail) {
+	  __computeImgSrc(original, optimized, thumbnail, isImg, isThumbnail) {
 	    if (!isImg) { return; }
 
 	    if (isThumbnail && thumbnail) { return thumbnail; }
 
 	    if (!isThumbnail && optimized) { return optimized; }
 
-	    return oriented;
+	    return original;
 	  }
 
 
@@ -149,14 +149,14 @@ export const PhotoElementMixin = superClass => {
 	  }
 
 
-	  __computeVidPoster(optimized, oriented, thumbnail, isVid, isThumbnail) {
+	  __computeVidPoster(poster, optimized, thumbnail, isVid, isThumbnail) {
 	    if (!isVid) { return; }
 
 	    if (isThumbnail && thumbnail) { return thumbnail; }
 
 	    if (!isThumbnail && optimized) { return optimized; }
 
-	    return oriented;
+	    return poster;
 	  }
 
 

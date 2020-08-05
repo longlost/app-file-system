@@ -175,13 +175,13 @@ const getImageFileDeletePaths = (storagePath, type) => {
   const dir = path.dirname(storagePath);
 
   const optimPath  = `${dir}/optim_${base}`;
-  const orientPath = `${dir}/orient_${base}`;
+  const posterPath = `${dir}/poster_${base}`;
   const thumbPath  = `${dir}/thumb_${base}`;
 
   return [
     storagePath,
     optimPath,
-    orientPath,
+    posterPath,
     thumbPath
   ];
 };
@@ -202,13 +202,30 @@ const deleteStorageFiles = async item => {
 
       // Test the file type.
       // If its an image/video, 
-      // then delete the orient_, optim_ and 
+      // then delete the poster_, optim_ and 
       // thumb_ files from storage as well.
       if (isCloudProcessable(item)) {
-        const paths    = getImageFileDeletePaths(storagePath, type);
-        const promises = paths.map(p => services.deleteFile(p));
+        const paths = getImageFileDeletePaths(storagePath, type);
+
+        // Fail gracefully for each file path.
+        // Not using Promise.allSettled here because it is 
+        // not supported by Samsung browser.
+        const promises = paths.map(p => {
+          const safeDel = async () => {
+            try {
+              await services.deleteFile(p);
+            }
+            catch (error) {
+              console.warn('Storage deleteFile failing gracefully: ', error.message);
+            }
+          };
+
+          return safeDel();
+        });
 
         // 'await' here to catch errors and fail gracefully.
+        // Not using Promise.allSettled here because it is 
+        // not supported by Samsung browser.
         await Promise.all(promises);
         return;
       }

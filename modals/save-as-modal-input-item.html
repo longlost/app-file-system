@@ -4,12 +4,14 @@
   :host {
     display:     flex;
     align-items: center;
+    margin:      16px 0px;
   }
 
   file-thumbnail {
     height:       64px;
     width:        64px;
     margin-right: 8px;
+    --thumbnail-background-color: inherit;
   }
 
 </style>
@@ -22,7 +24,7 @@
 </file-thumbnail>
 
 <paper-input id="input"
-						 class="shared-paper-input"
+                         class="shared-paper-input"
              allowed-pattern="[^/\f/\n/\r/\t/\v]"
              autocorrect
              autofocus

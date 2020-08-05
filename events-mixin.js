@@ -30,9 +30,9 @@ const arrayToDbObj = array => {
 
 const getPrintable = item => {
 
-	const {oriented, original, _tempUrl} = item;
+	const {original, poster, _tempUrl} = item;
 
-	if (oriented) { return oriented; }
+	if (poster) { return poster; }
 
 	if (original) { return original; }
 

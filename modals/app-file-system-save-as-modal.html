@@ -1,9 +1,13 @@
 
 <style>
 
-  #modal-items {
-    max-height: calc(100vh - 292px);
-    overflow-y: auto;
+  #modal {
+    --modal-card-content-padding: 0px;
+  }  
+
+  #content {
+    padding:          8px 16px;
+    background-color: var(--app-body-color);
   }
 
   #note {
@@ -26,24 +30,22 @@
 <app-modal id="modal"
            heading="Save As">
 
-  <div id="content-div" 
-       slot="card-content-slot">    
-
-    <div id="modal-items">
-      <template id="repeater"
-                is="dom-repeat" 
-                items="[[_files]]">
-
-        <save-as-modal-input-item item="[[item]]"
-                                  on-input-item-value-changed="__itemValueChanged">
-        </save-as-modal-input-item>
-
-      </template>
-    </div>
+  <div id="content" 
+       slot="card-content-slot">   
 
     <p id="note">
       Note that you can rename saved files anytime in the [[_editorType]] editor.
-    </p>
+    </p> 
+
+    <template id="repeater"
+              is="dom-repeat" 
+              items="[[_files]]">
+
+      <save-as-modal-input-item item="[[item]]"
+                                on-input-item-value-changed="__itemValueChanged">
+      </save-as-modal-input-item>
+
+    </template>
 
   </div>
   

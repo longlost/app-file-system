@@ -17,17 +17,20 @@ const allProcessingRan = item => {
   const {
     optimized,
     optimizedError,
-    oriented, 
-    orientedError,
+    poster, 
+    posterError,
     thumbnail, 
-    thumbnailError
+    thumbnailError,
+    type
   } = item;
 
+  const isVid = type.startsWith('video/');
+
   const optimizeRan  = optimized || optimizedError;
-  const orientRan    = oriented  || orientedError;
+  const posterRan    = !isVid    || (poster  || posterError);
   const thumbnailRan = thumbnail || thumbnailError;
 
-  return optimizeRan && orientRan && thumbnailRan;
+  return optimizeRan && posterRan && thumbnailRan;
 };
 
 
