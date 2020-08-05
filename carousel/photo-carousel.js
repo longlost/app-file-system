@@ -212,8 +212,19 @@ class PhotoCarousel extends AppElement {
 
     await this.__showBackground();
 
+    // Fail gracefully incase there is an issue 
+    // with the thumbnail placeholder.
+    const safeFlip = async () => {
+      try {
+        await this.$.flip.play();
+      }
+      catch (_) {
+        console.warn('Flip animation failed gracefully.');
+      }  
+    };
+
     await Promise.all([
-      this.$.flip.play(), 
+      safeFlip(), 
       this.$.overlay.open()
     ]);
 

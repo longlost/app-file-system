@@ -19,9 +19,9 @@
   *
   **/
 
-import {AppElement, html}  	from '@longlost/app-element/app-element.js';
+import {AppElement, html}   from '@longlost/app-element/app-element.js';
 import {isCloudProcessable} from '../shared/utils.js';
-import htmlString 					from './processing-error-icon.html';
+import htmlString           from './processing-error-icon.html';
 import '@longlost/app-icons/app-icons.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-menu-button/paper-menu-button.js';
@@ -41,8 +41,8 @@ class ProcessingErrorIcon extends AppElement {
       item: Object,
 
       _errors: {
-      	type: Array,
-      	computed: '__computeErrors(item)'
+        type: Array,
+        computed: '__computeErrors(item)'
       },
 
       _show: {
@@ -63,17 +63,17 @@ class ProcessingErrorIcon extends AppElement {
 
 
   __computeErrors(item) {
-  	if (!item) { return; }
+    if (!item) { return; }
 
-  	const {optimizedError, orientedError, thumbnailError, type} = item;
+    const {optimizedError, posterError, thumbnailError, type} = item;
 
-  	const kind = type.includes('image') ? 'version' : 'poster';  	
+    const kind = type.includes('image') ? 'version' : 'poster';   
 
-  	const optim  = optimizedError ? `Optimized ${kind} failed.` 		: undefined;
-		const orient = orientedError  ? `High fidelity ${kind} failed.` : undefined;
-		const thumb  = thumbnailError ? `Thumbnail ${kind} failed.` 		: undefined;
+    const optim  = optimizedError ? `Optimized ${kind} failed.`     : undefined;
+    const poster = posterError    ? `High fidelity ${kind} failed.` : undefined;
+    const thumb  = thumbnailError ? `Thumbnail ${kind} failed.`     : undefined;
 
-		return [thumb, optim, orient].filter(str => str);
+    return [thumb, optim, poster].filter(str => str);
   }
 
   // animate from upload through final processing
@@ -82,9 +82,9 @@ class ProcessingErrorIcon extends AppElement {
     // Animate during image processing as well.
     if (item && isCloudProcessable(item)) {
 
-    	const {optimizedError, orientedError, thumbnailError} = item;
+      const {optimizedError, posterError, thumbnailError} = item;
 
-      return optimizedError || orientedError || thumbnailError;
+      return optimizedError || posterError || thumbnailError;
     }
 
     // Other file types don't have post-processing
@@ -105,15 +105,15 @@ class ProcessingErrorIcon extends AppElement {
 
 
   async __dropdownClicked() {
-  	try {
-  		await this.clicked();
+    try {
+      await this.clicked();
 
-  		this.$.menu.close();
-  	}
-  	catch (error) {
-  		if (error === 'click debounced') { return; }
-  		console.error(error);
-  	}
+      this.$.menu.close();
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
   }
 
 }

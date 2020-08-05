@@ -68,11 +68,11 @@ export const ImageEditorItemMixin = superClass => {
 
 	    if (!item) { return '#'; }
 
-	    const {optimized, oriented, original, _tempUrl} = item;
+	    const {optimized, poster, original, _tempUrl} = item;
 
 	    if (optimized) { return optimized; }
 
-	    if (oriented)  { return oriented; }
+	    if (poster)  { return poster; }
 
 	    if (original)  { return original; }
 

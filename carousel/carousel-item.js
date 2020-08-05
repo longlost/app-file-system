@@ -27,6 +27,21 @@ import {PhotoElementMixin} from '../shared/photo-element-mixin.js';
 import htmlString          from './carousel-item.html';
 
 
+// Fault tolerance for failed thumbnail cloud processes.
+// Try the placeholder first, but if its not valid
+// attempt the src.
+const getNaturals = async (placeholder, src) => {
+  try {
+    const dimentions = await naturals(placeholder);
+
+    return dimentions;
+  }
+  catch (_) {
+    return naturals(src);
+  }
+};
+
+
 class CarouselItem extends PhotoElementMixin(AppElement) {
   static get is() { return 'carousel-item'; }
 
@@ -76,7 +91,8 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
     try {
       await this.clicked();
 
-      const {naturalHeight, naturalWidth} = await naturals(this._imgPlaceholder);
+      const {naturalHeight, naturalWidth} = 
+        await getNaturals(this._imgPlaceholder, this._imgSrc);
 
       const raw = getBBox(this);
 

@@ -312,8 +312,7 @@ exports.thumbnail = functions.
     // Image options.
     [ 
       '-auto-orient', // Places image upright for viewing.
-      '-thumbnail', 
-      '-resize', `${THUMB_MAX_SIZE}x${THUMB_MAX_SIZE}>`, // Keeps original aspect ratio.
+      '-thumbnail', `${THUMB_MAX_SIZE}x${THUMB_MAX_SIZE}>`, // Keeps original aspect ratio.
       '-strip' // Removes all metadata.
     ],
 

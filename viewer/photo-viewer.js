@@ -76,14 +76,18 @@ class PhotoViewer extends AppElement {
   __computePlaceholder(item) {
     if (!item) return '#';
 
-    const {_tempUrl, optimized, oriented} = item;
+    const {_tempUrl, optimized, original, poster} = item;
 
     if (optimized) {
       return optimized;
     }
 
-    if (oriented) {
-      return oriented;
+    if (poster) {
+      return poster;
+    }
+
+    if (original) {
+      return original;
     }
 
     return _tempUrl;
@@ -93,9 +97,13 @@ class PhotoViewer extends AppElement {
   __computeSrc(item) {
     if (!item) { return '#'; }
 
-    const {_tempUrl, oriented} = item;
+    const {_tempUrl, original, poster} = item;
 
-    return oriented ? oriented : _tempUrl;
+    if (poster) {
+      return poster;
+    }
+
+    return original ? original : _tempUrl;
   }
 
 

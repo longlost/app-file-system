@@ -163,9 +163,9 @@ class ImageEditor extends EditorMixin(AppElement) {
 
     if (!item) { return '#'; }
 
-    const {oriented, original, _tempUrl} = item;
+    const {original, poster, _tempUrl} = item;
 
-    if (oriented) { return oriented; }
+    if (poster) { return poster; }
 
     if (original) { return original; }
 
