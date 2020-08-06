@@ -11,7 +11,8 @@ const spawn      = require('child-process-promise').spawn;
 const imgUtils   = require('./shared/img-utils.js');
 
 const OPTIM_SIZE_FACTOR = '60%';
-const OPTIM_TARGET_KB   = 100; // Ideal max jpeg file size.
+const OPTIM_TARGET_KB   = 100;  // Ideal max jpeg file size.
+const OPTIM_MAX_SIZE    = 1024; // Only used for video poster.
 const THUMB_MAX_SIZE    = 256;
 const OPTIM_PREFIX      = 'optim_';
 const POSTER_PREFIX     = 'poster_';
