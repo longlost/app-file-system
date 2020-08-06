@@ -380,7 +380,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // Resolve the promise when the 
   // file item has fully processed.
   __waitForCloudProcessing(item) {
-    const {original, uid} = item;    
+    const {original, uid} = item;
 
     // An image or video that has been uploaded but not yet processed.
     if (isCloudProcessable(item) && original && !allProcessingRan(item)) {

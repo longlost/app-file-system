@@ -47,7 +47,10 @@ export const ItemMixin = superClass => {
 	      hideCheckbox: Boolean,
       
 	      // File item object.
-	      item: Object,
+	      item: {
+	      	type: Object,
+	      	observer: '__itemChanged'
+	      },
 
 	      // File upload controls, progress and state.
 	      uploads: Object,
@@ -81,7 +84,6 @@ export const ItemMixin = superClass => {
 	  static get observers() {
 	    return [
 	      '__hideCheckboxChanged(hideCheckbox)',
-	      '__itemChanged(item)',
 	      '__selectedChanged(selected)',
 	      '__uploadChanged(_upload)'
 	    ];
@@ -94,9 +96,17 @@ export const ItemMixin = superClass => {
 	    }
 	  }
 
+	  // Reset the reused dom element's
+	  // selected state if its item data
+	  // is that of a different item.
+	  __itemChanged(newItem, oldItem) {
+	  	if (!newItem) {
+	  		this.selected = false;	  		
+	  	}
 
-	  __itemChanged() {
-	    this.selected = false;
+	  	if (oldItem && (oldItem.uid !== newItem.uid)) {
+	  		this.selected = false;
+	  	}
 	  }
 
 
