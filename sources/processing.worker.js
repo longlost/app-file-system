@@ -17,14 +17,18 @@ import * as imgUtils from '../shared/img-utils.js';
 import {nanoid}			 from 'nanoid/non-secure'; // https://github.com/ai/nanoid
 
 
-const process = async (file, exifTags) => {	
+const process = async (callback, file, exifTags) => {	
 	const uid = nanoid(); // ie. 'Uakgb_J5m9g-0JDMbcJqLJ'.
 
 	// The file may not be passed since there is
 	// no need to transfer a file accross contexts 
 	// just to get a uid issued if it cannot be processed.
 	// Don't process unsupported file types either.
-	if (!file || !imgUtils.canProcess(file)) { 
+	if (!file || !imgUtils.canProcess(file)) {
+	 
+		// Update file read ui.
+		callback();
+
 		return {uid}; 
 	}
 
@@ -39,10 +43,13 @@ const process = async (file, exifTags) => {
 
 	if (imgUtils.canProcess(file)) {
 		const {default: compress} = await import('./worker-compress.js');
-		const compressed 					= await compress(file);
+		const compressed 					= await compress(callback, file);
 
 		return {exif, file: compressed, uid};
 	}
+
+	// Update file read ui.
+	callback();
 
 	return {exif, uid};
 };

@@ -591,15 +591,23 @@ class AppFileSystemFileSources extends AppElement {
         progressEl.show();
       }
 
-      const callback = () => {
-        read      += 1;
-        processed += 1;
+      // Updates "read" gauge ui when invoked.
+      // This happens after a uid has been issued
+      // and exif/dimension info has been read from
+      // supported images, but before image processing
+      // begins.
+      const readCallback = () => {        
+        read       += 1;
+        this._read += 1;
+      };
 
-        this._read      += 1;
+      // Updates "processed" gauge ui when invoked.
+      const processedCallback = () => {
+        processed       += 1;
         this._processed += 1;
       };
 
-      const processedFiles = await processFiles(files, callback);
+      const processedFiles = await processFiles(files, readCallback, processedCallback);
 
       // Drives modal repeater.
       // Add new files to queue (existing modal items).

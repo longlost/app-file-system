@@ -2,6 +2,7 @@
 
 import path          from 'path'; // webpack includes this by default!
 import runner        from '@longlost/worker/runner.js';
+import * as Comlink  from 'comlink';
 import * as imgUtils from '../shared/img-utils.js';
 
 
@@ -43,7 +44,7 @@ const formatFileSize = size => {
 
 let processRunner;
 
-export default async (files, callback) => {
+export default async (files, readCallback, processedCallback) => {
 
   if (!processRunner) {
 
@@ -68,8 +69,8 @@ export default async (files, callback) => {
 
       // No need to transfer file accross contexts if it won't be processed.
       const processed = imgUtils.canProcess(file) ? 
-                          await processRunner('process', file, EXIF_TAGS) :
-                          await processRunner('process');
+                          await processRunner('process', Comlink.proxy(readCallback), file, EXIF_TAGS) :
+                          await processRunner('process', Comlink.proxy(readCallback));
 
       processed.file = processed.file || file;
 
@@ -78,12 +79,12 @@ export default async (files, callback) => {
       // TESTING ONLY!!
       const end = Date.now();
       const secs = (end - start) / 1000;
-      console.log(`${file.name} took ${secs} sec`);
+      console.log(`${file.name}  processed size: ${formatFileSize(processed.file.size)} took ${secs} sec`);
 
 
 
       // Update processing tracker ui.
-      callback();
+      processedCallback();
 
       return processed;
     };
@@ -95,12 +96,6 @@ export default async (files, callback) => {
 
   return processedItems.map((item, index) => {
     const {exif, file, uid} = item;
-
-
-
-    console.log(file.name, ' processed size: ', formatFileSize(file.size));
-
-
 
     if (file.type.includes('image') || file.type.includes('video')) { 
       file._tempUrl = window.URL.createObjectURL(file);

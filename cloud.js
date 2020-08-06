@@ -10,13 +10,13 @@ const mkdirp     = require('mkdirp');
 const spawn      = require('child-process-promise').spawn;
 const imgUtils   = require('./shared/img-utils.js');
 
-
-const OPTIM_MAX_SIZE = 1024;
-const THUMB_MAX_SIZE = 256;
-const OPTIM_PREFIX   = 'optim_';
-const POSTER_PREFIX  = 'poster_';
-const SHARE_PREFIX   = 'share_';
-const THUMB_PREFIX   = 'thumb_';
+const OPTIM_SIZE_FACTOR = '60%';
+const OPTIM_TARGET_KB   = 100; // Ideal max jpeg file size.
+const THUMB_MAX_SIZE    = 256;
+const OPTIM_PREFIX      = 'optim_';
+const POSTER_PREFIX     = 'poster_';
+const SHARE_PREFIX      = 'share_';
+const THUMB_PREFIX      = 'thumb_';
 
 
 const getRandomFileName = ext => `${crypto.randomBytes(20).toString('hex')}${ext}`;
@@ -237,7 +237,7 @@ exports.poster = functions.
   storage.
   object().
   onFinalize(processMedia(
-    'poster',       // Type.
+    'poster',       // Type. Becomes db object key.
      POSTER_PREFIX, // Url filename prefix.
 
     // Image options. 'Original' version is processed on the client.
@@ -261,28 +261,52 @@ exports.optimize = functions.
   storage.
   object().
   onFinalize(processMedia(
-    'optimized',   // Type.
+    'optimized',   // Type. Becomes db object key.
      OPTIM_PREFIX, // Url filename prefix.
 
     // Image options.
     // see https://www.smashingmagazine.com/2015/06/efficient-image-resizing-with-imagemagick/
+
+    // Old options before on-client pre-processing.
+    // These baloon the file size of pre-processed PNG's.
+    // [
+    //   '-auto-orient', // Places image upright for viewing.
+    //   '-filter',     'Triangle',
+    //   '-define',     'filter:support=2',
+    //   '-resize',     `${OPTIM_MAX_SIZE}x${OPTIM_MAX_SIZE}>`, // Keeps original aspect ratio.
+    //   '-unsharp',    '0.25x0.25+8+0.065',
+    //   '-dither',     'None',
+    //   '-posterize',  '136',
+    //   '-quality',    '82',
+    //   '-define',     'jpeg:fancy-upsampling=off',
+    //   '-define',     'png:compression-filter=5',
+    //   '-define',     'png:compression-level=9',
+    //   '-define',     'png:compression-strategy=1',
+    //   '-define',     'png:exclude-chunk=all',
+    //   '-interlace',  'none',
+    //   '-colorspace', 'sRGB',
+    //   '-strip' // Removes all metadata.
+    // ],
+
+    // New options that work well with client pre-processing.
     [
-      '-auto-orient', // Places image upright for viewing.
-      '-filter',     'Triangle',
-      '-define',     'filter:support=2',
-      '-resize',     `${OPTIM_MAX_SIZE}x${OPTIM_MAX_SIZE}>`, // Keeps original aspect ratio.
-      '-unsharp',    '0.25x0.25+8+0.065',
-      '-dither',     'None',
-      '-posterize',  '136',
-      '-quality',    '82',
-      '-define',     'jpeg:fancy-upsampling=off',
-      '-define',     'png:compression-filter=5',
-      '-define',     'png:compression-level=9',
-      '-define',     'png:compression-strategy=1',
-      '-define',     'png:exclude-chunk=all',
-      '-interlace',  'none',
-      '-colorspace', 'sRGB',
-      '-strip' // Removes all metadata.
+      '-auto-orient',     // Places image upright for viewing.
+      '-filter',          'Triangle',
+      '-define',          'filter:support=2',
+      '-adaptive-resize',  OPTIM_SIZE_FACTOR,
+      '-quantize',        'transparent', // Important for PNG's to have a smaller file size than original.
+      '-colors',          '255',         // Important for PNG's to have a smaller file size than original.
+      '-unsharp',         '0.25x0.25+8+0.065',
+      '-quality',         '82',
+      '-define',          'jpeg:fancy-upsampling=off', // Increases file size without much quality improvement.
+      '-define',          `jpeg:extent=${OPTIM_TARGET_KB}kb`, // Ideal max file size.
+      '-define',          'png:compression-filter=5',         // Adaptive filtering.
+      '-define',          'png:compression-level=9',          // Use maximum available cpu/memory resources.
+      '-define',          'png:compression-strategy=1',       // Default strat.
+      '-define',          'png:exclude-chunk=all',
+      '-interlace',       'none',
+      '-colorspace',      'sRGB',
+      '-strip',           // Removes all metadata.
     ],
 
     // Video options.
@@ -306,13 +330,15 @@ exports.thumbnail = functions.
   storage.
   object().
   onFinalize(processMedia(
-    'thumbnail',   // Type.
+    'thumbnail',   // Type. Becomes db object key.
      THUMB_PREFIX, // Url filename prefix.
 
     // Image options.
     [ 
       '-auto-orient', // Places image upright for viewing.
       '-thumbnail', `${THUMB_MAX_SIZE}x${THUMB_MAX_SIZE}>`, // Keeps original aspect ratio.
+      '-quantize',  'transparent', // Important for keeping PNG file size small.
+      '-colors',    '255',         // Important for keeping PNG file size small.
       '-strip' // Removes all metadata.
     ],
 

@@ -26,9 +26,9 @@ const allProcessingRan = item => {
 
   const isVid = type.startsWith('video/');
 
-  const optimizeRan  = optimized || optimizedError;
-  const posterRan    = !isVid    || (poster  || posterError);
-  const thumbnailRan = thumbnail || thumbnailError;
+  const posterRan    = isVid ? Boolean(poster || posterError) : true;
+  const optimizeRan  = Boolean(optimized || optimizedError);
+  const thumbnailRan = Boolean(thumbnail || thumbnailError);
 
   return optimizeRan && posterRan && thumbnailRan;
 };
