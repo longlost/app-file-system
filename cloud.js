@@ -10,14 +10,14 @@ const mkdirp     = require('mkdirp');
 const spawn      = require('child-process-promise').spawn;
 const imgUtils   = require('./shared/img-utils.js');
 
-const OPTIM_SIZE_FACTOR = '60%';
-const OPTIM_TARGET_KB   = 100;  // Ideal max jpeg file size.
-const OPTIM_MAX_SIZE    = 1024; // Only used for video poster.
-const THUMB_MAX_SIZE    = 256;
-const OPTIM_PREFIX      = 'optim_';
-const POSTER_PREFIX     = 'poster_';
-const SHARE_PREFIX      = 'share_';
-const THUMB_PREFIX      = 'thumb_';
+const OPTIM_RESIZE_FACTOR = '50%'; // Reduce original image size by half.
+const OPTIM_TARGET_KB     = 100;   // Ideal max jpeg file size.
+const OPTIM_MAX_SIZE      = 1024;  // Only used for video poster.
+const THUMB_MAX_SIZE      = 256;
+const OPTIM_PREFIX        = 'optim_';
+const POSTER_PREFIX       = 'poster_';
+const SHARE_PREFIX        = 'share_';
+const THUMB_PREFIX        = 'thumb_';
 
 
 const getRandomFileName = ext => `${crypto.randomBytes(20).toString('hex')}${ext}`;
@@ -291,23 +291,23 @@ exports.optimize = functions.
 
     // New options that work well with client pre-processing.
     [
-      '-auto-orient',     // Places image upright for viewing.
-      '-filter',          'Triangle',
-      '-define',          'filter:support=2',
-      '-adaptive-resize',  OPTIM_SIZE_FACTOR,
-      '-quantize',        'transparent', // Important for PNG's to have a smaller file size than original.
-      '-colors',          '255',         // Important for PNG's to have a smaller file size than original.
-      '-unsharp',         '0.25x0.25+8+0.065',
-      '-quality',         '82',
-      '-define',          'jpeg:fancy-upsampling=off', // Increases file size without much quality improvement.
-      '-define',          `jpeg:extent=${OPTIM_TARGET_KB}kb`, // Ideal max file size.
-      '-define',          'png:compression-filter=5',         // Adaptive filtering.
-      '-define',          'png:compression-level=9',          // Use maximum available cpu/memory resources.
-      '-define',          'png:compression-strategy=1',       // Default strat.
-      '-define',          'png:exclude-chunk=all',
-      '-interlace',       'none',
-      '-colorspace',      'sRGB',
-      '-strip',           // Removes all metadata.
+      '-auto-orient', // Places image upright for viewing.
+      '-filter',      'Triangle',
+      '-define',      'filter:support=2',
+      '-resize',       OPTIM_RESIZE_FACTOR,
+      '-quantize',    'transparent', // Important for PNG's to have a smaller file size than original.
+      '-colors',      '255',         // Important for PNG's to have a smaller file size than original.
+      '-unsharp',     '0.25x0.25+8+0.065',
+      '-quality',     '82',
+      '-define',      'jpeg:fancy-upsampling=off', // Increases file size without much quality improvement.
+      '-define',      `jpeg:extent=${OPTIM_TARGET_KB}kb`, // Ideal max file size.
+      '-define',      'png:compression-filter=5',         // Adaptive filtering.
+      '-define',      'png:compression-level=9',          // Use maximum available cpu/memory resources.
+      '-define',      'png:compression-strategy=1',       // Default strat.
+      '-define',      'png:exclude-chunk=all',
+      '-interlace',   'none',
+      '-colorspace',  'sRGB',
+      '-strip',       // Removes all metadata.
     ],
 
     // Video options.
