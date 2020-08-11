@@ -676,10 +676,10 @@
   resolved "https://registry.yarnpkg.com/@longlost/webgl-filter/-/webgl-filter-1.0.0.tgz#200d28f8b50d93b02d491626c27feab853978f74"
   integrity sha512-OSJ3nfQvNx4r4dcdAwTKlpebLyI7ggwySGTGzYUj1KV9JQpayR70QY4jl2eYhSDXTX8wKNfK/Oez4+UF1NfvRQ==
 
-"@longlost/worker@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@longlost/worker/-/worker-5.0.1.tgz#d38cce28fefe0b4729cf94d88c897b2cea910d76"
-  integrity sha512-wvn8w/Ut3YqoElfhNvYZYCmI0fKMM6FHD3scp2jvbP48qgwojaQewKdAoAX33mSrsMAGJsHINkvQsNYqO2jKOw==
+"@longlost/worker@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@longlost/worker/-/worker-5.0.2.tgz#913b8e295fbc523aa2f534ac3ccd609a9dc45eb1"
+  integrity sha512-aQqgLhvOViq5mWBIDA/tH+p2faP5D5zJOJl9I/yAndGiJ+Kal/2WPCXpnJrRn9Aq9217b1KQ9tHmaWKwd6JO3A==
   dependencies:
     "@ungap/global-this" "^0.4.0"
     comlink "^4.3.0"

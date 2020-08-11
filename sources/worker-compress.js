@@ -14,6 +14,12 @@
   * also good for app owners as it eliminates the utilization 
   * of 1 of 3 image processing cloud functions.
   *
+  *
+  * See:
+  *
+  *   https://www.smashingmagazine.com/2015/06/efficient-image-resizing-with-imagemagick/
+  *   https://www.imagemagick.org/Usage/resize/
+  *
   **/
 
 import magick        from '@longlost/wasm-imagemagick/wasm-imagemagick.js';
@@ -159,7 +165,6 @@ const compressor = async (file, size) => {
   return compressed;
 };
 
-
 // The most basic processing regime.
 // Strip metadata and orient the 
 // image for upright display.
@@ -182,88 +187,6 @@ const minimizer = async file => {
 
   return minimized;
 };
-
-
-
-// // TESTING ONLY!!
-// //
-// // 482KB input
-// // 458KB no options passthrough
-// // 236KB ONLY -resize to 512px
-// // 654KB ONLY -adaptive-resize 60%
-// // 471KB all options EXCEPT a resize
-// // 183KB with all options AND -adaptive 60%
-// // 88KB  with all options AND -resize 512px
-// // 336KB with all options AND -resize 1024px
-// // 176KB with all options AND -resize 60%
-// const optimTest = async (file, size) => {
-//   const {name, type} = file;
-
-//   const OPTIM_MAX_SIZE = 1024;
-//   const OPTIM_TARGET_KB = 100;
-//   const THUMB_MAX_SIZE = 256;
-
-//   const commands  = [
-//     'mogrify', 
-
-
-
-//     '-auto-orient', // Places image upright for viewing.
-//     '-filter',          'Triangle',
-//     '-define',          'filter:support=2',
-
-
-
-//     // '-resize',     `${OPTIM_MAX_SIZE}x${OPTIM_MAX_SIZE}>`,
-
-//     '-resize', '50%',
-
-//     // '-adaptive-resize', '60%',     
-
-
-//     '-quantize',        'transparent',
-//     '-colors',          '255',
-//     '-unsharp',         '0.25x0.25+8+0.065',
-//     '-quality',         '82',
-//     '-define',          'jpeg:fancy-upsampling=off',
-//     '-define',          `jpeg:extent=${OPTIM_TARGET_KB}kb`,
-//     '-define',          'png:compression-filter=5',
-//     '-define',          'png:compression-level=9',
-//     '-define',          'png:compression-strategy=1',
-//     '-define',          'png:exclude-chunk=all',
-//     '-interlace',       'none',
-//     '-colorspace',      'sRGB',
-//     '-strip', // Removes all metadata.
-//     name
-//   ]; 
-
-
-//   // const commands  = [
-//   //   'mogrify', 
-//   //   '-auto-orient', // Places image upright for viewing.
-//   //   '-thumbnail', `${THUMB_MAX_SIZE}x${THUMB_MAX_SIZE}>`,
-//   //   '-quantize',  'transparent',
-//   //   '-colors',    '255',
-//   //   '-strip', // Removes all metadata.
-//   //   name
-//   // ]; 
-
-
-  
-
-
-
-//   const compressed = await magick({
-//     commands,
-//     fileCollection: [{file, inputName: name}], 
-//     outputName:     name,
-//     outputType:     type
-//   });
-
-//   return compressed;
-// };
-
-
 
 
 export default async (callback, file) => {
@@ -299,22 +222,6 @@ export default async (callback, file) => {
     if (file.size > LARGE_MIN_BYTES) {
       return compressor(file, 'huge');
     }
-
-
-
-
-    // TESTING ONLY!!!!
-    //
-    // if (file.size > LARGE_MIN_BYTES) {
-    //   const compressed = await compressor(file, 'huge');
-
-    //   console.log('first pass: ', compressed.size);
-
-    //   return optimTest(compressed, 'huge');
-    // }
-
-
-
 
     // Image does not need to be compressed, but still
     // strip metadata and orient upright for display.

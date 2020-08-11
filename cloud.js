@@ -267,29 +267,7 @@ exports.optimize = functions.
 
     // Image options.
     // see https://www.smashingmagazine.com/2015/06/efficient-image-resizing-with-imagemagick/
-
-    // Old options before on-client pre-processing.
-    // These baloon the file size of pre-processed PNG's.
-    // [
-    //   '-auto-orient', // Places image upright for viewing.
-    //   '-filter',     'Triangle',
-    //   '-define',     'filter:support=2',
-    //   '-resize',     `${OPTIM_MAX_SIZE}x${OPTIM_MAX_SIZE}>`, // Keeps original aspect ratio.
-    //   '-unsharp',    '0.25x0.25+8+0.065',
-    //   '-dither',     'None',
-    //   '-posterize',  '136',
-    //   '-quality',    '82',
-    //   '-define',     'jpeg:fancy-upsampling=off',
-    //   '-define',     'png:compression-filter=5',
-    //   '-define',     'png:compression-level=9',
-    //   '-define',     'png:compression-strategy=1',
-    //   '-define',     'png:exclude-chunk=all',
-    //   '-interlace',  'none',
-    //   '-colorspace', 'sRGB',
-    //   '-strip' // Removes all metadata.
-    // ],
-
-    // New options that work well with client pre-processing.
+    // see https://www.imagemagick.org/Usage/resize/
     [
       '-auto-orient', // Places image upright for viewing.
       '-filter',      'Triangle',

@@ -28,7 +28,19 @@ exports.canReadExif = file => {
 				 	 // These image types are supported by both 
 				 	 // the HTML <img/> tag and `exifreader` library.
     			 type.includes('jpeg') ||
-    			 type.includes('png')  || 
+
+    			 // TODO:
+    			 //
+    			 //		Switch 'exifreader' library for wasm-imagemagick
+    			 // 	'identify -verbose' command, which includes exif info
+
+
+    			 // PNG xmp info not available for exifreader, but may
+    			 // be available to ImageMagick 'identify -verbose'
+    			 
+    			 // type.includes('png')  ||
+
+
     			 type.includes('webp')
 				 );
 };
