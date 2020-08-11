@@ -92,7 +92,7 @@ export const FileInfoMixin = superClass => {
 	  	if (!exif[numsKey] || !exif[dirKey]) { return; }
 
 	  	const [degrees, minutes, seconds] = exif[numsKey];
-	  	const [direction] 								= exif[dirKey];
+	  	const direction 									= exif[dirKey];
 
 	  	return {degrees, minutes, seconds, direction};
 	  }
