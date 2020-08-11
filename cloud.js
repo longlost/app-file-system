@@ -203,11 +203,24 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
       Object.assign({sharePath: newPath}, download) :  // Used to get a shareable link.
       download;
 
-    // Add download url data to existing firestore doc.
-    await admin.firestore().collection(coll).doc(doc).set(
-      data, 
-      {merge: true}
-    );
+    // Consume update errors that occur when the document
+    // does not exist. This should only happen when the user
+    // executes an early delete, before cloud processing has
+    // completed.
+    try {
+
+      // Add download url data to existing firestore doc.
+      await admin.firestore().collection(coll).doc(doc).update(data);
+    }
+    catch (error) {
+
+      // User already deleted the item so ignore the 'not-found' error.
+      if (error.code && error.code === 5) { // Code 5 - 'not-found'.
+        return null;
+      }
+
+      throw error;
+    }
 
     return null;
   }
@@ -361,10 +374,7 @@ exports.createShareable = functions.https.onCall(async data => {
     const {coll, doc} = getCollAndDoc(fileDir);
 
     // Add data to existing firestore doc.
-    await admin.firestore().collection(coll).doc(doc).set(
-      {sharePath}, // Used to get a shareable link.
-      {merge: true}
-    );
+    await admin.firestore().collection(coll).doc(doc).update({sharePath});
 
     return null;
   }
