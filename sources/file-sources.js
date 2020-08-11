@@ -638,59 +638,66 @@ class AppFileSystemFileSources extends AppElement {
 
       // An error occured that stopped all files from being processed.
       if (this._read === 0) { return; } 
+
+      // Not done yet, user added more.
+      // Check read vals since not all file types get processed, 
+      // but they all get read.
+      if (this._read !== this._reading) { return; }
       
-      // Done processing for now.
-      if (this._read === this._reading) {
-        await wait(1200); // Give time for `paper-gauge` animation.
+      // Give time for `paper-gauge` final count animation to finish.
+      await wait(1200); 
 
-        // `file-sources` can work without its light dom stamped.
-        if (progressEl) {
-          await progressEl.hide();
+      // `file-sources` can work without its light dom stamped.
+      // Check read vals again, user may have added more.
+      if (progressEl && this._read === this._reading) {
+        await progressEl.hide();
+      }
+
+      await schedule();
+
+      // Check read vals again, user may have added more.
+      if (this._read !== this._reading) { return; }
+
+      // Reset queue tracker values.
+      this._read       = 0;       
+      this._reading    = 0;
+      this._processed  = 0;
+      this._processing = 0;
+
+      if (this._showingUploadActions) { return; }
+
+      this._showingUploadActions = true;
+
+      // Content will be 'display: none' when the 'app-header-overlay'
+      // is either not opened, or when any other overlays are open above it.
+      // So if the user is not currently viewing this element, then show
+      // the less intrusive fsToast instead.
+      const overlay = this.select('#overlay');
+
+      if (overlay && isDisplayed(overlay.content)) {
+        this.select('#actions').show();
+      }  
+      else {  
+        const toastStr = this._filesToUploadQty > 1 ? 'Files' : 'File';     
+
+        // Show interactive toast from `app-shell`.
+        const toastEvent = await fsToast(`${toastStr} ready to upload.`);
+        const {canceled} = toastEvent.detail;
+
+        this._showingUploadActions = false;      
+
+        // User clicked 'Go' button. 
+        // Skip the renaming process, start uploading.
+        if (!canceled) {
+          this.skipRenaming();
         }
 
-        await schedule();
-
-        // Reset queue tracker values.
-        this._read       = 0;       
-        this._reading    = 0;
-        this._processed  = 0;
-        this._processing = 0;
-
-        if (this._showingUploadActions) { return; }
-
-        this._showingUploadActions = true;
-
-        // Content will be 'display: none' when the 'app-header-overlay'
-        // is either not opened, or when any other overlays are open above it.
-        // So if the user is not currently viewing this element, then show
-        // the less intrusive fsToast instead.
-        const overlay = this.select('#overlay');
-
-        if (overlay && isDisplayed(overlay.content)) {
-          this.select('#actions').show();
-        }  
-        else {  
-          const toastStr = this._filesToUploadQty > 1 ? 'Files' : 'File';     
-
-          // Show interactive toast from `app-shell`.
-          const toastEvent = await fsToast(`${toastStr} ready to upload.`);
-          const {canceled} = toastEvent.detail;
-
-          this._showingUploadActions = false;      
-
-          // User clicked 'Go' button. 
-          // Skip the renaming process, start uploading.
-          if (!canceled) {
-            this.skipRenaming();
-          }
-
-          // User clicked 'Rename' button.
-          // Allow user to rename the files before uploading.
-          else { 
-            this.fire('open-save-as-modal', {files: this._filesToUpload});
-          } 
-        }
-      } 
+        // User clicked 'Rename' button.
+        // Allow user to rename the files before uploading.
+        else { 
+          this.fire('open-save-as-modal', {files: this._filesToUpload});
+        } 
+      }
     }
   }
 

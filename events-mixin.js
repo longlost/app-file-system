@@ -337,7 +337,7 @@ export const EventsMixin = superClass => {
 	    }	    
 	  }
 
-
+	  // From `file-items`
 	  __itemsChanged(event) {
 	  	hijackEvent(event);
 
@@ -347,11 +347,11 @@ export const EventsMixin = superClass => {
 	  		this._dbData = arrayToDbObj(items);
 	  	}
 	  	else {
-	  		this._dbData = undefined;
+	  		this._dbData = {};
 	  	}
 	  }
 
-	  // From <paginated-roll-items> and <paginated-file-items>
+	  // From `paginated-roll-items`
 	  __itemDataChanged(event) {
 	  	hijackEvent(event);
 
