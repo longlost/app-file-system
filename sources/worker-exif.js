@@ -1,29 +1,8 @@
 
-// Extract EXIF tags.
+// Extract EXIF data from images.
 
-// Add this to the project's package.json for a smaller, custom 'exifreader' build.
-
-// "exifreader": {
-//   "include": {
-//     "exif": [
-//       "DateTimeOriginal",   
-//       "GPSAltitude",        
-//       "GPSAltitudeRef",     
-//       "GPSDateStamp",       
-//       "GPSImgDirection",    
-//       "GPSImgDirectionRef", 
-//       "GPSLatitude",        
-//       "GPSLatitudeRef",     
-//       "GPSLongitude",       
-//       "GPSLongitudeRef",    
-//       "GPSTimeStamp",       
-//       "ImageDescription",   
-//       "Orientation"
-//     ]
-//   }
-// },
-
-import ExifReader from 'exifreader'; // https://github.com/mattiasw/ExifReader
+// https://github.com/mattiasw/ExifReader
+import ExifReader from '@longlost/afs-custom-exifreader/exif-reader.js'; 
 
 
 // Flatten single entry arrays.
