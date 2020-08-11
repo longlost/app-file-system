@@ -288,6 +288,13 @@
     lodash.camelcase "^4.3.0"
     protobufjs "^6.8.6"
 
+"@longlost/afs-custom-exifreader@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@longlost/afs-custom-exifreader/-/afs-custom-exifreader-1.0.0.tgz#39e6dcec3d5f0f7b6aee0710a6c9c174eec9406a"
+  integrity sha512-P3XcxziqpOBG/o03XLAn244GAsv5qefZX5yMUUwFs+Ftiv7/pPYj3LBPFP4F5RdHXIcQsTIiz/qe7h5zhTnpCw==
+  dependencies:
+    exifreader "^3.12.0"
+
 "@longlost/animation@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@longlost/animation/-/animation-2.0.0.tgz#13f6772eeaaf73bd14e53cdfdcf27ffae6fe8d26"

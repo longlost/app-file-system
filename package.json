@@ -18,6 +18,7 @@
   "homepage": "https://github.com/longlost/app-file-system#readme",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "@longlost/afs-custom-exifreader": "^1.0.0",
     "@longlost/app-carousel": "^3.0.0",
     "@longlost/app-element": "^2.0.0",
     "@longlost/app-icons": "^1.0.12",
@@ -59,7 +60,6 @@
     "child-process-promise": "^2.2.1",
     "comlink": "^4.3.0",
     "cropperjs": "^1.5.7",
-    "exifreader": "^3.12.0",
     "mime-types": "^2.1.27",
     "mkdirp": "^1.0.4",
     "multi-download": "^3.0.0",
