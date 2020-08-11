@@ -205,6 +205,8 @@ const getStorageDeletePaths = item => {
 
     return [storagePath];
   }
+
+  return [];
 };
 
 // Fail gracefully.
@@ -217,7 +219,7 @@ const getStorageDeletePaths = item => {
 // Also, this sometimes happens with slow connections.
 const safeStorageDelete = async pathStr => {
   try {
-    await services.deleteFile(p);
+    await services.deleteFile(pathStr);
   }
   catch (error) {
     if (error && error.message) {
@@ -368,7 +370,6 @@ class AppFileSystem extends EventsMixin(AppElement) {
     });
   }
 
-  // Adjust <file-items>'s <drag-drop-list> state correction.
   // Reset multiselect-btns.
   __deleteFromList() {    
 
@@ -398,19 +399,12 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
     await Promise.all(storagePromises);
 
-    // Adjust <file-items>'s <drag-drop-list> state correction.
     // Reset multiselect-btns.
-    uids.forEach(() => {
-      this.__deleteFromList();  
+    this.__deleteFromList(); 
+
+    uids.forEach(uid => {
+      delete this._dbData[uid];
     });
-
-    // Gather items left over from delete.
-    // These are used to collapse indexes.
-    const remaining = uids.reduce((accum, uid) => {
-      delete accum[uid];
-      return accum;
-    }, {...this._dbData});
-
 
     const itemsToDelete = uids.map(uid => ({coll: this.coll, doc: uid}));
 
@@ -419,7 +413,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
     // Take remaining items, 
     // sort ascending by index, 
     // issue new indexes.
-    const collapsed = Object.values(remaining).
+    const collapsed = Object.values(this._dbData).
                         sort((a, b) => a.index - b.index).
                         map((item, index) => {
                           if (item.index !== index) { // Only changes need to be saved.

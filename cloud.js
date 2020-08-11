@@ -85,7 +85,7 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
 
     // Exit if this is triggered on a file that is not processable.
     if (!isImg && !isVideo) {
-      console.log('This file is not a supported image or a video. Not optimizing.');
+      console.log('This file is not a supported image or a video. Not processing.');
       return null;
     }
 
@@ -121,12 +121,6 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
     const bucket               = admin.storage().bucket(object.bucket);
     const fileRef              = bucket.file(filePath);
 
-    // Allow the video to be downloaded publicly.
-    if (type === 'poster') {
-      await fileRef.makePublic();   
-    }
-
-
     if (isImg) {
 
       const tempLocalDir = path.dirname(tempLocalFile);
@@ -134,8 +128,22 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
       // Create the temp directory where the storage file will be downloaded.
       await mkdirp(tempLocalDir);
 
-      // Download file from bucket.
-      await fileRef.download({destination: tempLocalFile}); 
+      // Fail gracefully if user has already deleted the file from storage.
+      try {     
+
+        // Download file from bucket.
+        await fileRef.download({destination: tempLocalFile}); 
+      }
+      catch (error) {        
+
+        // Cannot download original file.
+        // Should be due to user performing an early delete.
+        if (error.code && error.code === 404) {
+          return null;
+        }
+
+        throw error;
+      }
 
       // Convert the image using ImageMagick.
       await spawn('convert', [
@@ -147,7 +155,28 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
     else {
       const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 
-      const fileUrl = await getUrl(bucket, filePath);
+      let fileUrl;
+
+      // Fail gracefully if user has already deleted the file from storage.
+      try {        
+
+        // Allow the video to be downloaded publicly.
+        if (type === 'poster') {
+          await fileRef.makePublic();   
+        }
+
+        fileUrl = await getUrl(bucket, filePath);
+      }
+      catch (error) {
+
+        // Cannot download original file.
+        // Should be due to user performing an early delete.
+        if (error.code && error.code === 404) {
+          return null;
+        }
+
+        throw error;
+      }
 
       // Extract a poster with ffmpeg.
       await spawn(ffmpegPath, [
