@@ -144,31 +144,25 @@ import {deepClone} from '@longlost/lambda/lambda.js';
 
 import {
   hijackEvent,
-  listen,  
   schedule,
-  unlisten,
-  wait,
   warn
 } from '@longlost/utils/utils.js';
 
-import {EventsMixin} from './events-mixin.js';
-
-import {
-  allProcessingRan,
-  isCloudProcessable
-} from './shared/utils.js';
-
-import path       from 'path';
-import services   from '@longlost/services/services.js';
-import htmlString from './app-file-system.html';
+import {EventsMixin}        from './events-mixin.js';
+import {isCloudProcessable} from './shared/utils.js';
+import path                 from 'path';
+import services             from '@longlost/services/services.js';
+import htmlString           from './app-file-system.html';
 import './sources/file-sources.js';
 // Modals, app-spinner imports in events-mixin.js.
 
 
-const getImageFileDeletePaths = (storagePath, type) => {
+const getImageStorageDeletePaths = (storagePath, type) => {
+
+  const isVid = type.startsWith('video/');
 
   // Replace video file ext with .jpeg for all poster images.
-  const base = type.includes('video') ? 
+  const base = isVid ? 
     `${path.basename(storagePath, path.extname(storagePath))}.jpeg` : 
     path.basename(storagePath);
 
@@ -178,78 +172,76 @@ const getImageFileDeletePaths = (storagePath, type) => {
   const posterPath = `${dir}/poster_${base}`;
   const thumbPath  = `${dir}/thumb_${base}`;
 
-  return [
+  const standardPaths = [
     storagePath,
     optimPath,
-    posterPath,
     thumbPath
   ];
+
+  if (isVid) {
+    return [...standardPaths, posterPath];
+  }
+
+  return standardPaths;
 };
 
 
-// Fails gracefully.
-const deleteStorageFiles = async item => {
+const getStorageDeletePaths = item => {
+  const {sharePath, path: storagePath, type} = item;
 
-  // Use try catches here to safely delete
-  // residual items that have been unsuccessfully
-  // or incompletely deleted previously.
-  // This sometimes happens with slow connections.
-  try {
+  if (storagePath) {
 
-    const {sharePath, path: storagePath, type} = item;
-
-    if (storagePath) {
-
-      // Test the file type.
-      // If its an image/video, 
-      // then delete the poster_, optim_ and 
-      // thumb_ files from storage as well.
-      if (isCloudProcessable(item)) {
-        const paths = getImageFileDeletePaths(storagePath, type);
-
-        // Fail gracefully for each file path.
-        // Not using Promise.allSettled here because it is 
-        // not supported by Samsung browser.
-        const promises = paths.map(p => {
-          const safeDel = async () => {
-            try {
-              await services.deleteFile(p);
-            }
-            catch (error) {
-              console.warn('Storage deleteFile failing gracefully: ', error.message);
-            }
-          };
-
-          return safeDel();
-        });
-
-        // 'await' here to catch errors and fail gracefully.
-        // Not using Promise.allSettled here because it is 
-        // not supported by Samsung browser.
-        await Promise.all(promises);
-        return;
-      }
-
-      if (sharePath) {
-        await Promise.all([
-          services.deleteFile(sharePath),
-          services.deleteFile(storagePath)
-        ]);
-        return;
-      }
-
-      await services.deleteFile(storagePath);
+    // Test the file type.
+    // If its an image or video, 
+    // then delete the poster_, optim_ and 
+    // thumb_ files from storage as well.
+    if (isCloudProcessable(item)) {
+      return getImageStorageDeletePaths(storagePath, type);
     }
+
+    if (sharePath) {
+      return [sharePath, storagePath];
+    }
+
+    return [storagePath];
+  }
+};
+
+// Fail gracefully.
+// Use try catch here to safely delete
+// residual items that have been unsuccessfully
+// or incompletely deleted previously.
+// This can occur when the user performs an early
+// delete (deleting the item before cloud 
+// processing has completed).
+// Also, this sometimes happens with slow connections.
+const safeStorageDelete = async pathStr => {
+  try {
+    await services.deleteFile(p);
   }
   catch (error) {
-    if (error.message && error.message.includes('does not exist')) {
-      console.warn(`Storage Object already deleted. 
-        Continuing with Firestore data delete.`);
-    } 
+    if (error && error.message) {
+      console.log('Storage delete failing gracefully: ', error.message);
+    }
     else {
-      throw error;
+      console.warn('Storage delete failing gracefully for unknown reason!');
     }
   }
+};
+
+// Fails gracefully.
+const deleteStorageFiles = item => {
+  const paths = getStorageDeletePaths(item);
+
+  // Fail gracefully for each file path.
+  // Not using Promise.allSettled here because it is 
+  // not supported by Samsung browser.
+  const promises = paths.map(safeStorageDelete);
+
+  // 'await' here to catch errors and fail gracefully.
+  // Not using Promise.allSettled here because it is 
+  // not supported by Samsung browser.
+  return Promise.all(promises);
 };
 
 
@@ -376,31 +368,6 @@ class AppFileSystem extends EventsMixin(AppElement) {
     });
   }
 
-  // Listen for data changes.
-  // Resolve the promise when the 
-  // file item has fully processed.
-  __waitForCloudProcessing(item) {
-    const {original, uid} = item;
-
-    // An image or video that has been uploaded but not yet processed.
-    if (isCloudProcessable(item) && original && !allProcessingRan(item)) {
-
-      return new Promise(resolve => {
-
-        listen(this, 'app-file-system-data-changed', (event, key) => { // Local event.
-          const match = event.detail.data[uid];
-
-          if (allProcessingRan(match)) { // Only present after processing.
-            unlisten(key);
-            resolve();
-          }
-        });
-      });    
-    }
-
-    return Promise.resolve();
-  }
-
   // Adjust <file-items>'s <drag-drop-list> state correction.
   // Reset multiselect-btns.
   __deleteFromList() {    
@@ -427,18 +394,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
     // Clone to survive deletion and fire with event.
     const items = uids.map(uid => this._dbData[uid]);
 
-    // Make sure these two operations run synchronously
-    // for each item, but allow parallel at the items level.
-    const deleteFromStorage = async item => {
-
-      // An image that has been uploaded but not yet optimized.
-      await this.__waitForCloudProcessing(item);
-
-      // Fails gracefully.
-      return deleteStorageFiles(item);
-    };
-
-    const storagePromises = items.map(item => deleteFromStorage(item));
+    const storagePromises = items.map(deleteStorageFiles);
 
     await Promise.all(storagePromises);
 
