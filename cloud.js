@@ -215,7 +215,17 @@ const processMedia = (type, prefix, imgOpts, vidOpts) => async object => {
     catch (error) {
 
       // User already deleted the item so ignore the 'not-found' error.
+      // Delete the newly uploaded file from storage.
       if (error.code && error.code === 5) { // Code 5 - 'not-found'.
+
+        // Fail gracefully in case the file has already been removed by client.
+        try {          
+          const newFileRef = bucket.file(newPath);
+
+          await newFileRef.delete();
+        }
+        catch (_) {} 
+
         return null;
       }
 
