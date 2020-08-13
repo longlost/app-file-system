@@ -105,7 +105,7 @@ class FileEditor extends EditorMixin(AppElement) {
     this.$.fab.classList.remove('fab-animation');
   }
 
-  // <app-header-overlay> 'on-reset' handler.
+  // <app-header-overlay> 'on-overlay-reset' handler.
   __resetFab() {
 
     // Remove the class in case the overlay 

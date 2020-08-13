@@ -283,6 +283,7 @@ class MultiselectBtns extends AppElement {
 
   delete() {
     this._selectedItems = {};
+    this._state         = 'none';
   }
 
 

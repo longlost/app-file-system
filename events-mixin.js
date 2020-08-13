@@ -197,14 +197,14 @@ export const EventsMixin = superClass => {
 	    	this.__saveImage.bind(this)
 	    );
 
-	    // <file-item>, <photo-carousel>
+	    // `file-items`, `photo-carousel`
 	    this._itemsChangedListenerKey = listen(
 	      this, 
 	      'items-changed', 
 	      this.__itemsChanged.bind(this)
 	    );
 
-	    // <paginated-roll-items>, <paginated-file-items>
+	    // `paginated-roll-items`
 	    this._itemDataChangedListenerKey = listen(
 	      this, 
 	      'item-data-changed', 
@@ -568,7 +568,6 @@ export const EventsMixin = superClass => {
 
 	    this._deleteItems = items;
 	    this.__pauseUploads(uids);
-
 
 	    await schedule();
 

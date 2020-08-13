@@ -406,6 +406,9 @@ class AppFileSystem extends EventsMixin(AppElement) {
       delete this._dbData[uid];
     });
 
+    // Update state.
+    this._dbData = {...this._dbData};
+
     const itemsToDelete = uids.map(uid => ({coll: this.coll, doc: uid}));
 
     await services.deleteItems(itemsToDelete);

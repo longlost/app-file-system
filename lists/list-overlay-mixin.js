@@ -32,8 +32,15 @@
   **/
 
 
-import {hijackEvent, listen, unlisten} from '@longlost/utils/utils.js';
+import {
+	hijackEvent, 
+	listen,
+	listenOnce,
+	unlisten
+} from '@longlost/utils/utils.js';
+
 import './multiselect-btns.js';
+import './afs-empty-list-placeholder.js';
 
 
 export const ListOverlayMixin = superClass => {
@@ -57,16 +64,40 @@ export const ListOverlayMixin = superClass => {
 	        value: false
 	      },
 
+	      _dataEmpty: {
+	      	type: Boolean,
+	      	value: true,
+	      	computed: '__computeDataEmpty(data)'
+	      },
+
 	      // Set to true to hide <select-checkbox>'s
 	      _hideCheckboxes: {
 	        type: Boolean,
 	        value: true
 	      },
 
+	      _hidePlaceholder: {
+	      	type: Boolean,
+	      	value: true,
+	      	computed: '__computeHidePlaceholder(_dataEmpty, _opened)'
+	      },
+
 	      // Only run db item subscriptions when overlay is open.
 	      _opened: Boolean
 
 	    };
+	  }
+
+
+	  static get observers() {
+	  	return [
+
+	  		// NOT using _opened as a dependency here.
+	  		// This only should be triggered by a change in '_dataEmpty',
+	  		// otherwise, this will close the overlay each time
+	  		// the user opens it, which is terrible.
+	  		'__dataEmptyOpenedChanged(_dataEmpty)'
+	  	];
 	  }
 
 
@@ -85,6 +116,42 @@ export const ListOverlayMixin = superClass => {
 	    super.disconnectedCallback();
 
 	    unlisten(this._itemsSelectedListenerKey);
+	  }
+
+
+	  __computeDataEmpty(data) {
+	  	if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+	  		return false;
+	  	}
+
+	  	return true;
+	  }
+
+
+	  __computeHidePlaceholder(empty, opened) {
+	  	return !Boolean(empty && opened);
+	  }
+
+	  // NOT using _opened as a dependency here.
+	  // This only should be triggered by a change in '_dataEmpty',
+	  // otherwise, this will close the overlay each time
+	  // the user opens it, which is terrible.
+	  async __dataEmptyOpenedChanged(empty) {
+	  	if (!empty || !this._opened) {
+	  		return;
+	  	}
+
+	  	// Automatically close the overlay 
+	  	// if all items have been deleted.
+	  	if (empty && this._opened) {
+
+	  		// Make sure the dom has been cleared first,
+	  		// otherwise, the items will be visible for
+	  		// a split second upon reopening.
+	  		await listenOnce(this, 'app-file-system-list-items-dom-changed');
+
+	  		this.$.overlay.reset();
+	  	}
 	  }
 
 
