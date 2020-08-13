@@ -262,6 +262,9 @@ class PaginatedRollItems extends AppElement {
 
   __domChanged() {
 
+    // Inform 'list-overlay-mixin' of change.
+    this.fire('app-file-system-list-items-dom-changed');
+
     // Already paginated.
     if (this._triggered || !Array.isArray(this._items)) { return; }
 
@@ -269,10 +272,7 @@ class PaginatedRollItems extends AppElement {
 
     if (elements.length !== this._items.length) { return; }
 
-    this._trigger = elements[elements.length - 1];      
-
-    // Inform <drag-drop-list> of new dom elements.
-    this.fire('drag-drop-update-items');
+    this._trigger = elements[elements.length - 1]; 
   }
 
 }

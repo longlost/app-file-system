@@ -55,7 +55,7 @@ class CameraRoll extends ListOverlayMixin(AppElement) {
   static get properties() {
     return {
 
-      _opened: Boolean,
+      _canShowScale: Boolean,
 
       // This default is overridden by localstorage 
       // after initial interaction from user.
@@ -65,6 +65,24 @@ class CameraRoll extends ListOverlayMixin(AppElement) {
       }
 
     };
+  }
+
+
+  static get observers() {
+    return [
+      '__scaleControlsChanged(_dataEmpty, _opened, _canShowScale)'
+    ];
+  }
+
+
+  __scaleControlsChanged(empty, opened, canShow) {
+
+    if (empty || !opened || !canShow) {
+      this.__hideScale();
+    } 
+    else {
+      this.__showScale();
+    }
   }
 
 
@@ -80,10 +98,10 @@ class CameraRoll extends ListOverlayMixin(AppElement) {
     if (!this.$.overlay.header) { return; }
 
     if (triggered) {
-      this.__hideScale();
+      this._canShowScale = false;
     }
     else {
-      this.__showScale();
+      this._canShowScale = true;
     }
   }
 
@@ -98,6 +116,11 @@ class CameraRoll extends ListOverlayMixin(AppElement) {
   }
 
 
+  __setupScale() {
+    this.$.scale.style['display'] = 'flex';
+  }
+
+
   __resetScale() {
     this.$.scale.style['display'] = 'none';
   }
@@ -109,7 +132,8 @@ class CameraRoll extends ListOverlayMixin(AppElement) {
 
   // Overlay 'on-reset' handler.
   __reset() {
-    this._opened = false;
+    this._canShowScale = false;
+    this._opened       = false;
     this.__resetScale();
   }
 
@@ -118,7 +142,7 @@ class CameraRoll extends ListOverlayMixin(AppElement) {
 
     await this.$.overlay.open();
 
-    this.$.scale.style['display'] = 'flex';
+    this.__setupScale();
     this._opened = true;
 
     await import(
@@ -127,8 +151,8 @@ class CameraRoll extends ListOverlayMixin(AppElement) {
     );
 
     await schedule();
-    
-    this.__showScale();
+
+    this._canShowScale = true;
   }
 
 }

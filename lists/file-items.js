@@ -384,13 +384,16 @@ class FileItems extends ItemsMixin(AppElement) {
 
   __domChanged() {
 
+    // Inform 'list-overlay-mixin' of change.
+    this.fire('app-file-system-list-items-dom-changed');
+
     if (this._items.length === 0) { return; }
 
     const elements = this.selectAll('.item');
 
     if (elements.length !== this._items.length) { return; }
 
-    this._trigger = elements[elements.length - 1]; 
+    this._trigger = elements[elements.length - 1];
   }
 
 }

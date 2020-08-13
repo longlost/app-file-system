@@ -86,7 +86,7 @@
                     title="My Photos"
                     on-header-overlay-threshold-triggered-changed="__overlayTriggered"
                     on-overlay-exiting="__hideScale"
-                    on-reset="__reset">
+                    on-overlay-reset="__reset">
 
 
   <div id="header-color-background"
@@ -100,6 +100,11 @@
                     on-all-changed="__allChanged"
                     on-hide-checkboxes-changed="__hideCheckboxesChanged">
   </multiselect-btns>
+
+
+  <afs-empty-list-placeholder hidden="[[_hidePlaceholder]]" 
+                              slot="content">
+  </afs-empty-list-placeholder>
 
 
   <roll-items id="items"

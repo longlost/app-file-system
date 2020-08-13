@@ -1,0 +1,31 @@
+
+<style>
+	
+	:host {
+		display: 				flex;
+		flex-direction: column;
+		align-items: 		center;
+		position: 			absolute;
+		top: 						160px;
+		left: 					0px;
+		width: 					100%;
+		opacity: 				0.3;
+		color: 					var(--app-primary-color);
+		z-index: 			 -1;
+	}
+
+	:host([hidden]) {
+		display: none;
+	}
+
+	afs-list-placeholder-icon {
+		height: 172px;
+		width: 	172px;
+	}
+
+</style>
+
+
+<afs-list-placeholder-icon playing="[[!hidden]]"></afs-list-placeholder-icon>
+
+<p>Nothin' to see here... yet.</p>
