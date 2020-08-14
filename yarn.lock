@@ -319,14 +319,6 @@
     "@polymer/polymer" "^3.4.0"
     scroll-behavior-polyfill "^2.0.13"
 
-"@longlost/app-element@^1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@longlost/app-element/-/app-element-1.0.6.tgz#b3492eea81d87b683821e130b304f49c5ada5bb0"
-  integrity sha512-E4oHLGGI5RCvKfrsGizzDEsxI5CeOslYUEKxMrw67tFw+GvrOZM13OV8FbUv41kokQDGhCqeE/QIbJ/vZq7/KQ==
-  dependencies:
-    "@longlost/element-mixin" "^1.0.9"
-    "@polymer/polymer" "^3.3.1"
-
 "@longlost/app-element@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@longlost/app-element/-/app-element-1.1.1.tgz#0a6907316ead915abea6df82f1c24f19cca965ab"
@@ -489,17 +481,6 @@
   dependencies:
     "@polymer/polymer" "^3.4.1"
 
-"@longlost/app-spinner@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@longlost/app-spinner/-/app-spinner-1.1.1.tgz#5bdcac193aaa30f21e8e9a3fd2c7a45626798ec0"
-  integrity sha512-tlceyf9jeysx2g6Zqx6eGETS3xi8jbwENgFZSlDl+lkmU6wIFASnfJNmctMbv5L8M26EBSbc7N4kA8cFQlBKmg==
-  dependencies:
-    "@longlost/app-element" "^1.0.6"
-    "@longlost/utils" "^1.3.5"
-    "@polymer/paper-button" "^3.0.1"
-    "@polymer/paper-spinner" "^3.0.2"
-    "@polymer/polymer" "^3.3.1"
-
 "@longlost/app-spinner@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@longlost/app-spinner/-/app-spinner-1.2.0.tgz#637cb97205a7a497f67a5b75b6dbce684ce02644"
@@ -553,13 +534,6 @@
     "@longlost/utils" "^1.3.5"
     "@polymer/polymer" "^3.3.1"
 
-"@longlost/element-mixin@^1.0.9":
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/@longlost/element-mixin/-/element-mixin-1.0.9.tgz#72b10e99569a6668a4ce0f7b5d698d8b0ea658de"
-  integrity sha512-pAJ2s1v5+rQfF3C3kOEFU++kHp4axnu/7MtFZwvmLK/xOhkHw+xsE9sZGtiMnpayE8EJt+bJUlkW+aRcrCsC3Q==
-  dependencies:
-    "@longlost/utils" "^1.3.5"
-
 "@longlost/icon-to-spinner@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@longlost/icon-to-spinner/-/icon-to-spinner-1.0.2.tgz#8bfb03f30c411b849d036d23cba20360b8750646"
@@ -581,15 +555,15 @@
   resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.2.0.tgz#f9ae362590222896d64272df580a281929081051"
   integrity sha512-hjwZPIcs1FPC1tHG6moCAX0bjtFHIRqVg/jBgsnLhGV0p3Dc0bGo1Z+lGYhEEKZnZFgxhxHY3+PBXw0brgPkPg==
 
-"@longlost/lazy-video@^2.3.4":
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.3.4.tgz#ed38469783c16d75fc4b61d0e5ea2423dfadfc34"
-  integrity sha512-KxjJyM844iwN2umPBWgl50A1+g4+eapDid46XSUo7dWBDfcLVpSWWoKEaOqkzF1CngTRmY3QZ5vkWJB/mGQjeA==
+"@longlost/lazy-video@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.4.0.tgz#d3d83dad03814ca4f3911e1814ce4f55e0c3c34d"
+  integrity sha512-sxZ+tNZNLY7ukopyPSLgwQPMnwbJN5K1CW6baXmVlmEkb48Hn/a4UWguEs2vz07R9R1K5YGRTkgiPxXbLOroXA==
   dependencies:
-    "@longlost/app-element" "^1.1.1"
-    "@longlost/app-spinner" "^1.1.1"
-    "@longlost/utils" "^1.4.0"
-    "@polymer/polymer" "^3.3.1"
+    "@longlost/app-element" "^2.0.0"
+    "@longlost/app-spinner" "^1.2.0"
+    "@longlost/utils" "^1.5.1"
+    "@polymer/polymer" "^3.4.1"
 
 "@longlost/paper-gauge@^1.0.1":
   version "1.0.1"

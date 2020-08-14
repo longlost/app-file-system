@@ -20,6 +20,7 @@ import {
 }                  from '@longlost/app-element/app-element.js';
 import {ItemMixin} from './item-mixin.js';
 import htmlString  from './roll-item.html';
+import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-ripple/paper-ripple.js';
 
 
@@ -36,7 +37,13 @@ class RollItem extends ItemMixin(AppElement) {
 
       _clicked: Boolean,
 
-      _rippled: Boolean
+      _rippled: Boolean,
+
+      _tabindex: {
+        type: Number,
+        value: 0,
+        computed: '__computeTabindex(hideCheckbox)'
+      }
 
     };
   }
@@ -46,6 +53,18 @@ class RollItem extends ItemMixin(AppElement) {
     return [
       '__clickedRippledChanged(_clicked, _rippled)'
     ];
+  }
+
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.$.a11y.target = this.$.wrapper;
+  }
+
+
+  __computeTabindex(hideCheckbox) {
+    return hideCheckbox ? 0 : -1;
   }
 
 
@@ -63,8 +82,20 @@ class RollItem extends ItemMixin(AppElement) {
   }
 
 
+  __a11yKeysPressed(event) {
+
+    const {key} = event.detail.keyboardEvent;
+
+    if (key === 'Enter') {
+      this.__thumbnailClicked();
+    }
+  }
+
+
   async __thumbnailClicked() {
     try {
+      if (this._tabindex === -1) { return; }
+
       await this.clicked();
 
       this._clicked = true;

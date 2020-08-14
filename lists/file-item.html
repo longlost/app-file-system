@@ -20,10 +20,10 @@
     max-width:        204px;
     border-radius:    3px;
     overflow:         hidden;
-    z-index:          1;
     background-color: var(--app-background-color);
   }
 
+  /* Overrides .wrapper class definitions. */
   .video {
     height:     unset;
     min-height: unset;
@@ -77,27 +77,24 @@
   }
 
   /*Reordering Testing Only*/
-  #test-div {
+  /*#test-div {
     position:         absolute;
     top:              8px;
     left:             8px;
     padding:          8px;
-    /*font-size:        20px;*/
     background-color: white;
     color:            rebeccapurple;
     z-index:          1;
-  }
+  }*/
 
 </style>
 
 
 <div class$="wrapper [[__computeSortableClass(item.type)]]">
 
-
   <file-thumbnail controls="[[_controls]]"
                   item="[[item]]">
   </file-thumbnail>
-
 
   <div id="label">
 
@@ -121,7 +118,8 @@
         </div>
       </div>
 
-      <paper-icon-button hidden="[[!hideCheckbox]]"
+      <paper-icon-button id="moreBtn"
+                         hidden="[[!hideCheckbox]]"
                          icon="app-icons:more-vert"
                          on-click="__moreBtnClicked">
       </paper-icon-button>

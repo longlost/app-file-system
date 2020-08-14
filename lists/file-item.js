@@ -67,11 +67,11 @@ class FileItem extends ItemMixin(FileInfoMixin(AppElement)) {
   }
 
   
-  async __moreBtnClicked(event) {
+  async __moreBtnClicked() {
     try {
-
       await this.clicked();
-
+      
+      this.$.moreBtn.blur();
       this.$.options.open();
     }
     catch (error) {

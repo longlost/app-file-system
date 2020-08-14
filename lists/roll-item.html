@@ -4,6 +4,7 @@
   :host {
     display:  block;
     position: relative;
+
     /*
       CSS padding hack. Padding percentages measure 
       from the elements width, so it is used here to 
@@ -25,6 +26,18 @@
     left:     0px;
   }
 
+  /* Keyboard-only focus styles hack. */
+  #wrapper:focus,
+  file-thumbnail:focus {
+    outline: none;
+  }
+
+  /* Keyboard-only focus styles hack. */
+  #wrapper:focus > file-thumbnail {
+    outline-offset: -2px;
+    outline:         var(--app-accent-color) solid 2px; 
+  }
+
   processing-icon {
     background-color: transparent;
     pointer-events:   none;
@@ -33,10 +46,19 @@
 </style>
 
 
-<div id="wrapper">
+<iron-a11y-keys id="a11y"
+                keys="enter"
+                on-keys-pressed="__a11yKeysPressed">
+</iron-a11y-keys>
+
+
+<div id="wrapper" 
+     tabindex$="[[_tabindex]]">
+
   <file-thumbnail aspect-ratio="fill"
                   controls="[[_controls]]"
                   item="[[item]]"
+                  tabindex="-1"
                   on-click="__thumbnailClicked">
   </file-thumbnail>
 
@@ -60,4 +82,5 @@
                    hidden="[[hideCheckbox]]"
                    on-value-changed="__selectCheckboxValChanged">
   </select-checkbox>
+
 </div>
