@@ -104,7 +104,11 @@ import {
   warn
 } from '@longlost/utils/utils.js';
 
-import {stripExt}    from '../shared/utils.js';
+import {
+  isCloudProcessable, 
+  stripExt
+} from '../shared/utils.js';
+
 import mime          from 'mime-types';
 import descriptions  from './mime-descriptions.json';
 import services      from '@longlost/services/services.js';
@@ -497,6 +501,7 @@ class AppFileSystemFileSources extends AppElement {
         uid,
       } = file;
 
+      // `data` becomes the database document item.
       return {
         coll: this.coll,
         doc: uid,
@@ -509,14 +514,17 @@ class AppFileSystemFileSources extends AppElement {
           doc: uid,
           exif,
           ext,
-          index: index + this._dbCount,
+          index:         index + this._dbCount,
+          isProcessable: isCloudProcessable(file),
           lastModified,
-          optimized: null,
-          original:  null,
-          poster:    null,
+          optimized:      null,
+          optimizedError: null,
+          original:       null,
+          poster:         null,
           size, 
           sizeStr,
-          thumbnail: null,
+          thumbnail:      null,
+          thumbnailError: null,
           timestamp,
           type,
           uid

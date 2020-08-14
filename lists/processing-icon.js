@@ -22,15 +22,18 @@
 import {
   AppElement, 
   html
-}                 from '@longlost/app-element/app-element.js';
+} from '@longlost/app-element/app-element.js';
+
 import {
   schedule,
   wait
-}                 from '@longlost/utils/utils.js';
+} from '@longlost/utils/utils.js';
+
 import {
   allProcessingRan,
   isCloudProcessable
-}                 from '../shared/utils.js';
+} from '../shared/utils.js';
+
 import htmlString from './processing-icon.html';
 import '@longlost/app-icons/app-icons.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -68,7 +71,7 @@ class ProcessingIcon extends AppElement {
 
   // animate from upload through final processing
   __computeAnimate(item) {
-    if (!item || 'type' in item === false) { return false; }
+    if (!item || !item.type) { return false; }
 
     // Animate during image processing as well.
     if (isCloudProcessable(item)) {

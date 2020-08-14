@@ -32,6 +32,7 @@
 
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {schedule}         from '@longlost/utils/utils.js';
 import htmlString         from './afs-empty-list-placeholder.html';
 import './afs-list-placeholder-icon.js';
 
@@ -47,9 +48,33 @@ class AFSEmptyListPlaceholder extends AppElement {
   static get properties() {
     return {
 
-      hidden: Boolean
+      hidden: {
+        type: Boolean,
+        value: true
+      }
 
     };
+  }
+
+
+  static get observers() {
+    return [
+      '__hiddenChanged(hidden)'
+    ];
+  }
+
+
+  async __hiddenChanged(hidden) {
+
+    if (hidden) {
+      this.style['display'] = 'none';
+      this.style['opacity'] = '0';
+    }
+    else {      
+      this.style['display'] = 'flex';
+      await schedule();
+      this.style['opacity'] = '0.3';
+    }
   }
 
 }
