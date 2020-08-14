@@ -172,6 +172,7 @@ class PaginatedCarousel extends AppElement {
       '__beforePageChanged(_beforePage)',
       '__beforeTriggeredChanged(_beforeTriggered)',
       '__beforeTriggerElementChanged(_beforeTrigger)',
+      '__disabledItemsChanged(disabled, _afterItems.*, _beforeItems.*)',
       '__openedStartChanged(opened, start)',
       '__openedChanged(opened)',
 
@@ -308,6 +309,18 @@ class PaginatedCarousel extends AppElement {
       else {
         console.error(error);
       }
+    }
+  }
+
+  // Check for last item deleted.
+  __disabledItemsChanged(disabled, afterPolymerObj, beforePolymerObj) {
+    if (disabled || !afterPolymerObj || !beforePolymerObj) { return; }
+
+    const {base: afterItems}  = afterPolymerObj;
+    const {base: beforeItems} = beforePolymerObj;
+
+    if (afterItems.length === 0 && beforeItems.length === 0) {
+      this.fire('last-item-deleted');
     }
   }
 

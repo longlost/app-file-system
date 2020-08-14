@@ -8,8 +8,15 @@
     position:        relative;  
     height:          100%;
     overflow:        hidden;
+    z-index:         0; /* Keyboard-only focus styles hack. */
+
     --thumbnail-background-color: var(--app-background-color);
     --thumbnail-border-radius:    inherit; /* Another Safari fix. */
+  }
+
+  /* Keyboard-only focus styles hack. */
+  :host > * {
+    z-index: -1;
   }
 
   .watermark {

@@ -37,11 +37,15 @@
 import {
   AppElement, 
   html
-}                 from '@longlost/app-element/app-element.js';
+} from '@longlost/app-element/app-element.js';
+
 import {
+  hijackEvent,
+  listenOnce,
   schedule, 
   wait
-}                 from '@longlost/utils/utils.js';
+} from '@longlost/utils/utils.js';
+
 import htmlString from './photo-carousel.html';
 import '@longlost/app-images/flip-image.js';
 import '@longlost/app-overlays/app-header-overlay.js';
@@ -91,8 +95,6 @@ class PhotoCarousel extends AppElement {
         value: true,
         computed: '__computeHideEditBtn(_currentItem.type)'
       },
-
-      _items: Array,
 
       _opened: Boolean,
 
@@ -144,16 +146,9 @@ class PhotoCarousel extends AppElement {
     return displayName ? displayName : ' ';
   }
 
-
-  __hideBackground() {
-    this.$.background.style['opacity'] = '0';
-    this.$.background.style['display'] = 'none';
-  }
-
   // Overlay reset event handler.
   __reset() { 
     this.stop();
-    this.__hideBackground();
   }
 
 
@@ -170,26 +165,49 @@ class PhotoCarousel extends AppElement {
   }
 
 
+  __hideBackground() {
+    this.$.background.style['opacity'] = '0';
+    this.$.background.style['display'] = 'none';
+  }
+
+
   async __carouselReady() {
 
-    await wait(100);
+    // Wait for current image/poster to load.
+    await Promise.race([
+      listenOnce(this, 'lazy-image-loaded-changed'),
+      listenOnce(this, 'lazy-video-poster-loaded-changed')
+    ]);
+
+    // Wait for current image/poster to fade-in.
+    await wait(350);
 
     this.$.carousel.style['opacity'] = '1';
+    this._carouselDisabled           = false;
 
-    // Wait for carousel lazy-image fade-in.
-    await wait(550);
-
-    this._carouselDisabled = false;
     this.$.flip.reset();
+    this.__hideBackground();
   }
 
 
   __centeredItemChanged(event) {
+    hijackEvent(event);
+
     this._centeredItem = event.detail.value;
   }
 
 
+  __lastItemDeleted(event) {
+    hijackEvent(event);
+
+    // Overlay 'reset' method causes rendering issues.
+    this.$.overlay.close();
+  }
+
+
   __photoSelected(event) {
+    hijackEvent(event);
+
     this.fire('open-photo-viewer', event.detail);
   }
 
