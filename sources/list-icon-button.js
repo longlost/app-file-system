@@ -8,7 +8,13 @@
   *  properites:
   *
   *  
-  *    data - Object of file data objects that drives animation timing.
+  *    coll - Firebase collection string.
+  *
+  *
+  *    count - Number of file or photo documents currently in the collection.
+  *
+  *
+  *    list - 'Files' or 'Photos', determines which icon to display in the button.
   * 
   *
   *
@@ -22,16 +28,15 @@
 import {
   AppElement, 
   html
-}                 from '@longlost/app-element/app-element.js';
+} from '@longlost/app-element/app-element.js';
+
 import {
   schedule,
   wait
-}                 from '@longlost/utils/utils.js';
-import {
-  allProcessingRan,
-  isCloudProcessable
-}                 from '../shared/utils.js';
+} from '@longlost/utils/utils.js';
+
 import htmlString from './list-icon-button.html';
+import services   from '@longlost/services/services.js';
 import '@longlost/app-icons/app-icons.js';
 import '@longlost/badged-icon-button/badged-icon-button.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -47,13 +52,13 @@ class ListIconButton extends AppElement {
 
 
   static get properties() {
-    return {      
+    return {
+
+      // Firestore collection.
+      coll: String,  
 
       // Total number of file items saved in db.
       count: Number,
-
-      // Object form of database items.
-      data: Object,
 
       // Determines which icon is shown for the <paper-icon-button>
       list: String,
@@ -61,15 +66,14 @@ class ListIconButton extends AppElement {
       // Uploading arrow animation state.
       _animateArrow: {
         type: Boolean,
-        value: false,
-        computed: '__computeAnimateArrow(_items)'
+        value: false
       },
 
       // Cloud processing gear animation state.
       _animateGear: {
         type: Boolean,
         value: false,
-        computed: '__computeAnimateGear(_items)'
+        computed: '__computeAnimateGear(_optimizing, _thumbail)'
       },
 
       _icon: {
@@ -77,16 +81,20 @@ class ListIconButton extends AppElement {
         computed: '__computeIcon(list)'
       },
 
-      // File object collection.
-      _items: {
-        type: Array,
-        computed: '__computeItems(data)'
-      },
+      _optimizing: Boolean,
+
+      _optimizingUnsubscribe: Object,
 
       _show: {
         type: Boolean,
         computed: '__computeShow(count)'
-      }
+      },
+
+      _thumbail: Boolean,
+
+      _thumnailUnsubscribe: Object,
+
+      _uploadingUnsubscribe: Object
 
     };
   }
@@ -94,9 +102,21 @@ class ListIconButton extends AppElement {
 
   static get observers() {
     return [
-      '__animateArrowChanged(_animateArrow)',
-      '__animateGearChanged(_animateGear)'
+      '__animateGearChanged(_animateGear)',
+      '__collShowChanged(coll, _show)'
     ];
+  }
+
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    this.__unsub();
+  }
+
+
+  __computeAnimateGear(optimizing, thumbnail) {
+    return optimizing || thumbnail;
   }
 
 
@@ -112,36 +132,134 @@ class ListIconButton extends AppElement {
   }
 
 
-  __computeItems(data) {
-    return data ? Object.values(data) : undefined;
-  }
-
-  // animate from upload through final processing
-  __computeAnimateArrow(items) {
-    if (!Array.isArray(items) || items.length === 0) { return false; }
-
-    const shouldAnimate = items.some(item => 
-                            item._tempUrl && !item.original);
-
-    return shouldAnimate;
-  }
-
-  // animate from upload through final processing
-  __computeAnimateGear(items) {
-    if (!Array.isArray(items) || items.length === 0) { return false; }
-
-    const shouldAnimate = items.some(item => 
-      isCloudProcessable(item) && 
-      item.original && 
-      !allProcessingRan(item)
-    );
-
-    return shouldAnimate;
-  }
-
-
   __computeShow(count) {
     return typeof count === 'number' && count > 0;
+  }
+
+
+  __startUploadingSub(coll) {
+
+    const callback = results => {
+
+      if (results.length > 0) {
+        this.__startArrowAnimation();
+      }
+      else {
+        this.__stopArrowAnimation();
+      }
+    };
+
+    const errorCallback = () => {
+      this.__stopArrowAnimation();
+    };
+
+    return services.querySubscribe({
+      callback,
+      coll,
+      errorCallback,
+      limit: 1,      
+      query: {
+        comparator: null, 
+        field:     'original', 
+        operator:  '=='
+      }
+    });
+  }
+
+
+  __startOptimizedSub(coll) {
+
+    const callback = results => {
+
+      if (results.length > 0) {
+        this._optimizing = true;
+      }
+      else {
+        this._optimizing = false;
+      }
+    };
+
+    const errorCallback = () => {
+      this._optimizing = false;
+    };
+
+    return services.querySubscribe({
+      callback,
+      coll,
+      errorCallback,
+      limit: 1,
+      query: [{
+        comparator: true, 
+        field:     'isProcessable', 
+        operator:  '=='
+      }, {
+        comparator: '\uf8ff', 
+        field:     'original', 
+        operator:  '<'
+      }, {
+        comparator: null, 
+        field:     'optimized', 
+        operator:  '=='
+      }, {
+        comparator: null, 
+        field:     'optimizedError', 
+        operator:  '=='
+      }]
+    });
+  }
+
+  __startThumbnailSub(coll) {
+
+    const callback = results => {
+
+      if (results.length > 0) {
+        this._thumbail = true;
+      }
+      else {
+        this._thumbail = false;
+      }
+    };
+
+    const errorCallback = () => {
+      this._thumbail = false;
+    };
+
+    return services.querySubscribe({
+      callback,
+      coll,
+      errorCallback,
+      limit: 1,
+      query: [{
+        comparator: true, 
+        field:     'isProcessable', 
+        operator:  '=='
+      }, {
+        comparator: '\uf8ff', 
+        field:     'original', 
+        operator:  '<'
+      }, {
+        comparator: null, 
+        field:     'thumbnail', 
+        operator:  '=='
+      }, {
+        comparator: null, 
+        field:     'thumbnailError', 
+        operator:  '=='
+      }]
+    });
+  }
+
+
+  async __collShowChanged(coll, show) {
+
+    if (!coll || !show) {
+      this.__unsub();
+      return;
+    }
+
+    this._uploadingUnsubscribe  = await this.__startUploadingSub(coll);
+    this._optimizingUnsubscribe = await this.__startOptimizedSub(coll);
+    this._thumnailUnsubscribe   = await this.__startThumbnailSub(coll);   
   }
 
 
@@ -154,16 +272,6 @@ class ListIconButton extends AppElement {
   __stopArrowAnimation() {
     this.$.arrow.classList.remove('start-arrow');
     this.$.count.classList.remove('start-count');
-  }
-
-
-  __animateArrowChanged(animate) {
-    if (animate) {
-      this.__startArrowAnimation();
-    }
-    else {
-      this.__stopArrowAnimation();
-    }
   }
 
 
@@ -187,6 +295,24 @@ class ListIconButton extends AppElement {
     }
     else {
       this.__stopGearAnimation();
+    }
+  }
+
+
+  __unsub() {
+    if (this._uploadingUnsubscribe) {
+      this._uploadingUnsubscribe();
+      this._uploadingUnsubscribe = undefined;
+    }
+
+    if (this._optimizingUnsubscribe) {
+      this._optimizingUnsubscribe();
+      this._optimizingUnsubscribe = undefined;
+    }
+
+    if (this._thumbnailUnsubscribe) {
+      this._thumbnailUnsubscribe();
+      this._thumbnailUnsubscribe = undefined;
     }
   }
 
