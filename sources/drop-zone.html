@@ -4,14 +4,18 @@
   :host {
     display:             block;
     height:              100%;
-    background-color:    var(--app-light-color);
-    --dz-active-bgcolor: var(--paper-indigo-50);
-    --dz-active-color:   var(--paper-indigo-600);
-    --dz-color:          var(--paper-grey-600);
-    --dz-disabled-color: var(--paper-grey-400);
+    border-radius:       inherit;
+    overflow:            hidden;
+    background-color:    var(--app-background-color);
+
+    --dz-active-bgcolor: var(--app-light-color);
+    --dz-active-color:   var(--app-accent-color);
+    --dz-color:          var(--secondary-text-color);
+    --dz-disabled-color: var(--disabled-text-color);
     --dz-feedback-color: var(--app-error-color, var(--paper-red-600));
-    --dz-hover-bgcolor:  var(--app-primary-color);
-    --dz-hover-color:    var(--paper-grey-600);
+    --dz-hover-bgcolor:  var(--app-body-color);
+    --dz-hover-color:    var(--secondary-text-color);
+    --dz-icon-color:     var(--app-primary-color);
     --dz-icon-size:      40px;
   }
 
@@ -52,6 +56,8 @@
   #icon {
     height: var(--dz-icon-size);
     width:  var(--dz-icon-size);
+    color:  var(--dz-icon-color);
+    margin-bottom: 4px;
   }
 
   #input {
@@ -68,13 +74,14 @@
 
 <label id="label" 
        for="input"
+       on-click="__labelClicked"
        on-dragenter="__handleDragEnterAndOver"
        on-dragleave="__handleDragLeave"
        on-dragover="__handleDragEnterAndOver"
        on-drop="__handleDrop">
 
   <iron-icon id="icon" 
-             icon="file-icons:file-upload">
+             icon="file-icons:move-to-inbox">
   </iron-icon>
 
   <input id="input" 

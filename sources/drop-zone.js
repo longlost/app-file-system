@@ -67,14 +67,24 @@ class DropZone extends AppElement {
 
   __computeInputAccept(accept) {
     if (!accept || accept === 'image') { return 'image/*'; }
+
     if (accept === 'audio') { return 'audio/*'; } 
     if (accept === 'video') { return 'video/*'; }
+
     return accept;
   }
 
   
   __computeInstructions(multiple) {
-    return multiple ? 'Drop files here or click' : 'Drop file here or click';
+    return multiple ? 'DROP FILES HERE' : 'DROP FILE HERE';
+  }
+
+  // Disable clicks on droparea. There is a button for that.
+  __labelClicked(event) {
+
+    if (event.detail === 1) {
+      hijackEvent(event);
+    }
   }
 
 
@@ -90,18 +100,21 @@ class DropZone extends AppElement {
 
   __handleDragEnterAndOver(event) {
     hijackEvent(event);
+
     this.__highlight();
   }
 
 
   __handleDragLeave(event) {
     hijackEvent(event);
+
     this.__unhighlight();
   }
 
 
   __handleDrop(event) {
     hijackEvent(event);
+
     this.__unhighlight();
     this.__handleFiles(event.dataTransfer.files);
   }
@@ -113,6 +126,7 @@ class DropZone extends AppElement {
 
 
   __handleFiles(files) {
+    
     // Make a true array.
     const array = [...files];
     this.fire('files-added', {files: array});
@@ -136,10 +150,10 @@ class DropZone extends AppElement {
   openChooser() {
 
     // HACK:
-    //    Second call to click makes this more reliable.
-    
+    //    The call to this.$.label.click makes this more reliable.
+
+    this.$.label.click();    
     this.$.input.click();
-    this.$.input.click(); 
   }
 
 }

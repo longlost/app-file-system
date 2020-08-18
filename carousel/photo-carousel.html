@@ -5,16 +5,16 @@
   #carousel {
     position: fixed;
     top:      0px;
-    right:    0px;
     left:     0px;
     height:   100vh;
+    width:    100vw;
     background-color: black;
   }
   
   #background {
     display:    none;
+    transition: opacity 0.2s linear 0.3s;
     opacity:    0;
-    transition: opacity 0.6s;
     z-index:    1;
   }
 
@@ -27,6 +27,7 @@
     margin-bottom: 128px;
 
     box-shadow: none;
+
     --overlay-background-color:                   transparent;    
     --overlay-toolbar-backdrop-filter:            blur(10px);
     --overlay-toolbar-background-parallax-height: 100%;
@@ -59,16 +60,15 @@
   }
 
   #carousel {
-
+    
     /*
       iOS Safari fix for initial positioning being 
       offset when using margin on carousel-items. 
       MUST use padding and match the padding with
       a wider carousel.
     */
-    left:  -4px;
-    right: -4px;
-
+    left:   -4px;
+    width:   calc(100vw + 8px);
     opacity: 0;
   }
 

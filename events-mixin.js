@@ -458,7 +458,10 @@ export const EventsMixin = superClass => {
 	    );
 	    await this.$.imageEditor.open();
 
-	    this.$.carousel.stop();
+	    // Only available when list === 'photos'.
+	    if (this.$.carousel && this.$.carousel.stop) {
+	    	this.$.carousel.stop();
+	    }	    
 	  }
 
 

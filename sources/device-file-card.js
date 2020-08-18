@@ -93,6 +93,8 @@ class DeviceFileCard extends AppElement {
       // one of 3 shorthand values: 'image', 'video' or 'audio'.
       accept: String,
 
+      darkMode: Boolean,
+
       // Set to true to hide the add and delete dropzones.
       hideDropzone: Boolean,
 
@@ -112,9 +114,8 @@ class DeviceFileCard extends AppElement {
     };
   }
 
-
-  __chooserBtnClicked() {
-    // Cannot use 'await this.clicked()' here because of Safari.
+  // Cannot use 'await this.clicked()' here because of Safari.
+  __chooserBtnClicked() {    
     this.$.dropzone.openChooser();
   }
 
