@@ -76,12 +76,10 @@ class WebFileCard extends AppElement {
       // Cancel method for ReadableStream instance from fetchFile function.
       _cancel: Object,
 
-      // Data-bind to #cancel-btn disabled prop.
-      _cancelBtnDisabled: {
-        type: Boolean,
-        value: true,
-        computed: '__computeCancelBtnDisabled(_cancel)'
-      },
+      // A promise reject function that allows user to early cancel
+      // before the fetchFile has initialized. 
+      // This occurs on slow/intermittent connections.
+      _canceler: Object,
 
 
 
@@ -141,11 +139,6 @@ class WebFileCard extends AppElement {
   }
 
 
-  __computeCancelBtnDisabled(cancel) {
-    return !Boolean(cancel);
-  }
-
-
   __computeValid(url, mimes) {
     if (!url || !mimes) { return false; }
 
@@ -166,7 +159,9 @@ class WebFileCard extends AppElement {
     if (shouldNotCancel) { return; }
 
     warn('This import is not an acceptable type of file.');
+
     await schedule();
+
     cancel('Failed to fetch');
   }
 
@@ -183,19 +178,41 @@ class WebFileCard extends AppElement {
 
 
   async __downloadBtnClicked() {
+
+    // So this particular instance can cancel any 
+    // late callbacks that come in after an early cancel.
+    let done = false;
+
     try {
       await this.clicked();
+
       this.$.progress.classList.add('show');
-      await wait(350);
+
+      await schedule();
+
+      const earlyCancel = new Promise((_, reject) => {
+        this._canceler = reject;
+      });
 
       const callback = status => {
         const {cancel, progress, type} = status;
+
+        // Already canceled early.
+        if (done) {
+          cancel();
+
+          return; 
+        }
+
         this._cancel   = cancel;
         this._progress = progress;
         this._type     = type;
       };
 
-      const file = await fetchFile(this._url, callback);
+      const [file] = await Promise.race([
+        fetchFile(this._url, callback),
+        earlyCancel
+      ]);
 
       this.fire('file-added', {file});
     }
@@ -205,7 +222,7 @@ class WebFileCard extends AppElement {
       } 
 
       if (error.message === 'Failed to fetch') {
-        message('Import cancelled.');
+        message('Import canceled.');
       } 
       else {
         console.error(error);
@@ -213,27 +230,29 @@ class WebFileCard extends AppElement {
       }
     }
     finally {
-      await schedule();
-      this.$.progress.classList.remove('show');
-      await wait(350);      
+      done = true;
+
       this._cancel   = undefined;
-      this._progress = 0;
+      this._canceler = undefined;
+      this._progress = 0;  
       this._type     = undefined;
+
+      await schedule();
+
+      this.$.progress.classList.remove('show');
     }
   }
 
+  // CANNOT use 'this.clicked()' here.
+  // Its built in debounce is interfered by 
+  // the progress elements entry animation.
+  __cancelBtnClicked() {
 
-  async __cancelBtnClicked() {
-    try {
-      await this.clicked();
-
-      if (this._cancel) {
-        this._cancel('Failed to fetch');
-      }
+    if (this._cancel) {
+      this._cancel('Failed to fetch');
     }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
+    else if (this._canceler) {
+      this._canceler({message: 'Failed to fetch'});
     }
   }
 

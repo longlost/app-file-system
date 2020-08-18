@@ -608,6 +608,59 @@ class PaginatedCarousel extends AppElement {
     this.fire('item-data-changed', {value: data});
   }
 
+  // Reset the scroller back to the current item, as it
+  // will have shifted to the beginning once new dom
+  // elements have been appended to the front.
+  __resetScrollerPosition(el, left) {
+
+    // Chrome and FireFox will respect the first attempt to reset
+    // the scroller's position, but Safari is very stubborn.
+    // The number of attempts to reset its position varies greatly,
+    // so take dynamic measurements and keep trying until it works.
+    const correctScrollPosition = (tries, doubleChecked) => {
+
+      // MUST be rAF and NOT `schedule` for Safari!
+      window.requestAnimationFrame(() => {
+
+        // Bail if the overlay has been closed.
+        if (!this.opened) { return; } 
+
+        // Give up trying if this consumes too much time and is not
+        // working effectively. Safari is unpredictable.
+        if (this.$.scroller.scrollLeft === left || tries === 10) {
+
+          if (doubleChecked) {
+            this._beforeTrigger = el;
+            this._beforeEl      = undefined;
+            this._centered      = false;
+
+            if (this._beforePage === 0) {
+              this._ready = true;
+            }
+          }
+          else {
+
+            // The scroller is where it should be.
+            // Double check that it is, measure it one more time.
+            correctScrollPosition(tries, true);
+          }
+        }
+        else {
+
+          // Attempt to move the scroller back to the correct position again.
+          this.$.scroller.scroll(left, 0);
+
+          // Increment 'tries' and measure again.
+          correctScrollPosition(tries + 1, false);
+        }        
+      });     
+    };
+
+    // This first try works on Chrome and Firefox, but not Safari.
+    this.$.scroller.scroll(left, 0);
+
+    correctScrollPosition(1, false);
+  }
 
   // Reposition to current photo when new items are added.
   // New before items shift the scrolled elements to the right,
@@ -616,14 +669,12 @@ class PaginatedCarousel extends AppElement {
   async __beforeElCenteredChanged(el, centered) {
     if (!el || !centered) { return; }
 
+    if (!this.opened) { return; }
+
     // Only correct for each lazy loaded page of before items once.
     if (this._lastShiftedPage >= this._beforePage) { return; }
 
     this._lastShiftedPage = this._beforePage;
-
-    // Prevent this from running more than once 
-    // at a time for a single lazy load process.
-    this._centered = false;
 
     // Calculate how many new elements/sections are being added
     // to determine how much to shift the scroller back so
@@ -639,33 +690,7 @@ class PaginatedCarousel extends AppElement {
                    width * sections : 
                    width * (sections + 1);
 
-    // MUST run 4 frames in a row for Safari, 
-    // one for each new dom element.
-    this.$.scroller.scroll(left, 0);
-
-    // MUST be rAF and NOT schedule for Safari!
-    window.requestAnimationFrame(() => {
-
-      this.$.scroller.scroll(left, 0);
-
-      window.requestAnimationFrame(() => {
-
-        this.$.scroller.scroll(left, 0);
-
-        window.requestAnimationFrame(async () => {
-
-          this.$.scroller.scroll(left, 0);
-
-          this._beforeTrigger = el;
-          this._beforeEl      = undefined;
-
-          if (this._beforePage === 0) {
-            this._ready = true;
-          }
-
-        });
-      });
-    });     
+    this.__resetScrollerPosition(el, left);
   }
 
 
@@ -713,7 +738,7 @@ class PaginatedCarousel extends AppElement {
 
     this._afterTrigger = elements.length > 1 ? elements[elements.length - 1] : elements[0]; 
   }
-
+  
 
   __beforeDomChanged() {
 

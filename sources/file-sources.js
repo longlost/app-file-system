@@ -576,10 +576,10 @@ class AppFileSystemFileSources extends AppElement {
     let processed = 0;
 
     const newToRead = files.length;
-    const reading   = this._reading + newToRead;
+    this._reading   = this._reading + newToRead;
 
     const newToProcess = files.filter(imgUtils.canProcess).length;
-    const processing   = this._processing + newToProcess;
+    this._processing   = this._processing + newToProcess;
 
     const cardEl     = this.select('#deviceFileCard');
     const progressEl = this.select('#progress');
@@ -591,9 +591,6 @@ class AppFileSystemFileSources extends AppElement {
       }
 
       // Show queue tracker ui.
-      this._reading    = reading;
-      this._processing = processing;
-
       // `file-sources` can work without its light dom stamped.
       if (progressEl) {
         progressEl.show();
@@ -630,8 +627,8 @@ class AppFileSystemFileSources extends AppElement {
       console.error(error);
 
       // Roll-back queues by number of failed items. 
-      this._reading    = reading    - newToRead    - read;
-      this._processing = processing - newToProcess - processed;
+      this._reading    = this._reading    - newToRead    - read;
+      this._processing = this._processing - newToProcess - processed;
 
       // An error occured that stopped all files from being processed.
       // Checking progressEl since `file-sources` can work without 
@@ -648,23 +645,21 @@ class AppFileSystemFileSources extends AppElement {
       if (this._read === 0) { return; } 
 
       // Not done yet, user added more.
-      // Check read vals since not all file types get processed, 
-      // but they all get read.
-      if (this._read !== this._reading) { return; }
+      if (this._read !== this._reading || this._processed !== this._processing) { return; }
       
       // Give time for `paper-gauge` final count animation to finish.
       await wait(1200); 
 
       // `file-sources` can work without its light dom stamped.
       // Check read vals again, user may have added more.
-      if (progressEl && this._read === this._reading) {
+      if (progressEl && this._read === this._reading && this._processed === this._processing) {
         await progressEl.hide();
       }
 
       await schedule();
 
       // Check read vals again, user may have added more.
-      if (this._read !== this._reading) { return; }
+      if (this._read !== this._reading || this._processed !== this._processing) { return; }
 
       // Reset queue tracker values.
       this._read       = 0;       

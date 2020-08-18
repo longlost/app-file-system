@@ -332,9 +332,20 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   static get observers() {
     return [
+      '__darkModeChanged(darkMode)',
       '__dbDataChanged(_dbData)', // _dbData prop def in events-mixin.js.
       '__listChanged(list)'
     ];
+  }
+
+
+  __darkModeChanged(dark) {
+    if (dark) {
+      this.updateStyles({'--gradient-end': 'var(--dark-mode-gradient)'});
+    }
+    else {
+      this.updateStyles({'--gradient-end': 'var(--light-mode-gradient)'});
+    }
   }
 
 

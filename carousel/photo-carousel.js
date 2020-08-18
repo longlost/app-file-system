@@ -165,8 +165,13 @@ class PhotoCarousel extends AppElement {
   }
 
 
-  __hideBackground() {
+  async __hideBackground() {
     this.$.background.style['opacity'] = '0';
+
+    // Safari fix. Without waiting before seting display,
+    // the next iteration will not respect the transition.
+    await schedule();
+
     this.$.background.style['display'] = 'none';
   }
 
@@ -226,7 +231,7 @@ class PhotoCarousel extends AppElement {
     this._measurements = measurements;
 
     // Avoid infinite loops by setting this once per open.
-    this._start = this.item; 
+    this._start = this.item;
 
     await this.__showBackground();
 

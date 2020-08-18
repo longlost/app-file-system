@@ -1,6 +1,20 @@
 
 <style>
 
+  :host {
+
+    --light-mode-gradient: var(--app-light-color) 100%;
+    --dark-mode-gradient:  var(--app-dark-color)  180%;
+
+    --gradient-end: var(--light-mode-gradient);
+
+    --afs-gradient-background: radial-gradient(
+      ellipse at top left, 
+      var(--app-background-color) 40%, 
+      var(--gradient-end)
+    );
+  }
+
   #spinner {
     z-index: 2;
   }

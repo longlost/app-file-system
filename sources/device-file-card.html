@@ -10,12 +10,12 @@
     flex-direction:   column;
     width:            100%;
     padding:          16px;
-    background-color: var(--app-background-color);
+    background:       var(--afs-gradient-background);
   }  
 
   #choose-btn {
     width:            100%;
-    margin:           0px 0px 32px 0px;
+    margin:           32px 0px 0px 0px;
     background-color: var(--app-primary-color);
     color:            var(--app-primary-color-text);
   }
@@ -28,15 +28,6 @@
 
 
 <div class="shared-card">
-  <paper-button id="choose-btn"
-                class="shared-paper-button-with-icon"
-                raised
-                on-click="__chooserBtnClicked">
-    <iron-icon class="shared-iron-icon-inside-paper-button" 
-               icon="file-icons:folder-open">
-    </iron-icon>
-    browse device
-  </paper-button> 
 
   <drop-zone id="dropzone"
              accept="[[accept]]"
@@ -47,4 +38,15 @@
              unit="[[unit]]"
              on-files-added="__dzFilesAdded">
   </drop-zone>
+
+  <paper-button id="choose-btn"
+                class="shared-paper-button-with-icon"
+                raised
+                on-click="__chooserBtnClicked">
+    <iron-icon class="shared-iron-icon-inside-paper-button" 
+               icon="file-icons:folder-open">
+    </iron-icon>
+    BROWSE DEVICE
+  </paper-button>
+  
 </div>

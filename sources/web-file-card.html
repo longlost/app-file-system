@@ -6,10 +6,10 @@
   }
 
   .shared-card {
-    padding:          16px;
-    position:         relative;
-    overflow:         hidden;
-    background-color: var(--app-background-color);
+    padding:    16px;
+    position:   relative;
+    overflow:   hidden;
+    background: var(--afs-gradient-background);
   }
 
   #link-icon {
@@ -61,10 +61,6 @@
     color:      var(--app-primary-color);
   }
 
-  #cancel-btn[disabled] {
-    color: var(--disabled-text-color);
-  }
-
 </style>
 
 
@@ -95,7 +91,7 @@
     <iron-icon class="shared-iron-icon-inside-paper-button" 
                icon="app-icons:public">
     </iron-icon>
-    <span>import from web</span>
+    <span>IMPORT FROM WEB</span>
   </paper-button>
 
   <div id="progress" 
@@ -103,9 +99,8 @@
     <div>Importing from web.</div>
     <paper-progress value="[[_progress]]"></paper-progress>
     <paper-button id="cancel-btn"
-                  disabled="[[_cancelBtnDisabled]]"
                   on-click="__cancelBtnClicked">
-      cancel
+      CANCEL
     </paper-button>
   </div>
 
