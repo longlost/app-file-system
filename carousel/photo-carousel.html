@@ -3,7 +3,6 @@
 
   #background,
   #carousel {
-    position: fixed;
     top:      0px;
     left:     0px;
     height:   100vh;
@@ -12,6 +11,7 @@
   }
   
   #background {
+    position:   fixed;
     display:    none;
     transition: opacity 0.2s linear 0.3s;
     opacity:    0;
@@ -19,13 +19,6 @@
   }
 
   #overlay {
-
-    /*
-      Addresses the carousel jumping up suddenly on exit.
-    */
-    padding:       0px;
-    margin-bottom: 128px;
-
     box-shadow: none;
 
     --overlay-background-color:                   transparent;    
@@ -60,6 +53,7 @@
   }
 
   #carousel {
+    position: absolute;
     
     /*
       iOS Safari fix for initial positioning being 
