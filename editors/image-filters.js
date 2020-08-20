@@ -108,10 +108,10 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   }
 
 
-  __computeFilters(filter, loaded, preview) {
-    if (!filter || !loaded || !preview) { return; }
+  __computeFilters(filter, loaded, source) {
+    if (!filter || !loaded || !source) { return; }
 
-    const creator = createFilter(filter, preview);
+    const creator = createFilter(filter, source);
 
     return [
       {src: creator('brownie'),             name: 'brownie',             label: 'Brownie'},
@@ -136,13 +136,13 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   __computeThumbnail(item) {
     if (!item) { return '#'; }
 
-    const {_tempUrl, optimized, thumbnail} = item;
+    const {optimized, thumbnail} = item;
 
     if (thumbnail) {
       return thumbnail;
     }
 
-    return optimized ? optimized : _tempUrl;
+    return optimized || '#';
   }
 
   // Wait for '_previewSrc' timing but use the 
@@ -162,7 +162,11 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
     // Must set crossOrigin to allow WebGl to load the image.
     img.crossOrigin = 'anonymous';
-    img.src         = this._thumbnail;
+
+    // Start with the thumbnail for best performance,
+    // but MUST use the newly edited version so edits
+    // are reflected in the choices.
+    img.src = this._newSrc || this._thumbnail;
   }
 
 

@@ -1,4 +1,10 @@
 
+/**
+	*		Common events from nested child elements are handled here.
+	*
+	*
+	*
+	**/
 
 import {
   hijackEvent,
@@ -7,14 +13,18 @@ import {
   unlisten,
   wait,
   warn
-}               		 from '@longlost/utils/utils.js';
-import services 		 from '@longlost/services/services.js';
+} from '@longlost/utils/utils.js';
+
+import services from '@longlost/services/services.js';
+
 // Will NOT download multiple files in Chrome when dev tools is open!!
 import multiDownload from 'multi-download';
+
 // Will NOT print pdf's in Chrome when dev tools is open!!
-import printJS  		 from 'print-js'; 
+import printJS from 'print-js'; 
 import '@longlost/app-spinner/app-spinner.js';
 import './modals/app-file-system-delete-modal.js';
+
 // Not lazy loaded so that afs may work in the background.
 import './modals/app-file-system-save-as-modal.js';
 
@@ -30,9 +40,18 @@ const arrayToDbObj = array => {
 
 const getPrintable = item => {
 
-	const {original, poster, _tempUrl} = item;
+	const {_tempUrl, original, optimized, poster, thumbnail, type} = item;
 
-	if (poster) { return poster; }
+	// Must handle video differently since the printables
+	// are all handled in the cloud and may fail.
+	// Cannot use '_tempUrl' or 'original' for video
+	// as those point to the video file, not the still posters.
+	if (type.includes('video')) {
+
+		if (poster) { return poster; }
+
+		return optimized ? optimized : thumbnail;
+	}
 
 	if (original) { return original; }
 
@@ -41,7 +60,7 @@ const getPrintable = item => {
 
 
 const getPrintType = type => {
-  if (type.includes('image')) {
+  if (type.includes('image') || type.includes('video')) {
     return 'image';
   }
   if (type.includes('pdf')) {
@@ -84,8 +103,10 @@ const printItem = async item => {
 
 // Will NOT print pdf's in Chrome when dev tools is open!!
 const printImages = items => {
-  const someAreNotImages = items.some(item => !
-    item.type.includes('image'));
+
+  const someAreNotImages = items.some(item => 
+  													 (!item.type.includes('image') || 
+  													 	!item.type.includes('video')));
 
   if (someAreNotImages) {
     throw new Error('Can only print multiple image files.');

@@ -120,7 +120,7 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
       _transformFileType: {
         type: Boolean,
         value: false,
-        computed: '__computeTransformFileType(item.ext, ext)'
+        computed: '__computeTransformFileType(item.type, item.ext, ext)'
       },
 
       _type: {
@@ -146,8 +146,10 @@ class ImageCropper extends ImageEditorItemMixin(AppElement) {
   // Unfortunately this can dramatically increase the
   // size of the file by ~ 5x, so limit the dimensions
   // of the output to compensate.
-  __computeTransformFileType(originalExt, newExt) {
-    if (!originalExt || !newExt) { return false; }
+  __computeTransformFileType(type, ext, newExt) {
+    if (!type || !ext || !newExt) { return false; }
+
+    const originalExt = type.includes('video') ? '.jpeg' : ext;
 
     return originalExt !== newExt;
   }

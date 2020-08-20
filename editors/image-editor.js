@@ -85,7 +85,7 @@ class ImageEditor extends EditorMixin(AppElement) {
 
       _ext: {
         type: String,
-        computed: '__computeExt(item.ext, _cropIsRound)'
+        computed: '__computeExt(item.type, item.ext, _cropIsRound)'
       },
 
       _hideToolbarBtns: {
@@ -142,8 +142,14 @@ class ImageEditor extends EditorMixin(AppElement) {
   // This should be avoided for perfromance reasons
   // as well as errors that occur when uploading
   // and cloud processing images larger than 10MB.
-  __computeExt(ext, cropIsRound) {
-    return cropIsRound ? '.png' : ext;
+  __computeExt(type, ext, cropIsRound) {
+    if (!type || !ext) { return; }
+
+    // If this is a video, use the poster's extension, 
+    // not the video file's. All video posters are .jpeg.
+    const extension = type.includes('video') ? '.jpeg' : ext;
+
+    return cropIsRound ? '.png' : extension;
   }
 
 
@@ -163,9 +169,13 @@ class ImageEditor extends EditorMixin(AppElement) {
 
     if (!item) { return '#'; }
 
-    const {original, poster, _tempUrl} = item;
+    const {_tempUrl, original, poster, type} = item;
 
     if (poster) { return poster; }
+
+    // Cannot use 'original' or '_tempUrl' for videos as that 
+    // is the actual raw video, not an editable still poster.
+    if (type.includes('video')) { return '#'; }
 
     if (original) { return original; }
 
