@@ -68,11 +68,14 @@ export const ImageEditorItemMixin = superClass => {
 
 	    if (!item) { return '#'; }
 
-	    const {optimized, poster, original, _tempUrl} = item;
+	    const {_tempUrl, optimized, poster, original, type} = item;
 
 	    if (optimized) { return optimized; }
 
 	    if (poster)  { return poster; }
+
+	    // Cannot use the actual video file here, so bail.
+	    if (type.includes('video')) { return '#'; }
 
 	    if (original)  { return original; }
 

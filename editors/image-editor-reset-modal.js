@@ -36,11 +36,8 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-}                 from '@longlost/app-element/app-element.js';
-import htmlString from './image-editor-reset-modal.html';
+import {AppElement, html} from '@longlost/app-element/app-element.js';
+import htmlString         from './image-editor-reset-modal.html';
 import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -56,18 +53,10 @@ class ResetModal extends AppElement {
   }
 
 
-  static get properties() {
-    return {
-
-
-
-    };
-  }
-
-
   async __dismissBtnClicked() {
     try {
       await this.clicked();
+
       this.$.modal.close();
     }
     catch (error) {

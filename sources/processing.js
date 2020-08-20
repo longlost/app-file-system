@@ -56,6 +56,9 @@ export default async (files, readCallback, processedCallback) => {
     processRunner = await runner(Worker);
   }
 
+  const proxiedReadCb      = Comlink.proxy(readCallback);
+  const proxiedProcessedCb = Comlink.proxy(processedCallback);
+  const baseArgs           = ['process', proxiedReadCb, proxiedProcessedCb];
 
   const processPromises = files.map(file => {
     const process = async () => {
@@ -67,10 +70,11 @@ export default async (files, readCallback, processedCallback) => {
 
 
 
+
       // No need to transfer file accross contexts if it won't be processed.
       const processed = imgUtils.canProcess(file) ? 
-                          await processRunner('process', Comlink.proxy(readCallback), file, EXIF_TAGS) :
-                          await processRunner('process', Comlink.proxy(readCallback));
+                          await processRunner(...baseArgs, file, EXIF_TAGS) :
+                          await processRunner(...baseArgs);
 
       processed.file = processed.file || file;
 
@@ -80,11 +84,7 @@ export default async (files, readCallback, processedCallback) => {
       const end = Date.now();
       const secs = (end - start) / 1000;
       console.log(`${file.name}  processed size: ${formatFileSize(processed.file.size)} took ${secs} sec`);
-
-
-
-      // Update processing tracker ui.
-      processedCallback();
+      
 
       return processed;
     };

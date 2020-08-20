@@ -14,12 +14,13 @@
   *
   **/
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {htmlLiteral}      from '@polymer/polymer/lib/utils/html-tag.js';
-import {blobToFile}       from '@longlost/lambda/lambda.js';
-import {schedule, warn}   from '@longlost/utils/utils.js';
-import path               from 'path';
-import mime               from 'mime-types';
+import {AppElement, html}            from '@longlost/app-element/app-element.js';
+import {htmlLiteral}                 from '@polymer/polymer/lib/utils/html-tag.js';
+import {blobToFile}                  from '@longlost/lambda/lambda.js';
+import {hijackEvent, schedule, warn} from '@longlost/utils/utils.js';
+import path                          from 'path';
+import mime                          from 'mime-types';
+
 // Disable webpack config 'style-loader' so 
 // these styles are not put in the document head.
 import styles  from '!css-loader!cropperjs/dist/cropper.css';
@@ -122,7 +123,8 @@ class CropWrapper extends AppElement {
       </style>
 
 
-      <div id="wrapper">
+      <div id="wrapper" 
+           on-contextmenu="__preventContextMenuOnCropper">
 
         <!-- 
           MUST set crossorigin directly here for cropperjs to 
@@ -245,6 +247,14 @@ class CropWrapper extends AppElement {
     else {
       this.updateStyles({'--crop-area-border-radius': '0px'});
     }
+  }
+
+  // Prevent the menu for long clicks.
+  // Long clicks and drags are common when
+  // using the cropper and the context menu
+  // disrupts the workflow.
+  __preventContextMenuOnCropper(event) {
+    hijackEvent(event);
   }
 
 

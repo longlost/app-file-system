@@ -17,7 +17,7 @@ import * as imgUtils from '../shared/img-utils.js';
 import {nanoid}			 from 'nanoid/non-secure'; // https://github.com/ai/nanoid
 
 
-const process = async (callback, file, exifTags) => {	
+const process = async (readCb, processedCb, file, exifTags) => {	
 	const uid = nanoid(); // ie. 'Uakgb_J5m9g-0JDMbcJqLJ'.
 
 	// The file may not be passed since there is
@@ -27,7 +27,7 @@ const process = async (callback, file, exifTags) => {
 	if (!file || !imgUtils.canProcess(file)) {
 	 
 		// Update file read ui.
-		callback();
+		readCb();
 
 		return {uid}; 
 	}
@@ -43,13 +43,16 @@ const process = async (callback, file, exifTags) => {
 
 	if (imgUtils.canProcess(file)) {
 		const {default: compress} = await import('./worker-compress.js');
-		const compressed 					= await compress(callback, file);
+		const compressed 					= await compress(readCb, file);
+
+		// Update processing tracker ui.
+    processedCb();
 
 		return {exif, file: compressed, uid};
 	}
 
 	// Update file read ui.
-	callback();
+	readCb();
 
 	return {exif, uid};
 };

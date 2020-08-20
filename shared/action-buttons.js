@@ -25,11 +25,8 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-}                 from '@longlost/app-element/app-element.js';
-import htmlString from './action-buttons.html';
+import {AppElement, html} from '@longlost/app-element/app-element.js';
+import htmlString         from './action-buttons.html';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/file-icons.js';
 
@@ -92,10 +89,11 @@ class ActionButtons extends AppElement {
 
   __computeHidePrintBtn(type) {
     const isPrintable = type && (
-                          type.includes('html') ||
+                          type.includes('html')  ||
                           type.includes('image') ||
-                          type.includes('json') ||
-                          type.includes('pdf')
+                          type.includes('json')  ||
+                          type.includes('pdf')   ||
+                          type.includes('video')
                         );
 
     return !isPrintable;

@@ -93,7 +93,7 @@ class PhotoCarousel extends AppElement {
       _hideEditBtn: {
         type: Boolean,
         value: true,
-        computed: '__computeHideEditBtn(_currentItem.type)'
+        computed: '__computeHideEditBtn(_currentItem)'
       },
 
       _opened: Boolean,
@@ -128,8 +128,26 @@ class PhotoCarousel extends AppElement {
   }
 
 
-  __computeHideEditBtn(type) {
-    return !type || !type.includes('image');
+  __computeHideEditBtn(item) {
+    if (!item || !item.type) { return true; }
+
+    const {optimized, poster, thumbnail, type} = item;
+
+    if (type.includes('image')) {
+      return false;
+    }
+
+    if (type.includes('video')) {
+
+      // Can't edit of all poster generating cloud processes failed.
+      if (!optimized && !poster && !thumbnail) {
+        return true;
+      }
+
+      return false;
+    }
+
+    return true;
   }
 
 
