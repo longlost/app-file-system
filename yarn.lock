@@ -349,14 +349,14 @@
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
 
-"@longlost/app-images@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.5.0.tgz#7404ad93546ed81ea3d4602913ec95f791bbf91f"
-  integrity sha512-+RmU9QXqnsjFhI7pAlOoRBEPkzpGSkh59cA1UhXJUm9bXODCbTyid8jYj7oEV/3Zpm7BPncx5IVs/MR92EXjew==
+"@longlost/app-images@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.5.1.tgz#21c48ba88566817aa38a753ad0b42e2b3f0781a7"
+  integrity sha512-pAqd9p1ZsDFeXWlXo/s80+CV+xSQusuyvAxXVmfS6gi0JCa4q3ga7NsN6BGiDjuB4MnjFFzDk6ChtcetRY/aJg==
   dependencies:
     "@longlost/animation" "^2.0.0"
     "@longlost/app-element" "^2.0.0"
-    "@longlost/utils" "^1.4.1"
+    "@longlost/utils" "^1.5.1"
     "@polymer/iron-image" "^3.0.2"
 
 "@longlost/app-inputs@^1.3.10":
@@ -594,13 +594,13 @@
     "@longlost/boot" "^1.2.6"
     firebase "^7.14.5"
 
-"@longlost/tab-pages@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@longlost/tab-pages/-/tab-pages-1.0.2.tgz#2f664590af8a3830d59a60e1014ccad9828b491d"
-  integrity sha512-NplyUjegcJ1BkWwqJr7B1yfH8tGioNbGK2LeXntouA6TFqRKTnEMO5V6lj1nnO3RXORTMmI0a6OW2cktWTjBVQ==
+"@longlost/tab-pages@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@longlost/tab-pages/-/tab-pages-1.0.3.tgz#b8a9b65ecd455e26017f81a6805b08ef0eafc79a"
+  integrity sha512-AvDbBdJbnwTMu+w83+ASH+j1IiDFKFF+T/gdGUWsJ+wxdZ3OcdqLGa3YCw92TENOgR06spgvlSlLo4jwQuGPwA==
   dependencies:
     "@longlost/app-element" "^2.0.0"
-    "@longlost/utils" "^1.4.0"
+    "@longlost/utils" "^1.5.1"
 
 "@longlost/utils@^1.1.6", "@longlost/utils@^1.3.5":
   version "1.3.5"
@@ -613,13 +613,6 @@
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@longlost/utils/-/utils-1.4.0.tgz#76b6747ba70b78b9c250daeb359650ecd881f856"
   integrity sha512-1n5tSWBh7QaTeX95ipxkaIqsy2u458FkpapXGN7bpj5kdxtYCYBUgnpBqJuGAbSlRdOPeJiSxNjjuMg5W3bedA==
-  dependencies:
-    "@longlost/lambda" "^2.2.0"
-
-"@longlost/utils@^1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@longlost/utils/-/utils-1.4.1.tgz#6b99ed518e23625b92406551174c3837ce12b8de"
-  integrity sha512-RPKlgjtSsjTTfrThqss7NRNxPq8hxcmYwxB4BIMLF627R3qUPTQ35rQI02DNL9vvXqlNw5EeJFs+PFjbsc7ETQ==
   dependencies:
     "@longlost/lambda" "^2.2.0"
 

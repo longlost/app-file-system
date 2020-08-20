@@ -21,10 +21,10 @@
   **/
 
 
-import {AppElement, html}  from '@longlost/app-element/app-element.js';
-import {getBBox, naturals} from '@longlost/utils/utils.js';
-import {PhotoElementMixin} from '../shared/photo-element-mixin.js';
-import htmlString          from './carousel-item.html';
+import {AppElement, html}            from '@longlost/app-element/app-element.js';
+import {getBBox, naturals, schedule} from '@longlost/utils/utils.js';
+import {PhotoElementMixin}           from '../shared/photo-element-mixin.js';
+import htmlString                    from './carousel-item.html';
 
 
 // Fault tolerance for failed thumbnail cloud processes.
@@ -57,6 +57,8 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
 
       reverse: Boolean,
 
+      _naturals: Object,
+
       _trigger: {
         type: Number,
         value: 6
@@ -68,7 +70,8 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
 
   static get observers() {
     return [
-      '__indexReverseChanged(index, reverse)'
+      '__indexReverseChanged(index, reverse)',
+      '__placeholderSrcChanged(_imgPlaceholder, _imgSrc)'
     ];
   }
 
@@ -86,13 +89,28 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
     this.style['order'] = `-${index}`;
   }
 
+  // Cache the image measurements to improve click handler speed.
+  async __placeholderSrcChanged(placeholder, src) {
+    this._naturals = undefined; // Clear cached val.
+
+    if (placeholder || src) {      
+      this._naturals = await getNaturals(placeholder, src);
+    }
+  }
+
 
   async __imgClicked() {
     try {
       await this.clicked();
 
-      const {naturalHeight, naturalWidth} = 
+      // Use cached values when available,
+      // but wait for img load for early clicks.
+      const {naturalHeight, naturalWidth} = this._naturals ? 
+        this._naturals :
         await getNaturals(this._imgPlaceholder, this._imgSrc);
+
+      // Improves reliability.
+      await schedule();
 
       const raw = getBBox(this);
 
@@ -176,14 +194,14 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
       const heightWidth = getHeightWidth();
 
       // Use the image's measurements rather than the container's.
-      const top = (bbox.height / 2) - (heightWidth.height / 2);
+      // Remove any vertical scrolling with window.scrollY.
+      const top = ((bbox.height / 2) - (heightWidth.height / 2)) - window.scrollY;
 
       const measurements = {
         ...bbox, 
         ...heightWidth,
         bottom: top + heightWidth.height,
-        top,
-        x:      top
+        top
       };
 
       this.fire('photo-selected', {measurements, item: this.item});

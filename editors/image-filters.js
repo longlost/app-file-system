@@ -36,7 +36,7 @@
 import {AppElement, html}     from '@longlost/app-element/app-element.js';
 import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
 import {FilterMixin}          from './filter-mixin.js';
-import {wait, warn}           from '@longlost/utils/utils.js';
+import {schedule, wait, warn} from '@longlost/utils/utils.js';
 import {imgFilterFile}        from '../shared/utils.js';
 import htmlString             from './image-filters.html';
 import '@polymer/iron-selector/iron-selector.js';
@@ -68,7 +68,7 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
       _filters: {
         type: Array,
-        computed: '__computeFilters(_filter, _loaded, _preview)'
+        computed: '__computeFilters(_filter, _loaded, _sourceImg)'
       },
 
       _loaded: Boolean,
@@ -78,11 +78,16 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
       // in order to get the correct dimensions (natural sizes)
       // set for the filter's underlying canvas, so as
       // not to distort the image's aspect ratio.
-      _preview: Object,
+      _sourceImg: Object,
 
       _previewSrc: {
         type: String,
         computed: '__computePreviewSrc(_filter, _src)'
+      },
+
+      _thumbnail: {
+        type: String,
+        computed: '__computeThumbnail(item)'
       },
 
       // Used in _name computed method.
@@ -128,25 +133,46 @@ class ImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   }
 
 
+  __computeThumbnail(item) {
+    if (!item) { return '#'; }
+
+    const {_tempUrl, optimized, thumbnail} = item;
+
+    if (thumbnail) {
+      return thumbnail;
+    }
+
+    return optimized ? optimized : _tempUrl;
+  }
+
+  // Wait for '_previewSrc' timing but use the 
+  // smaller thumbnail file for the 'filter-item's.
   __previewSrcChanged(src) {
     this._loaded = false;
 
     if (!src || src === '#') {
-      this._preview = undefined;
+      this._sourceImg = undefined;
     }
 
     const img = new Image();
 
     img.onload = () => {
-      this._loaded  = true;
-      this._preview = img;
-
-      this.fire('image-filters-loaded');
+      this._sourceImg = img;
     };
 
     // Must set crossOrigin to allow WebGl to load the image.
     img.crossOrigin = 'anonymous';
-    img.src         = src;
+    img.src         = this._thumbnail;
+  }
+
+
+  async __previewLoaded() {
+
+    await schedule(); // Safari fix for WebGL: INVALID_VALUE: texImage2D: bad image data.
+
+    this._loaded = true;
+
+    this.fire('image-filters-loaded');
   }
 
 

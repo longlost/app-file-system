@@ -202,10 +202,13 @@ class PhotoViewer extends AppElement {
   }
 
 
-  __switchToImg() {
+  async __switchToImg() {
+    this.$.img.style['opacity'] = '1';
+
+    await schedule(); // Improves reliability for iOS Safari.
+
     this.$.background.style['display']       = 'none';
     this.$.content.style['background-color'] = 'black';
-    this.$.img.style['opacity']              = '1';
     this.$.flip.reset();
   }
 
@@ -232,7 +235,7 @@ class PhotoViewer extends AppElement {
 
       await schedule();
 
-      this.__switchToImg();      
+      await this.__switchToImg();      
     }
 
     // No FLIP, just size the image and open the overlay.
@@ -244,7 +247,7 @@ class PhotoViewer extends AppElement {
 
       this.__setImgSize();
 
-      this.__switchToImg();
+      await this.__switchToImg();
 
       await schedule();
 
