@@ -32,13 +32,7 @@
   **/
 
 
-import {
-	hijackEvent, 
-	listen,
-	listenOnce,
-	unlisten
-} from '@longlost/utils/utils.js';
-
+import {hijackEvent, listenOnce} from '@longlost/utils/utils.js';
 import './multiselect-btns.js';
 import './afs-empty-list-placeholder.js';
 
@@ -104,8 +98,7 @@ export const ListOverlayMixin = superClass => {
 	  connectedCallback() {
 	    super.connectedCallback();
 
-	    this._itemsSelectedListenerKey = listen(
-	      this,
+	    this.addEventListener(
 	      'item-selected',
 	      this.__itemSelected.bind(this)
 	    );
@@ -115,7 +108,10 @@ export const ListOverlayMixin = superClass => {
 	  disconnectedCallback() {
 	    super.disconnectedCallback();
 
-	    unlisten(this._itemsSelectedListenerKey);
+	    this.removeEventListener(
+	      'item-selected',
+	      this.__itemSelected.bind(this)
+	    );
 	  }
 
 

@@ -1,11 +1,6 @@
 
 
-import {
-	hijackEvent,
-	listen,
-	schedule,
-	unlisten
-} from '@longlost/utils/utils.js';
+import {hijackEvent, schedule} from '@longlost/utils/utils.js';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/lazy-video/lazy-video.js';
 
@@ -31,8 +26,6 @@ export const PhotoElementMixin = superClass => {
 	        type: String,
 	        value: 'cover' // Or 'contain'.
 	      },
-
-	      _imgLoadedListenerKey: Object,
 
 	      _imgPlaceholder: {
 	      	type: String,
@@ -84,14 +77,12 @@ export const PhotoElementMixin = superClass => {
 	  connectedCallback() {
 	  	super.connectedCallback();
 
-	  	this._imgLoadedListenerKey = listen(
-	  		this,
+	  	this.addEventListener(
 	  		'loaded-changed',
 	  		this.__handleImageLoadedChanged.bind(this)
   		);
 
-  		this._vidLoadedListenerKey = listen(
-  			this,
+  		this.addEventListener(
   			'lazy-video-metadata-loaded',
   			this.__handleMetadataLoaded.bind(this)
   		);
@@ -101,7 +92,15 @@ export const PhotoElementMixin = superClass => {
 	  disconnectedCallback() {
 	  	super.disconnectedCallback();
 
-	  	unlisten(this._imgLoadedListenerKey);
+	  	this.removeEventListener(
+	  		'loaded-changed',
+	  		this.__handleImageLoadedChanged.bind(this)
+  		);
+
+  		this.removeEventListener(
+  			'lazy-video-metadata-loaded',
+  			this.__handleMetadataLoaded.bind(this)
+  		);
 	  }
 
 
@@ -177,6 +176,7 @@ export const PhotoElementMixin = superClass => {
 
 	    if (loaded && _tempUrl && !original) {
 	      await schedule(); // <lazy-image> workaround.
+	      
 	      window.URL.revokeObjectURL(_tempUrl);
 	    }
 	  }

@@ -41,7 +41,6 @@ import {
 
 import {
   hijackEvent,
-  listenOnce,
   schedule, 
   wait
 } from '@longlost/utils/utils.js';
@@ -196,11 +195,28 @@ class PhotoCarousel extends AppElement {
 
   async __carouselReady() {
 
+    // NOT using `listenOnce` here since there 
+    // is no way to remove the attached event listener
+    // for the promise of the two that never resolves.
+    let imgResolver;
+    let vidResolver;
+
+    const imgOnce = new Promise(resolve => {
+      imgResolver = resolve;
+    });
+
+    const vidOnce = new Promise(resolve => {
+      vidResolver = resolve;
+    });
+
+    this.addEventListener('lazy-image-loaded-changed',        imgResolver);
+    this.addEventListener('lazy-video-poster-loaded-changed', vidResolver);
+
     // Wait for current image/poster to load.
-    await Promise.race([
-      listenOnce(this, 'lazy-image-loaded-changed'),
-      listenOnce(this, 'lazy-video-poster-loaded-changed')
-    ]);
+    await Promise.race([imgOnce, vidOnce]);
+
+    this.removeEventListener('lazy-image-loaded-changed',        imgResolver);
+    this.removeEventListener('lazy-video-poster-loaded-changed', vidResolver);
 
     // Wait for current image/poster to fade-in.
     await wait(350);

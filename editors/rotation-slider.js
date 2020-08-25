@@ -33,16 +33,10 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-}                 from '@longlost/app-element/app-element.js';
-import {
-  listen, 
-  schedule, 
-  unlisten
-}                 from '@longlost/utils/utils.js';
-import htmlString from './rotation-slider.html';
+import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {schedule}         from '@longlost/utils/utils.js';
+import htmlString         from './rotation-slider.html';
+
 
 // The total slider travel represents +/- 45 degrees.
 const TOTAL_DEGREES = 90;
@@ -80,7 +74,14 @@ class RotationSlider extends AppElement {
     // Center the scroller initially.
     this.center();
 
-    this._resizeListenerKey = listen(window, 'resize', this.__measureWidth.bind(this));
+    window.addEventListener('resize', this.__measureWidth.bind(this));
+  }
+
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    window.removeEventListener('resize', this.__measureWidth.bind(this));
   }
 
 
