@@ -341,10 +341,16 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   __darkModeChanged(dark) {
     if (dark) {
-      this.updateStyles({'--gradient-end': 'var(--dark-mode-gradient)'});
+      this.updateStyles({
+        '--gradient-start': 'var(--afs-dark-mode-start-gradient)',
+        '--gradient-end':   'var(--afs-dark-mode-end-gradient)'
+      });
     }
     else {
-      this.updateStyles({'--gradient-end': 'var(--light-mode-gradient)'});
+      this.updateStyles({
+        '--gradient-start': 'var(--afs-light-mode-start-gradient)',
+        '--gradient-end':   'var(--afs-light-mode-end-gradient)'
+      });
     }
   }
 

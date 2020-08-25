@@ -5,7 +5,7 @@
   * 
   *   
   *   A simple wrapper element for metadata-page that uses 
-  *		ImageEditorMixin to control opacity when the element is being tabbed.
+  *   ImageEditorMixin to control opacity when the element is being tabbed.
   *
   *
   *
@@ -14,9 +14,9 @@
   *
   *     current - <String> Required. Currently visible tab page, tab-pages-page-changed event.   
   *
-  * 		page - <String> Required. The name of this page in tab sequence. 
+  *     page - <String> Required. The name of this page in tab sequence. 
   *
-  * 		selected - <String> Required. The name of the selected paper-tab.
+  *     selected - <String> Required. The name of the selected paper-tab.
   *
   *
   *
@@ -27,7 +27,7 @@
   *   @customElement
   *   @polymer
   *   @demo demo/index.html
-  * 	@implements ImageEditorItemMixin
+  *   @implements ImageEditorItemMixin
   *
   **/
 
@@ -42,15 +42,16 @@ class ImageMeta extends ImageEditorItemMixin(AppElement) {
   static get template() {
     return html`
 
-    	<style>
+      <style>
 
-    		:host {
-    			display: block;
-    		}
+        :host {
+          display:          block;
+          background-color: var(--app-body-color);
+        }
 
-    	</style>
+      </style>
 
-    	<slot></slot>
+      <slot></slot>
 
     `;
   }

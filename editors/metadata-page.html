@@ -5,6 +5,7 @@
     display:   block;    
     max-width: 768px;
     margin:    32px auto 0px auto;
+    color:     var(--afs-gradient-text-color);
   }
 
   section {
@@ -16,6 +17,12 @@
     flex-direction: column;
   }
 
+  .shared-paper-input {
+    --paper-input-container-color:       var(--afs-gradient-secondary-text-color);
+    --paper-input-container-input-color: var(--afs-gradient-text-color);
+    --paper-input-container-focus-color: var(--afs-gradient-focus-color);
+  }
+
   iron-icon {
     min-height:   24px;
     min-width:    24px;
@@ -24,12 +31,18 @@
 
   paper-input[focused] iron-icon,
   iron-icon[focused] {
-    color: var(--app-primary-color);
+    color: var(--afs-gradient-focus-color);
   }
 
   .explainer {
     font-size: 12px;
-    color:     var(--secondary-text-color);
+    color:     var(--afs-gradient-secondary-text-color);
+  }
+
+  app-textarea {
+    --app-textarea-color:       var(--afs-gradient-secondary-text-color);
+    --app-textarea-input-color: var(--afs-gradient-text-color);
+    --app-textarea-focus-color: var(--afs-gradient-focus-color);
   }
 
   #geolocation-btn {
