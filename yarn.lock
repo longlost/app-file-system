@@ -359,10 +359,10 @@
     "@longlost/utils" "^1.5.1"
     "@polymer/iron-image" "^3.0.2"
 
-"@longlost/app-inputs@^1.3.10":
-  version "1.3.10"
-  resolved "https://registry.yarnpkg.com/@longlost/app-inputs/-/app-inputs-1.3.10.tgz#9b238a451e45643494b4799cf3740645481151e3"
-  integrity sha512-QiRySRFCF6CpdWLpjKH1ba/7cnpWKUxNnqTY/2A+9OIRTLeyMkZ+ptjC4dJUVsscl7ISX3vZhy02lI2ISaOl3A==
+"@longlost/app-inputs@^1.3.9":
+  version "1.3.9"
+  resolved "https://registry.yarnpkg.com/@longlost/app-inputs/-/app-inputs-1.3.9.tgz#11c8665533232e4fc416d42465a381d029801661"
+  integrity sha512-M4gFnqi+zzVJzzQsPSFnOrdKQ+97Fb5J+WH5y6r39CVEmoT4hKQKOMwd3aUBMXaf8M5Ev+dNkba8wAyKin98GA==
   dependencies:
     "@longlost/app-element" "^2.0.0"
     "@longlost/app-icons" "^1.0.12"
@@ -386,18 +386,18 @@
     "@polymer/paper-ripple" "^3.0.2"
     "@polymer/polymer" "^3.4.1"
 
-"@longlost/app-inputs@^1.3.9":
-  version "1.3.9"
-  resolved "https://registry.yarnpkg.com/@longlost/app-inputs/-/app-inputs-1.3.9.tgz#11c8665533232e4fc416d42465a381d029801661"
-  integrity sha512-M4gFnqi+zzVJzzQsPSFnOrdKQ+97Fb5J+WH5y6r39CVEmoT4hKQKOMwd3aUBMXaf8M5Ev+dNkba8wAyKin98GA==
+"@longlost/app-inputs@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-inputs/-/app-inputs-1.4.0.tgz#f0e1c868198d34ccc7d497b0f0a7e42b0333d334"
+  integrity sha512-CcpQyHpMRokyhHJ5r18mBgaNb7tVEdTkMdQvxSS0dcjGdJrMbTJfBt1iKLvDDyvbAdCw4kpejPN8TSestkHuGQ==
   dependencies:
     "@longlost/app-element" "^2.0.0"
     "@longlost/app-icons" "^1.0.12"
-    "@longlost/app-shared-styles" "^2.0.14"
+    "@longlost/app-shared-styles" "^2.0.15"
     "@longlost/icon-to-spinner" "^1.0.2"
     "@longlost/lambda" "^2.2.0"
     "@longlost/pencil-to-check-icon" "^1.0.2"
-    "@longlost/utils" "^1.5.0"
+    "@longlost/utils" "^1.5.2"
     "@polymer/gold-phone-input" "^3.0.1"
     "@polymer/iron-a11y-keys" "^3.0.1"
     "@polymer/iron-form-element-behavior" "^3.0.1"
@@ -594,13 +594,13 @@
     "@longlost/boot" "^1.2.6"
     firebase "^7.14.5"
 
-"@longlost/tab-pages@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@longlost/tab-pages/-/tab-pages-1.0.3.tgz#b8a9b65ecd455e26017f81a6805b08ef0eafc79a"
-  integrity sha512-AvDbBdJbnwTMu+w83+ASH+j1IiDFKFF+T/gdGUWsJ+wxdZ3OcdqLGa3YCw92TENOgR06spgvlSlLo4jwQuGPwA==
+"@longlost/tab-pages@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@longlost/tab-pages/-/tab-pages-1.1.0.tgz#9d125d1cdffecc212edf2389c8a9b30d37eabfec"
+  integrity sha512-4E0HKG2aghY8GfqKOS+S/UP68YtuDq5sq5xGXm60rgKoqeRx9GZnhl9JUp3VIVcJ6xRAYfOmtuydxLrh3K+aog==
   dependencies:
     "@longlost/app-element" "^2.0.0"
-    "@longlost/utils" "^1.5.1"
+    "@longlost/utils" "^1.5.2"
 
 "@longlost/utils@^1.1.6", "@longlost/utils@^1.3.5":
   version "1.3.5"
@@ -627,6 +627,13 @@
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@longlost/utils/-/utils-1.5.1.tgz#01bb49e6a2d12dd56f941f51d2cb67a3e5e2691f"
   integrity sha512-4VE0pQ04oNlKK1k1bYqWTMm4KMpUeiHRUcWGvwEdEOY7zlK7BnPacpULNYFdW21M22gAG4sNWCRNvpNPuHaoQw==
+  dependencies:
+    "@longlost/lambda" "^2.2.0"
+
+"@longlost/utils@^1.5.2":
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@longlost/utils/-/utils-1.5.2.tgz#0b6cf7cb8d14ed72dc283c8c67d1d13dbea1eb3c"
+  integrity sha512-3b0dpEh2/SDkmR1vPMmwAoLdxirMsnZ2b4+vPL+SSvArQ82e0jvmumYenxQTuoPKke5uEDpuXznuiW7WxaurAg==
   dependencies:
     "@longlost/lambda" "^2.2.0"
 

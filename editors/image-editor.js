@@ -424,6 +424,13 @@ class ImageEditor extends EditorMixin(AppElement) {
       this._selectedTab = 'filters';
     }
 
+    // Cover underlays. 
+    // Filters page is the tallest, but is initially 0px tall,
+    // so must wait to measure it til it is fully stamped.
+    const filtersHeight = this.select('image-filters').getBoundingClientRect().height;
+
+    this.select('tab-pages').style['min-height'] = `${filtersHeight}px`;
+
     await schedule();
 
     this.$.pagesSpinner.hide();
