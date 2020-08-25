@@ -19,7 +19,7 @@
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@longlost/afs-custom-exifreader": "^1.0.0",
-    "@longlost/app-carousel": "^3.0.1",
+    "@longlost/app-carousel": "^3.0.2",
     "@longlost/app-element": "^2.0.0",
     "@longlost/app-icons": "^1.0.12",
     "@longlost/app-images": "^1.5.1",
@@ -71,7 +71,7 @@
     "@polymer/test-fixture": "^4.0.2",
     "@webcomponents/webcomponentsjs": "^2.4.4",
     "chai": "^4.2.0",
-    "mocha": "^8.1.1",
+    "mocha": "^8.1.2",
     "wct-mocha": "^1.1.0"
   }
 }

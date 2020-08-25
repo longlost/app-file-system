@@ -23,7 +23,6 @@
 
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {listen, unlisten} from '@longlost/utils/utils.js';
 import htmlString         from './select-checkbox.html';
 import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/paper-checkbox/paper-checkbox.js';
@@ -46,9 +45,7 @@ class SelectCheckbox extends AppElement {
         reflectToAttribute: true // For css selector.
       },
 
-      hidden: Boolean,
-
-      _key: Object
+      hidden: Boolean
 
     };
   }
@@ -57,14 +54,14 @@ class SelectCheckbox extends AppElement {
   connectedCallback() {
     super.connectedCallback();
 
-    this._key = listen(this, 'click', this.__clicked.bind(this));
+    this.addEventListener('click', this.__clicked.bind(this));
   }
 
 
   disconnectedCallback() {
     super.connectedCallback();
 
-    unlisten(this._key);
+    this.removeEventListener('click', this.__clicked.bind(this));
   }
 
 
