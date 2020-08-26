@@ -135,20 +135,21 @@
   </roll-items>
 
 
-</app-header-overlay>
-
-
-<div id="scale" 
-     class="hide-scale">
-  <div id="scale-wrapper" 
-       class="shared-border-radius-mask">
-    <div id="scale-background" 
-         class="background">
+  <div id="scale" 
+       class="hide-scale"
+       slot="content">
+    <div id="scale-wrapper" 
+         class="shared-border-radius-mask">
+      <div id="scale-background" 
+           class="background">
+      </div>
+      <iron-icon icon="file-icons:view-comfy"></iron-icon>
+      <paper-slider value="[[_scale]]" 
+                    on-immediate-value-changed="__sliderValChanged">
+      </paper-slider>
+      <iron-icon icon="file-icons:view-module"></iron-icon>
     </div>
-    <iron-icon icon="file-icons:view-comfy"></iron-icon>
-    <paper-slider value="[[_scale]]" 
-                  on-immediate-value-changed="__sliderValChanged">
-    </paper-slider>
-    <iron-icon icon="file-icons:view-module"></iron-icon>
   </div>
-</div>
+
+
+</app-header-overlay>

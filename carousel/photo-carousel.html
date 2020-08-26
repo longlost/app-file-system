@@ -1,21 +1,17 @@
 
 <style>
-
-  #background,
-  #carousel {
-    top:      0px;
-    left:     0px;
-    height:   100vh;
-    width:    100vw;
-    background-color: black;
-  }
   
   #background {
-    position:   fixed;
     display:    none;
+    position:   fixed;
+    top:        0px;
+    left:       0px;   
+    height:     100vh; 
+    width:      100vw;
     transition: opacity 0.2s linear 0.3s;
     opacity:    0;
     z-index:    1;
+    background-color: black;
   }
 
   #overlay {
@@ -52,17 +48,7 @@
     color: var(--disabled-text-color);
   }
 
-  #carousel {
-    position: absolute;
-    
-    /*
-      iOS Safari fix for initial positioning being 
-      offset when using margin on carousel-items. 
-      MUST use padding and match the padding with
-      a wider carousel.
-    */
-    left:   -4px;
-    width:   calc(100vw + 8px);
+  #carousel {    
     opacity: 0;
   }
 
