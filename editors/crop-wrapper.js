@@ -292,7 +292,8 @@ class CropWrapper extends AppElement {
     const options = {
       aspectRatio: this.initialAspectRatio,
       dragMode:   'move',
-      preview 
+      preview,
+      responsive:  true // Re-render on window 'resize'.
     };
 
     this._round   = this.initialRound;

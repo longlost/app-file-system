@@ -1,6 +1,24 @@
 
 <style>
 
+  :host {
+    display:  block;
+    position: absolute;
+    top:      0px;
+    height:   100vh;
+    
+    /*
+      iOS Safari fix for initial positioning being 
+      offset when using margin on carousel-items. 
+      MUST use padding and match the padding with
+      a wider carousel.
+    */
+    left: -4px;
+    width: calc(100vw + 8px);
+    
+    background-color: black;
+  }
+
   app-carousel {
     height:           100%;
     background-color: inherit;
