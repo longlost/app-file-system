@@ -51,6 +51,7 @@ import '@longlost/app-overlays/app-header-overlay.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/action-buttons.js';
 import './paginated-carousel.js';
+import '../shared/afs-edit-photo-fab.js';
 
 
 class PhotoCarousel extends AppElement {
@@ -83,18 +84,6 @@ class PhotoCarousel extends AppElement {
         computed: '__computeCurrentItem(_carouselDisabled, _centeredItem)'
       },
 
-      _editBtnDisabled: {
-        type: Boolean,
-        value: true,
-        computed: '__computeEditBtnDisabled(_currentItem)'
-      },
-
-      _hideEditBtn: {
-        type: Boolean,
-        value: true,
-        computed: '__computeHideEditBtn(_currentItem)'
-      },
-
       _opened: Boolean,
 
       _placeholder: {
@@ -122,34 +111,6 @@ class PhotoCarousel extends AppElement {
   }
 
 
-  __computeEditBtnDisabled(currentItem) {
-    return !Boolean(currentItem);
-  }
-
-
-  __computeHideEditBtn(item) {
-    if (!item || !item.type) { return true; }
-
-    const {optimized, poster, thumbnail, type} = item;
-
-    if (type.includes('image')) {
-      return false;
-    }
-
-    if (type.includes('video')) {
-
-      // Can't edit of all poster generating cloud processes failed.
-      if (!optimized && !poster && !thumbnail) {
-        return true;
-      }
-
-      return false;
-    }
-
-    return true;
-  }
-
-
   __computePlaceholder(item) {
     if (!item) return '#';
 
@@ -163,22 +124,18 @@ class PhotoCarousel extends AppElement {
     return displayName ? displayName : ' ';
   }
 
+
+  async __back() {
+    this.$.fab.exit();
+
+    await wait(100);
+
+    this.$.overlay.back();
+  }
+
   // Overlay reset event handler.
   __reset() { 
     this.stop();
-  }
-
-
-  async __editBtnClicked() {
-    try {
-      await this.clicked();
-
-      this.fire('edit-image', {item: this._currentItem});
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
-    }
   }
 
 
@@ -224,6 +181,7 @@ class PhotoCarousel extends AppElement {
     this.$.carousel.style['opacity'] = '1';
     this._carouselDisabled           = false;
 
+    this.$.flipWrapper.style['display'] = 'none';
     this.$.flip.reset();
     this.__hideBackground();
   }
@@ -267,6 +225,8 @@ class PhotoCarousel extends AppElement {
     // Avoid infinite loops by setting this once per open.
     this._start = this.item;
 
+    this.$.flipWrapper.style['display'] = 'flex';
+
     await this.__showBackground();
 
     // Fail gracefully incase there is an issue 
@@ -302,6 +262,8 @@ class PhotoCarousel extends AppElement {
     this._carouselDisabled = true;
     this._opened           = false;       
     this._start            = undefined;
+
+    this.$.fab.reset();
   }
 
 }

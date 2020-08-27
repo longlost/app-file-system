@@ -14,12 +14,10 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-}                  from '@longlost/app-element/app-element.js';
-import {ItemMixin} from './item-mixin.js';
-import htmlString  from './roll-item.html';
+import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {ItemMixin}        from './item-mixin.js';
+import {getBBox}          from '@longlost/utils/utils.js';
+import htmlString         from './roll-item.html';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-ripple/paper-ripple.js';
 
@@ -73,7 +71,7 @@ class RollItem extends ItemMixin(AppElement) {
     if (clicked && rippled) {
       this.fire('open-carousel', {
         item:         this.item, 
-        measurements: this.getBoundingClientRect()
+        measurements: getBBox(this)
       });
 
       this._clicked = false;

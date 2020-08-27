@@ -194,14 +194,19 @@ class CarouselItem extends PhotoElementMixin(AppElement) {
       const heightWidth = getHeightWidth();
 
       // Use the image's measurements rather than the container's.
-      // Remove any vertical scrolling with window.scrollY.
-      const top = ((bbox.height / 2) - (heightWidth.height / 2)) - window.scrollY;
+      // Add bbox.top and bbox.left to get the correct starting reference
+      // for scrolled content or responsively sized content that is not
+      // fullbleed.
+      const top  = ((bbox.height / 2) - (heightWidth.height / 2)) + bbox.top;
+      const left = ((bbox.width  / 2) - (heightWidth.width  / 2)) + bbox.left;
 
       const measurements = {
         ...bbox, 
         ...heightWidth,
-        bottom: top + heightWidth.height,
-        top
+        top,
+        right:  left + heightWidth.width,
+        bottom: top  + heightWidth.height,
+        left
       };
 
       this.fire('photo-selected', {measurements, item: this.item});

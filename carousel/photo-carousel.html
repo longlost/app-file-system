@@ -14,6 +14,26 @@
     background-color: black;
   }
 
+  /* Responsive design - large screen sizes. */
+  #flipWrapper {
+    display:         none;
+    justify-content: center;
+    align-items:     center;
+    position:        fixed;
+    top:             0px;
+    left:            0px;   
+    height:          100vh; 
+    width:           100vw;
+    z-index:         1;
+  }
+
+  /* Responsive design - large screen sizes. */
+  #flip {
+    position:   absolute;
+    max-height: 568px;
+    top:        unset;
+  }
+
   #overlay {
     box-shadow: none;
 
@@ -44,10 +64,6 @@
     display: inline-flex;
   }
 
-  paper-icon-button[disabled] {
-    color: var(--disabled-text-color);
-  }
-
   #carousel {    
     opacity: 0;
   }
@@ -58,21 +74,25 @@
 <div id="background"></div>
 
 
-<flip-image id="flip"
-            measurements="[[_measurements]]"
-            sizing="contain"
-            src="[[_placeholder]]">
-</flip-image>
+<div id="flipWrapper">
+  <flip-image id="flip"
+              measurements="[[_measurements]]"
+              sizing="contain"
+              src="[[_placeholder]]">
+  </flip-image>
+</div>
 
 
 <app-header-overlay id="overlay"
                     disable-background-effects
                     fixed-header
                     header-size="1"
+                    parent-controls-exits
                     prebuilt-animation="from-top"
                     reset-scroll
                     title="[[_title]]"
                     top-title
+                    on-header-overlay-back="__back"
                     on-overlay-reset="__reset">
 
 
@@ -85,12 +105,6 @@
        slot="top-toolbar-buttons-slot">
 
     <action-buttons item="[[_currentItem]]"></action-buttons>
-
-    <paper-icon-button disabled="[[_editBtnDisabled]]"
-                       hidden="[[_hideEditBtn]]"
-                       icon="file-icons:tune"
-                       on-click="__editBtnClicked">
-    </paper-icon-button>
 
   </div>
 
@@ -106,5 +120,12 @@
                       on-last-item-deleted="__lastItemDeleted"
                       on-photo-selected="__photoSelected">
   </paginated-carousel>
+
+
+  <afs-edit-photo-fab id="fab"
+                      item="[[_currentItem]]"
+                      slot="content">
+  </afs-edit-photo-fab>
+
 
 </app-header-overlay>
