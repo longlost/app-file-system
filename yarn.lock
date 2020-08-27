@@ -341,14 +341,14 @@
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
 
-"@longlost/app-images@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.5.2.tgz#3dd2a1015264f0cd0f230f16dd5d33433fcac397"
-  integrity sha512-0gQ1VmTezLRLu7L9+z6hWNnZWTYWQ7QN7kG4TIoTzE3NjyUcLaq5/Up9xa009jpAzm22QtNbsZz+wmqwOcAjkg==
+"@longlost/app-images@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.6.0.tgz#443b74f6ae61c68af97fc5d97e7e05ea48230c9f"
+  integrity sha512-na40aai1PW2jN8tZ5isMYJUq3SajdVH0H84arfgQjY87G2FETGB6BEgIvD2HhOczSshuNYrdiStXexEMKG9WKg==
   dependencies:
     "@longlost/animation" "^2.0.0"
     "@longlost/app-element" "^2.0.0"
-    "@longlost/utils" "^1.5.2"
+    "@longlost/utils" "^2.0.0"
     "@polymer/iron-image" "^3.0.2"
 
 "@longlost/app-inputs@^1.4.1":

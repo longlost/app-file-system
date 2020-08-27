@@ -188,13 +188,15 @@ class PhotoViewer extends AppElement {
       this.$.img.style['width']  = `${w}px`;
     }
     else {
-      const widthAdjustment = (height + widthDelta) * Math.max(aspect, 1 / aspect);
+
+      const heightAdjustment = (height + heightDelta) * Math.max(aspect, 1 / aspect);
+      const widthAdjustment  = (height + widthDelta)  * Math.max(aspect, 1 / aspect);
 
       // Use the widthAdjustment if the image height is
       // the limiting factor, otherwise set the img width
       // to fill the screen.
-      const h = Math.max(screen.height, widthAdjustment);
-      const w = Math.max(screen.width, screen.width + (heightDelta * aspect));
+      const h = Math.max(screen.height, heightAdjustment, widthAdjustment);
+      const w = Math.max(screen.width, heightAdjustment);
 
       this.$.img.style['height'] = `${h}px`;
       this.$.img.style['width']  = `${w}px`;

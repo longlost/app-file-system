@@ -1,0 +1,35 @@
+
+<style>
+
+  :host {
+  	display:  inline-block;
+  	position: fixed;
+    right:    16px;
+    bottom:   16px;    
+    z-index:  1;
+
+    --fab-animation-ease: var(--custom-ease, cubic-bezier(0.49, 0.01, 0, 1));
+  }
+
+  #fab {    
+    background-color: var(--app-accent-color);
+    color:            var(--app-accent-color-text);
+    transition:       transform 0.4s var(--fab-animation-ease), opacity 0.2s ease-in 0.15s;
+  }
+
+  .fab-base-transform {
+    transform: scale(0, 0) rotate(-90deg);
+  }
+
+  .fab-animation {
+    transform: scale(1, 1) rotate(0deg);
+  }
+
+</style>
+
+
+<paper-fab id="fab"
+           class="fab-base-transform"
+           icon="file-icons:tune"
+           on-click="__fabClicked">
+</paper-fab>

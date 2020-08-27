@@ -1,10 +1,6 @@
 
 <style>
 
-  :host {
-    --fab-animation-ease: var(--custom-ease, cubic-bezier(0.49, 0.01, 0, 1));
-  }
-
   #overlay {
     background: var(--afs-gradient-background);
 
@@ -18,24 +14,6 @@
     width:  100%;
   }
 
-  #fab {
-    position: fixed;
-    right:    16px;
-    bottom:   16px;
-    background-color: var(--app-accent-color);
-    color:            var(--app-accent-color-text);
-    z-index:          1;
-    transition:       transform 0.4s var(--fab-animation-ease), opacity 0.2s ease-in 0.15s;
-  }
-
-  .fab-base-transform {
-    transform: scale(0, 0) rotate(-90deg);
-  }
-
-  .fab-animation {
-    transform: scale(1, 1) rotate(0deg);
-  }
-
   *[hidden] {
     display: none;
   }
@@ -45,23 +23,24 @@
 
 <app-header-overlay id="overlay"
                     header-size="[[__computeHeaderSize(_isImg, _isVid)]]"
+                    parent-controls-exits
                     prebuilt-animation="from-right"
                     reveal-header
                     title="[[_title]]"
-                    on-overlay-exiting="__hideFab"
-                    on-overlay-reset="__resetFab">
+                    on-header-overlay-back="__back"
+                    on-overlay-reset="__reset">
 
 
   <lazy-image alt="[[item.displayName]]"
-              hidden="[[!_isImg]]"
+              hidden="[[_hideLazyImg]]"
               placeholder="[[_imgPlaceholder]]"
-              src="[[_imgSrc]]"
+              src="[[_src]]"
               sizing="cover"
               slot="header-background-slot">
   </lazy-image>
 
   <lazy-video aspect-ratio="fill"
-              hidden="[[!_isVid]]" 
+              hidden="[[_hideLazyVideo]]" 
               placeholder="[[_vidPlaceholder]]"
               poster="[[_vidPoster]]"
               slot="header-background-slot"
@@ -72,7 +51,7 @@
                   slot="top-toolbar-buttons-slot">
   </action-buttons>
 
-  <paper-icon-button hidden="[[__computeHideLaunchBtn(_isImg, _isVid)]]"
+  <paper-icon-button hidden="[[_hideLaunchBtn]]"
                      icon="file-icons:launch"
                      slot="bottom-toolbar-buttons-slot"
                      on-click="__launchBtnClicked">
@@ -90,15 +69,14 @@
   </metadata-page>
 
 
+  <afs-edit-photo-fab id="fab"
+                      item="[[item]]"
+                      parent-controls
+                      slot="content">
+  </afs-edit-photo-fab>
+
+
 </app-header-overlay>
-
-
-<paper-fab id="fab"
-           class="fab-base-transform"
-           hidden="[[!_isImg]]"
-           icon="file-icons:tune"
-           on-click="__fabClicked">
-</paper-fab>
 
 
 <map-overlay id="mapOverlay"

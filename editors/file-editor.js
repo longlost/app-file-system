@@ -8,7 +8,7 @@
   *
   *
   *
-  *  Properites:
+  *  Properties:
   *
   *
   *    
@@ -33,20 +33,13 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-}                 from '@longlost/app-element/app-element.js';
-import {
-  EditorMixin
-}                 from './editor-mixin.js';
-import {
-  schedule
-}                 from '@longlost/utils/utils.js';
-import htmlString from './file-editor.html';
-import '@polymer/paper-fab/paper-fab.js';
+import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {EditorMixin}      from './editor-mixin.js';
+import {schedule, wait}   from '@longlost/utils/utils.js';
+import htmlString         from './file-editor.html';
 import '../shared/file-icons.js';
 import '../shared/action-buttons.js';
+import '../shared/afs-edit-photo-fab.js';
 // Map lazy loaded.
 
 
@@ -58,6 +51,36 @@ class FileEditor extends EditorMixin(AppElement) {
   }
 
 
+  static get properties() {
+    return {
+
+      _hideLaunchBtn: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideLaunchBtn(_isImg, _isVid)'
+      },
+
+      _hideLazyImg: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideLazyImg(_isImg, _isVid, _vidPoster)'
+      },
+
+      _hideLazyVideo: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideLazyVideo(_isVid, _vidPoster)'
+      },
+
+      _src: {
+        type: String,
+        computed: '__computeSrc(_imgSrc, _vidPoster)'
+      }
+
+    };
+  }
+
+
   __computeHeaderSize(isImg, isVid) {
     return isImg || isVid ? 5 : 2;
   }
@@ -65,6 +88,26 @@ class FileEditor extends EditorMixin(AppElement) {
 
   __computeHideLaunchBtn(isImg, isVid) {
     return !isImg && !isVid;
+  }
+
+
+  __computeHideLazyImg(isImg, isVid, poster) {
+    if (isImg) { return false; }
+
+    // Don't hide if there is a video poster present.
+    if (isVid && poster) { return false; }
+
+    return true;
+  }
+
+
+  __computeHideLazyVideo(isVid, poster) {
+    return !isVid || poster;
+  }
+
+
+  __computeSrc(imgSrc, poster) {
+    return imgSrc ? imgSrc : poster;
   }
 
 
@@ -81,43 +124,26 @@ class FileEditor extends EditorMixin(AppElement) {
   }
 
 
-  async __fabClicked() {
-    try {
-      await this.clicked();
+  async __back() {
+    this.$.fab.exit();
 
-      this.fire('edit-image', {item: this.item});
-    }
-    catch (error) {
-      if (error === 'click debounced') { return; }
-      console.error(error);
-    }
+    await wait(100);
+
+    this.$.overlay.back();
   }
 
-
-  async __showFab() {
-    this.$.fab.style['display'] = 'flex';
-    await schedule();
-    this.$.fab.classList.add('fab-animation');
-  }
-
-  // <app-header-overlay> 'on-overlay-exiting' handler.
-  __hideFab() {
-    this.$.fab.classList.remove('fab-animation');
-  }
-
-  // <app-header-overlay> 'on-overlay-reset' handler.
-  __resetFab() {
+  // `app-header-overlay` 'on-overlay-reset' handler.
+  __reset() {
 
     // Remove the class in case the overlay 
     // is reset programmatically.
-    this.$.fab.classList.remove('fab-animation');
-    this.$.fab.style['display'] = 'none';
+    this.$.fab.reset();
   }
 
 
   async open() {
     await  this.$.overlay.open();
-    return this.__showFab();
+    return this.$.fab.enter();
   }
 
   // Used for confirmed delete actions.
