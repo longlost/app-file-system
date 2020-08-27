@@ -166,14 +166,14 @@ class PhotoCarousel extends AppElement {
       vidResolver = resolve;
     });
 
-    this.addEventListener('lazy-image-loaded-changed',        imgResolver);
-    this.addEventListener('lazy-video-poster-loaded-changed', vidResolver);
+    this.addEventListener('lazy-image-placeholder-loaded-changed', imgResolver);
+    this.addEventListener('lazy-video-poster-loaded-changed',      vidResolver);
 
     // Wait for current image/poster to load.
     await Promise.race([imgOnce, vidOnce]);
 
-    this.removeEventListener('lazy-image-loaded-changed',        imgResolver);
-    this.removeEventListener('lazy-video-poster-loaded-changed', vidResolver);
+    this.removeEventListener('lazy-image-placeholder-loaded-changed', imgResolver);
+    this.removeEventListener('lazy-video-poster-loaded-changed',      vidResolver);
 
     // Wait for current image/poster to fade-in.
     await wait(350);
