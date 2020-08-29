@@ -492,14 +492,14 @@
   resolved "https://registry.yarnpkg.com/@longlost/lambda/-/lambda-2.2.0.tgz#f9ae362590222896d64272df580a281929081051"
   integrity sha512-hjwZPIcs1FPC1tHG6moCAX0bjtFHIRqVg/jBgsnLhGV0p3Dc0bGo1Z+lGYhEEKZnZFgxhxHY3+PBXw0brgPkPg==
 
-"@longlost/lazy-video@^2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.4.0.tgz#d3d83dad03814ca4f3911e1814ce4f55e0c3c34d"
-  integrity sha512-sxZ+tNZNLY7ukopyPSLgwQPMnwbJN5K1CW6baXmVlmEkb48Hn/a4UWguEs2vz07R9R1K5YGRTkgiPxXbLOroXA==
+"@longlost/lazy-video@^2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@longlost/lazy-video/-/lazy-video-2.4.1.tgz#cdf09e314d832e88fd72f5e17df3fd1026d32e3d"
+  integrity sha512-rvLfU9qHrj93p4mWdaKnJ/SJMkSIJogucdERJSIcg3Kl3FjdT2qz5vn3fr8xvhixz3jAB5xb2WUx/TrhIHwhPg==
   dependencies:
     "@longlost/app-element" "^2.0.0"
     "@longlost/app-spinner" "^1.2.0"
-    "@longlost/utils" "^1.5.1"
+    "@longlost/utils" "^2.0.0"
     "@polymer/polymer" "^3.4.1"
 
 "@longlost/paper-gauge@^1.0.1":
@@ -538,13 +538,13 @@
     "@longlost/boot" "^1.2.6"
     firebase "^7.14.5"
 
-"@longlost/tab-pages@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@longlost/tab-pages/-/tab-pages-1.1.0.tgz#9d125d1cdffecc212edf2389c8a9b30d37eabfec"
-  integrity sha512-4E0HKG2aghY8GfqKOS+S/UP68YtuDq5sq5xGXm60rgKoqeRx9GZnhl9JUp3VIVcJ6xRAYfOmtuydxLrh3K+aog==
+"@longlost/tab-pages@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@longlost/tab-pages/-/tab-pages-1.1.1.tgz#6f148aa038f8bdbabc73470c9f1a0af118d3f733"
+  integrity sha512-eBQLZEHMm9xypPbP7UZievwXJWSa7ScC64ftmTI3srh5f8M1ZS60rCl/kzVw9m4qufyzi20TKn5yO9ZT1ZI1dA==
   dependencies:
     "@longlost/app-element" "^2.0.0"
-    "@longlost/utils" "^1.5.2"
+    "@longlost/utils" "^2.0.0"
 
 "@longlost/utils@^1.1.6", "@longlost/utils@^1.3.5":
   version "1.3.5"
@@ -564,13 +564,6 @@
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@longlost/utils/-/utils-1.5.0.tgz#1b17fa40262ce14495adef60effe8a692143bdf6"
   integrity sha512-kekx5f2GCiQo0pnrCs/QN+C+zeuCe0XW81CIKHo0lZ9YS1LR8UoOiLHjJi81btRT6bD71b8YBBtkKn1aJNswGA==
-  dependencies:
-    "@longlost/lambda" "^2.2.0"
-
-"@longlost/utils@^1.5.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@longlost/utils/-/utils-1.5.1.tgz#01bb49e6a2d12dd56f941f51d2cb67a3e5e2691f"
-  integrity sha512-4VE0pQ04oNlKK1k1bYqWTMm4KMpUeiHRUcWGvwEdEOY7zlK7BnPacpULNYFdW21M22gAG4sNWCRNvpNPuHaoQw==
   dependencies:
     "@longlost/lambda" "^2.2.0"
 
@@ -1920,10 +1913,10 @@ mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-mocha@^8.1.2:
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/mocha/-/mocha-8.1.2.tgz#d67fad13300e4f5cd48135a935ea566f96caf827"
-  integrity sha512-I8FRAcuACNMLQn3lS4qeWLxXqLvGf6r2CaLstDpZmMUUSmvW6Cnm1AuHxgbc7ctZVRcfwspCRbDHymPsi3dkJw==
+mocha@^8.1.3:
+  version "8.1.3"
+  resolved "https://registry.yarnpkg.com/mocha/-/mocha-8.1.3.tgz#5e93f873e35dfdd69617ea75f9c68c2ca61c2ac5"
+  integrity sha512-ZbaYib4hT4PpF4bdSO2DohooKXIn4lDeiYqB+vTmCdr6l2woW0b6H3pf5x4sM5nwQMru9RvjjHYWVGltR50ZBw==
   dependencies:
     ansi-colors "4.1.1"
     browser-stdout "1.3.1"

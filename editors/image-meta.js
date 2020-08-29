@@ -46,6 +46,7 @@ class ImageMeta extends ImageEditorItemMixin(AppElement) {
 
         :host {
           display:          block;
+          min-height:       100vh;
           background-color: var(--app-body-color);
         }
 
