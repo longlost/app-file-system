@@ -125,7 +125,11 @@ class PhotoCarousel extends AppElement {
   }
 
 
-  async __back() {
+  async __back() {    
+    this.__hideBackground();
+
+    await schedule();
+
     this.$.fab.exit();
 
     await wait(100);
@@ -147,6 +151,15 @@ class PhotoCarousel extends AppElement {
     await schedule();
 
     this.$.background.style['display'] = 'none';
+  }
+
+
+  async __showBackground() {
+    this.$.background.style['display'] = 'block';
+
+    await schedule();
+
+    this.$.background.style['opacity'] = '1';
   }
 
 
@@ -183,7 +196,6 @@ class PhotoCarousel extends AppElement {
 
     this.$.flipWrapper.style['display'] = 'none';
     this.$.flip.reset();
-    this.__hideBackground();
   }
 
 
@@ -209,15 +221,6 @@ class PhotoCarousel extends AppElement {
   }
 
 
-  async __showBackground() {
-    this.$.background.style['display'] = 'block';
-
-    await schedule();
-
-    this.$.background.style['opacity'] = '1';
-  }
-
-
   async open(measurements) {
 
     this._measurements = measurements;
@@ -225,6 +228,8 @@ class PhotoCarousel extends AppElement {
     // Avoid infinite loops by setting this once per open.
     this._start = this.item;
 
+    // No fade transition from FLIP to carousel "slight of hand".
+    this.$.carousel.style['transition'] = 'unset'; 
     this.$.flipWrapper.style['display'] = 'flex';
 
     await this.__showBackground();
@@ -255,9 +260,13 @@ class PhotoCarousel extends AppElement {
   }
 
   // Stop carousel db updates when this overlay is closed
-  // and when the image-editor is opened over this element.
+  // and when the `image-editor` is opened over this element.
   stop() {
-    this.$.carousel.style['opacity'] = '0';
+
+    // Setup the transition for a fade-in after the `image-editor`
+    // closes and the carousel is ready again.
+    this.$.carousel.style['transition'] = 'opacity 0.3s ease-out';
+    this.$.carousel.style['opacity']    = '0';
 
     this._carouselDisabled = true;
     this._opened           = false;       

@@ -81,31 +81,16 @@ class WebFileCard extends AppElement {
       // This occurs on slow/intermittent connections.
       _canceler: Object,
 
-
-
-      // _url: String,
-
-
+      _url: String,
+      
 
       //  !!!!TESTING ONLY!!!!
       //  uncomment __inputValueChanged
       //
       // _url: {
       //   type: String,
-      //   value: 'https://app-layout-assets.appspot.com/assets/bg4.jpg'
-      // }
-
-
-
-      //  !!!!TESTING ONLY!!!!
-      //  uncomment __inputValueChanged
-      //
-      _url: {
-        type: String,
-        value: 'https://fetch-progress.anthum.com/20kbps/images/sunrise-progressive.jpg'
-      },
-
-
+      //   value: 'https://fetch-progress.anthum.com/20kbps/images/sunrise-progressive.jpg'
+      // },
 
 
       // Data-bind to <paper-progress>
@@ -165,16 +150,11 @@ class WebFileCard extends AppElement {
     cancel('Failed to fetch');
   }
 
-  
-
-  // commented out for testing only.
 
   __inputValueChanged(event) {
-    // const {value} = event.detail;
-    // this._url = value.trim();
+    const {value} = event.detail;
+    this._url = value.trim();
   }
-
-
 
 
   async __downloadBtnClicked() {
