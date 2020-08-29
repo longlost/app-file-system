@@ -64,11 +64,9 @@ export default async (files, readCallback, processedCallback) => {
     const process = async () => {
 
 
-      // TESTING!!    
-      console.log(file.name, ' original size: ', formatFileSize(file.size));
-      const start = Date.now();
-
-
+      // // TESTING!!    
+      // console.log(file.name, ' original size: ', formatFileSize(file.size));
+      // const start = Date.now();
 
 
       // No need to transfer file accross contexts if it won't be processed.
@@ -79,11 +77,10 @@ export default async (files, readCallback, processedCallback) => {
       processed.file = processed.file || file;
 
 
-
-      // TESTING ONLY!!
-      const end = Date.now();
-      const secs = (end - start) / 1000;
-      console.log(`${file.name}  processed size: ${formatFileSize(processed.file.size)} took ${secs} sec`);
+      // // TESTING ONLY!!
+      // const end = Date.now();
+      // const secs = (end - start) / 1000;
+      // console.log(`${file.name}  processed size: ${formatFileSize(processed.file.size)} took ${secs} sec`);
       
 
       return processed;
