@@ -3,6 +3,7 @@
 
   #overlay {
     padding: 0px;
+
     --overlay-background-color:         var(--app-body-color);
     --overlay-toolbar-background-color: var(--app-primary-color);
     --overlay-toolbar-color:            var(--app-primary-color-text);
@@ -29,6 +30,7 @@
 
   #pages {
     overflow: unset; /* Don't break preview position: sticky; with an overflow setting. */
+    background-color: var(--app-body-color);
   }
 
   app-spinner {
@@ -96,8 +98,7 @@
                slot="content"
                on-tab-pages-page-changed="__tabPageChanged">
 
-      <image-filters class="page"
-                     current="[[_currentPage]]"
+      <image-filters current="[[_currentPage]]"
                      edited="[[_edited]]"
                      ext="[[_ext]]"
                      high-quality="[[_highQuality]]"
@@ -109,8 +110,7 @@
                      on-image-filters-show-spinner="__showSpinner">
       </image-filters>
     
-      <image-adjuster class="page"
-                      current="[[_currentPage]]"
+      <image-adjuster current="[[_currentPage]]"
                       edited="[[_edited]]"
                       ext="[[_ext]]"
                       high-quality="[[_highQuality]]"
@@ -122,8 +122,7 @@
                       on-image-adjuster-show-spinner="__showSpinner">                      
       </image-adjuster>
       
-      <image-cropper class="page"
-                     current="[[_currentPage]]"
+      <image-cropper current="[[_currentPage]]"
                      edited="[[_edited]]"
                      ext="[[_ext]]"
                      high-quality="[[_highQuality]]"
@@ -136,8 +135,7 @@
                      on-image-cropper-show-spinner="__showSpinner">
       </image-cropper>
 
-      <image-meta class="page"
-                  current="[[_currentPage]]"
+      <image-meta current="[[_currentPage]]"
                   page="info"
                   selected="[[_selectedPage]]">
         <metadata-page dark-mode="[[darkMode]]"

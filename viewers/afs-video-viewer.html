@@ -1,0 +1,54 @@
+
+<style>
+
+  #overlay {
+    box-shadow:       none;
+    background-color: black;
+    z-index:          1;
+  }
+
+  #content {   
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
+    position:        relative;
+    height:          100%;
+    overflow:        hidden;
+  }
+
+  lazy-video {
+    width:           	100%;   
+    background-color: transparent;
+  }
+
+  paper-icon-button {
+    position: absolute;
+    top:      16px;
+    left:     16px;
+    color:    var(--constant-light-text);
+  }
+
+</style>
+
+
+<app-overlay id="overlay"
+             modal
+             prebuilt-animation="from-left"
+             on-overlay-reset="__reset">
+
+  <div id="content">
+
+
+    <lazy-video id="video"
+    						aspect-ratio="landscape"
+	              src="[[_src]]">
+	  </lazy-video>
+
+
+    <paper-icon-button icon="app-icons:arrow-back"
+                       on-click="__backBtnClicked">
+    </paper-icon-button>
+
+  </div>
+
+</app-overlay>

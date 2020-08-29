@@ -115,7 +115,12 @@ class FileEditor extends EditorMixin(AppElement) {
     try {
       await this.clicked();
 
-      this.fire('open-photo-viewer', {item: this.item});
+      if (this._isVid) {
+        this.fire('open-video-viewer', {item: this.item});
+      }
+      else {
+        this.fire('open-photo-viewer', {item: this.item});
+      }
     }
     catch (error) {
       if (error === 'click debounced') { return; }

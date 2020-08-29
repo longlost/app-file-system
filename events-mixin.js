@@ -156,76 +156,99 @@ export const EventsMixin = superClass => {
 	  connectedCallback() {
 	    super.connectedCallback();
 
+	    this.__downloadItems 			= this.__downloadItems.bind(this);
+	    this.__editFile 					= this.__editFile.bind(this);
+	    this.__editImage 					= this.__editImage.bind(this);
+	    this.__saveImage 					= this.__saveImage.bind(this);
+	    this.__itemsChanged 			= this.__itemsChanged.bind(this);
+	    this.__itemDataChanged 		= this.__itemDataChanged.bind(this);	    
+	    this.__itemsSorted 				= this.__itemsSorted.bind(this);
+	    this.__openCarousel 			= this.__openCarousel.bind(this);
+	    this.__openPhotoViewer 		= this.__openPhotoViewer.bind(this);
+	    this.__openVideoViewer 		= this.__openVideoViewer.bind(this);
+	    this.__printItem 					= this.__printItem.bind(this);
+	    this.__printImages 				= this.__printImages.bind(this);
+	    this.__requestDeleteItem 	= this.__requestDeleteItem.bind(this);
+	    this.__requestDeleteItems = this.__requestDeleteItems.bind(this);
+	    this.__resumeCarousel 		= this.__resumeCarousel.bind(this);
+	    this.__shareItem 					= this.__shareItem.bind(this);
+	    this.__updateItem 				= this.__updateItem.bind(this);
+
+
 	    // `file-list`
-	    this.addEventListener('download-items', this.__downloadItems.bind(this));
+	    this.addEventListener('download-items', this.__downloadItems);
 
 	    // `quick-options`
-	    this.addEventListener('edit-file', this.__editFile.bind(this));
+	    this.addEventListener('edit-file', this.__editFile);
 
 	    // `file-item`, `photo-carousel`
-	    this.addEventListener('edit-image', this.__editImage.bind(this));
+	    this.addEventListener('edit-image', this.__editImage);
 
 	    // <image-editor>
-	    this.addEventListener('image-editor-save', this.__saveImage.bind(this));
+	    this.addEventListener('image-editor-save', this.__saveImage);
 
 	    // `file-items`, `photo-carousel`
-	    this.addEventListener('items-changed', this.__itemsChanged.bind(this));
+	    this.addEventListener('items-changed', this.__itemsChanged);
 
 	    // `paginated-roll-items`
-	    this.addEventListener('item-data-changed', this.__itemDataChanged.bind(this));	    
+	    this.addEventListener('item-data-changed', this.__itemDataChanged);	    
 
 	    // Events from `file-items` which is
 	    // a child of `file-list`
-	    this.addEventListener('file-items-sorted', this.__itemsSorted.bind(this));
+	    this.addEventListener('file-items-sorted', this.__itemsSorted);
 
 	    // `roll-item`
-	    this.addEventListener('open-carousel', this.__openCarousel.bind(this));
+	    this.addEventListener('open-carousel', this.__openCarousel);
 
 	    // `photo-carousel`, `file-editor`
-	    this.addEventListener('open-photo-viewer', this.__openPhotoViewer.bind(this));
+	    this.addEventListener('open-photo-viewer', this.__openPhotoViewer);
+
+	    // `file-editor`
+	    this.addEventListener('open-video-viewer', this.__openVideoViewer);
 
 	    // `file-list`, `quick-options`
-	    this.addEventListener('print-item', this.__printItem.bind(this));
+	    this.addEventListener('print-item', this.__printItem);
 
 	    // `file-list`
-	    this.addEventListener('print-images', this.__printImages.bind(this));
+	    this.addEventListener('print-images', this.__printImages);
 
 	    // `file-items` and `file-item`
-	    this.addEventListener('request-delete-item', this.__requestDeleteItem.bind(this));
+	    this.addEventListener('request-delete-item', this.__requestDeleteItem);
 
 	    // `file-items` and `file-item`
-	    this.addEventListener('request-delete-items', this.__requestDeleteItems.bind(this));
+	    this.addEventListener('request-delete-items', this.__requestDeleteItems);
 
 	    // `image-editor`
-	    this.addEventListener('resume-carousel', this.__resumeCarousel.bind(this));
+	    this.addEventListener('resume-carousel', this.__resumeCarousel);
 
 	    // `quick-options`, `file-editor`, `photo-carousel`
-	    this.addEventListener('share-item', this.__shareItem.bind(this));
+	    this.addEventListener('share-item', this.__shareItem);
 
 	    // `file-editor`, `image-editor`
-	    this.addEventListener('update-item', this.__updateItem.bind(this));
+	    this.addEventListener('update-item', this.__updateItem);
 	  }
 
 
 	  disconnectedCallback() {
 	    super.disconnectedCallback();	    
 	    
-	    this.removeEventListener('download-items', 			 this.__downloadItems.bind(this));
-	    this.removeEventListener('edit-file', 					 this.__editFile.bind(this));
-	    this.removeEventListener('edit-image', 					 this.__editImage.bind(this));
-	    this.removeEventListener('image-editor-save', 	 this.__saveImage.bind(this));
-	    this.removeEventListener('items-changed', 			 this.__itemsChanged.bind(this));
-	    this.removeEventListener('item-data-changed', 	 this.__itemDataChanged.bind(this));	 
-	    this.removeEventListener('file-items-sorted', 	 this.__itemsSorted.bind(this));
-	    this.removeEventListener('open-carousel', 			 this.__openCarousel.bind(this));
-	    this.removeEventListener('open-photo-viewer', 	 this.__openPhotoViewer.bind(this));
-	    this.removeEventListener('print-item', 					 this.__printItem.bind(this));
-	    this.removeEventListener('print-images', 				 this.__printImages.bind(this));
-	    this.removeEventListener('request-delete-item',  this.__requestDeleteItem.bind(this));
-	    this.removeEventListener('request-delete-items', this.__requestDeleteItems.bind(this));
-	    this.removeEventListener('resume-carousel', 		 this.__resumeCarousel.bind(this));
-	    this.removeEventListener('share-item', 					 this.__shareItem.bind(this));
-	    this.removeEventListener('update-item', 				 this.__updateItem.bind(this));
+	    this.removeEventListener('download-items', 			 this.__downloadItems);
+	    this.removeEventListener('edit-file', 					 this.__editFile);
+	    this.removeEventListener('edit-image', 					 this.__editImage);
+	    this.removeEventListener('image-editor-save', 	 this.__saveImage);
+	    this.removeEventListener('items-changed', 			 this.__itemsChanged);
+	    this.removeEventListener('item-data-changed', 	 this.__itemDataChanged);	 
+	    this.removeEventListener('file-items-sorted', 	 this.__itemsSorted);
+	    this.removeEventListener('open-carousel', 			 this.__openCarousel);
+	    this.removeEventListener('open-photo-viewer', 	 this.__openPhotoViewer);
+	    this.removeEventListener('open-video-viewer', 	 this.__openVideoViewer);
+	    this.removeEventListener('print-item', 					 this.__printItem);
+	    this.removeEventListener('print-images', 				 this.__printImages);
+	    this.removeEventListener('request-delete-item',  this.__requestDeleteItem);
+	    this.removeEventListener('request-delete-items', this.__requestDeleteItems);
+	    this.removeEventListener('resume-carousel', 		 this.__resumeCarousel);
+	    this.removeEventListener('share-item', 					 this.__shareItem);
+	    this.removeEventListener('update-item', 				 this.__updateItem);
 	  }
 
 	  // So top level elements can receive real-time updates to item.
@@ -337,7 +360,7 @@ export const EventsMixin = superClass => {
 	    this.$.carousel.open(measurements);
 	  }
 	  
-	  // From <file-item> (image files only) and <photo-carousel>
+	  // From `file-editor` and `photo-carousel` (image files only)
 	  async __openPhotoViewer(event) {
 	  	hijackEvent(event);
 
@@ -347,10 +370,26 @@ export const EventsMixin = superClass => {
 
 	    await import(
 	    	/* webpackChunkName: 'app-file-system-photo-viewer' */ 
-	    	'./viewer/photo-viewer.js'
+	    	'./viewers/photo-viewer.js'
 	    );
 
-	    this.$.viewer.open(measurements);
+	    this.$.photoViewer.open(measurements);
+	  }
+
+	  // From `file-editor` (video files only)
+	  async __openVideoViewer(event) {
+	  	hijackEvent(event);
+
+	  	const {item} = event.detail;
+
+	  	this._liveUid = item.uid;
+
+	    await import(
+	    	/* webpackChunkName: 'afs-video-viewer' */ 
+	    	'./viewers/afs-video-viewer.js'
+	    );
+
+	    this.$.videoViewer.open();
 	  }
 
 	  // From <quick-options>, <file-item>

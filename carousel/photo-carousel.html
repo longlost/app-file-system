@@ -1,5 +1,10 @@
 
 <style>
+
+  :host {
+    --carousel-max-height: 568px;
+    --carousel-max-width:  1010px; /* 16:9 aspect. */
+  }
   
   #background {
     display:    none;
@@ -30,8 +35,10 @@
   /* Responsive design - large screen sizes. */
   #flip {
     position:   absolute;
-    max-height: 568px;
+    max-height: var(--carousel-max-height);
+    max-width:  var(--carousel-max-width);
     top:        unset;
+    left:       unset;
   }
 
   #overlay {
