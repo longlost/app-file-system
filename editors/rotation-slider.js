@@ -67,6 +67,8 @@ class RotationSlider extends AppElement {
   async connectedCallback() {
     super.connectedCallback();
 
+    this.__measureWidth = this.__measureWidth.bind(this);
+
     await schedule();
 
     this.__measureWidth();
@@ -74,14 +76,14 @@ class RotationSlider extends AppElement {
     // Center the scroller initially.
     this.center();
 
-    window.addEventListener('resize', this.__measureWidth.bind(this));
+    window.addEventListener('resize', this.__measureWidth);
   }
 
 
   disconnectedCallback() {
     super.disconnectedCallback();
 
-    window.removeEventListener('resize', this.__measureWidth.bind(this));
+    window.removeEventListener('resize', this.__measureWidth);
   }
 
 

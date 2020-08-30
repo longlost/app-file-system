@@ -77,30 +77,19 @@ export const PhotoElementMixin = superClass => {
 	  connectedCallback() {
 	  	super.connectedCallback();
 
-	  	this.addEventListener(
-	  		'loaded-changed',
-	  		this.__handleImageLoadedChanged.bind(this)
-  		);
+	  	this.__handleImageLoadedChanged = this.__handleImageLoadedChanged.bind(this);
+	  	this.__handleMetadataLoaded 		= this.__handleMetadataLoaded.bind(this);
 
-  		this.addEventListener(
-  			'lazy-video-metadata-loaded',
-  			this.__handleMetadataLoaded.bind(this)
-  		);
+	  	this.addEventListener('lazy-image-loaded-changed', this.__handleImageLoadedChanged);
+  		this.addEventListener('lazy-video-metadata-loaded-changed', this.__handleMetadataLoaded);
 	  }
 
 
 	  disconnectedCallback() {
 	  	super.disconnectedCallback();
 
-	  	this.removeEventListener(
-	  		'loaded-changed',
-	  		this.__handleImageLoadedChanged.bind(this)
-  		);
-
-  		this.removeEventListener(
-  			'lazy-video-metadata-loaded',
-  			this.__handleMetadataLoaded.bind(this)
-  		);
+	  	this.removeEventListener('lazy-image-loaded-changed', this.__handleImageLoadedChanged);
+  		this.removeEventListener('lazy-video-metadata-loaded-changed', this.__handleMetadataLoaded);
 	  }
 
 
@@ -165,7 +154,7 @@ export const PhotoElementMixin = superClass => {
 	    return original;
 	  }
 
-	  // <lazy-image> 'on-loaded-changed' event handler.
+	  // <lazy-image> 'lazy-image-loaded-changed' event handler.
 	  async __handleImageLoadedChanged(event) {
 	  	hijackEvent(event);
 

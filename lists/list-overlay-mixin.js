@@ -98,20 +98,16 @@ export const ListOverlayMixin = superClass => {
 	  connectedCallback() {
 	    super.connectedCallback();
 
-	    this.addEventListener(
-	      'item-selected',
-	      this.__itemSelected.bind(this)
-	    );
+	    this.__itemSelected = this.__itemSelected.bind(this);
+
+	    this.addEventListener('item-selected', this.__itemSelected);
 	  }
 
 
 	  disconnectedCallback() {
 	    super.disconnectedCallback();
 
-	    this.removeEventListener(
-	      'item-selected',
-	      this.__itemSelected.bind(this)
-	    );
+	    this.removeEventListener('item-selected', this.__itemSelected);
 	  }
 
 

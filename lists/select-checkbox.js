@@ -54,14 +54,16 @@ class SelectCheckbox extends AppElement {
   connectedCallback() {
     super.connectedCallback();
 
-    this.addEventListener('click', this.__clicked.bind(this));
+    this.__clicked = this.__clicked.bind(this);
+
+    this.addEventListener('click', this.__clicked);
   }
 
 
   disconnectedCallback() {
     super.connectedCallback();
 
-    this.removeEventListener('click', this.__clicked.bind(this));
+    this.removeEventListener('click', this.__clicked);
   }
 
 
