@@ -168,25 +168,22 @@ class PhotoCarousel extends AppElement {
     // NOT using `listenOnce` here since there 
     // is no way to remove the attached event listener
     // for the promise of the two that never resolves.
-    let imgResolver;
-    let vidResolver;
+    let resolver;
 
-    const imgOnce = new Promise(resolve => {
-      imgResolver = resolve;
+    const once = new Promise(resolve => {
+      resolver = resolve;
     });
 
-    const vidOnce = new Promise(resolve => {
-      vidResolver = resolve;
-    });
-
-    this.addEventListener('lazy-image-placeholder-loaded-changed', imgResolver);
-    this.addEventListener('lazy-video-poster-loaded-changed',      vidResolver);
+    this.addEventListener('lazy-image-placeholder-loaded-changed', resolver);
+    this.addEventListener('lazy-image-loaded-changed',             resolver);
+    this.addEventListener('lazy-video-poster-loaded-changed',      resolver);
 
     // Wait for current image/poster to load.
-    await Promise.race([imgOnce, vidOnce]);
+    await once;
 
-    this.removeEventListener('lazy-image-placeholder-loaded-changed', imgResolver);
-    this.removeEventListener('lazy-video-poster-loaded-changed',      vidResolver);
+    this.removeEventListener('lazy-image-placeholder-loaded-changed', resolver);
+    this.removeEventListener('lazy-image-loaded-changed',             resolver);
+    this.removeEventListener('lazy-video-poster-loaded-changed',      resolver);
 
     // Wait for current image/poster to fade-in.
     await wait(350);
@@ -241,7 +238,7 @@ class PhotoCarousel extends AppElement {
         await this.$.flip.play();
       }
       catch (_) {
-        console.warn('Flip animation failed gracefully.');
+        this.$.flipWrapper.style['display'] = 'none';
       }  
     };
 
