@@ -1,10 +1,17 @@
 
 <style>
 
+  :host {
+    --background-color-crossover: 240px; 
+  }
+
   #overlay {
     padding: 0px;
 
-    --overlay-background-color: var(--app-body-color);
+    background: linear-gradient(
+      var(--app-dark-color) var(--background-color-crossover), 
+      var(--app-body-color) var(--background-color-crossover)
+    );
   }
 
   #toolbar-background-container,
@@ -39,6 +46,7 @@
     max-width:      568px; 
     margin:         0px auto;  
     padding-bottom: 16px;
+    color:          var(--app-primary-color-text);
   }
 
   #grid {
@@ -65,6 +73,7 @@
 
     #types {
       text-align: center;
+      font-size:  20px;
     }
 
     #grid {
