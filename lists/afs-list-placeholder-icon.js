@@ -78,6 +78,14 @@ class AFSListPlaceholderIcon extends AppElement {
   }
 
 
+  constructor() {
+    super();
+
+    this.__animateBlinking = this.__animateBlinking.bind(this);
+    this.__animateLooking  = this.__animateLooking.bind(this);
+  }
+
+
   __playingChanged(playing) {
     if (playing) {
       this.__startAnimation();
@@ -138,15 +146,8 @@ class AFSListPlaceholderIcon extends AppElement {
     this.__animateBlinking();
     this.__animateLooking();
 
-    this.$.eyesPath.addEventListener( 
-      'animationend', 
-      this.__animateBlinking.bind(this)
-    );
-
-    this.$.eyes.addEventListener( 
-      'transitionend', 
-      this.__animateLooking.bind(this)
-    );
+    this.$.eyesPath.addEventListener('animationend',  this.__animateBlinking);
+    this.$.eyes.addEventListener(    'transitionend', this.__animateLooking);
   }
 
 
@@ -155,15 +156,8 @@ class AFSListPlaceholderIcon extends AppElement {
     this.$.eyes.classList.remove(this._currentLookClass);
     this.$.eyesPath.classList.remove('blink');
 
-    this.$.eyesPath.removeEventListener( 
-      'animationend', 
-      this.__animateBlinking.bind(this)
-    );
-
-    this.$.eyes.removeEventListener( 
-      'transitionend', 
-      this.__animateLooking.bind(this)
-    );
+    this.$.eyesPath.removeEventListener('animationend',  this.__animateBlinking);
+    this.$.eyes.removeEventListener(    'transitionend', this.__animateLooking);
   }
 
 }
