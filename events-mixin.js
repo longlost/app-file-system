@@ -357,7 +357,7 @@ export const EventsMixin = superClass => {
 	    	'./carousel/photo-carousel.js'
 	    );
 
-	    this.$.carousel.open(measurements);
+	    this.select('#carousel').open(measurements);
 	  }
 	  
 	  // From `file-editor` and `photo-carousel` (image files only)
@@ -373,7 +373,7 @@ export const EventsMixin = superClass => {
 	    	'./viewers/photo-viewer.js'
 	    );
 
-	    this.$.photoViewer.open(measurements);
+	    this.select('#photoViewer').open(measurements);
 	  }
 
 	  // From `file-editor` (video files only)
@@ -389,7 +389,7 @@ export const EventsMixin = superClass => {
 	    	'./viewers/afs-video-viewer.js'
 	    );
 
-	    this.$.videoViewer.open();
+	    this.select('#videoViewer').open();
 	  }
 
 	  // From <quick-options>, <file-item>
@@ -405,7 +405,7 @@ export const EventsMixin = superClass => {
 	    	'./editors/file-editor.js'
 	    );
 
-	    this.$.fileEditor.open();
+	    this.select('#fileEditor').open();
 	  }
 
 	  // From <photo-carousel>
@@ -420,11 +420,13 @@ export const EventsMixin = superClass => {
 	    	/* webpackChunkName: 'app-file-system-image-editor' */ 
 	    	'./editors/image-editor.js'
 	    );
-	    await this.$.imageEditor.open();
+	    await this.select('#imageEditor').open();
+
+	    const carousel = this.select('#carousel');
 
 	    // Only available when list === 'photos'.
-	    if (this.$.carousel && this.$.carousel.stop) {
-	    	this.$.carousel.stop();
+	    if (carousel && carousel.stop) {
+	    	carousel.stop();
 	    }	    
 	  }
 
@@ -434,7 +436,7 @@ export const EventsMixin = superClass => {
 
 	  	await this.add(event.detail.value);
 	  	
-	  	this.$.imageEditor.saved();
+	  	this.select('#imageEditor').saved();
 	  }
 
 
@@ -443,8 +445,10 @@ export const EventsMixin = superClass => {
 
 	  	// Only call resume if the carousel 
 	  	// has been opened before.
-	  	if (this.$.carousel.resume) {
-	  		this.$.carousel.resume();
+	  	const carousel = this.select('#carousel');
+
+	  	if (carousel && carousel.resume) {
+	  		carousel.resume();
 	  	}
 	  }
 
@@ -550,12 +554,15 @@ export const EventsMixin = superClass => {
 		  	// Close editors since their item is now gone.
 	      // Test for close method since these elements
 	      // are lazy loaded and may not yet exist.
-	      if (this.$.fileEditor.reset) {
-	      	this.$.fileEditor.reset();
+	      const fileEditor 	= this.select('#fileEditor');
+	      const imageEditor = this.select('#imageEditor');
+
+	      if (fileEditor.reset) {
+	      	fileEditor.reset();
 	      }
 
-	      if (this.$.imageEditor.reset) {
-	      	this.$.imageEditor.reset();
+	      if (imageEditor.reset) {
+	      	imageEditor.reset();
 	      }
 
 	      // Delete methods show different spinner messages.

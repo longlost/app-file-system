@@ -51,51 +51,62 @@
               on-upload-updated="__uploadUpdated">
 </file-sources>
 
-
-<file-list id="fileList"
-           coll="[[coll]]"
-           data="[[_dbData]]"
-           hide-dropzone="[[hideDropzone]]"
-           uploads="[[_uploads]]">
-</file-list>
+<!-- Control memory footprint by removing "heavy" elements when not in use. -->
+<template id="stamperTemplate"
+          is="dom-if"
+          if="[[_stamp]]"
+          restamp>
 
 
-<camera-roll id="cameraRoll"
+  <file-list id="fileList"
              coll="[[coll]]"
              data="[[_dbData]]"
-             uploads="[[_uploads]]">
-</camera-roll>
+             hide-dropzone="[[hideDropzone]]"
+             uploads="[[_uploads]]"
+             on-list-overlay-closed="__listOverlayClosedHandler">
+  </file-list>
 
 
-<file-editor id="fileEditor"
-             dark-mode="[[darkMode]]"
-             item="[[_liveItem]]"
-             list="[[list]]">
-</file-editor>
+  <camera-roll id="cameraRoll"
+               coll="[[coll]]"
+               data="[[_dbData]]"
+               uploads="[[_uploads]]"
+               on-list-overlay-closed="__listOverlayClosedHandler">
+  </camera-roll>
 
 
-<photo-carousel id="carousel"
-                coll="[[coll]]"
+  <file-editor id="fileEditor"
+               dark-mode="[[darkMode]]"
+               item="[[_liveItem]]"
+               list="[[list]]">
+  </file-editor>
+
+
+  <photo-carousel id="carousel"
+                  coll="[[coll]]"
+                  item="[[_liveItem]]"
+                  list=[[list]]>
+  </photo-carousel>
+
+
+  <image-editor id="imageEditor"
+                dark-mode="[[darkMode]]"
                 item="[[_liveItem]]"
-                list=[[list]]>
-</photo-carousel>
+                list="[[list]]">
+  </image-editor>
 
 
-<image-editor id="imageEditor"
-              dark-mode="[[darkMode]]"
-              item="[[_liveItem]]"
-              list="[[list]]">
-</image-editor>
+  <afs-video-viewer id="videoViewer"
+                    item="[[_liveItem]]">
+  </afs-video-viewer>
 
 
-<afs-video-viewer id="videoViewer"
-                  item="[[_liveItem]]">
-</afs-video-viewer>
+  <photo-viewer id="photoViewer"
+                item="[[_liveItem]]">
+  </photo-viewer>
 
 
-<photo-viewer id="photoViewer"
-              item="[[_liveItem]]">
-</photo-viewer>
+</template>
 
 
 <app-spinner id="spinner"

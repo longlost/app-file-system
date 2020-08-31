@@ -90,7 +90,8 @@ export const ListOverlayMixin = superClass => {
 	  		// This only should be triggered by a change in '_dataEmpty',
 	  		// otherwise, this will close the overlay each time
 	  		// the user opens it, which is terrible.
-	  		'__dataEmptyOpenedChanged(_dataEmpty)'
+	  		'__dataEmptyOpenedChanged(_dataEmpty)',
+	  		'__openedChanged(_opened)'
 	  	];
 	  }
 
@@ -143,6 +144,14 @@ export const ListOverlayMixin = superClass => {
 	  		await listenOnce(this, 'app-file-system-list-items-dom-changed');
 
 	  		this.$.overlay.reset();
+	  	}
+	  }
+
+	  // Control memory footprint by removing 
+	  // "heavy" elements when not in use.
+	  __openedChanged(opened) {
+	  	if (!opened) {
+	  		this.fire('list-overlay-closed');
 	  	}
 	  }
 

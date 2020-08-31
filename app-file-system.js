@@ -144,6 +144,7 @@ import {deepClone} from '@longlost/lambda/lambda.js';
 
 import {
   hijackEvent,
+  listenOnce,
   schedule,
   warn
 } from '@longlost/utils/utils.js';
@@ -318,6 +319,12 @@ class AppFileSystem extends EventsMixin(AppElement) {
         value: 'kB' // or 'B', 'MB', 'GB'
       },
 
+      // Controls the `<template is="dom-if"...` which wraps
+      // all non-critical elements.
+      // This feature keeps the memory footprint of AFS low when 
+      // not in use or when only background tasks are running.
+      _stamp: Boolean,
+
       // From file-soureces.
       // Upload controls, progress and state.
       // Consumed by upload-controls ui.
@@ -392,14 +399,14 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
     if (this.list === 'files') {
 
-      if (this.$.fileList.delete) {
-        this.$.fileList.delete();
+      if (this.select('#fileList').delete) {
+        this.select('#fileList').delete();
       }
     }
     else if (this.list === 'photos') {
 
-      if (this.$.cameraRoll.delete) {
-        this.$.cameraRoll.delete();
+      if (this.select('#cameraRoll').delete) {
+        this.select('#cameraRoll').delete();
       }
     }
   }
@@ -486,6 +493,13 @@ class AppFileSystem extends EventsMixin(AppElement) {
     else {
       this.set(`_uploads.${upload.uid}`, upload);
     }
+  }
+
+  // Remove "heavy", or high memory, elements from dom when not in use.
+  __listOverlayClosedHandler(event) {
+    hijackEvent(event);
+
+    this._stamp = false;
   }
 
   // Add one HTML5 File object or an array of File objects.
@@ -586,6 +600,10 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   async openList() {
+
+    this._stamp = true;
+
+    await listenOnce(this.$.stamperTemplate, 'dom-change');
     
     if (this.list === 'files') {
       await import(
@@ -593,7 +611,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
         './lists/file-list.js'
       );
 
-      return this.$.fileList.open();
+      return this.select('#fileList').open();
     }
     else if (this.list === 'photos') {
       await import(
@@ -601,7 +619,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
         './lists/camera-roll.js'
       );
       
-      return this.$.cameraRoll.open();
+      return this.select('#cameraRoll').open();
     }
 
     throw new Error('Cannot open the overlay without the list property being properly set.');

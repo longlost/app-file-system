@@ -186,7 +186,13 @@ class MultiselectBtns extends AppElement {
   __computeHidePrintBtn(items) {
     if (!Array.isArray(items)) { return true; }
 
-    return items.some(item => !item.type.includes('image'));
+    // All images and videos which have a poster image.
+    const show = items.some(item => (
+      item.type.includes('image') ||
+      (item.type.includes('video') && item.poster)
+    ));
+
+    return !show;
   }
 
 
