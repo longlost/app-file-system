@@ -1,0 +1,44 @@
+
+<style include="app-shared-styles">
+
+  #dismiss-btn {
+    color: var(--app-primary-color);
+  }
+
+  #reset-btn {
+    background-color: var(--app-primary-color);
+    color:            var(--app-primary-color-text);
+  }
+
+</style>
+
+
+<app-modal id="modal"
+           heading="Reset All">
+
+  <div id="content" 
+     slot="card-content-slot">
+
+    <p>Do you want to discard all unsaved changes?</p>
+
+    <p>This action CANNOT be undone.</p>
+
+  </div>
+
+  <paper-button id="dismiss-btn"
+                slot="card-actions-slot"
+                on-click="__dismissBtnClicked">
+    DISMISS
+  </paper-button>
+
+  <paper-button id="reset-btn"
+                class="shared-paper-button-with-icon"
+                slot="card-actions-slot"
+                on-click="__resetBtnClicked">
+    <iron-icon class="shared-iron-icon-inside-paper-button" 
+               icon="afs-image-editor-icons:refresh">
+    </iron-icon>
+    <span>RESET ALL</span>
+  </paper-button>
+
+</app-modal>

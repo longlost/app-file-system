@@ -154,7 +154,7 @@ import {isCloudProcessable} from './shared/utils.js';
 import path                 from 'path';
 import services             from '@longlost/services/services.js';
 import htmlString           from './app-file-system.html';
-import './sources/file-sources.js';
+import './sources/afs-file-sources.js';
 // Modals, app-spinner imports in events-mixin.js.
 
 
@@ -372,14 +372,14 @@ class AppFileSystem extends EventsMixin(AppElement) {
     
     if (list === 'files') {
       import(
-        /* webpackChunkName: 'app-file-system-file-list' */ 
-        './lists/file-list.js'
+        /* webpackChunkName: 'afs-file-list' */ 
+        './lists/afs-file-list.js'
       );
     }
     else if (list === 'photos') {
       import(
-        /* webpackChunkName: 'app-file-system-camera-roll' */ 
-        './lists/camera-roll.js'
+        /* webpackChunkName: 'afs-camera-roll' */ 
+        './lists/afs-camera-roll.js'
       );
     }
   }
@@ -607,16 +607,16 @@ class AppFileSystem extends EventsMixin(AppElement) {
     
     if (this.list === 'files') {
       await import(
-        /* webpackChunkName: 'app-file-system-file-list' */ 
-        './lists/file-list.js'
+        /* webpackChunkName: 'afs-file-list' */ 
+        './lists/afs-file-list.js'
       );
 
       return this.select('#fileList').open();
     }
     else if (this.list === 'photos') {
       await import(
-        /* webpackChunkName: 'app-file-system-camera-roll' */ 
-        './lists/camera-roll.js'
+        /* webpackChunkName: 'afs-camera-roll' */ 
+        './lists/afs-camera-roll.js'
       );
       
       return this.select('#cameraRoll').open();

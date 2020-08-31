@@ -1,0 +1,174 @@
+
+<style>
+
+  :host {
+    --background-color-crossover: 240px; 
+  }
+
+  #overlay {
+    padding: 0px;
+
+    background: linear-gradient(
+      var(--app-dark-color) var(--background-color-crossover), 
+      var(--app-body-color) var(--background-color-crossover)
+    );
+  }
+
+  #toolbar-background-container,
+  #progress {
+    position: absolute;
+    top:      0px;
+    right:    0px;
+    bottom:   0px;
+    left:     0px;
+    z-index: -1;
+  }  
+
+  #toolbar-background {
+    height: 100%;
+    background-color: var(--app-dark-color);
+    color:            var(--app-dark-color-text);
+  }
+
+  #content {
+    display:            grid;
+    grid-template-rows: min-content;
+    min-height:         calc(100vh - 128px);    
+    padding:            32px 16px;
+  }
+
+  #content[hidden] {
+    display: none;
+  }
+
+  #types { 
+    width:          100%;
+    max-width:      568px; 
+    margin:         0px auto;  
+    padding-bottom: 16px;
+    color:          var(--app-primary-color-text);
+  }
+
+  #grid {
+    display:            grid;
+    grid-template-rows: min-content 20px 1fr;
+    grid-row-gap:       16px;
+    align-self:         center;
+    height:             100%;
+    width:              100%;
+    max-width:          568px;
+    margin:             0px auto;
+  }
+
+  .vert-aligned {
+    align-self: center;
+  }
+
+  #or {
+    text-align: center;
+  }
+
+  /* Larger than large mobile. */
+  @media (min-width: 1023px) {
+
+    #types {
+      text-align: center;
+      font-size:  20px;
+    }
+
+    #grid {
+      grid-template-columns: 1fr 112px 1fr;
+      grid-template-rows:    unset;
+      height:                unset;
+      max-width:             1024px;
+    }
+
+    #deviceFileCard {
+      height: 300px;
+    }
+
+  }
+
+</style>
+
+
+<template id="stamper" 
+          is="dom-if" 
+          if="[[_stamp]]" 
+          restamp>
+
+
+  <app-header-overlay id="overlay"
+                      header-size="1"
+                      parent-controls-exits
+                      prebuilt-animation="from-top"
+                      fixed-header
+                      title="Add Files"
+                      on-header-overlay-back="__back"
+                      on-overlay-reset="__reset">
+
+
+    <div id="toolbar-background-container"
+         slot="header-background-slot">
+
+      <afs-progress-bar id="progress"
+                        processed="[[_processed]]"
+                        processing="[[_processing]]"
+                        read="[[_read]]"
+                        reading="[[_reading]]">
+      </afs-progress-bar>
+
+      <div id="toolbar-background"></div>
+    </div>
+
+
+    <afs-list-icon-button coll="[[coll]]"
+                          count="[[_dbCount]]"
+                          list="[[list]]"
+                          slot="top-toolbar-buttons-slot"
+                          on-click="__listBtnClicked">
+    </afs-list-icon-button>    
+
+
+    <div id="content"
+         hidden="[[_hideContent]]" 
+         slot="content">
+
+      <div id="types">[[_acceptableTypes]]</div>
+
+
+      <div id="grid">
+        <afs-web-file-card class="vert-aligned"
+                           mimes="[[_mimes]]"
+                           on-file-added="__webFileAdded">
+        </afs-web-file-card>
+
+        <div id="or" 
+             class="vert-aligned">
+          OR
+        </div>
+
+        <afs-device-file-card id="deviceFileCard"
+                              accept="[[accept]]"
+                              hide-dropzone="[[hideDropzone]]"
+                              maxfiles="[[maxfiles]]"
+                              maxsize="[[maxsize]]"
+                              multiple="[[multiple]]"
+                              unit="[[unit]]"
+                              on-files-added="__deviceFilesAdded">
+        </afs-device-file-card>
+      </div>
+
+
+      <afs-upload-actions-card id="actions"
+                               list="[[list]]"
+                               qty="[[_filesToUploadQty]]"
+                               on-go="__uploadActionsGo"
+                               on-rename="__uploadActionsRename">                                        
+      </afs-upload-actions-card>
+
+    </div>
+
+  </app-header-overlay>
+
+</template>

@@ -34,22 +34,22 @@
 </style>
 
 
-<file-sources id="sources"
-              accept="[[accept]]"
-              coll="[[coll]]"
-              data="[[_dbData]]"
-              hide-dropzone="[[hideDropzone]]"
-              list="[[list]]"
-              maxfiles="[[maxfiles]]"
-              maxsize="[[maxsize]]"
-              multiple="[[multiple]]"
-              unit="[[unit]]"
-              on-delete-previous="__deletePrevious"
-              on-open-list="openList"
-              on-open-save-as-modal="__openSaveAsModal"
-              on-upload-done="__uploadDone"
-              on-upload-updated="__uploadUpdated">
-</file-sources>
+<afs-file-sources id="sources"
+                  accept="[[accept]]"
+                  coll="[[coll]]"
+                  data="[[_dbData]]"
+                  hide-dropzone="[[hideDropzone]]"
+                  list="[[list]]"
+                  maxfiles="[[maxfiles]]"
+                  maxsize="[[maxsize]]"
+                  multiple="[[multiple]]"
+                  unit="[[unit]]"
+                  on-delete-previous="__deletePrevious"
+                  on-open-list="openList"
+                  on-open-save-as-modal="__openSaveAsModal"
+                  on-upload-done="__uploadDone"
+                  on-upload-updated="__uploadUpdated">
+</afs-file-sources>
 
 <!-- Control memory footprint by removing "heavy" elements when not in use. -->
 <template id="stamperTemplate"
@@ -58,42 +58,42 @@
           restamp>
 
 
-  <file-list id="fileList"
-             coll="[[coll]]"
-             data="[[_dbData]]"
-             hide-dropzone="[[hideDropzone]]"
-             uploads="[[_uploads]]"
-             on-list-overlay-closed="__listOverlayClosedHandler">
-  </file-list>
+  <afs-file-list id="fileList"
+                 coll="[[coll]]"
+                 data="[[_dbData]]"
+                 hide-dropzone="[[hideDropzone]]"
+                 uploads="[[_uploads]]"
+                 on-list-overlay-closed="__listOverlayClosedHandler">
+  </afs-file-list>
 
 
-  <camera-roll id="cameraRoll"
-               coll="[[coll]]"
-               data="[[_dbData]]"
-               uploads="[[_uploads]]"
-               on-list-overlay-closed="__listOverlayClosedHandler">
-  </camera-roll>
+  <afs-camera-roll id="cameraRoll"
+                   coll="[[coll]]"
+                   data="[[_dbData]]"
+                   uploads="[[_uploads]]"
+                   on-list-overlay-closed="__listOverlayClosedHandler">
+  </afs-camera-roll>
 
 
-  <file-editor id="fileEditor"
-               dark-mode="[[darkMode]]"
-               item="[[_liveItem]]"
-               list="[[list]]">
-  </file-editor>
+  <afs-file-editor id="fileEditor"
+                   dark-mode="[[darkMode]]"
+                   item="[[_liveItem]]"
+                   list="[[list]]">
+  </afs-file-editor>
 
 
-  <photo-carousel id="carousel"
-                  coll="[[coll]]"
-                  item="[[_liveItem]]"
-                  list=[[list]]>
-  </photo-carousel>
+  <afs-photo-carousel id="carousel"
+                      coll="[[coll]]"
+                      item="[[_liveItem]]"
+                      list=[[list]]>
+  </afs-photo-carousel>
 
 
-  <image-editor id="imageEditor"
-                dark-mode="[[darkMode]]"
-                item="[[_liveItem]]"
-                list="[[list]]">
-  </image-editor>
+  <afs-image-editor id="imageEditor"
+                    dark-mode="[[darkMode]]"
+                    item="[[_liveItem]]"
+                    list="[[list]]">
+  </afs-image-editor>
 
 
   <afs-video-viewer id="videoViewer"
@@ -101,9 +101,9 @@
   </afs-video-viewer>
 
 
-  <photo-viewer id="photoViewer"
-                item="[[_liveItem]]">
-  </photo-viewer>
+  <afs-photo-viewer id="photoViewer"
+                    item="[[_liveItem]]">
+  </afs-photo-viewer>
 
 
 </template>
@@ -114,19 +114,19 @@
 </app-spinner>
 
 
-<app-file-system-share-modal id="shareModal"
-                             item="[[_liveItem]]">
-</app-file-system-share-modal>
+<afs-share-modal id="shareModal"
+                 item="[[_liveItem]]">
+</afs-share-modal>
 
 
-<app-file-system-delete-modal id="deleteConfirmModal"
-                              on-delete="__deleteModalDelete"
-                              on-canceled="__deleteModalCanceled">                                
-</app-file-system-delete-modal>
+<afs-delete-modal id="deleteConfirmModal"
+                  on-delete="__deleteModalDelete"
+                  on-canceled="__deleteModalCanceled">                                
+</afs-delete-modal>
 
 
-<app-file-system-save-as-modal id="saveAsModal"
-                               list="[[list]]"
-                               on-skip="__saveAsModalSkip"
-                               on-update="__saveAsModalUpdate">                                 
-</app-file-system-save-as-modal>
+<afs-save-as-modal id="saveAsModal"
+                   list="[[list]]"
+                   on-skip="__saveAsModalSkip"
+                   on-update="__saveAsModalUpdate">                                 
+</afs-save-as-modal>

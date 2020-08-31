@@ -1,0 +1,37 @@
+
+<style include="app-shared-styles">
+
+  :host {
+    display:     flex;
+    align-items: center;
+    margin:      16px 0px;
+  }
+
+  afs-file-thumbnail {
+    height:       64px;
+    width:        64px;
+    margin-right: 8px;
+    --thumbnail-background-color: inherit;
+  }
+
+</style>
+
+
+<afs-file-thumbnail item="[[item]]" 
+                    presentation 
+                    sizing="contain"
+                    on-click="__thumbnailClicked">
+</afs-file-thumbnail>
+
+<paper-input id="input"
+             class="shared-paper-input"
+             allowed-pattern="[^/\f/\n/\r/\t/\v]"
+             autocorrect
+             autofocus
+             autocomplete
+             auto-validate
+             label="File Name"
+             on-value-changed="__valueChanged"
+             placeholder="[[__computePlaceholderName(item.name)]]"
+             tabindex="0">
+</paper-input>

@@ -1,6 +1,6 @@
 # \<app-file-system\>
 
-### Warning - This element is not finished - do not use yet!
+
 
 ## Install the Polymer-CLI
 

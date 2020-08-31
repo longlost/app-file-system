@@ -27,11 +27,11 @@
   **/
 
 
-import '../shared/file-thumbnail.js';
-import './processing-error-icon.js';
-import './processing-icon.js';
-import './select-checkbox.js';
-import './upload-controls.js';
+import '../shared/afs-file-thumbnail.js';
+import './afs-processing-error-icon.js';
+import './afs-processing-icon.js';
+import './afs-select-checkbox.js';
+import './afs-upload-controls.js';
 
 
 export const ItemMixin = superClass => {

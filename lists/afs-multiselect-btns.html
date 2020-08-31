@@ -1,0 +1,93 @@
+
+<style>
+
+  :host {
+    display: flex;
+  }
+
+  .btn {
+    opacity:    0;
+    transform:  translateX(100%);
+    transition: transform 0.3s var(--custom-ease),
+                opacity 0.2s ease-out;
+  }
+
+  .btn[disabled] {
+    color: currentColor;
+  }
+
+  .delay-2nd {
+    transition-delay: 0.05s; 
+  }
+
+  .delay-3rd {
+    transition-delay: 0.1s;
+  }
+
+  .enter {
+    opacity:   1;
+    transform: none;
+  }
+
+  #selectBtn {
+    border-radius:        50%;    
+    --lower-badge-right: -50%;
+    --lower-badge-background-color: var(--app-accent-color); 
+    --upper-badge-right: -2px;
+    --upper-badge-top:   -2px;
+  }
+
+  #selectBtn[active] {
+    background-color: var(--constant-light-text);
+    color:            var(--app-primary-color);
+  }
+
+  #all-badge {
+    right:            6px;
+    top:              28px;
+    width:            24px;
+    height:           14px;
+    padding:          2px;
+    border-radius:    4px;
+    font-size:        12px;
+    pointer-events:   none;
+    background-color: var(--app-dark-color);
+    color:            var(--app-dark-color-text);
+  }
+
+</style>
+
+
+<paper-icon-button class$="btn [[_btnEnterClass]]"
+                   disabled="[[_btnDisabled]]"
+                   icon="afs-file-icons:delete"
+                   on-click="__deleteBtnClicked">
+</paper-icon-button>
+
+<paper-icon-button class$="btn delay-2nd [[_btnEnterClass]]"
+                   disabled="[[_btnDisabled]]"
+                   icon="afs-file-icons:file-download"
+                   on-click="__downloadBtnClicked">
+</paper-icon-button>
+
+<paper-icon-button class$="btn delay-3rd [[_btnEnterClass]]"
+                   disabled="[[_btnDisabled]]"
+                   hidden="[[_hidePrintBtn]]"
+                   icon="afs-file-icons:print"
+                   on-click="__printBtnClicked">
+</paper-icon-button>
+
+<badged-icon-button id="selectBtn"
+                    active$="[[!_hideCheckboxes]]"
+                    alt="Multi-select"
+                    hidden="[[_hideSelectBtn]]"
+                    icon="app-icons:check"
+                    show-lower="[[_showAllBadge]]"
+                    show-upper="[[_showCountBadge]]"
+                    upper-label="[[_count]]"
+                    on-click="__selectBtnClicked">
+  <div id="all-badge" 
+       slot="lower-badge">
+    All
+  </div>
+</badged-icon-button>

@@ -1,0 +1,73 @@
+
+<style>
+
+  :host {
+    display:   block;
+    margin:    0px auto;
+    max-width: 1024px;
+    padding:   16px;
+  }
+
+  #icon-container {
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
+    margin:          24px 0px;
+  }
+
+  #sort-icons-container {
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
+    position:        relative;
+    height:          40px;
+    width:           40px;
+  }
+
+  #block-icon {
+    position: absolute;
+    height:   100%;
+    width:    100%;
+  }
+
+  *[hidden] {
+    display: none;
+  }  
+
+</style>
+
+
+<drag-drop-list disabled="[[!hideCheckboxes]]"
+                sortable=".item"
+                on-drag-drop-list-sorted="__handleSort">
+
+  <template is="dom-repeat" 
+            items="[[_items]]"
+            strip-whitespace
+            on-dom-change="__domChanged">
+
+    <afs-file-item class="item"
+                   coll="[[coll]]"
+                   hide-checkbox="[[hideCheckboxes]]"
+                   state-index="[[index]]"
+                   item="[[item]]"
+                   selected="[[all]]"
+                   uploads="[[uploads]]">
+    </afs-file-item>
+
+  </template>
+
+</drag-drop-list>
+
+
+<div id="icon-container"
+     hidden="[[__computeHideIcons(_items)]]">
+  <iron-icon icon="afs-file-icons:touch-app"></iron-icon>
+  <div id="sort-icons-container">
+    <iron-icon icon="afs-file-icons:low-priority"></iron-icon>
+    <iron-icon id="block-icon"
+               hidden="[[hideCheckboxes]]" 
+               icon="afs-file-icons:block">
+    </iron-icon>
+  </div>
+</div>

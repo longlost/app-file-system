@@ -1,0 +1,138 @@
+
+<style>
+
+  :host {
+    --carousel-max-height: 568px;
+    --carousel-max-width:  1010px; /* 16:9 aspect. */
+  }
+  
+  #background {
+    display:    none;
+    position:   fixed;
+    top:        0px;
+    left:       0px;   
+    height:     100vh; 
+    width:      100vw;
+    transition: opacity 0.2s linear 0.3s;
+    opacity:    0;
+    z-index:    1;
+    background-color: black;
+  }
+
+  /* Responsive design - large screen sizes. */
+  #flipWrapper {
+    display:         none;
+    justify-content: center;
+    align-items:     center;
+    position:        fixed;
+    top:             0px;
+    left:            0px;   
+    height:          100vh; 
+    width:           100vw;
+    z-index:         1;
+  }
+
+  /* Responsive design - large screen sizes. */
+  #flip {
+    position:   absolute;
+    max-height: var(--carousel-max-height);
+    max-width:  var(--carousel-max-width);
+    top:        unset;
+    left:       unset;
+  }
+
+  #overlay {
+    box-shadow: none;
+
+    --overlay-background-color:                   transparent;    
+    --overlay-toolbar-backdrop-filter:            blur(10px);
+    --overlay-toolbar-background-parallax-height: 100%;
+    --overlay-toolbar-background-color:           transparent;
+    --overlay-toolbar-vignette-opacity:           0;
+  }
+
+  /*
+    Cannot have a background color and 
+    a backdrop-filter on same element.
+  */
+  #header-color-background {
+    position:         absolute;
+    top:              0px;
+    right:            0px;
+    bottom:           0px;
+    left:             0px;
+    pointer-events:   none;
+    z-index:         -1;
+    opacity:          0.7;
+    background-color: var(--app-primary-color);
+  }
+
+  #top-toolbar-btns {
+    display: inline-flex;
+  }
+
+  #carousel {    
+    opacity: 0;
+  }
+
+</style>
+
+
+<div id="background"></div>
+
+
+<div id="flipWrapper">
+  <flip-image id="flip"
+              measurements="[[_measurements]]"
+              sizing="contain"
+              src="[[_placeholder]]">
+  </flip-image>
+</div>
+
+
+<app-header-overlay id="overlay"
+                    disable-background-effects
+                    fixed-header
+                    header-size="1"
+                    parent-controls-exits
+                    prebuilt-animation="from-top"
+                    reset-scroll
+                    title="[[_title]]"
+                    top-title
+                    on-header-overlay-back="__back"
+                    on-overlay-reset="__reset">
+
+
+  <div id="header-color-background"
+       slot="header-background-slot">
+  </div>
+
+
+  <div id="top-toolbar-btns"
+       slot="top-toolbar-buttons-slot">
+
+    <afs-action-buttons item="[[_currentItem]]"></afs-action-buttons>
+
+  </div>
+
+    
+  <afs-paginated-carousel id="carousel"
+                          coll="[[coll]]"
+                          disabled="[[_carouselDisabled]]"
+                          opened="[[_opened]]"
+                          start="[[_start]]"
+                          slot="content"
+                          on-carousel-ready="__carouselReady"
+                          on-centered-item-changed="__centeredItemChanged"
+                          on-last-item-deleted="__lastItemDeleted"
+                          on-photo-selected="__photoSelected">
+  </afs-paginated-carousel>
+
+
+  <afs-edit-photo-fab id="fab"
+                      item="[[_currentItem]]"
+                      slot="content">
+  </afs-edit-photo-fab>
+
+
+</app-header-overlay>
