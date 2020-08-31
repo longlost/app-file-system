@@ -1,0 +1,162 @@
+
+<style include="app-shared-styles">
+
+	:host {
+		display: 					block;
+		min-height: 			100vh;
+    background-color: var(--app-body-color);
+	}
+
+	#content {
+		display: 							 grid;
+    grid-template-columns: repeat(auto-fit, minmax(264px, 1fr));
+    grid-column-gap: 			 16px;
+		padding: 							 16px;
+	}
+
+	.wrapper {
+		margin-bottom: 		24px;
+		padding: 			 		16px 0px;
+		border-radius: 		3px;
+		background-color: var(--app-background-color);
+	}
+
+	.shared-paper-slider {
+		width: 100%;
+	}
+
+	.label {
+		display: 		 		 flex;
+		justify-content: center;
+		align-items: 		 center;
+	}
+
+	.label iron-icon {
+		margin-right: 8px;
+	}
+
+	#clear {
+		display: 					inline-flex;
+    flex-direction: 	column;
+		margin: 					0px 16px;
+    font-size: 				10px;
+		border-radius:  	3px;
+		background-color: var(--app-background-color);
+		color: 						var(--disabled-text-color);
+	}
+
+	#clear[pressed] {
+		outline: 					none;
+		background-color: var(--app-dark-color);
+		color: 						var(--constant-light-text);
+	}
+
+</style>
+
+
+<afs-image-editor-item button-disabled="[[_applyBtnDisabled]]" 
+									 		 button-icon="brush" 
+									 		 button-label="APPLY"
+									 		 on-image-editor-item-btn-clicked="__applyClicked">
+
+	<canvas id="preview"
+			 		slot="preview">
+	</canvas>
+
+
+	<div id="content">
+
+		<div class="wrapper">
+			<paper-slider class="shared-paper-slider"
+										max="100"
+										min="0" 
+										pin
+										value="[[_centeredVal]]"
+										on-immediate-value-changed="__brightnessChanged">
+			</paper-slider>
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:brightness-4"></iron-icon>
+				<span>Brightness</span>
+			</div>
+		</div>
+
+		<div class="wrapper">
+			<paper-slider class="shared-paper-slider"
+										max="100"
+										min="0" 
+										pin
+										value="[[_centeredVal]]"
+										on-immediate-value-changed="__contrastChanged">
+			</paper-slider>
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:exposure"></iron-icon>
+				<span>Contrast</span>
+			</div>
+		</div>
+
+		<div class="wrapper">
+			<paper-slider class="shared-paper-slider"
+										max="100"
+										min="0" 
+										pin
+										value="[[_centeredVal]]"
+										on-immediate-value-changed="__saturationChanged">
+			</paper-slider>
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:tonality"></iron-icon>
+				<span>Saturation</span>
+			</div>
+		</div>
+
+		<div class="wrapper">
+			<paper-slider class="shared-paper-slider"
+										max="360"
+										min="0" 
+										pin
+										value="[[_zeroedVal]]"
+										on-immediate-value-changed="__hueChanged">
+			</paper-slider>
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:palette"></iron-icon>
+				<span>Hue</span>
+			</div>
+		</div>
+
+		<div class="wrapper">
+			<paper-slider class="shared-paper-slider"
+										max="100"
+										min="0" 
+										pin
+										value="[[_zeroedVal]]"
+										on-immediate-value-changed="__sharpenChanged">
+			</paper-slider>
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:texture"></iron-icon>
+				<span>Sharpness</span>
+			</div>
+		</div>
+
+		<div class="wrapper">
+			<paper-slider class="shared-paper-slider"
+										max="100"
+										min="0" 
+										pin
+										value="[[_zeroedVal]]"
+										on-immediate-value-changed="__blurChanged">
+			</paper-slider>
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:blur-on"></iron-icon>
+				<span>Blur</span>
+			</div>
+		</div>
+
+	</div>
+
+
+	<paper-button id="clear"
+								on-click="__clearClicked">
+		<iron-icon icon="afs-image-editor-icons:clear"></iron-icon>
+		<div>Clear</div>
+	</paper-button>
+
+</afs-image-editor-item>

@@ -1,0 +1,96 @@
+
+<style>
+
+  :host {
+    display:             block;
+    height:              100%;
+    border-radius:       inherit;
+    overflow:            hidden;
+    background-color:    var(--app-background-color);
+
+    --dz-active-bgcolor: var(--app-light-color);
+    --dz-active-color:   var(--app-accent-color);
+    --dz-color:          var(--secondary-text-color);
+    --dz-disabled-color: var(--disabled-text-color);
+    --dz-feedback-color: var(--app-error-color, var(--paper-red-600));
+    --dz-hover-bgcolor:  var(--app-body-color);
+    --dz-hover-color:    var(--secondary-text-color);
+    --dz-icon-color:     var(--app-primary-color);
+    --dz-icon-size:      40px;
+  }
+
+  :host([disabled]) {
+    cursor: not-allowed;
+  }
+
+  #label {
+    display:         flex;
+    flex-direction:  column;
+    justify-content: center;
+    align-items:     center;
+    height:          calc(100% - 8px);
+    cursor:          pointer;
+    color:           var(--dz-color);
+    border:          4px dashed var(--dz-color);
+  }
+
+  :host([disabled]) #label {
+    pointer-events:  none;
+    text-decoration: line-through;
+    color:           var(--dz-disabled-color);
+    border-color:    var(--dz-disabled-color);
+  }
+
+  #label:hover {
+    color:            var(--dz-hover-color);
+    border-color:     var(--dz-hover-color);
+    background-color: var(--dz-hover-bgcolor);
+  }
+
+  #label.highlight {
+    color:            var(--dz-active-color);
+    border-color:     var(--dz-active-color);
+    background-color: var(--dz-active-bgcolor);
+  }
+
+  #icon {
+    height: var(--dz-icon-size);
+    width:  var(--dz-icon-size);
+    color:  var(--dz-icon-color);
+    margin-bottom: 4px;
+  }
+
+  #input {
+    display: none;
+  }
+
+  #feedback {
+    font-weight: bold;
+    color:       var(--dz-feedback-color);
+  }
+
+</style>
+
+
+<label id="label" 
+       for="input"
+       on-click="__labelClicked"
+       on-dragenter="__handleDragEnterAndOver"
+       on-dragleave="__handleDragLeave"
+       on-dragover="__handleDragEnterAndOver"
+       on-drop="__handleDrop">
+
+  <iron-icon id="icon" 
+             icon="afs-file-icons:move-to-inbox">
+  </iron-icon>
+
+  <input id="input" 
+         type="file" 
+         multiple$="[[multiple]]" 
+         accept$="[[__computeInputAccept(accept)]]"
+         on-change="__handleChange">
+
+  <span>[[_instructions]]</span>
+  <span id="feedback">[[_feedbackText]]</span>
+
+</label>

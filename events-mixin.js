@@ -21,10 +21,10 @@ import multiDownload from 'multi-download';
 // Will NOT print pdf's in Chrome when dev tools is open!!
 import printJS from 'print-js'; 
 import '@longlost/app-spinner/app-spinner.js';
-import './modals/app-file-system-delete-modal.js';
+import './modals/afs-delete-modal.js';
 
 // Not lazy loaded so that afs may work in the background.
-import './modals/app-file-system-save-as-modal.js';
+import './modals/afs-save-as-modal.js';
 
 
 // From items array/collection back to a Firestore data obj.
@@ -353,8 +353,8 @@ export const EventsMixin = superClass => {
 	  	this._liveUid = item.uid;
 
 	    await import(
-	    	/* webpackChunkName: 'app-file-system-photo-carousel' */ 
-	    	'./carousel/photo-carousel.js'
+	    	/* webpackChunkName: 'afs-photo-carousel' */ 
+	    	'./carousel/afs-photo-carousel.js'
 	    );
 
 	    this.select('#carousel').open(measurements);
@@ -369,8 +369,8 @@ export const EventsMixin = superClass => {
 	  	this._liveUid = item.uid;
 
 	    await import(
-	    	/* webpackChunkName: 'app-file-system-photo-viewer' */ 
-	    	'./viewers/photo-viewer.js'
+	    	/* webpackChunkName: 'afs-photo-viewer' */ 
+	    	'./viewers/afs-photo-viewer.js'
 	    );
 
 	    this.select('#photoViewer').open(measurements);
@@ -401,8 +401,8 @@ export const EventsMixin = superClass => {
 
 	  	await schedule();
 	    await import(
-	    	/* webpackChunkName: 'app-file-system-file-editor' */ 
-	    	'./editors/file-editor.js'
+	    	/* webpackChunkName: 'afs-file-editor' */ 
+	    	'./editors/afs-file-editor.js'
 	    );
 
 	    this.select('#fileEditor').open();
@@ -417,8 +417,8 @@ export const EventsMixin = superClass => {
 
 	  	await schedule();
 	    await import(
-	    	/* webpackChunkName: 'app-file-system-image-editor' */ 
-	    	'./editors/image-editor.js'
+	    	/* webpackChunkName: 'afs-image-editor' */ 
+	    	'./editors/afs-image-editor.js'
 	    );
 	    await this.select('#imageEditor').open();
 
@@ -557,11 +557,11 @@ export const EventsMixin = superClass => {
 	      const fileEditor 	= this.select('#fileEditor');
 	      const imageEditor = this.select('#imageEditor');
 
-	      if (fileEditor.reset) {
+	      if (fileEditor && fileEditor.reset) {
 	      	fileEditor.reset();
 	      }
 
-	      if (imageEditor.reset) {
+	      if (imageEditor && imageEditor.reset) {
 	      	imageEditor.reset();
 	      }
 
@@ -604,8 +604,8 @@ export const EventsMixin = superClass => {
 
 	  	await schedule();
 	  	await import(
-	  		/* webpackChunkName: 'app-file-system-share-modal' */ 
-	  		'./modals/app-file-system-share-modal.js'
+	  		/* webpackChunkName: 'afs-share-modal' */ 
+	  		'./modals/afs-share-modal.js'
 	  	);
 
 	  	this.$.shareModal.open();

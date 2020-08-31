@@ -36,7 +36,7 @@ import {AppElement, html}  from '@longlost/app-element/app-element.js';
 import {schedule, wait}    from '@longlost/utils/utils.js';
 import htmlString          from './afs-edit-photo-fab.html';
 import '@polymer/paper-fab/paper-fab.js';
-import '../shared/file-icons.js';
+import '../shared/afs-file-icons.js';
 
 
 class AFSEditPhotoFab extends AppElement {
@@ -48,22 +48,22 @@ class AFSEditPhotoFab extends AppElement {
 
 
   static get properties() {
-  	return {
+    return {
 
-  		item: Object,
+      item: Object,
 
       parentControls: {
         type: Boolean,
         value: false
       },
 
-  		_hidden: {
-  			type: Boolean,
-  			value: true,
-  			computed: '__computeHidden(item)'
-  		}
+      _hidden: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHidden(item)'
+      }
 
-  	};
+    };
   }
 
 
@@ -123,9 +123,9 @@ class AFSEditPhotoFab extends AppElement {
 
 
   async enter() {
-  	if (this._hidden) { return; }
+    if (this._hidden) { return; }
 
-  	this.style['display'] = 'inline-block';
+    this.style['display'] = 'inline-block';
 
     await schedule();
 
@@ -135,21 +135,21 @@ class AFSEditPhotoFab extends AppElement {
   }
 
  
- 	async exit() {
- 		if (this._hidden) { return; }
+  async exit() {
+    if (this._hidden) { return; }
 
- 		this.$.fab.classList.remove('fab-animation');
+    this.$.fab.classList.remove('fab-animation');
 
- 		await wait(450);
+    await wait(450);
 
- 		this.style['display'] = 'none';
- 	}
-
-
- 	reset() {
- 		this.$.fab.classList.remove('fab-animation');
     this.style['display'] = 'none';
- 	}
+  }
+
+
+  reset() {
+    this.$.fab.classList.remove('fab-animation');
+    this.style['display'] = 'none';
+  }
 
 }
 

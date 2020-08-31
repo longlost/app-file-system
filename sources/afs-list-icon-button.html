@@ -1,0 +1,138 @@
+
+<style>
+
+	.flex {
+		display: 				 flex;
+		justify-content: center;
+		align-items: 		 center;
+	}
+
+	div[slot="upper-badge"] {
+		overflow: visible;
+	}
+
+	.absolute {
+		position: absolute;
+	}
+
+	#gear {
+    height: 26px;
+    width: 	26px;
+    color: 	var(--app-light-color);
+	}
+
+	.gear {		
+    transition: transform 0.4s ease-out;
+    transform:  scale(0, 0);
+	}
+
+	.show-gear {		
+    transform: scale(1, 1);
+	}
+
+	.start-gear {
+		animation-name: 					 rotate-gear;
+		animation-duration: 			 2s;
+		animation-iteration-count: infinite;
+		animation-timing-function: var(--custom-ease);
+	}
+
+	@keyframes rotate-gear {
+		0% {
+			transform: scale(1, 1) rotate(0deg);
+		}
+		100% {
+			transform: scale(1, 1) rotate(360deg);
+		}
+	}
+
+	#arrow-container {
+		height: 100%;
+		width:  100%;
+		border-radius: 		50%;
+		overflow: 				hidden;
+		background-color: var(--app-accent-color);
+	}
+
+	#arrow {
+		height: 	 12px;
+		width: 		 12px;
+    color: 		 var(--app-accent-color-text);
+    transform: translateY(100%);
+	}
+
+	.start-arrow {
+		animation-name: 					 translate-arrow;
+		animation-duration: 			 2s;
+		animation-iteration-count: infinite;
+		animation-timing-function: var(--custom-ease);
+	}
+
+	@keyframes translate-arrow {
+		0% {
+			transform: translateY(100%);
+		}
+		100% {
+			transform: translateY(-100%);
+		}
+	}
+
+	#count {
+		transform: translateY(33%);
+	}
+
+	.start-count {
+		animation-name: 					 translate-count;
+		animation-duration: 			 2s;
+		animation-delay:  				 0.04s;
+		animation-iteration-count: infinite;
+		animation-timing-function: ease-out;
+	}
+
+	@keyframes translate-count {
+		0% {
+			transform: translateY(33%);
+		}
+		100% {
+			transform: translateY(-33%);
+		}
+	}
+
+	.count-label {
+		display: 		 		 flex;
+		justify-content: center;
+		align-items: 		 center;
+		height: 		 		 12px;
+		width: 			 		 12px;
+	}
+
+</style>
+
+
+<badged-icon-button alt="List icon button."
+										icon="[[_icon]]"
+										show-upper="[[_show]]">
+	<div class="flex" 
+			 slot="upper-badge">
+		<iron-icon id="gear"
+							 class="absolute gear"
+							 icon="app-icons:settings">
+		</iron-icon>
+		<div id="arrow-container" 
+				 class="flex absolute">	
+			<iron-icon id="arrow"
+								 icon="afs-file-icons:forward-270">
+			</iron-icon>		
+			<div id="count" 
+					 class="absolute">
+				<div class="count-label">
+					[[count]]
+				</div>				
+				<div class="count-label"></div>
+				<div class="count-label">
+					[[count]]
+				</div>
+			</div>
+		</div>
+	</div>
+</badged-icon-button>

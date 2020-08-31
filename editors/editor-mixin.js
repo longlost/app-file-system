@@ -2,7 +2,7 @@
 import {PhotoElementMixin} from '../shared/photo-element-mixin.js';
 import '@longlost/app-overlays/app-header-overlay.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
-import './metadata-page.js';
+import './afs-metadata-page.js';
 
 
 export const EditorMixin = superClass => {
