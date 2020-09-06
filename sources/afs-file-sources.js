@@ -316,7 +316,13 @@ class AFSFileSources extends AppElement {
     // Use the 'mime-types' library to lookup the 
     // corresponding header content-type strings
     // that align with the accept string.
-    const types = entries.map(mime.contentType);
+    const types = entries.map(entry => {
+
+      // Returns false if none is found.
+      const type = mime.contentType(entry);
+
+      return type ? type : entry; // Fallback to entry string.
+    });
 
     // Take out wild cards. (ie. 'image/*' -> 'image')
     const mimes = getMimeTypes(types);
