@@ -341,10 +341,10 @@
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
 
-"@longlost/app-images@^1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.8.0.tgz#f20564d1e868a7192c0e88c0cc3f7e570cc7b875"
-  integrity sha512-6tjMVGg7LDo4FqPPcoCzl15EA3eUp8WDW+DfhJ35EvhDK7XFHLDCN3qWF/qssqRiM6CfPcoZxC+XoQT6qy6emQ==
+"@longlost/app-images@^1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.8.1.tgz#3c18aa15fe33f6bb3b55cf890be42ed51e29edcb"
+  integrity sha512-bZDA/QMmjVNYQPmVsawW2b4EVmQ5NGCUH0A5W+T0nx2MtAkNHARKGjpjF5hPhakh/b4KaTtntZDhmmPNCVRFhA==
   dependencies:
     "@longlost/animation" "^2.0.0"
     "@longlost/app-element" "^2.0.0"
@@ -520,12 +520,14 @@
     "@longlost/utils" "^1.5.0"
     "@polymer/polymer" "^3.4.1"
 
-"@longlost/pinch-to-zoom@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@longlost/pinch-to-zoom/-/pinch-to-zoom-1.0.0.tgz#9f41c23a3788dc4cb9eac3191a35a2aafb12e724"
-  integrity sha512-McFnHQZMAmpcbavOzUWc2aYYP8aI/kOwIKGcvQYjqYzYMz1lHRFbO9zIG5mvtildDSBAIWV5HiDMILAaoqwnCg==
+"@longlost/pinch-to-zoom@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@longlost/pinch-to-zoom/-/pinch-to-zoom-1.1.0.tgz#c9df792cbceee402592828d0ea3b0770219de1fa"
+  integrity sha512-/I9qhC4tnD20X0GjmmK4JwdxZoIDi0XVficM6Nraswi2sl/jr+OZe0iBL1ggU5OW4+RnAM+/zUE9WrfzCBWiTg==
   dependencies:
-    "@polymer/polymer" "^3.3.1"
+    "@longlost/app-element" "^2.0.0"
+    "@longlost/utils" "^2.0.0"
+    "@polymer/polymer" "^3.4.1"
     pinch-zoom-element "^1.1.1"
 
 "@longlost/services@^3.2.3":
@@ -1373,10 +1375,10 @@ core-js@3.6.5:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.6.5.tgz#7395dc273af37fb2e50e9bd3d9fe841285231d1a"
   integrity sha512-vZVEEwZoIsI+vPEuoF9Iqf5H7/M3eeQqWlQnYa8FSKKePuYTf5MWnxb5SDAzCa60b3JBRS5g9b+Dq7b1y/RCrA==
 
-cropperjs@^1.5.7:
-  version "1.5.7"
-  resolved "https://registry.yarnpkg.com/cropperjs/-/cropperjs-1.5.7.tgz#b65019725bae1c6285e881fb661b2141fa57025b"
-  integrity sha512-sGj+G/ofKh+f6A4BtXLJwtcKJgMUsXYVUubfTo9grERiDGXncttefmue/fyQFvn8wfdyoD1KhDRYLfjkJFl0yw==
+cropperjs@^1.5.8:
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/cropperjs/-/cropperjs-1.5.8.tgz#cd5f1fcc1043dfc70c54455fbe26b02d2b077ac0"
+  integrity sha512-Q97kxr4hNhIhxlgyQ2Z/TEA6GEYsk+UfT2OltqZugciNjkPJ2rBwu17MgvI3exjiYmGAFdudIV8grMqhsYzKZw==
 
 cross-spawn@^4.0.2:
   version "4.0.2"
@@ -2077,10 +2079,10 @@ pointer-tracker@^2.0.3:
   resolved "https://registry.yarnpkg.com/pointer-tracker/-/pointer-tracker-2.3.0.tgz#d9dcd467accfb974fc8481adca36a41c8ce761a5"
   integrity sha512-2tQaxrI62yNRIE6jFkxCpa/nraqavDWPZH1WVVAEA9TlH7CWjqX6sfCsWwrWeSYcQwAiZ/l3YfqXNDp4aQIOCQ==
 
-print-js@^1.0.63:
-  version "1.0.63"
-  resolved "https://registry.yarnpkg.com/print-js/-/print-js-1.0.63.tgz#de9258c3dfbf273ed8c02113d09240f09c31416d"
-  integrity sha512-WKf79bFeqJpwx5vcjvEuL0J1bRVA5QlKQY+usFksOx0WOApSJwQGgMlgM2PVub/R1uUMF4onc2SWRWPNz4R40g==
+print-js@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/print-js/-/print-js-1.1.0.tgz#d85844a07285859f0cd65b4894e96639c062c7b6"
+  integrity sha512-nW324FU9lJKhRxVxAvnqr7OhJ7cJZvQBQQYgRNNy6vqf4Rm3F5pgggxFFuMN+Jp7EijvY+vvuHaPddNa+9gL9w==
 
 prismjs@^1.11.0:
   version "1.21.0"
