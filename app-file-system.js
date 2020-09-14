@@ -524,13 +524,17 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
         const str = Array.isArray(files) ? 'files' : 'file';
 
-        await this.$.spinner.show(`Saving ${str}.`);
+        if (!this.noUploadConfirm) {
+          await this.$.spinner.show(`Saving ${str}.`);
+        }
       }
       else {
 
         const str = Array.isArray(files) ? 'photos' : 'photo';
 
-        await this.$.spinner.show(`Saving ${str}.`);
+        if (!this.noUploadConfirm) {
+          await this.$.spinner.show(`Saving ${str}.`);
+        }
       }
 
       const array = Array.isArray(files) ? files : [files];   
