@@ -1,5 +1,5 @@
 
-<style include="app-shared-styles">  
+<style>  
 
   :host {
     --scale-animation-ease: var(--custom-ease, cubic-bezier(0.49, 0.01, 0, 1));
@@ -15,22 +15,34 @@
     --overlay-background-color:         var(--app-body-color);
   }
 
-  .background {
-    position:         absolute;
-    top:              0px;
-    right:            0px;
-    bottom:           0px;
-    left:             0px;
-    pointer-events:   none;
-    z-index:         -1;
+  #header-background {
+    position:       absolute;
+    top:            0px;
+    right:          0px;
+    bottom:         0px;
+    left:           0px;
+    pointer-events: none;
+    z-index:       -1;
   }
 
   /*
     Cannot have a background color and 
     a backdrop-filter on same element.
   */
-  #header-color-background {
-    opacity:          0.7;
+  #header-background::before, 
+  #scale-wrapper::before,
+  #progress::before {
+    content: ' ';
+    position: absolute;
+    top:      0px;
+    right:    0px;
+    bottom:   0px;
+    left:     0px;
+    opacity:  0.7;
+  }
+
+  #header-background::before, 
+  #progress::before {    
     background-color: var(--app-dark-color);
   }
 
@@ -58,12 +70,18 @@
     transform: translateY(92px);
   }
 
+  .border-radius-mask {
+    overflow:           hidden;      
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+  }
+
   #scale-wrapper {
     display:       flex;
     position:      relative;
     align-items:   center;
     padding:       0px 8px;
-    border-radius: 16px;
+    border-radius: 16px;    
+
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter:         blur(10px);
   }
@@ -75,9 +93,23 @@
     Cannot have a background color and 
     a backdrop-filter on same element.
   */
-  #scale-background {
-    opacity:          0.7;
+
+  #scale-wrapper::before {
     background-color: var(--app-background-color);
+  }
+
+  #progress {
+    position:      fixed;
+    bottom:       -64px;
+    left:          16px;
+    width:         calc(100% - 32px);
+    max-width:     414px;
+    border-radius: 3px;
+    z-index:       1;
+
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter:         blur(10px);
+    background-color:        unset;
   }
 
 </style>
@@ -101,8 +133,7 @@
                     on-overlay-reset="__reset">
 
 
-  <div id="header-color-background"
-       class="background" 
+  <div id="header-background"
        slot="header-background-slot">
   </div>
 
@@ -138,11 +169,8 @@
   <div id="scale" 
        class="hide-scale"
        slot="content">
-    <div id="scale-wrapper" 
-         class="shared-border-radius-mask">
-      <div id="scale-background" 
-           class="background">
-      </div>
+    <div id="scale-wrapper"
+         class="border-radius-mask">
       <iron-icon icon="afs-file-icons:view-comfy"></iron-icon>
       <paper-slider value="[[_scale]]" 
                     on-immediate-value-changed="__sliderValChanged">
@@ -150,6 +178,17 @@
       <iron-icon icon="afs-file-icons:view-module"></iron-icon>
     </div>
   </div>
+
+
+  <afs-progress-bar id="progress"
+                    class="border-radius-mask"
+                    from-bottom
+                    processed="[[progress.processed]]"
+                    processing="[[progress.processing]]"
+                    read="[[progress.read]]"
+                    reading="[[progress.reading]]"
+                    slot="content">
+  </afs-progress-bar>
 
 
 </app-header-overlay>

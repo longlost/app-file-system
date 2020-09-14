@@ -313,6 +313,10 @@ class AppFileSystem extends EventsMixin(AppElement) {
         value: false
       },
 
+      // If set, afs will not ask the user to confirm
+      // uploading files after processing.
+      noUploadConfirm: Boolean,
+
       // Used as a multipier for 'maxsize'.
       unit: {
         type: String,
@@ -466,6 +470,14 @@ class AppFileSystem extends EventsMixin(AppElement) {
     this.__delete(event.detail.uids);
   }
 
+  // From `afs-file-sources`.
+  // On-device file pre-processing progress.
+  __progressChangedHandler(event) {
+    hijackEvent(event);
+
+    this._progress = event.detail;
+  }
+
   // From file-sources.
   // Upload successful, canceled or failed.
   __uploadDone(event) {
@@ -500,6 +512,8 @@ class AppFileSystem extends EventsMixin(AppElement) {
     hijackEvent(event);
 
     this._stamp = false;
+
+    this.fire('app-file-system-list-closed');
   }
 
   // Add one HTML5 File object or an array of File objects.
