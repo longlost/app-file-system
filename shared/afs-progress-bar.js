@@ -28,6 +28,8 @@ class AFSProgressBar extends AppElement {
   static get properties() {
     return {
 
+      fromBottom: Boolean,
+
       processed: {
         type: Number,
         value: 0
@@ -71,6 +73,8 @@ class AFSProgressBar extends AppElement {
 
     this._indeterminate   = false;
     this.style['display'] = 'none';
+
+    return schedule();
   }
 
 
@@ -82,7 +86,11 @@ class AFSProgressBar extends AppElement {
 
     await schedule();
 
-    this.style['transform'] = 'translateY(100%)';
+    const translation = this.fromBottom ? 'calc(-100% - 16px)' : `100%`;
+
+    this.style['transform'] = `translateY(${translation})`;
+
+    return wait(350);
   }
 
 }

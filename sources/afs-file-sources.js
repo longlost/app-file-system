@@ -116,7 +116,7 @@ import * as imgUtils from '../shared/img-utils.js';
 import processFiles  from './processing.js';
 import htmlString    from './afs-file-sources.html';
 import '@longlost/app-overlays/app-header-overlay.js';
-import './afs-progress-bar.js';
+import '../shared/afs-progress-bar.js';
 import './afs-upload-actions-card.js';
 import './afs-list-icon-button.js';
 import './afs-web-file-card.js';
@@ -166,6 +166,10 @@ class AFSFileSources extends AppElement {
 
       // One file upload or multiple files.
       multiple: Boolean,
+
+      // If set, afs will not ask the user to confirm
+      // uploading files after processing.
+      noUploadConfirm: Boolean,
 
       unit: String, // 'B', 'kB', 'MB' or 'GB'
 
@@ -250,7 +254,8 @@ class AFSFileSources extends AppElement {
 
   static get observers() {
     return [
-      '__collChanged(coll)'
+      '__collChanged(coll)',
+      '__progressValuesChanged(_reading, _read, _processing, _processed)'
     ];
   }
 
@@ -377,6 +382,16 @@ class AFSFileSources extends AppElement {
         prop:      'index',
         direction: 'desc'
       }
+    });
+  }
+
+
+  __progressValuesChanged(reading, read, processing, processed) {
+    this.fire('progress-changed', {
+      processed,
+      processing,
+      read,
+      reading
     });
   }
 
@@ -672,6 +687,13 @@ class AFSFileSources extends AppElement {
       this._reading    = 0;
       this._processed  = 0;
       this._processing = 0;
+
+      // Start uploading immediately.
+      if (this.noUploadConfirm) {
+        this.skipRenaming();
+
+        return;
+      }
 
       if (this._showingUploadActions) { return; }
 

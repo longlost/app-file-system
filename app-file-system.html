@@ -43,10 +43,12 @@
                   maxfiles="[[maxfiles]]"
                   maxsize="[[maxsize]]"
                   multiple="[[multiple]]"
+                  no-upload-confirm="[[noUploadConfirm]]"
                   unit="[[unit]]"
                   on-delete-previous="__deletePrevious"
                   on-open-list="openList"
                   on-open-save-as-modal="__openSaveAsModal"
+                  on-progress-changed="__progressChangedHandler"
                   on-upload-done="__uploadDone"
                   on-upload-updated="__uploadUpdated">
 </afs-file-sources>
@@ -70,6 +72,7 @@
   <afs-camera-roll id="cameraRoll"
                    coll="[[coll]]"
                    data="[[_dbData]]"
+                   progress="[[_progress]]"
                    uploads="[[_uploads]]"
                    on-list-overlay-closed="__listOverlayClosedHandler">
   </afs-camera-roll>

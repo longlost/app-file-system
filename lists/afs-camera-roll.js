@@ -35,13 +35,13 @@
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
 import {ListOverlayMixin} from './list-overlay-mixin.js';
-import {schedule}         from '@longlost/utils/utils.js';
+import {schedule, wait}   from '@longlost/utils/utils.js';
 import htmlString         from './afs-camera-roll.html';
-import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-slider/paper-slider.js';
 import '../shared/afs-file-icons.js';
+import '../shared/afs-progress-bar.js';
 // 'afs-roll-items' lazy loaded after open.
 
 
@@ -56,6 +56,8 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
   static get properties() {
     return {
 
+      progress: Object,
+
       _canShowScale: Boolean,
 
       // This default is overridden by localstorage 
@@ -63,7 +65,9 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
       _scale: {
         type: Number,
         value: 50
-      }
+      },
+
+      _showingProgress: Boolean,
 
     };
   }
@@ -71,14 +75,60 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
 
   static get observers() {
     return [
-      '__scaleControlsChanged(_dataEmpty, _opened, _canShowScale)'
+      '__progressOpenedChanged(progress, _opened)',
+      '__scaleControlsChanged(_dataEmpty, _opened, _canShowScale, _showingProgress)'
     ];
   }
 
+  // Progress takes priority over scale slider ui.
+  // When progress is visible, hide the scale.
+  async __progressOpenedChanged(progress, opened) {
 
-  __scaleControlsChanged(empty, opened, canShow) {
+    if (!progress || !opened) {
+      await this.$.progress.hide();
 
-    if (empty || !opened || !canShow) {
+      this._showingProgress = false;
+
+      return;
+    }
+
+    const {processed, processing, read, reading} = progress;
+
+    // An error occured.
+    if (read === 0) {
+      await this.$.progress.hide();
+
+      this._showingProgress = false;
+
+      return;
+    }
+
+    if (read !== reading || processed !== processing) {
+      this._showingProgress = true;
+
+      await wait(350);
+
+      this.$.progress.show();
+
+      return; 
+    }
+    
+    // Give time for `paper-gauge` final count animation to finish.
+    await wait(1200); 
+
+    // `afs-file-sources` can work without its light dom stamped.
+    // Check read vals again, user may have added more.
+    if (read === reading && processed === processing) {
+      await this.$.progress.hide();
+
+      this._showingProgress = false;
+    }
+  }
+
+
+  __scaleControlsChanged(empty, opened, canShow, showingProgress) {
+
+    if (empty || !opened || !canShow || showingProgress) {
       this.__hideScale();
     } 
     else {
