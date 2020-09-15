@@ -244,7 +244,10 @@ class AFSFileSources extends AppElement {
       // Controls the <template> dom-if.
       // Reduce dom footprint when not in use,
       // or when AFS is used in the background.
-      _stamp: Boolean,
+      _stamp: {
+        type: Boolean,
+        value: false
+      },
 
       _unsubscribe: Object
 
@@ -662,8 +665,13 @@ class AFSFileSources extends AppElement {
     }
     finally {
 
+      // Wait to read progress values for late running callbacks.
+      // Safari sometimes runs the last 'processedCallback' AFTER
+      // resolving the 'processFiles' promise.
+      await schedule();
+
       // An error occured that stopped all files from being processed.
-      if (this._read === 0) { return; } 
+      if (this._read === 0) { return; }
 
       // Not done yet, user added more.
       if (this._read !== this._reading || this._processed !== this._processing) { return; }
