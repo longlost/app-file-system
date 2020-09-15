@@ -92,23 +92,23 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
       return;
     }
 
-    const {processed, processing, read, reading} = progress;
+    // NOT using closure values here so the reads are in real-time.
+    if (
+      this.progress.read      !== this.progress.reading || 
+      this.progress.processed !== this.progress.processing
+    ) {
 
-    // An error occured.
-    if (read === 0) {
-      await this.$.progress.hide();
-
-      this._showingProgress = false;
-
-      return;
-    }
-
-    if (read !== reading || processed !== processing) {
       this._showingProgress = true;
 
       await wait(350);
 
-      this.$.progress.show();
+      // Read again.
+      if (
+        this.progress.read      !== this.progress.reading || 
+        this.progress.processed !== this.progress.processing
+      ) {
+        this.$.progress.show();
+      }
 
       return; 
     }
@@ -118,7 +118,12 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
 
     // `afs-file-sources` can work without its light dom stamped.
     // Check read vals again, user may have added more.
-    if (read === reading && processed === processing) {
+    // NOT using closure values here so the reads are in real-time.
+    if (
+      this.progress.read      === this.progress.reading && 
+      this.progress.processed === this.progress.processing
+    ) {
+
       await this.$.progress.hide();
 
       this._showingProgress = false;
