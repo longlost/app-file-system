@@ -53,7 +53,7 @@ export default async (files, readCallback, processedCallback) => {
       './processing.worker.js'
     );
 
-    processRunner = await runner(Worker);
+    processRunner = await runner(Worker).run;
   }
 
   const proxiedReadCb      = Comlink.proxy(readCallback);
