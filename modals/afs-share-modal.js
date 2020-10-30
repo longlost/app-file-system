@@ -47,7 +47,7 @@ import {
   warn
 } from '@longlost/utils/utils.js';
 
-import services   from '@longlost/services/services.js';
+import services   from '@longlost/app-shell/services/services.js';
 import htmlString from './afs-share-modal.html';
 import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';

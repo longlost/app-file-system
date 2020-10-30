@@ -28,7 +28,7 @@
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
 import {isOnScreen}       from '@longlost/utils/utils.js';
-import {firebase}         from '@longlost/boot/boot.js';
+import {firebase}         from '@longlost/app-shell/boot/boot.js';
 import htmlString         from './afs-paginated-roll-items.html';
 import './afs-roll-item.js';
 

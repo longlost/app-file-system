@@ -152,7 +152,7 @@ import {
 import {EventsMixin}        from './events-mixin.js';
 import {isCloudProcessable} from './shared/utils.js';
 import path                 from 'path';
-import services             from '@longlost/services/services.js';
+import services             from '@longlost/app-shell/services/services.js';
 import htmlString           from './app-file-system.html';
 import './sources/afs-file-sources.js';
 // Modals, app-spinner imports in events-mixin.js.

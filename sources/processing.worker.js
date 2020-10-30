@@ -36,14 +36,21 @@ const process = async (readCb, processedCb, file, exifTags) => {
 	let exif = null;
 
 	if (imgUtils.canReadExif(file)) {
-		const {default: read} = await import('./worker-exif.js');
+		const {default: read} = await import(
+			/* webpackChunkName: 'afs-sources-worker-exif' */ 
+			'./worker-exif.js'
+		);
 
 		exif = read(file, exifTags);
 	}
 
 	if (imgUtils.canProcess(file)) {
-		const {default: compress} = await import('./worker-compress.js');
-		const compressed 					= await compress(readCb, file);
+		const {default: compress} = await import(
+			/* webpackChunkName: 'afs-sources-worker-compress' */ 
+			'./worker-compress.js'
+		);
+
+		const compressed = await compress(readCb, file);
 
 		// Update processing tracker ui.
     processedCb();

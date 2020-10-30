@@ -44,7 +44,7 @@
 
 import {AppElement, html}        from '@longlost/app-element/app-element.js';
 import {ItemsMixin}              from './items-mixin.js';
-import {firebase}                from '@longlost/boot/boot.js';
+import {firebase}                from '@longlost/app-shell/boot/boot.js';
 import {hijackEvent, isOnScreen} from '@longlost/utils/utils.js';
 import htmlString                from './afs-file-items.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
