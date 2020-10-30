@@ -31,7 +31,7 @@
 
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {firebase}         from '@longlost/boot/boot.js';
+import {firebase}         from '@longlost/app-shell/boot/boot.js';
 import {isOnScreen}       from '@longlost/utils/utils.js';
 import htmlString         from './afs-paginated-carousel.html';
 import '@longlost/app-carousel/app-carousel.js';

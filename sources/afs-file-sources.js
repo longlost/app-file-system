@@ -111,7 +111,7 @@ import {
 
 import mime          from 'mime-types';
 import descriptions  from './mime-descriptions.json';
-import services      from '@longlost/services/services.js';
+import services      from '@longlost/app-shell/services/services.js';
 import * as imgUtils from '../shared/img-utils.js';
 import processFiles  from './processing.js';
 import htmlString    from './afs-file-sources.html';

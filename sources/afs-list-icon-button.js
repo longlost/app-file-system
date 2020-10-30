@@ -36,7 +36,7 @@ import {
 } from '@longlost/utils/utils.js';
 
 import htmlString from './afs-list-icon-button.html';
-import services   from '@longlost/services/services.js';
+import services   from '@longlost/app-shell/services/services.js';
 import '@longlost/app-icons/app-icons.js';
 import '@longlost/badged-icon-button/badged-icon-button.js';
 import '@polymer/iron-icon/iron-icon.js';

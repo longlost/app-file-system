@@ -13,7 +13,7 @@ import {
   warn
 } from '@longlost/utils/utils.js';
 
-import services from '@longlost/services/services.js';
+import services from '@longlost/app-shell/services/services.js';
 
 // Will NOT download multiple files in Chrome when dev tools is open!!
 import multiDownload from 'multi-download';
