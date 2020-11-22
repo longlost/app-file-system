@@ -283,7 +283,7 @@ class AFSFileSources extends AppElement {
       return accum;
     }, '');
 
-    return `${capitalize(description)}.`;
+    return `${capitalize(description)}`;
   }
 
 
