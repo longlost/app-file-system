@@ -65,6 +65,7 @@
                  data="[[_dbData]]"
                  hide-dropzone="[[hideDropzone]]"
                  uploads="[[_uploads]]"
+                 on-list-confirm-selection="__listOverlayConfirmSelectionHandler"
                  on-list-overlay-closed="__listOverlayClosedHandler">
   </afs-file-list>
 
@@ -74,6 +75,7 @@
                    data="[[_dbData]]"
                    progress="[[_progress]]"
                    uploads="[[_uploads]]"
+                   on-list-confirm-selection="__listOverlayConfirmSelectionHandler"
                    on-list-overlay-closed="__listOverlayClosedHandler">
   </afs-camera-roll>
 
@@ -107,6 +109,12 @@
   <afs-photo-viewer id="photoViewer"
                     item="[[_liveItem]]">
   </afs-photo-viewer>
+
+
+  <afs-confirm-selection-modal id="confirmSelectionModal"
+                               on-selection-confirmed="__confirmSelectionModalConfirmed"
+                               on-selection-dismissed="__confirmSelectionModalDismissed">                           
+  </afs-confirm-selection-modal>
 
 
 </template>

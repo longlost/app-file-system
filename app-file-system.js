@@ -513,7 +513,19 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
     this._stamp = false;
 
-    this.fire('app-file-system-list-closed');
+    // When in "selector" mode, list overlays pass the selected
+    // item as the event detail payload.
+    // The event is intercepted by the `openSelector` method, in this case.
+    this.fire('app-file-system-list-closed', event.detail);
+  }
+
+
+  __waitForTemplateToStamp() {
+    if (this._stamp) { return; }
+
+    this._stamp = true;
+
+    return listenOnce(this.$.stamperTemplate, 'dom-change');
   }
 
   // Add one HTML5 File object or an array of File objects.
@@ -619,9 +631,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   async openList() {
 
-    this._stamp = true;
-
-    await listenOnce(this.$.stamperTemplate, 'dom-change');
+    await this.__waitForTemplateToStamp();
     
     if (this.list === 'files') {
       await import(
@@ -641,6 +651,45 @@ class AppFileSystem extends EventsMixin(AppElement) {
     }
 
     throw new Error('Cannot open the overlay without the list property being properly set.');
+  }
+
+  // Returns a promise that resolves to the selected file item object.
+  // The promise resolves with an undefined value if the user closes
+  // the selector without making a selection. 
+  async openSelector() {
+
+    await this.__waitForTemplateToStamp();
+    
+    if (this.list === 'files') {
+
+
+      throw new Error('TODO list. File selector has not been developed yet.');
+
+
+      // await import(
+      //   /* webpackChunkName: 'afs-file-list' */ 
+      //   './lists/afs-file-list.js'
+      // );
+
+      // await this.select('#fileList').openSelector();
+    }
+    else if (this.list === 'photos') {
+      await import(
+        /* webpackChunkName: 'afs-camera-roll' */ 
+        './lists/afs-camera-roll.js'
+      );
+      
+      await this.select('#cameraRoll').openSelector();
+    }
+    else {
+      throw new Error('Cannot open the selector without the list property being properly set.');
+    }
+    
+    const {event} = await listenOnce(this, 'app-file-system-list-closed', e => {
+      hijackEvent(e);
+    });
+
+    return event.detail.item;
   }
 
 

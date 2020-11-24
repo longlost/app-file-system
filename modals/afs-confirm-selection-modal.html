@@ -1,0 +1,67 @@
+
+<style include="app-shared-styles">
+	
+  #item {
+    display:     flex;
+    align-items: center;
+    margin:      16px 0px;
+  }
+
+  afs-file-thumbnail {
+    height:       64px;
+    min-height:   64px;
+    width:        64px;
+    min-width:    64px;
+    margin-right: 8px;
+    --thumbnail-background-color: inherit;
+  }
+
+  #dismiss-btn {
+    color: var(--app-primary-color);
+  }
+
+  #confirm-btn {
+    background-color: var(--app-primary-color, red);
+    color:            var(--app-primary-color-text);
+  }
+
+</style>
+
+
+<app-modal id="modal"
+           heading="Confirm Selection">
+
+  <div id="content"
+       slot="card-content-slot">
+
+    <p>
+      Is this the item you want to use?
+    </p>    
+
+    <div id="item">
+      <afs-file-thumbnail item="[[_item]]" 
+                          presentation 
+                          sizing="contain">
+      </afs-file-thumbnail>
+      <span class="shared-no-select shared-single-line-truncate">
+        [[_item.displayName]]
+      </span>
+    </div> 
+
+  </div>
+
+  <div slot="card-actions-slot">
+
+    <paper-button id="dismiss-btn" 
+                  on-click="__dismissBtnClicked">
+      DISMISS
+    </paper-button> 
+
+    <paper-button id="confirm-btn" 
+                  on-click="__confirmBtnClicked">
+      USE
+    </paper-button> 
+
+  </div>
+
+</app-modal>

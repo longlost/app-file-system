@@ -49,6 +49,9 @@ export const ListOverlayMixin = superClass => {
 
 	      data: Object,
 
+	      // To be overwritten by implementation class.
+	      title: String,
+
 	      // File upload controls, progress and state.
 	      uploads: Object,
 
@@ -76,8 +79,22 @@ export const ListOverlayMixin = superClass => {
 	      	computed: '__computeHidePlaceholder(_dataEmpty, _opened)'
 	      },
 
+	      _isSelector: {
+	      	type: Boolean,
+	      	value: false
+	      },
+
 	      // Only run db item subscriptions when overlay is open.
-	      _opened: Boolean
+	      _opened: Boolean,
+
+	      // A cached value of the most recent selected file item.
+	      // Used when list is in "selector" mode (_isSelector truthy).
+	      _selectedItem: Object,
+
+	      _title: {
+	      	type: String,
+	      	computed: '__computeTitle(title, _isSelector)'
+	      }
 
 	    };
 	  }
@@ -99,16 +116,19 @@ export const ListOverlayMixin = superClass => {
 	  connectedCallback() {
 	    super.connectedCallback();
 
-	    this.__itemSelected = this.__itemSelected.bind(this);
+	    this.__openCarouselHandler = this.__openCarouselHandler.bind(this);
+	    this.__itemSelectedHandler = this.__itemSelectedHandler.bind(this);
 
-	    this.addEventListener('item-selected', this.__itemSelected);
+	    this.addEventListener('open-carousel', this.__openCarouselHandler);
+	    this.addEventListener('item-selected', this.__itemSelectedHandler);
 	  }
 
 
 	  disconnectedCallback() {
 	    super.disconnectedCallback();
 
-	    this.removeEventListener('item-selected', this.__itemSelected);
+	    this.removeEventListener('open-carousel', this.__openCarouselHandler);
+	    this.removeEventListener('item-selected', this.__itemSelectedHandler);
 	  }
 
 
@@ -123,6 +143,11 @@ export const ListOverlayMixin = superClass => {
 
 	  __computeHidePlaceholder(empty, opened) {
 	  	return !Boolean(empty && opened);
+	  }
+
+
+	  __computeTitle(title, isSelector) {
+	  	return isSelector ? 'Select' : title;
 	  }
 
 	  // NOT using _opened as a dependency here.
@@ -151,7 +176,10 @@ export const ListOverlayMixin = superClass => {
 	  // "heavy" elements when not in use.
 	  __openedChanged(opened) {
 	  	if (!opened) {
-	  		this.fire('list-overlay-closed');
+
+	  		this.fire('list-overlay-closed', {item: this._selectedItem});
+
+	  		this._selectedItem = undefined;
 	  	}
 	  }
 
@@ -165,8 +193,27 @@ export const ListOverlayMixin = superClass => {
 	    this._hideCheckboxes = event.detail.value;
 	  }
 
+	  // When in selector mode, intercept this event
+	  // to prevent the carousel from being opened.
+	  __openCarouselHandler(event) {
 
-	  __itemSelected(event) {
+	  	// When in selector mode, confirm the selected item
+	    // before returning it.
+	    if (this._isSelector) {
+		    hijackEvent(event);
+
+		    const {item} = event.detail;
+	    
+	    	// Cache the item to send as detail object 
+	    	// with 'list-overlay-closed' event.
+	    	this._selectedItem = item;
+
+	    	this.fire('list-confirm-selection', {item});
+	    }
+	  }
+
+
+	  __itemSelectedHandler(event) {
 	    hijackEvent(event);
 
 	    const {item, selected} = event.detail;
@@ -177,6 +224,17 @@ export const ListOverlayMixin = superClass => {
 	    else {
 	      this.$.multi.unselected(item);
 	    }
+	  }
+
+
+	  clearSelected() {
+	  	this._selectedItem = undefined;
+	  }
+
+	  // Called when in selector mode and user confirms
+	  // a selection via the confirmation modal.
+	  close() {
+	  	return this.$.overlay.close();
 	  }
 
 

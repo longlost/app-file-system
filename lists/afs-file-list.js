@@ -7,7 +7,7 @@
   *
   *
   *
-  *  Properites:
+  *  Properties:
   *
   *
   *    Inherited from list-overlay-mixin.js
@@ -29,6 +29,7 @@
 
 
 import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {schedule}         from '@longlost/utils/utils.js';
 import {ListOverlayMixin} from './list-overlay-mixin.js';
 import htmlString         from './afs-file-list.html';
 // 'afs-file-items' lazy loaded after open.
@@ -41,13 +42,29 @@ class AFSFileList extends ListOverlayMixin(AppElement) {
     return html([htmlString]);
   }
 
+
+  static get properties() {
+    return {
+
+      // Overwriting mixin prop value.
+      title: {
+        type: String,
+        value: 'My Files'
+      }
+
+    };
+  }
+
   // Overlay 'on-reset' handler.
   __reset() {
     this._opened = false;
   }
 
 
-  async open() {
+  async __open() {
+
+    await schedule();
+
     await this.$.overlay.open();
 
     this._opened = true;
@@ -56,6 +73,20 @@ class AFSFileList extends ListOverlayMixin(AppElement) {
       /* webpackChunkName: 'afs-file-items' */ 
       './afs-file-items.js'
     );
+  }
+
+
+  open() {
+    this._isSelector = false;
+
+    return this.__open();
+  }
+  
+
+  openSelector() {
+    this._isSelector = true;
+
+    return this.__open();
   }
 
 }
