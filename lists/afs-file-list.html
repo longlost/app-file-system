@@ -14,12 +14,13 @@
                     header-size="1"
                     prebuilt-animation="from-right"
                     reveal-header
-                    title="My Files"
+                    title="[[_title]]"
                     on-overlay-reset="__reset">
 
 
   <afs-multiselect-btns id="multi"
-                        data="[[data]]" 
+                        data="[[data]]"
+                        hidden="[[_isSelector]]"
                         slot="top-toolbar-buttons-slot"
                         on-all-changed="__allChanged"
                         on-hide-checkboxes-changed="__hideCheckboxesChanged">

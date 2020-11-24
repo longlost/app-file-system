@@ -659,5 +659,38 @@ export const EventsMixin = superClass => {
 	  	}
 	  }
 
+	  // Open a modal that allows the user to confirm an item selection
+	  // when a list overlay is in selection mode.
+	  async __listOverlayConfirmSelectionHandler(event) {
+	    hijackEvent(event);
+
+	    const {item} = event.detail;
+
+	    await import(
+        /* webpackChunkName: 'afs-confirm-selection-modal' */ 
+        './modals/afs-confirm-selection-modal.js'
+      );    
+
+	    this.select('#confirmSelectionModal').open(item);
+	  }
+
+
+	  __confirmSelectionModalConfirmed(event) {
+	  	hijackEvent(event);
+
+	  	const id = this.list === 'files' ? '#fileList' : '#cameraRoll';
+
+	  	this.select(id).close();
+	  }
+
+
+	  __confirmSelectionModalDismissed(event) {
+	  	hijackEvent(event);
+
+	  	const id = this.list === 'files' ? '#fileList' : '#cameraRoll';
+
+	  	this.select(id).clearSelected();
+	  }
+
   };
 };

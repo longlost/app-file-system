@@ -9,7 +9,7 @@
   *
   *
   *
-  *  Properites:
+  *  Properties:
   *
   *
   *    Inherited from list-overlay-mixin.js
@@ -57,6 +57,12 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
     return {
 
       progress: Object,
+
+      // Overwriting mixin prop value.
+      title: {
+        type: String,
+        value: 'My Photos'
+      },
 
       _canShowScale: Boolean,
 
@@ -194,7 +200,9 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
   }
 
 
-  async open() {
+  async __open() {
+
+    await schedule();
 
     await this.$.overlay.open();
 
@@ -209,6 +217,20 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
     await schedule();
 
     this._canShowScale = true;
+  }
+
+
+  open() {
+    this._isSelector = false;
+
+    return this.__open();
+  }
+  
+
+  openSelector() {
+    this._isSelector = true;
+
+    return this.__open();
   }
 
 }
