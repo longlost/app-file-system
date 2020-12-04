@@ -27,7 +27,7 @@
     "@longlost/app-map": "^1.4.6",
     "@longlost/app-overlays": "^1.3.9",
     "@longlost/app-shared-styles": "^2.0.15",
-    "@longlost/app-shell": "^2.2.2",
+    "@longlost/app-shell": "^2.2.4",
     "@longlost/app-spinner": "^1.2.0",
     "@longlost/badged-icon-button": "^1.1.2",
     "@longlost/drag-drop-list": "^2.0.4",
