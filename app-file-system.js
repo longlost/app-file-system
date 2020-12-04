@@ -466,8 +466,18 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // Previous file(s) are replaced when 
   // 'multiple' is falsey. 
   // Only one file at a time.
-  __deletePrevious(event) {
+  __deletePreviousHandler(event) {
+    hijackEvent(event);
+
     this.__delete(event.detail.uids);
+  }
+
+  // Intercept event from 'file-sources' and rename
+  // to a public api version.
+  __itemsSavedHandler(event) {
+    hijackEvent(event);
+
+    this.fire('app-file-system-items-saved', event.detail);
   }
 
   // From `afs-file-sources`.
@@ -515,7 +525,6 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
     // When in "selector" mode, list overlays pass the selected
     // item as the event detail payload.
-    // The event is intercepted by the `openSelector` method, in this case.
     this.fire('app-file-system-list-closed', event.detail);
   }
 
@@ -679,17 +688,11 @@ class AppFileSystem extends EventsMixin(AppElement) {
         './lists/afs-camera-roll.js'
       );
       
-      await this.select('#cameraRoll').openSelector();
+      return this.select('#cameraRoll').openSelector();
     }
     else {
       throw new Error('Cannot open the selector without the list property being properly set.');
     }
-    
-    const {event} = await listenOnce(this, 'app-file-system-list-closed', e => {
-      hijackEvent(e);
-    });
-
-    return event.detail.item;
   }
 
 
