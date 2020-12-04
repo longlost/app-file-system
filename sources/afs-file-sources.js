@@ -567,7 +567,11 @@ class AFSFileSources extends AppElement {
       }     
     }
 
-    return services.saveItems(items);
+    await services.saveItems(items);
+
+    const dbItems = items.map(item => item.data);
+
+    this.fire('items-saved', {items: dbItems});
   }
 
 
