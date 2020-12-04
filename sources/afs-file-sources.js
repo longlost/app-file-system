@@ -597,6 +597,8 @@ class AFSFileSources extends AppElement {
 
   async __filesAdded(files) {
 
+    this.fire('files-added', {files});
+
     // These values are cached outside of try/catch since 
     // they are needed for the catch block to roll back 
     // queue in case of an error.

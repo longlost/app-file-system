@@ -110,6 +110,10 @@
   *                                      detail -> {uids}
   *
   *
+  *     'app-file-system-items-saved' - Fired any time file(s) items are saved to db.
+  *                                     detail -> {[uid]: 'File item', ...}
+  *
+  *
   *  
   *  Methods:
   *
@@ -470,6 +474,14 @@ class AppFileSystem extends EventsMixin(AppElement) {
     hijackEvent(event);
 
     this.__delete(event.detail.uids);
+  }
+
+  // Intercept event from 'file-sources' and rename
+  // to a public api version.
+  __filesAddedHandler(event) {
+    hijackEvent(event);
+
+    this.fire('app-file-system-files-added', event.detail);
   }
 
   // Intercept event from 'file-sources' and rename
