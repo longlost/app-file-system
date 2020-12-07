@@ -1,6 +1,6 @@
 
 
-import {formatTimestamp} from '@longlost/utils/utils.js';
+import {formatTimestamp} from '@longlost/app-core/utils.js';
 import path 						 from 'path';
 import mime              from 'mime-types';
 

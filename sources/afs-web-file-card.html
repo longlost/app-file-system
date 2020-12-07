@@ -41,7 +41,7 @@
 
   #download-btn[disabled] {
     background-color: var(--app-disabled-color);
-    color:            var(--disabled-text-color);
+    color:            var(--app-disabled-text);
   }
 
   #progress {
@@ -54,7 +54,7 @@
     bottom:           0px;
     left:             0px;
     padding:          16px;
-    transition:       transform 0.3s var(--custom-ease);
+    transition:       transform 0.3s var(--app-custom-ease);
     background-color: var(--app-background-color);
   }
 
@@ -68,7 +68,7 @@
 
   paper-progress {
     width: 100%;
-    --paper-progress-active-color: var(--app-accent-color);
+    --paper-progress-active-color: var(--app-secondary-color);
   }
 
   #cancel-btn {
@@ -105,7 +105,7 @@
                 raised
                 on-click="__downloadBtnClicked">
     <iron-icon class="shared-iron-icon-inside-paper-button" 
-               icon="app-icons:public">
+               icon="afs-file-icons:public">
     </iron-icon>
     <span>IMPORT FROM WEB</span>
   </paper-button>

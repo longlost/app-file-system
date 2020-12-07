@@ -32,7 +32,7 @@
   **/
 
 
-import {hijackEvent, listenOnce} from '@longlost/utils/utils.js';
+import {hijackEvent, listenOnce} from '@longlost/app-core/utils.js';
 import './afs-multiselect-btns.js';
 import './afs-empty-list-placeholder.js';
 

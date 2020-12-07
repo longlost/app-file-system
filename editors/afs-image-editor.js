@@ -33,8 +33,8 @@
   **/
 
 
-import {AppElement, html}           from '@longlost/app-element/app-element.js';
-import {listenOnce, schedule, wait} from '@longlost/utils/utils.js';
+import {AppElement, html}           from '@longlost/app-core/app-element.js';
+import {listenOnce, schedule, wait} from '@longlost/app-core/utils.js';
 import {EditorMixin}                from './editor-mixin.js';
 import htmlString                   from './afs-image-editor.html';
 import '@longlost/app-spinner/app-spinner.js';

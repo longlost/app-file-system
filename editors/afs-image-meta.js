@@ -32,7 +32,7 @@
   **/
 
 
-import {AppElement, html}     from '@longlost/app-element/app-element.js';
+import {AppElement, html}     from '@longlost/app-core/app-element.js';
 import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
 
 

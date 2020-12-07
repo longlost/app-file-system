@@ -142,21 +142,21 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
+} from '@longlost/app-core/app-element.js';
 
-import {deepClone} from '@longlost/lambda/lambda.js';
+import {deepClone} from '@longlost/app-core/lambda.js';
 
 import {
   hijackEvent,
   listenOnce,
   schedule,
   warn
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
 
+import {isCloudProcessable} from '@longlost/app-core/img-utils.js';
 import {EventsMixin}        from './events-mixin.js';
-import {isCloudProcessable} from './shared/utils.js';
 import path                 from 'path';
-import services             from '@longlost/app-shell/services/services.js';
+import services             from '@longlost/app-core/services/services.js';
 import htmlString           from './app-file-system.html';
 import './sources/afs-file-sources.js';
 // Modals, app-spinner imports in events-mixin.js.

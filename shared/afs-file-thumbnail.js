@@ -23,7 +23,7 @@
   **/
 
 
-import {AppElement, html}  from '@longlost/app-element/app-element.js';
+import {AppElement, html}  from '@longlost/app-core/app-element.js';
 import {PhotoElementMixin} from '../shared/photo-element-mixin.js';
 import htmlString          from './afs-file-thumbnail.html';
 import '@polymer/iron-icon/iron-icon.js';

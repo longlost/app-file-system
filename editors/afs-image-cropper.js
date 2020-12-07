@@ -33,9 +33,9 @@
   **/
 
 
-import {AppElement, html}       from '@longlost/app-element/app-element.js';
+import {AppElement, html}       from '@longlost/app-core/app-element.js';
+import {listenOnce, wait, warn} from '@longlost/app-core/utils.js';
 import {ImageEditorItemMixin}   from './image-editor-item-mixin.js';
-import {listenOnce, wait, warn} from '@longlost/utils/utils.js';
 import htmlString               from './afs-image-cropper.html';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/iron-icon/iron-icon.js';

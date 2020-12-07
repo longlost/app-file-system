@@ -39,16 +39,16 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
+} from '@longlost/app-core/app-element.js';
 
 import {
   hijackEvent,
   schedule
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
 
 import htmlString from './afs-confirm-selection-modal.html';
+import '@longlost/app-core/app-shared-styles.js';
 import '@longlost/app-overlays/app-modal.js';
-import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/paper-button/paper-button.js';
 import '../shared/afs-file-thumbnail.js';
 

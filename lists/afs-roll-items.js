@@ -18,9 +18,9 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {scale}            from '@longlost/app-core/lambda.js';
 import {ItemsMixin}       from './items-mixin.js';
-import {scale}            from '@longlost/lambda/lambda.js';
 import htmlString         from './afs-roll-items.html';
 import './afs-paginated-roll-items.js';
 

@@ -1,6 +1,6 @@
 
 
-import {hijackEvent, schedule} from '@longlost/utils/utils.js';
+import {hijackEvent, schedule} from '@longlost/app-core/utils.js';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/lazy-video/lazy-video.js';
 

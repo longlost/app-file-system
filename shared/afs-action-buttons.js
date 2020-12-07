@@ -25,7 +25,7 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
 import htmlString         from './afs-action-buttons.html';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/afs-file-icons.js';

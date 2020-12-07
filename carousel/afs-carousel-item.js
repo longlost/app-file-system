@@ -21,8 +21,8 @@
   **/
 
 
-import {AppElement, html}            from '@longlost/app-element/app-element.js';
-import {getBBox, naturals, schedule} from '@longlost/utils/utils.js';
+import {AppElement, html}            from '@longlost/app-core/app-element.js';
+import {getBBox, naturals, schedule} from '@longlost/app-core/utils.js';
 import {PhotoElementMixin}           from '../shared/photo-element-mixin.js';
 import htmlString                    from './afs-carousel-item.html';
 

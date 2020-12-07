@@ -30,9 +30,9 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {firebase}         from '@longlost/app-shell/boot/boot.js';
-import {isOnScreen}       from '@longlost/utils/utils.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {firebase}         from '@longlost/app-core/boot/boot.js';
+import {isOnScreen}       from '@longlost/app-core/utils.js';
 import htmlString         from './afs-paginated-carousel.html';
 import '@longlost/app-carousels/app-carousel.js';
 import './afs-carousel-item.js';

@@ -38,16 +38,16 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
+} from '@longlost/app-core/app-element.js';
 
 import {
   hijackEvent,
   listenOnce,
   schedule,
   warn
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
 
-import {stripExt} from '../shared/utils.js';
+import {stripExt} from '@longlost/app-core/file-utils.js';
 import htmlString from './afs-save-as-modal.html';
 import '@longlost/app-overlays/app-modal.js';
 import '@polymer/paper-button/paper-button.js';

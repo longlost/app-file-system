@@ -12,9 +12,9 @@
 	*
 	**/
 
-import * as Comlink  from 'comlink';
-import * as imgUtils from '../shared/img-utils.js';
-import {nanoid}			 from 'nanoid/non-secure'; // https://github.com/ai/nanoid
+import * as Comlink  						 from 'comlink';
+import {nanoid}			 						 from 'nanoid/non-secure'; // https://github.com/ai/nanoid
+import {canProcess, canReadExif} from '@longlost/app-core/img-utils.js';
 
 
 const process = async (readCb, processedCb, file, exifTags) => {	
@@ -24,7 +24,7 @@ const process = async (readCb, processedCb, file, exifTags) => {
 	// no need to transfer a file accross contexts 
 	// just to get a uid issued if it cannot be processed.
 	// Don't process unsupported file types either.
-	if (!file || !imgUtils.canProcess(file)) {
+	if (!file || !canProcess(file)) {
 	 
 		// Update file read ui.
 		readCb();
@@ -35,7 +35,7 @@ const process = async (readCb, processedCb, file, exifTags) => {
 	// Firebase does not allow undefined values.
 	let exif = null;
 
-	if (imgUtils.canReadExif(file)) {
+	if (canReadExif(file)) {
 		const {default: read} = await import(
 			/* webpackChunkName: 'afs-sources-worker-exif' */ 
 			'./worker-exif.js'
@@ -44,7 +44,7 @@ const process = async (readCb, processedCb, file, exifTags) => {
 		exif = read(file, exifTags);
 	}
 
-	if (imgUtils.canProcess(file)) {
+	if (canProcess(file)) {
 		const {default: compress} = await import(
 			/* webpackChunkName: 'afs-sources-worker-compress' */ 
 			'./worker-compress.js'

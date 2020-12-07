@@ -14,10 +14,10 @@
   *
   **/
 
-import {AppElement, html}            from '@longlost/app-element/app-element.js';
+import {AppElement, html}            from '@longlost/app-core/app-element.js';
 import {htmlLiteral}                 from '@polymer/polymer/lib/utils/html-tag.js';
-import {blobToFile}                  from '@longlost/lambda/lambda.js';
-import {hijackEvent, schedule, warn} from '@longlost/utils/utils.js';
+import {blobToFile}                  from '@longlost/app-core/lambda.js';
+import {hijackEvent, schedule, warn} from '@longlost/app-core/utils.js';
 import path                          from 'path';
 import mime                          from 'mime-types';
 

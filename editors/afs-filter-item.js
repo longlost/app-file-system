@@ -33,7 +33,7 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
 import htmlString         from './afs-filter-item.html';
 import '@longlost/app-images/lazy-image.js';
 

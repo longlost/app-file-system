@@ -34,8 +34,9 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
 import htmlString         from './afs-video-viewer.html';
+import '@longlost/app-core/app-icons.js';
 import '@longlost/app-overlays/app-overlay.js';
 import '@longlost/lazy-video/lazy-video.js';
 

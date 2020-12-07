@@ -37,13 +37,13 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
+} from '@longlost/app-core/app-element.js';
 
 import {
   hijackEvent,
   schedule, 
   wait
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
 
 import htmlString from './afs-photo-carousel.html';
 import '@longlost/app-images/flip-image.js';

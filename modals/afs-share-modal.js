@@ -39,15 +39,15 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
+} from '@longlost/app-core/app-element.js';
 
 import {
   message,
   schedule,
   warn
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
 
-import services   from '@longlost/app-shell/services/services.js';
+import services   from '@longlost/app-core/services/services.js';
 import htmlString from './afs-share-modal.html';
 import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';

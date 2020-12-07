@@ -1,9 +1,9 @@
 
 
 import path          from 'path'; // webpack includes this by default!
-import runner        from '@longlost/worker/runner.js';
 import * as Comlink  from 'comlink';
-import * as imgUtils from '../shared/img-utils.js';
+import {canProcess}  from '@longlost/app-core/img-utils.js';
+import runner        from '@longlost/app-core/worker/runner.js';
 
 
 const EXIF_TAGS = [
@@ -70,7 +70,7 @@ export default async (files, readCallback, processedCallback) => {
 
 
       // No need to transfer file accross contexts if it won't be processed.
-      const processed = imgUtils.canProcess(file) ? 
+      const processed = canProcess(file) ? 
                           await processRunner(...baseArgs, file, EXIF_TAGS) :
                           await processRunner(...baseArgs);
 

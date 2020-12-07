@@ -26,26 +26,26 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
-
-import {
-  FileInfoMixin
-} from '../shared/file-info-mixin.js';
+} from '@longlost/app-core/app-element.js';
 
 import {
   compose,
   map,
   split
-} from '@longlost/lambda/lambda.js';
+} from '@longlost/app-core/lambda.js';
 
 import {
   isOnScreen
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
+
+import {
+  FileInfoMixin
+} from '../shared/file-info-mixin.js';
 
 import htmlString from './afs-metadata-page.html';
-import '@longlost/app-icons/app-icons.js';
+import '@longlost/app-core/app-icons.js';
+import '@longlost/app-core/app-shared-styles.js';
 import '@longlost/app-inputs/app-textarea.js';
-import '@longlost/app-shared-styles/app-shared-styles.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';

@@ -38,20 +38,20 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
+} from '@longlost/app-core/app-element.js';
 
 import {
   message,
   schedule,
   wait,
   warn
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
 
-import {fetchFile}  from '../shared/utils.js';
+import {fetchFile}  from '@longlost/app-core/file-utils.js';
 import path         from 'path'; // webpack includes this by default!
 import mime         from 'mime-types';
 import htmlString   from './afs-web-file-card.html';
-import '@longlost/app-shared-styles/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-progress/paper-progress.js';

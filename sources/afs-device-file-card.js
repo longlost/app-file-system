@@ -64,10 +64,10 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {hijackEvent}      from '@longlost/utils/utils.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {hijackEvent}      from '@longlost/app-core/utils.js';
 import htmlString         from './afs-device-file-card.html';
-import '@longlost/app-shared-styles/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.js';
 import '@polymer/paper-button/paper-button.js';
 import '../shared/afs-file-icons.js';
 import './afs-drop-zone.js';

@@ -10,8 +10,8 @@
   *
   **/
 
-import {AppElement, html}            from '@longlost/app-element/app-element.js';
-import {hijackEvent, schedule, wait} from '@longlost/utils/utils.js';
+import {AppElement, html}            from '@longlost/app-core/app-element.js';
+import {hijackEvent, schedule, wait} from '@longlost/app-core/utils.js';
 import htmlString                    from './afs-upload-actions-card.html';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-card/paper-card.js';

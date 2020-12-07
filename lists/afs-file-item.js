@@ -13,12 +13,12 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
 import {FileInfoMixin}    from '../shared/file-info-mixin.js';
 import {ItemMixin}        from './item-mixin.js';
 import htmlString         from './afs-file-item.html';
-import '@longlost/app-icons/app-icons.js';
-import '@longlost/app-shared-styles/app-shared-styles.js';
+import '@longlost/app-core/app-icons.js';
+import '@longlost/app-core/app-shared-styles.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './afs-quick-options.js';
 

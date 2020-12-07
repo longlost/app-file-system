@@ -19,10 +19,10 @@
   *
   **/
 
-import {AppElement, html}   from '@longlost/app-element/app-element.js';
-import {isCloudProcessable} from '../shared/utils.js';
+import {AppElement, html}   from '@longlost/app-core/app-element.js';
+import {isCloudProcessable} from '@longlost/app-core/img-utils.js';
 import htmlString           from './afs-processing-error-icon.html';
-import '@longlost/app-icons/app-icons.js';
+import '@longlost/app-core/app-icons.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-menu-button/paper-menu-button.js';
 
