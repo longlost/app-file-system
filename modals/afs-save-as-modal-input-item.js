@@ -35,15 +35,11 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-element/app-element.js';
-
-import {hijackEvent} from '@longlost/utils/utils.js';
-import {stripExt}    from '../shared/utils.js';
-import htmlString    from './afs-save-as-modal-input-item.html';
-import '@longlost/app-shared-styles/app-shared-styles.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {hijackEvent}      from '@longlost/app-core/utils.js';
+import {stripExt}         from '@longlost/app-core/file-utils.js';
+import htmlString         from './afs-save-as-modal-input-item.html';
+import '@longlost/app-core/app-shared-styles.js';
 import '@polymer/paper-input/paper-input.js';
 import '../shared/afs-file-thumbnail.js';
 

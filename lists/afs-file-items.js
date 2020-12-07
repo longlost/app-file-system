@@ -42,10 +42,10 @@
   **/
 
 
-import {AppElement, html}        from '@longlost/app-element/app-element.js';
+import {AppElement, html}        from '@longlost/app-core/app-element.js';
+import {firebase}                from '@longlost/app-core/boot/boot.js';
+import {hijackEvent, isOnScreen} from '@longlost/app-core/utils.js';
 import {ItemsMixin}              from './items-mixin.js';
-import {firebase}                from '@longlost/app-shell/boot/boot.js';
-import {hijackEvent, isOnScreen} from '@longlost/utils/utils.js';
 import htmlString                from './afs-file-items.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';

@@ -14,9 +14,9 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {getBBox}          from '@longlost/app-core/utils.js';
 import {ItemMixin}        from './item-mixin.js';
-import {getBBox}          from '@longlost/utils/utils.js';
 import htmlString         from './afs-roll-item.html';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-ripple/paper-ripple.js';

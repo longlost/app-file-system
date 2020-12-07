@@ -22,8 +22,8 @@
   *
   **/
 
-import magick        from '@longlost/wasm-imagemagick/wasm-imagemagick.js';
-import * as imgUtils from '../shared/img-utils.js';
+import magick       from '@longlost/wasm-imagemagick/wasm-imagemagick.js';
+import {canProcess} from '@longlost/app-core/img-utils.js';
 
 
 const KILOBYTE = 1024;
@@ -191,7 +191,7 @@ const minimizer = async file => {
 
 export default async (callback, file) => {
 
-  if (imgUtils.canProcess(file)) {
+  if (canProcess(file)) {
 
     const info            = await identifier(file);
     const {height, width} = getImageSize(info);

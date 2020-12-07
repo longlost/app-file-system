@@ -11,9 +11,9 @@ import {
   schedule,
   wait,
   warn
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
 
-import services from '@longlost/app-shell/services/services.js';
+import services from '@longlost/app-core/services/services.js';
 
 // Will NOT download multiple files in Chrome when dev tools is open!!
 import multiDownload from 'multi-download';

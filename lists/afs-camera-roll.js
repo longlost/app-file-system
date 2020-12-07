@@ -33,9 +33,9 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {schedule, wait}   from '@longlost/app-core/utils.js';
 import {ListOverlayMixin} from './list-overlay-mixin.js';
-import {schedule, wait}   from '@longlost/utils/utils.js';
 import htmlString         from './afs-camera-roll.html';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
 import '@polymer/iron-icon/iron-icon.js';

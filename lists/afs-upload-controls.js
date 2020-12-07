@@ -14,18 +14,18 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
+} from '@longlost/app-core/app-element.js';
 
 import {
   isDisplayed,
   schedule,
   wait
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
 
 import htmlString from './afs-upload-controls.html';
-import '@longlost/app-icons/app-icons.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-progress/paper-progress.js';
+import '../shared/afs-file-icons.js';
 
 
 class AFSUploadControls extends AppElement {

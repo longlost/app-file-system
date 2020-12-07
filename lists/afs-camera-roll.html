@@ -2,7 +2,7 @@
 <style>  
 
   :host {
-    --scale-animation-ease: var(--custom-ease, cubic-bezier(0.49, 0.01, 0, 1));
+    --scale-animation-ease: var(--app-custom-ease, cubic-bezier(0.49, 0.01, 0, 1));
   }
       
   #overlay {
@@ -10,7 +10,7 @@
 
     --overlay-toolbar-backdrop-filter:  blur(10px);
     --overlay-toolbar-background-color: transparent;
-    --overlay-toolbar-color:            var(--app-dark-color-text);
+    --overlay-toolbar-color:            var(--app-primary-dark-color-text);
     --overlay-toolbar-pointer-events:   none;
     --overlay-background-color:         var(--app-body-color);
   }
@@ -44,7 +44,7 @@
 
   #header-background::before, 
   #progress::before {    
-    background-color: var(--app-dark-color);
+    background-color: var(--app-primary-dark-color);
   }
 
   /* A non-scrolling faux background. */

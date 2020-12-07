@@ -22,20 +22,20 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
+} from '@longlost/app-core/app-element.js';
 
 import {
   schedule,
   wait
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
 
 import {
   allProcessingRan,
   isCloudProcessable
-} from '../shared/utils.js';
+} from '@longlost/app-core/img-utils.js';
 
 import htmlString from './afs-processing-icon.html';
-import '@longlost/app-icons/app-icons.js';
+import '@longlost/app-core/app-icons.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '../shared/afs-file-icons.js';
 

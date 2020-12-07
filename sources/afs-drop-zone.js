@@ -10,8 +10,8 @@
   *
   **/
   
-import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {hijackEvent}      from '@longlost/utils/utils.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {hijackEvent}      from '@longlost/app-core/utils.js';
 import htmlString         from './afs-drop-zone.html';
 import '@polymer/iron-icon/iron-icon.js';
 import '../shared/afs-file-icons.js';

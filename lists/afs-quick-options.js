@@ -28,16 +28,16 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
+} from '@longlost/app-core/app-element.js';
 
 import {
   isDisplayed, 
   schedule, 
   wait
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
 
 import htmlString from './afs-quick-options.html';
-import '@longlost/app-icons/app-icons.js';
+import '@longlost/app-core/app-icons.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/afs-action-buttons.js';
 

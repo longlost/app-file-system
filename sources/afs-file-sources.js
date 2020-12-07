@@ -84,7 +84,7 @@
 import {
   AppElement, 
   html
-} from '@longlost/app-element/app-element.js';
+} from '@longlost/app-core/app-element.js';
 
 import {
   capitalize,
@@ -92,7 +92,7 @@ import {
   head,
   map,
   split
-} from '@longlost/lambda/lambda.js';
+} from '@longlost/app-core/lambda.js';
 
 import {
   fsToast,
@@ -102,17 +102,18 @@ import {
   schedule,
   wait,
   warn
-} from '@longlost/utils/utils.js';
+} from '@longlost/app-core/utils.js';
+
+import {stripExt} from '@longlost/app-core/file-utils.js';
 
 import {
   isCloudProcessable, 
-  stripExt
-} from '../shared/utils.js';
+  canProcess
+} from '@longlost/app-core/img-utils.js';
 
 import mime          from 'mime-types';
 import descriptions  from './mime-descriptions.json';
-import services      from '@longlost/app-shell/services/services.js';
-import * as imgUtils from '../shared/img-utils.js';
+import services      from '@longlost/app-core/services/services.js';
 import processFiles  from './processing.js';
 import htmlString    from './afs-file-sources.html';
 import '@longlost/app-overlays/app-header-overlay.js';
@@ -608,7 +609,7 @@ class AFSFileSources extends AppElement {
     const newToRead = files.length;
     this._reading   = this._reading + newToRead;
 
-    const newToProcess = files.filter(imgUtils.canProcess).length;
+    const newToProcess = files.filter(canProcess).length;
     this._processing   = this._processing + newToProcess;
 
     const cardEl     = this.select('#deviceFileCard');

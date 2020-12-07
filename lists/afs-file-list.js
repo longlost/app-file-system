@@ -28,8 +28,8 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {schedule}         from '@longlost/utils/utils.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {schedule}         from '@longlost/app-core/utils.js';
 import {ListOverlayMixin} from './list-overlay-mixin.js';
 import htmlString         from './afs-file-list.html';
 // 'afs-file-items' lazy loaded after open.

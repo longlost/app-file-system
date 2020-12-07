@@ -33,9 +33,9 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {schedule, wait}   from '@longlost/app-core/utils.js';
 import {EditorMixin}      from './editor-mixin.js';
-import {schedule, wait}   from '@longlost/utils/utils.js';
 import htmlString         from './afs-file-editor.html';
 import '../shared/afs-file-icons.js';
 import '../shared/afs-action-buttons.js';

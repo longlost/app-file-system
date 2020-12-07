@@ -32,8 +32,8 @@
   **/
 
 
-import {AppElement, html}  from '@longlost/app-element/app-element.js';
-import {schedule, wait}    from '@longlost/utils/utils.js';
+import {AppElement, html}  from '@longlost/app-core/app-element.js';
+import {schedule, wait}    from '@longlost/app-core/utils.js';
 import htmlString          from './afs-edit-photo-fab.html';
 import '@polymer/paper-fab/paper-fab.js';
 import '../shared/afs-file-icons.js';

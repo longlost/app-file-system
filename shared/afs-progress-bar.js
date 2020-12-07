@@ -10,8 +10,8 @@
   *
   **/
 
-import {AppElement, html} from '@longlost/app-element/app-element.js';
-import {schedule, wait}   from '@longlost/utils/utils.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {schedule, wait}   from '@longlost/app-core/utils.js';
 import htmlString         from './afs-progress-bar.html';
 import '@longlost/paper-gauge/paper-gauge.js';
 import '@polymer/paper-progress/paper-progress.js';

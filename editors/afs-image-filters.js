@@ -33,10 +33,10 @@
   **/
 
 
-import {AppElement, html}     from '@longlost/app-element/app-element.js';
+import {AppElement, html}     from '@longlost/app-core/app-element.js';
+import {schedule, wait, warn} from '@longlost/app-core/utils.js';
 import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
 import {FilterMixin}          from './filter-mixin.js';
-import {schedule, wait, warn} from '@longlost/utils/utils.js';
 import {imgFilterFile}        from '../shared/utils.js';
 import htmlString             from './afs-image-filters.html';
 import '@polymer/iron-selector/iron-selector.js';

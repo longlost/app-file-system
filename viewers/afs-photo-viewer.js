@@ -34,9 +34,10 @@
   **/
 
 
-import {AppElement, html}   from '@longlost/app-element/app-element.js';
-import {naturals, schedule} from '@longlost/utils/utils.js';
+import {AppElement, html}   from '@longlost/app-core/app-element.js';
+import {naturals, schedule} from '@longlost/app-core/utils.js';
 import htmlString           from './afs-photo-viewer.html';
+import '@longlost/app-core/app-icons.js';
 import '@longlost/app-images/flip-image.js';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/app-overlays/app-overlay.js';
