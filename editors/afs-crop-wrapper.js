@@ -20,11 +20,8 @@ import {blobToFile}                  from '@longlost/app-core/lambda.js';
 import {hijackEvent, schedule, warn} from '@longlost/app-core/utils.js';
 import path                          from 'path';
 import mime                          from 'mime-types';
-
-// Disable webpack config 'style-loader' so 
-// these styles are not put in the document head.
-import styles  from '!css-loader!cropperjs/dist/cropper.css';
-import Cropper from 'cropperjs';
+import styles                        from 'cropperjs/dist/cropper.css';
+import Cropper                       from 'cropperjs';
 
 
 // Pull any src url params from end of extention.
