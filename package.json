@@ -1,6 +1,6 @@
 {
   "name": "@longlost/app-file-system",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "description": "This custom element handles all aspects of handling files for an app. Processing, uploading, viewing and editing.",
   "main": "app-file-system.js",
   "scripts": {
