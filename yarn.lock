@@ -375,6 +375,17 @@
     "@longlost/app-core" "^1.0.0"
     "@polymer/iron-image" "^3.0.2"
 
+"@longlost/app-images@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-2.0.0.tgz#f20a5077154f94b40f781a24e03355bc7a85ec83"
+  integrity sha512-uTDCFYrdqcmdPoe9ogkePeO3Wsz+kBJluYc4onRXHNzZQuD7HuDh+ZvHwBbFpOQgnM+4WOJJB5Df9M2zw4pn/Q==
+  dependencies:
+    "@longlost/app-core" "^1.1.2"
+    "@polymer/iron-icon" "^3.0.1"
+    "@polymer/iron-iconset-svg" "^3.0.1"
+    "@polymer/iron-image" "^3.0.2"
+    "@polymer/paper-button" "^3.0.1"
+
 "@longlost/app-inputs@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@longlost/app-inputs/-/app-inputs-2.0.0.tgz#3e2ae760ff562efd7ed8cb15e9172b746190dbbf"

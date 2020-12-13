@@ -160,13 +160,16 @@ export const PhotoElementMixin = superClass => {
 
 	    if (!this.item) { return; }
 
-	    const {value: loaded}      = event.detail;
-	    const {original, _tempUrl} = this.item;
+	    const {value: loaded} = event.detail;
+	    const {_tempUrl} 			= this.item;
 
-	    if (loaded && _tempUrl && !original) {
+	    if (loaded && _tempUrl) {
 	      await schedule(); // <lazy-image> workaround.
 	      
-	      window.URL.revokeObjectURL(_tempUrl);
+	      try {
+	        window.URL.revokeObjectURL(_tempUrl);
+	      }
+	      catch (_) { /* noop */ }
 	    }
 	  }
 
@@ -174,10 +177,13 @@ export const PhotoElementMixin = superClass => {
 	  __handleMetadataLoaded(event) {
 	  	hijackEvent(event);
 	  	
-	    const {original, _tempUrl} = this.item;
+	    const {_tempUrl} = this.item;
 
-	    if (_tempUrl && !original) {
-	      window.URL.revokeObjectURL(_tempUrl);
+	    if (_tempUrl) {
+	      try {
+	        window.URL.revokeObjectURL(_tempUrl);
+	      }
+	      catch (_) { /* noop */ }
 	    }
 	  }
 
