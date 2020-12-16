@@ -102,6 +102,13 @@
   dependencies:
     "@firebase/auth-types" "0.10.1"
 
+"@firebase/auth@0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@firebase/auth/-/auth-0.16.0.tgz#2b65e015f4c1cbcd83da4303984ba984d67a4a45"
+  integrity sha512-1d8WvbGCCaTMZXqevjrkrFzP6FFvFORHBUByQc5xVpDty+kQxIayeWxUqyEuwGm57BrQ1fUwveH2G9a4DGarCQ==
+  dependencies:
+    "@firebase/auth-types" "0.10.1"
+
 "@firebase/component@0.1.21":
   version "0.1.21"
   resolved "https://registry.yarnpkg.com/@firebase/component/-/component-0.1.21.tgz#56062eb0d449dc1e7bbef3c084a9b5fa48c7c14d"
@@ -135,6 +142,11 @@
   resolved "https://registry.yarnpkg.com/@firebase/firestore-types/-/firestore-types-2.0.0.tgz#1f6212553b240f1a8905bb8dcf1f87769138c5c0"
   integrity sha512-ZGb7p1SSQJP0Z+kc9GAUi+Fx5rJatFddBrS1ikkayW+QHfSIz0omU23OgSHcBGTxe8dJCeKiKA2Yf+tkDKO/LA==
 
+"@firebase/firestore-types@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@firebase/firestore-types/-/firestore-types-2.1.0.tgz#ad406c6fd7f0eae7ea52979f712daa0166aef665"
+  integrity sha512-jietErBWihMvJkqqEquQy5GgoEwzHnMXXC/TsVoe9FPysXm1/AeJS12taS7ZYvenAtyvL/AEJyKrRKRh4adcJQ==
+
 "@firebase/firestore@2.0.5":
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-2.0.5.tgz#bef5fafb49ac9872830efd07c2388634441c9699"
@@ -142,6 +154,21 @@
   dependencies:
     "@firebase/component" "0.1.21"
     "@firebase/firestore-types" "2.0.0"
+    "@firebase/logger" "0.2.6"
+    "@firebase/util" "0.3.4"
+    "@firebase/webchannel-wrapper" "0.4.1"
+    "@grpc/grpc-js" "^1.0.0"
+    "@grpc/proto-loader" "^0.5.0"
+    node-fetch "2.6.1"
+    tslib "^1.11.1"
+
+"@firebase/firestore@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-2.1.0.tgz#eda6f7ea5a6c3091b7beb405e254fb852cb9ff3b"
+  integrity sha512-CKzZdht5ECpOGsfxOfeea7rXFTeR/wR7Lbh12TQI7Ru4CfhfdMBQPw9gs4wBX+WyKifp18Fz/bjP8Lly5RgNMg==
+  dependencies:
+    "@firebase/component" "0.1.21"
+    "@firebase/firestore-types" "2.1.0"
     "@firebase/logger" "0.2.6"
     "@firebase/util" "0.3.4"
     "@firebase/webchannel-wrapper" "0.4.1"
@@ -213,6 +240,18 @@
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/@firebase/performance/-/performance-0.4.4.tgz#5f13ea3b9a72a0ae9c36520c419be31448a0955a"
   integrity sha512-CY/fzz7qGQ9hUkvOow22MeJhayHSjXmI4+0AqcxaUC4CWk4oQubyIC4pk62aH+yCwZNNeC7JJUEDbtqI/0rGkQ==
+  dependencies:
+    "@firebase/component" "0.1.21"
+    "@firebase/installations" "0.4.19"
+    "@firebase/logger" "0.2.6"
+    "@firebase/performance-types" "0.0.13"
+    "@firebase/util" "0.3.4"
+    tslib "^1.11.1"
+
+"@firebase/performance@0.4.5":
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/@firebase/performance/-/performance-0.4.5.tgz#3ab89208ed6fb80165e5594058e46dc85113cd78"
+  integrity sha512-oenEOaV/UzvV8XPi8afYQ71RzyrHoBesqOyXqb1TOg7dpU+i+UJ5PS8K64DytKUHTxQl+UJFcuxNpsoy9BpWzw==
   dependencies:
     "@firebase/component" "0.1.21"
     "@firebase/installations" "0.4.19"
@@ -310,13 +349,13 @@
   dependencies:
     exifreader "^3.12.0"
 
-"@longlost/app-carousels@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@longlost/app-carousels/-/app-carousels-1.0.3.tgz#a79b1f2450b3818e377989c3531d0e3fbeaa643d"
-  integrity sha512-Lj49je68GXgDGPeDSumtwA0pLSINmpkJKCjgrcKk6fFYdHeI79IMZuN/S3ThaZiFbrOBSknsMdIDPQ24T6rFCg==
+"@longlost/app-carousels@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@longlost/app-carousels/-/app-carousels-2.0.0.tgz#b17f7697d3732dba82201af35974695d1c153d52"
+  integrity sha512-j+vuaHUTYw/S9qdhcwzvncb8BDrQ2oJ9kpo5Et7gOGZrz33nAFPjjTXDxXEKrVPPq2hb741zyGR1AWk5qjeEtw==
   dependencies:
-    "@longlost/app-core" "^1.0.0"
-    "@longlost/app-images" "^1.8.4"
+    "@longlost/app-core" "^1.1.3"
+    "@longlost/app-images" "^2.0.1"
     "@polymer/iron-icon" "^3.0.1"
     "@polymer/paper-icon-button" "^3.0.2"
     "@polymer/paper-ripple" "^3.0.2"
@@ -367,22 +406,27 @@
     scroll-behavior-polyfill "^2.0.13"
     workbox-window "^6.0.2"
 
-"@longlost/app-images@^1.8.4":
-  version "1.8.4"
-  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-1.8.4.tgz#fff87a3fcb53b686d38efab25bcad29a3e252b91"
-  integrity sha512-8C8xFOa0tThT97a/Y8ONn1f3XuT5ZV6ydqn06/Lk3ls3kgl/Lo7u8Q/eCEgfdxsNOzbd64nzYHG/n79ndAW/gQ==
+"@longlost/app-core@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@longlost/app-core/-/app-core-1.1.3.tgz#4c9cec23d92bda87250e819a3b1eaf0d85df1bcc"
+  integrity sha512-7LE+faXNT90VXZj+CCUD2q8s1g9YVxf584hQAxHBVsfCXo9HRhkk1wF/a3V8/zBBewEjOJz5CZvaN2DMqGnAvg==
   dependencies:
-    "@longlost/app-core" "^1.0.0"
-    "@polymer/iron-image" "^3.0.2"
-
-"@longlost/app-images@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-2.0.0.tgz#f20a5077154f94b40f781a24e03355bc7a85ec83"
-  integrity sha512-uTDCFYrdqcmdPoe9ogkePeO3Wsz+kBJluYc4onRXHNzZQuD7HuDh+ZvHwBbFpOQgnM+4WOJJB5Df9M2zw4pn/Q==
-  dependencies:
-    "@longlost/app-core" "^1.1.2"
-    "@polymer/iron-icon" "^3.0.1"
     "@polymer/iron-iconset-svg" "^3.0.1"
+    "@polymer/paper-styles" "^3.0.1"
+    "@polymer/polymer" "^3.4.1"
+    "@ungap/global-this" "^0.4.3"
+    comlink "^4.3.0"
+    firebase "^8.2.0"
+    mime-types "^2.1.27"
+    scroll-behavior-polyfill "^2.0.13"
+    workbox-window "^6.0.2"
+
+"@longlost/app-images@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-2.0.1.tgz#5597dd27ef321141b1f014d19c17a19c0cb4d3b5"
+  integrity sha512-p8LYq75KXIgeewAVC6TbjK+fq6ByZ2QE9VJfeIvWjCO5bDWUNMsSoOg2T4whlzyX9TLGh0mzrTAmWUmYUelNxQ==
+  dependencies:
+    "@longlost/app-core" "^1.1.3"
     "@polymer/iron-image" "^3.0.2"
     "@polymer/paper-button" "^3.0.1"
 
@@ -1113,6 +1157,11 @@
   resolved "https://registry.yarnpkg.com/@ungap/global-this/-/global-this-0.4.2.tgz#bc59a79799862e3e0cf647c090fd3f3f2285cf56"
   integrity sha512-uFg7Kz+E12RBlgBLMlWVjmn2OIeE2J1Lzij0RseNcCVsrJX+LEB4fQ9MnoPXkXJmO5cHtTEzI5ATtb3IJfQ9tQ==
 
+"@ungap/global-this@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@ungap/global-this/-/global-this-0.4.3.tgz#44cb668b03e7c4bc88cb6e6f9329d381131878ee"
+  integrity sha512-MuHEpDBurNVeD6mV9xBcAN2wfTwuaFQhHuhWkJuXmyVJ5P5sBCw+nnFpdfb0tAvgWkfefWCsAoAsh7MTUr3LPg==
+
 "@ungap/promise-all-settled@1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@ungap/promise-all-settled/-/promise-all-settled-1.1.2.tgz#aa58042711d6e3275dd37dc597e5d31e8c290a44"
@@ -1539,6 +1588,26 @@ firebase@^8.1.2:
     "@firebase/installations" "0.4.19"
     "@firebase/messaging" "0.7.3"
     "@firebase/performance" "0.4.4"
+    "@firebase/polyfill" "0.3.36"
+    "@firebase/remote-config" "0.1.30"
+    "@firebase/storage" "0.4.2"
+    "@firebase/util" "0.3.4"
+
+firebase@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/firebase/-/firebase-8.2.0.tgz#fb8416dcb2e917c75cd1e876168673db31b315dd"
+  integrity sha512-+xmFd6/E9dZC3OC16lPll5ql5tCi/CHu/iu66OAqZZwriwnxZTp48uQp5Rk/YiOkl19iyf9jzPx5NX3NXpXXbA==
+  dependencies:
+    "@firebase/analytics" "0.6.2"
+    "@firebase/app" "0.6.13"
+    "@firebase/app-types" "0.6.1"
+    "@firebase/auth" "0.16.0"
+    "@firebase/database" "0.8.1"
+    "@firebase/firestore" "2.1.0"
+    "@firebase/functions" "0.6.1"
+    "@firebase/installations" "0.4.19"
+    "@firebase/messaging" "0.7.3"
+    "@firebase/performance" "0.4.5"
     "@firebase/polyfill" "0.3.36"
     "@firebase/remote-config" "0.1.30"
     "@firebase/storage" "0.4.2"
