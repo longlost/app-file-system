@@ -517,6 +517,7 @@ class AFSFileSources extends AppElement {
         displayName,
         exif,
         ext,
+        height,
         index,
         lastModified,
         size,  
@@ -524,6 +525,7 @@ class AFSFileSources extends AppElement {
         timestamp,
         type,
         uid,
+        width
       } = file;
 
       // `data` becomes the database document item.
@@ -539,6 +541,7 @@ class AFSFileSources extends AppElement {
           doc: uid,
           exif,
           ext,
+          height,
           index:         index + this._dbCount,
           isProcessable: isCloudProcessable(file),
           lastModified,
@@ -552,7 +555,8 @@ class AFSFileSources extends AppElement {
           thumbnailError: null,
           timestamp,
           type,
-          uid
+          uid,
+          width
         },
         merge: false
       };

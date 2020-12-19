@@ -109,6 +109,13 @@
   dependencies:
     "@firebase/auth-types" "0.10.1"
 
+"@firebase/auth@0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@firebase/auth/-/auth-0.16.1.tgz#8b0c9a9c6ab29694ea6d7f467d91b9d3dd22fce8"
+  integrity sha512-7juD7D/kaxNti/xa5G+ZGJJs+bdJUWOW0MlNBtXwiG+TjMh69EDmwJnQmmc9h/32QVvXt1qo1OGWOoMMpF/2Gg==
+  dependencies:
+    "@firebase/auth-types" "0.10.1"
+
 "@firebase/component@0.1.21":
   version "0.1.21"
   resolved "https://registry.yarnpkg.com/@firebase/component/-/component-0.1.21.tgz#56062eb0d449dc1e7bbef3c084a9b5fa48c7c14d"
@@ -166,6 +173,21 @@
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-2.1.0.tgz#eda6f7ea5a6c3091b7beb405e254fb852cb9ff3b"
   integrity sha512-CKzZdht5ECpOGsfxOfeea7rXFTeR/wR7Lbh12TQI7Ru4CfhfdMBQPw9gs4wBX+WyKifp18Fz/bjP8Lly5RgNMg==
+  dependencies:
+    "@firebase/component" "0.1.21"
+    "@firebase/firestore-types" "2.1.0"
+    "@firebase/logger" "0.2.6"
+    "@firebase/util" "0.3.4"
+    "@firebase/webchannel-wrapper" "0.4.1"
+    "@grpc/grpc-js" "^1.0.0"
+    "@grpc/proto-loader" "^0.5.0"
+    node-fetch "2.6.1"
+    tslib "^1.11.1"
+
+"@firebase/firestore@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@firebase/firestore/-/firestore-2.1.1.tgz#e19040faf858cc00cb3b7609945fe490182b36b3"
+  integrity sha512-mcKp8psdKSxujaGjyfmt/thlTG5Gk+gFdJbkx4DnGO1PsJG4H5mE0wG//7tOH7DGeRCAmiagjKhA8nQlf/UNCg==
   dependencies:
     "@firebase/component" "0.1.21"
     "@firebase/firestore-types" "2.1.0"
@@ -342,13 +364,6 @@
     protobufjs "^6.9.0"
     yargs "^15.3.1"
 
-"@longlost/afs-custom-exifreader@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@longlost/afs-custom-exifreader/-/afs-custom-exifreader-1.0.0.tgz#39e6dcec3d5f0f7b6aee0710a6c9c174eec9406a"
-  integrity sha512-P3XcxziqpOBG/o03XLAn244GAsv5qefZX5yMUUwFs+Ftiv7/pPYj3LBPFP4F5RdHXIcQsTIiz/qe7h5zhTnpCw==
-  dependencies:
-    exifreader "^3.12.0"
-
 "@longlost/app-carousels@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@longlost/app-carousels/-/app-carousels-2.0.0.tgz#b17f7697d3732dba82201af35974695d1c153d52"
@@ -421,12 +436,36 @@
     scroll-behavior-polyfill "^2.0.13"
     workbox-window "^6.0.2"
 
+"@longlost/app-core@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@longlost/app-core/-/app-core-1.1.4.tgz#c5a8f4f7623f2703b3ad5a6e41d8fe1f1c792cf7"
+  integrity sha512-vRYtSyZyOLM8gQRa/65rSgczOsqrf7phmsBAYllTn9ZSysycWXFDKswMfe3diOmuiaq28mvtWJNDp+Q5I5qL/w==
+  dependencies:
+    "@polymer/iron-iconset-svg" "^3.0.1"
+    "@polymer/paper-styles" "^3.0.1"
+    "@polymer/polymer" "^3.4.1"
+    "@ungap/global-this" "^0.4.3"
+    comlink "^4.3.0"
+    firebase "^8.2.1"
+    mime-types "^2.1.27"
+    scroll-behavior-polyfill "^2.0.13"
+    workbox-window "^6.0.2"
+
 "@longlost/app-images@^2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-2.0.1.tgz#5597dd27ef321141b1f014d19c17a19c0cb4d3b5"
   integrity sha512-p8LYq75KXIgeewAVC6TbjK+fq6ByZ2QE9VJfeIvWjCO5bDWUNMsSoOg2T4whlzyX9TLGh0mzrTAmWUmYUelNxQ==
   dependencies:
     "@longlost/app-core" "^1.1.3"
+    "@polymer/iron-image" "^3.0.2"
+    "@polymer/paper-button" "^3.0.1"
+
+"@longlost/app-images@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-2.0.2.tgz#295010f9d6931e1475b1544d4449babe02db914f"
+  integrity sha512-oFTRnPPtvZOlBTdF6VzGlf5/n5k5aucQsb+wMl0sLl8+Np/jpSF+z6FjztxgUonNx59Gw/l0+UxDgMz2gssBMA==
+  dependencies:
+    "@longlost/app-core" "^1.1.4"
     "@polymer/iron-image" "^3.0.2"
     "@polymer/paper-button" "^3.0.1"
 
@@ -557,13 +596,13 @@
   dependencies:
     "@longlost/app-core" "^1.0.0"
 
-"@longlost/wasm-imagemagick@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@longlost/wasm-imagemagick/-/wasm-imagemagick-2.2.0.tgz#45b84057470c21db1efbf4777265af1ae137db28"
-  integrity sha512-MLSJ+e9lITb+lkUpsXRxIJeFzx4GBseo4Tb0pBjuKZyseSXId2QJ5b9BEQDkNZTpGz0eq9ZL/htzlMGf3Z+5kw==
+"@longlost/wasm-imagemagick@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@longlost/wasm-imagemagick/-/wasm-imagemagick-2.2.1.tgz#5aa9a22d3415d0568920915519b2cecb64e78cf0"
+  integrity sha512-oS/3a09Dur50ADk1uY7dh5WinLW5hhq/diT9alt5WocNJUMqiDCsoEB+SuRjRMtK4kEE2q1OOeDmrPH6prL42A==
   dependencies:
-    "@ungap/global-this" "^0.4.0"
-    wasm-imagemagick "^1.2.7"
+    "@ungap/global-this" "^0.4.3"
+    wasm-imagemagick "^1.2.8"
 
 "@longlost/webgl-filter@^1.0.0":
   version "1.0.0"
@@ -1147,11 +1186,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.30.tgz#1ed6e01e4ca576d5aec9cc802cc3bcf94c274192"
   integrity sha512-HmqFpNzp3TSELxU/bUuRK+xzarVOAsR00hzcvM0TXrMlt/+wcSLa5q6YhTb6/cA6wqDCZLDcfd8fSL95x5h7AA==
 
-"@ungap/global-this@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@ungap/global-this/-/global-this-0.4.0.tgz#a358647ec368aae9f6e80ea4420defb1ae78d7fe"
-  integrity sha512-2Ita9Z8L+GZKN/HhECVTDS/uXhjeSXZtAvPo4u/vVRMK1l/lDi/x72ARMvVrBnr8dq1UrFtPnmOapX/7ORX0aQ==
-
 "@ungap/global-this@^0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@ungap/global-this/-/global-this-0.4.2.tgz#bc59a79799862e3e0cf647c090fd3f3f2285cf56"
@@ -1519,13 +1553,6 @@ event-target-shim@^5.0.0:
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
   integrity sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==
 
-exifreader@^3.12.0:
-  version "3.12.0"
-  resolved "https://registry.yarnpkg.com/exifreader/-/exifreader-3.12.0.tgz#78e881d132330cc0928b4c247a5f805964f5f296"
-  integrity sha512-uxYUCCcJRu/fS4Ig2Ys1H6pEZPnKynNPkn8WO+hD/dtpi2NXK38OgvyBgQa+LlsWSvCtvAtmT3iER49dyiiqow==
-  optionalDependencies:
-    xmldom "^0.1.31"
-
 extend@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
@@ -1604,6 +1631,26 @@ firebase@^8.2.0:
     "@firebase/auth" "0.16.0"
     "@firebase/database" "0.8.1"
     "@firebase/firestore" "2.1.0"
+    "@firebase/functions" "0.6.1"
+    "@firebase/installations" "0.4.19"
+    "@firebase/messaging" "0.7.3"
+    "@firebase/performance" "0.4.5"
+    "@firebase/polyfill" "0.3.36"
+    "@firebase/remote-config" "0.1.30"
+    "@firebase/storage" "0.4.2"
+    "@firebase/util" "0.3.4"
+
+firebase@^8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/firebase/-/firebase-8.2.1.tgz#fd8eb523a4ca424030d8eb21c2795aa3c1d1031d"
+  integrity sha512-u2dvRIbyHZ2g0dziHKwXvMBubTSf+fgJcijXyy7fXcFFPd3wbDaGlHz7Sc6saOnlJtzZAYmvZUXaIxnStKOOXg==
+  dependencies:
+    "@firebase/analytics" "0.6.2"
+    "@firebase/app" "0.6.13"
+    "@firebase/app-types" "0.6.1"
+    "@firebase/auth" "0.16.1"
+    "@firebase/database" "0.8.1"
+    "@firebase/firestore" "2.1.1"
     "@firebase/functions" "0.6.1"
     "@firebase/installations" "0.4.19"
     "@firebase/messaging" "0.7.3"
@@ -2365,10 +2412,10 @@ type-detect@^4.0.0, type-detect@^4.0.5:
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
   integrity sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==
 
-wasm-imagemagick@^1.2.7:
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/wasm-imagemagick/-/wasm-imagemagick-1.2.7.tgz#3ca570a5914fdf2adfff21861678665f460cc8d0"
-  integrity sha512-I3VIzcKE1n3IrsmYfouLff0NfB+3TKEn2gNRfvSuBDIORSNL+3ukl0mC3pmt5p6X5QNCaksuaZNGJvmc0Oto7w==
+wasm-imagemagick@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/wasm-imagemagick/-/wasm-imagemagick-1.2.8.tgz#218e3d5cad9ccc2ebef30ad01fbe090814b38f33"
+  integrity sha512-V7u80n7g+iAoV7sYgQKGSdG59J6/aSMGO0DDK0zxKnwOGjmVXyjP0yU4tX4cMrfC0t/Wk3I8TX7cmdbFQOYHpg==
   dependencies:
     p-map "^2.0.0"
     stacktrace-js "^2.0.0"
@@ -2462,11 +2509,6 @@ wrappy@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
-
-xmldom@^0.1.31:
-  version "0.1.31"
-  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.31.tgz#b76c9a1bd9f0a9737e5a72dc37231cf38375e2ff"
-  integrity sha512-yS2uJflVQs6n+CyjHoaBmVSqIDevTAWrzMmjG1Gc7h1qQ7uVozNhEPJAwZXWyGQ/Gafo3fCwrcaokezLPupVyQ==
 
 xmlhttprequest@1.8.0:
   version "1.8.0"

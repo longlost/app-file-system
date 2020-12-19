@@ -1,62 +1,72 @@
 
 // Extract EXIF data from images.
 
-// https://github.com/mattiasw/ExifReader
-import ExifReader from '@longlost/afs-custom-exifreader/exif-reader.js'; 
+
+const EXIF_TAGS = [
+  'DateTimeOriginal',   // Date and time string when image was originally created.
+  'GPSAltitude',        // Meters.
+  'GPSAltitudeRef',     // '0' - above sea level, '1' - below sea level.
+  'GPSDateStamp',       // UTC. 'YYYY:MM:DD'.
+  'GPSImgDirection',    // 'T' true north, or 'M' for magnetic north.
+  'GPSImgDirectionRef', // 0 - 359.99, degrees of rotation from north.
+  'GPSLatitude',        // Degrees, minutes, and seconds (ie. With secs - dd/1,mm/1,ss/1, or without secs dd/1,mmmm/100,0/1).
+  'GPSLatitudeRef',     // 'N' for north latitudes, 'S' for south latitudes.
+  'GPSLongitude',       // Degrees, minutes, and seconds (ie. With secs - dd/1,mm/1,ss/1, or without secs dd/1,mmmm/100,0/1).
+  'GPSLongitudeRef',    // 'E' for east longitudes, 'W' for west longitudes.
+  'GPSTimeStamp',       // UTC. hour, minute, sec.
+  'ImageDescription',   // User generated string for image (ie. 'Company picnic').
+  'Orientation',        // One of 8 values, most common are 1, 3, 6 and 8 since other are 'flipped' versions.
+  'Make',
+  'Model'
+];
 
 
-// Flatten single entry arrays.
-// Flatten GPS 2d arrays.
-const format = (name, value) => {
+// Format GPS Lat and Long entries.
+const formatGps = (tag, value) => {
 
-	if (Array.isArray(value)) {
+	if (value && (tag === 'GPSLatitude' || tag === 'GPSLongitude')) {
+		const entries = value.split(',');
+		
+		return entries.map(entry => {
+			
+			const [numerator, denominator] = entry.
+																				 trim().
+																				 split('/').
+																				 map(str => Number(str));
 
-		if (value.length === 1 || name === 'GPSAltitude' || name === 'GPSImgDirection') {
-			return value[0];
-		}
-
-		// 'Value' is a 2D Array.
-		if (Array.isArray(value[0])) {
-
-			if (name.startsWith('GPS')) {
-
-				return value.map(entries => {
-					const [numerator, denominator] = entries;
-
-					return denominator === 0 ? numerator : numerator / denominator;
-				});
-			}
-
-			return value.flat();
-		}
+			return denominator === 0 ? numerator : numerator / denominator;
+		});
 	}
 
-	// Value is a single Number or String.
 	return value;
 };
 
+// Build a string suitable for IM 'identify' 
+// that only includes the custom tags.
+const identifyExifStr = () => EXIF_TAGS.reduce((accum, tag) => 
+																`${accum}%[EXIF:${tag}]\n`, '');
 
-export default (file, exifTags) => {	
-	const reader = new FileReaderSync();
-	const buffer = reader.readAsArrayBuffer(file);
-	const exif 	 = ExifReader.load(buffer);
+// Format the ImageMagic array of string values into
+// a more useful object with exif tag names as keys.
+const formatExif = array => {
 
-	if (Array.isArray(exifTags)) {
+	if (!array || !array.length || array.length !== EXIF_TAGS.length) { return; }
 
-		const requestedTags = exifTags.reduce((accum, name) => {
+	const exif = EXIF_TAGS.reduce((accum, tag, index) => {
 
-			if (exif[name]) {
-				const {value} = exif[name];
+		const value = array[index];
 
-				accum[name] = format(name, value);
-			}
-			
-			return accum;
-		}, {Orientation: 1});
+		if (!value) { return accum; }
 
+		accum[tag] = formatGps(tag, value);
 
-		return requestedTags;
-	}
+		return accum;
+	}, {});
+
+	if (Object.keys(exif).length === 0) { return; }
 
 	return exif;
 };
+
+
+export {identifyExifStr, formatExif};
