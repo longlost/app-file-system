@@ -1,26 +1,9 @@
 
 
-import path          from 'path'; // webpack includes this by default!
-import * as Comlink  from 'comlink';
-import {canProcess}  from '@longlost/app-core/img-utils.js';
-import runner        from '@longlost/app-core/worker/runner.js';
-
-
-const EXIF_TAGS = [
-  'DateTimeOriginal',   // Date and time string when image was originally created.
-  'GPSAltitude',        // Meters.
-  'GPSAltitudeRef',     // '0' - above sea level, '1' - below sea level.
-  'GPSDateStamp',       // UTC. 'YYYY:MM:DD'.
-  'GPSImgDirection',    // 'T' true north, or 'M' for magnetic north.
-  'GPSImgDirectionRef', // 0 - 359.99, degrees of rotation from north.
-  'GPSLatitude',        // Degrees, minutes, and seconds (ie. With secs - dd/1,mm/1,ss/1, or without secs dd/1,mmmm/100,0/1).
-  'GPSLatitudeRef',     // 'N' for north latitudes, 'S' for south latitudes.
-  'GPSLongitude',       // Degrees, minutes, and seconds (ie. With secs - dd/1,mm/1,ss/1, or without secs dd/1,mmmm/100,0/1).
-  'GPSLongitudeRef',    // 'E' for east longitudes, 'W' for west longitudes.
-  'GPSTimeStamp',       // UTC. hour, minute, sec.
-  'ImageDescription',   // User generated string for image (ie. 'Company picnic').
-  'Orientation'         // One of 8 values, most common are 1, 3, 6 and 8 since other are 'flipped' versions.
-];
+import path         from 'path'; // webpack includes this by default!
+import * as Comlink from 'comlink';
+import {canProcess} from '@longlost/app-core/img-utils.js';
+import runner       from '@longlost/app-core/worker/runner.js';
 
 const KILOBYTE = 1024;
 const MEGABYTE = 1048576;
@@ -71,7 +54,7 @@ export default async (files, readCallback, processedCallback) => {
 
       // No need to transfer file accross contexts if it won't be processed.
       const processed = canProcess(file) ? 
-                          await processRunner(...baseArgs, file, EXIF_TAGS) :
+                          await processRunner(...baseArgs, file) :
                           await processRunner(...baseArgs);
 
       processed.file = processed.file || file;
@@ -92,7 +75,16 @@ export default async (files, readCallback, processedCallback) => {
   const processedItems = await Promise.all(processPromises);
 
   return processedItems.map((item, index) => {
-    const {exif, file, uid} = item;
+
+    // Set entries that are not always present to null 
+    // because Firestore does not accept undefined vals;
+    const {
+      exif = null, 
+      file, 
+      height = null, 
+      uid, 
+      width = null
+    } = item;
 
     if (file.type.includes('image') || file.type.includes('video')) { 
       file._tempUrl = window.URL.createObjectURL(file);
@@ -103,12 +95,14 @@ export default async (files, readCallback, processedCallback) => {
   
     file.basename  = file.name;
     file.category  = path.dirname(file.type);
-    file.exif      = exif ? exif : null; // Firestore does not accept undefined vals;
+    file.exif      = exif;
     file.ext       = path.extname(file.name);
+    file.height    = height;
     file.index     = index;
     file.sizeStr   = formatFileSize(file.size);
     file.timestamp = Date.now();
     file.uid       = uid;
+    file.width     = width;
 
     return file;
   });

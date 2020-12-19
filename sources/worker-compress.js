@@ -22,8 +22,9 @@
   *
   **/
 
-import magick       from '@longlost/wasm-imagemagick/wasm-imagemagick.js';
-import {canProcess} from '@longlost/app-core/img-utils.js';
+import magick                        from '@longlost/wasm-imagemagick/wasm-imagemagick.js';
+import {canProcess}                  from '@longlost/app-core/img-utils.js';
+import {identifyExifStr, formatExif} from './worker-exif.js';
 
 
 const KILOBYTE = 1024;
@@ -46,26 +47,36 @@ const SMALL_RESIZE_FACTOR = '85%';          // Not recommended to be lower than 
 const SMALL_UNSHARP       = '0x6+0.5+0';
 
 
-// Read basic image properties.
-const identifier = async file => {
+const identify = (file, str) => {
   const {name} = file;
 
-  const [info] = await magick({
-    commands:       ['identify', name],
+  return magick({
+    commands:       ['identify', '-quiet', '-ping', '-format', str, name],
     fileCollection: [{file, inputName: name}]
   });
-
-  return info;
 };
 
-// The argument is a string with the following format:
-//    Filename[frame #] image-format widthxheight page-widthxpage-height+x-offset+y-offset 
-//    colorspace user-time elapsed-time
-const getImageSize = str => {
-  const sizeStr         = str.split(' ')[2];
-  const [width, height] = sizeStr.split('x');
 
-  return {height, width};
+// Read exif, width and height properties.
+const identifyExifAndDimensions = async file => {
+
+  const exifStr   = identifyExifStr();
+  const formatStr = `%h\n%w\n${exifStr}`;
+
+  const [height, width, ...rest] = await identify(file, formatStr);
+
+  const exif = formatExif(rest);
+
+  return {exif, height: Number(height), width: Number(width)};
+};
+
+
+// Read image width and height properties.
+const identifyDimensions = async file => {
+
+  const [height, width] = await identify(file, '%h\n%w\n');
+
+  return {height: Number(height), width: Number(width)};
 };
 
 
@@ -141,7 +152,7 @@ const getSizeSpecificCommands = (type, size) => {
 
 // Best effort to balance reducing file size 
 // without greatly sacrificing quality.
-const compressor = async (file, size) => {
+const compressor = async (exif, file, size) => {
   const {name, type} = file;
 
   const commands  = [
@@ -162,13 +173,15 @@ const compressor = async (file, size) => {
     outputType:     type
   });
 
-  return compressed;
+  const dimensions = await identifyDimensions(compressed);
+
+  return {exif, file: compressed, ...dimensions};
 };
 
 // The most basic processing regime.
 // Strip metadata and orient the 
 // image for upright display.
-const minimizer = async file => {
+const minimizer = async (exif, file) => {
   const {name} = file;
 
   const commands  = [
@@ -185,7 +198,9 @@ const minimizer = async file => {
     outputType:     file.type
   });
 
-  return minimized;
+  const dimensions = await identifyDimensions(minimized);
+
+  return {exif, file: minimized, ...dimensions};
 };
 
 
@@ -193,8 +208,7 @@ export default async (callback, file) => {
 
   if (canProcess(file)) {
 
-    const info            = await identifier(file);
-    const {height, width} = getImageSize(info);
+    const {exif, height, width} = await identifyExifAndDimensions(file);
 
     // Update file read ui.
     callback();
@@ -204,7 +218,7 @@ export default async (callback, file) => {
 
       // Large memory footprint, so compress.
       if (file.size > SMALL_MIN_KB) {
-        return compressor(file, 'small');
+        return compressor(exif, file, 'small');
       }
     }
 
@@ -213,24 +227,24 @@ export default async (callback, file) => {
 
       // Large memory footprint, so compress.
       if (file.size > LARGE_MIN_BYTES) {
-        return compressor(file, 'large');
+        return compressor(exif, file, 'large');
       }
     }
 
     // Huge sized images that have a large memory 
     // footprint and need to be compressed.
     if (file.size > LARGE_MIN_BYTES) {
-      return compressor(file, 'huge');
+      return compressor(exif, file, 'huge');
     }
 
     // Image does not need to be compressed, but still
     // strip metadata and orient upright for display.
-    return minimizer(file);
+    return minimizer(exif, file);
   }
 
   // Update file read ui.
   callback();
 
   // Files that are not supported by ImageMagick.
-  return file; 
+  return {file}; 
 };
