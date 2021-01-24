@@ -58,8 +58,7 @@
   </paper-icon-button>
 
 
-  <afs-metadata-page dark-mode="[[darkMode]]"
-                     geolocation="[[_geolocation]]"
+  <afs-metadata-page geolocation="[[_geolocation]]"
                      is-img="[[_isImg]]"
                      item="[[item]]"
                      list="[[list]]"
@@ -80,7 +79,6 @@
 
 
 <map-overlay id="mapOverlay"
-             dark-mode="[[darkMode]]"
              draggable 
              lat="[[item.geolocation.lat]]" 
              lng="[[item.geolocation.lng]]"
