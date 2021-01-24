@@ -192,6 +192,7 @@ const getImageStorageDeletePaths = (storagePath, type) => {
 
 
 const getStorageDeletePaths = item => {
+
   const {sharePath, path: storagePath, type} = item;
 
   if (storagePath) {
@@ -223,6 +224,7 @@ const getStorageDeletePaths = item => {
 // processing has completed).
 // Also, this sometimes happens with slow connections.
 const safeStorageDelete = async pathStr => {
+
   try {
     await services.deleteFile(pathStr);
   }
@@ -238,6 +240,7 @@ const safeStorageDelete = async pathStr => {
 
 // Fails gracefully.
 const deleteStorageFiles = item => {
+
   const paths = getStorageDeletePaths(item);
 
   // Fail gracefully for each file path.
@@ -253,6 +256,7 @@ const deleteStorageFiles = item => {
 
 
 class AppFileSystem extends EventsMixin(AppElement) {
+
   static get is() { return 'app-file-system'; }
 
   static get template() {
@@ -273,7 +277,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
       // Firestore collection name.
       coll: String,
 
-      // Passed into <map-overlay> and <app-map>
+      // Controls gradient styling used by several afs elements.
       darkMode: Boolean,
 
       // Set to true to hide the 'device-file-card' dropzone.
@@ -355,6 +359,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   __darkModeChanged(dark) {
+
     if (dark) {
       this.updateStyles({
         '--gradient-start': 'var(--afs-dark-mode-start-gradient)',
@@ -471,6 +476,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // 'multiple' is falsey. 
   // Only one file at a time.
   __deletePreviousHandler(event) {
+
     hijackEvent(event);
 
     this.__delete(event.detail.uids);
@@ -479,6 +485,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // Intercept event from 'file-sources' and rename
   // to a public api version.
   __filesAddedHandler(event) {
+
     hijackEvent(event);
 
     this.fire('app-file-system-files-added', event.detail);
@@ -487,6 +494,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // Intercept event from 'file-sources' and rename
   // to a public api version.
   __itemsSavedHandler(event) {
+
     hijackEvent(event);
 
     this.fire('app-file-system-items-saved', event.detail);
@@ -495,6 +503,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // From `afs-file-sources`.
   // On-device file pre-processing progress.
   __progressChangedHandler(event) {
+
     hijackEvent(event);
 
     this._progress = event.detail;
@@ -503,6 +512,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // From file-sources.
   // Upload successful, canceled or failed.
   __uploadDone(event) {
+
     hijackEvent(event);
 
     const {uid} = event.detail;
@@ -514,6 +524,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
   // From file-sources.
   // Upload controls, state or progress updates.
   __uploadUpdated(event) {
+
     hijackEvent(event);
 
     const {upload} = event.detail;
@@ -531,6 +542,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   // Remove "heavy", or high memory, elements from dom when not in use.
   __listOverlayClosedHandler(event) {
+
     hijackEvent(event);
 
     this._stamp = false;
@@ -542,6 +554,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   __waitForTemplateToStamp() {
+
     if (this._stamp) { return; }
 
     this._stamp = true;
@@ -551,6 +564,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
   // Add one HTML5 File object or an array of File objects.
   async add(files) {
+
     try {
 
       if (this.list === 'files') {
@@ -586,6 +600,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   async delete(uid) {
+
     if (!uid) { 
       throw new Error(`<app-file-system> 'delete' method must have a uid argument present.`); 
     }
@@ -607,6 +622,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   async deleteAll() {
+
     try {
       await this.$.spinner.show('Deleting files.');
 
@@ -625,6 +641,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   async deleteMultiple(uids) {
+
     if (!uids || uids.length === 0) { 
       throw new Error(`<app-file-system> 'deleteMultiple' method must have an array of file uids.`); 
     }
@@ -646,6 +663,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   getData() {
+
     return deepClone(this._dbData);
   }
 
@@ -709,11 +727,13 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
 
   openSources() {
+
     return this.$.sources.open();
   }
 
 
   open() {
+    
     return this.openSources();
   }
 

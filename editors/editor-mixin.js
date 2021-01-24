@@ -6,15 +6,12 @@ import './afs-metadata-page.js';
 
 
 export const EditorMixin = superClass => {
+
   return class EditorMixin extends PhotoElementMixin(superClass) {
 
 
     static get properties() {
 	    return {
-
-	      // Passed into <map-overlay> and <metadata-page>
-	      // which implements <app-map>.
-	      darkMode: Boolean,
 
 	      // Pass through to <metadata-page>.
 	      list: String,
@@ -52,6 +49,7 @@ export const EditorMixin = superClass => {
 
 
 	  __computeTitle(displayName, editedDisplayName) {
+
 	    return editedDisplayName ? editedDisplayName : displayName;
 	  }
 
@@ -67,6 +65,7 @@ export const EditorMixin = superClass => {
 
 
 	  __displayNameChanged(event) {
+
 	    this._editedDisplayName = event.detail.value;
 	  }
 
@@ -85,6 +84,7 @@ export const EditorMixin = superClass => {
 
 
 	  __mapOverlaySelectedChanged(event) {
+	  	
 	    this._geolocation = event.detail.selected;
 	  }
 

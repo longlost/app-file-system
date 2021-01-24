@@ -57,6 +57,7 @@ const toKeywordsArray = compose(split(' '), map(normalize));
 
 
 class AFSMetadataPage extends FileInfoMixin(AppElement) {
+
   static get is() { return 'afs-metadata-page'; }
 
   static get template() {
@@ -66,9 +67,6 @@ class AFSMetadataPage extends FileInfoMixin(AppElement) {
 
   static get properties() {
     return {
-
-      // Passed into <app-map>.
-      darkMode: Boolean,
 
       geolocation: {
         type: Object,
@@ -130,36 +128,43 @@ class AFSMetadataPage extends FileInfoMixin(AppElement) {
 
 
   __computedGeolocationBtnIcon(geolocation) {
+
     return geolocation ? 'afs-file-icons:edit-location' : 'afs-file-icons:add-location'
   }
 
 
   __computedGeolocationBtnText(geolocation) {
+
     return geolocation ? 'EDIT LOCATION' : 'ADD LOCATION';
   }
 
 
   __computeHideGeolocationEditBtn(exif) {
+
     return exif && exif['GPSLatitude'];
   }
 
 
   __computeHideGPSDisplay(gps) {
+
     return !Boolean(gps);
   }
 
 
   __computeHideOrder(list) {
+
     return list !== 'files';
   }
 
 
   __computeSaveBtnClass(isImg) {
+
     return isImg ? 'is-img' : '';
   }
 
 
   __geolocationChanged(geolocation) {
+
     if (geolocation) {
       this._changes = true;
     }
@@ -167,6 +172,7 @@ class AFSMetadataPage extends FileInfoMixin(AppElement) {
 
 
   async __gpsChanged(gps) {
+
     if (gps) {
 
       await isOnScreen(this.$.map);
@@ -182,6 +188,7 @@ class AFSMetadataPage extends FileInfoMixin(AppElement) {
 
 
   __itemChanged(item) {
+
     if (!item) { return; }
 
     const {displayName, keywords, notes} = item;
@@ -203,24 +210,28 @@ class AFSMetadataPage extends FileInfoMixin(AppElement) {
 
 
   __displayNameInputValueChanged(event) {
+
     this._displayName = event.detail.value.trim();
     this._changes     = true;
   }
 
 
   __keywordsInputValueChanged(event) {
+
     this._rawKeywords = event.detail.value.trim();
     this._changes     = true;
   }
 
 
   __notesChanged(event) {
+
     this._notes   = event.detail.value;
     this._changes = true;
   }
 
 
   async __editGeolocationBtnClicked() {
+
     try {
       await this.clicked();
 
@@ -234,6 +245,7 @@ class AFSMetadataPage extends FileInfoMixin(AppElement) {
 
 
   async __saveBtnClicked() {
+    
     try {
       await this.clicked();
 

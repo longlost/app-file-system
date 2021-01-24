@@ -42,6 +42,7 @@ const db = firebase.firestore();
 
 
 class AFSPaginatedCarousel extends AppElement {
+  
   static get is() { return 'afs-paginated-carousel'; }
 
   static get template() {
@@ -184,6 +185,7 @@ class AFSPaginatedCarousel extends AppElement {
 
 
   connectedCallback() {
+
     super.connectedCallback();
 
     this.$.carousel.scrollContainer = this.$.scroller;
@@ -191,6 +193,7 @@ class AFSPaginatedCarousel extends AppElement {
 
 
   __collChanged(newVal, oldVal) {
+
     if (!newVal || (oldVal && newVal !== oldVal)) {
       this.__reset();
     }
@@ -198,6 +201,7 @@ class AFSPaginatedCarousel extends AppElement {
 
 
   __afterItemsChanged(obj) {
+
     this.__itemsChanged(obj);
   }
 
@@ -225,6 +229,7 @@ class AFSPaginatedCarousel extends AppElement {
 
 
   async __afterTriggerElementChanged(el) {
+
     try {
 
       if (!el) { return; }
@@ -256,6 +261,7 @@ class AFSPaginatedCarousel extends AppElement {
 
 
   __beforeItemsChanged(obj) {
+
     this.__itemsChanged(obj);
   }
 
@@ -283,6 +289,7 @@ class AFSPaginatedCarousel extends AppElement {
 
 
   async __beforeTriggerElementChanged(el) {
+
     try {
 
       if (!el) { return; }
@@ -314,6 +321,7 @@ class AFSPaginatedCarousel extends AppElement {
 
   // Check for last item deleted.
   __disabledItemsChanged(disabled, afterPolymerObj, beforePolymerObj) {
+
     if (disabled || !afterPolymerObj || !beforePolymerObj) { return; }
 
     const {base: afterItems}  = afterPolymerObj;
@@ -410,6 +418,7 @@ class AFSPaginatedCarousel extends AppElement {
 
 
   __updateItems(list, start, results) {
+
     this.splice(list, start, results.length, ...results); 
   }
 
@@ -448,9 +457,7 @@ class AFSPaginatedCarousel extends AppElement {
       unsubscribe();
     }
 
-
     const start = page * this.limit;
-
 
     const callback = (results, doc) => {
 
@@ -574,6 +581,7 @@ class AFSPaginatedCarousel extends AppElement {
 
 
   __reset() {
+
     this.__unsub();
     this._afterItems      = [];
     this._beforeItems     = [];
@@ -667,6 +675,7 @@ class AFSPaginatedCarousel extends AppElement {
   // since the dom is ltr based, so this method compensates for 
   // that distance and places the current photo back into view. 
   async __beforeElCenteredChanged(el, centered) {
+
     if (!el || !centered) { return; }
 
     if (!this.opened) { return; }
@@ -694,7 +703,8 @@ class AFSPaginatedCarousel extends AppElement {
   }
 
 
-  __centeredItemChanged(event) {
+  __carouselCenteredChanged(event) {
+
     const {carouselIndex} = event.detail.value;
 
     if (typeof carouselIndex !== 'number') { return; }
@@ -762,7 +772,7 @@ class AFSPaginatedCarousel extends AppElement {
     // Feed before items in reverse order so nav works correctly.
     const reversed = [...before].reverse();
 
-    this.$.carousel.setItems([...reversed, ...after]);
+    this.$.carousel.setElements([...reversed, ...after]);
   }
 
 }
