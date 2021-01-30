@@ -43,7 +43,7 @@
 
 
 import {AppElement, html}        from '@longlost/app-core/app-element.js';
-import * as database             from '@longlost/app-core/services/db.js';
+import {init as initDb}          from '@longlost/app-core/services/db.js';
 import {hijackEvent, isOnScreen} from '@longlost/app-core/utils.js';
 import {ItemsMixin}              from './items-mixin.js';
 import htmlString                from './afs-file-items.html';
@@ -241,7 +241,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
     };
     
 
-    const db = await database.init();
+    const db = await initDb();
 
     let ref = db.collection(this.coll).
                 orderBy('index', 'asc').

@@ -27,7 +27,7 @@
 
 
 import {AppElement, html} from '@longlost/app-core/app-element.js';
-import * as database      from '@longlost/app-core/services/db.js';
+import {init as initDb}   from '@longlost/app-core/services/db.js';
 import {isOnScreen}       from '@longlost/app-core/utils.js';
 import htmlString         from './afs-paginated-roll-items.html';
 import './afs-roll-item.js';
@@ -122,7 +122,7 @@ class AFSPaginatedRollItems extends AppElement {
 
     super.connectedCallback();
 
-    this._db = await database.init();
+    this._db = await initDb();
   }
 
 
