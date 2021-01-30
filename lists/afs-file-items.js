@@ -43,7 +43,7 @@
 
 
 import {AppElement, html}        from '@longlost/app-core/app-element.js';
-import {firebase}                from '@longlost/app-core/boot/boot.js';
+import {init as initDb}          from '@longlost/app-core/services/db.js';
 import {hijackEvent, isOnScreen} from '@longlost/app-core/utils.js';
 import {ItemsMixin}              from './items-mixin.js';
 import htmlString                from './afs-file-items.html';
@@ -51,9 +51,6 @@ import '@longlost/drag-drop-list/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';
 import './afs-file-item.js';
 import '../shared/afs-file-icons.js';
-
-
-const db = firebase.firestore();
 
 
 class AFSFileItems extends ItemsMixin(AppElement) {
@@ -192,7 +189,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
   }
 
 
-  __startSubscription(subscription) {
+  async __startSubscription(subscription) {
 
     const {page, startAfter, unsubscribe} = subscription;
 
@@ -242,7 +239,9 @@ class AFSFileItems extends ItemsMixin(AppElement) {
 
       console.error(error);
     };
+    
 
+    const db = await initDb();
 
     let ref = db.collection(this.coll).
                 orderBy('index', 'asc').

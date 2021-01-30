@@ -27,13 +27,10 @@
 
 
 import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {init as initDb}   from '@longlost/app-core/services/db.js';
 import {isOnScreen}       from '@longlost/app-core/utils.js';
-import {firebase}         from '@longlost/app-core/boot/boot.js';
 import htmlString         from './afs-paginated-roll-items.html';
 import './afs-roll-item.js';
-
-
-const db = firebase.firestore();
 
 
 class AFSPaginatedRollItems extends AppElement {
@@ -80,6 +77,9 @@ class AFSPaginatedRollItems extends AppElement {
         computed: '__computeData(_items)'
       },
 
+      // Firestore reference.
+      _db: Object,
+
       // This element's last snapshot doc.
       _doc: Object,
 
@@ -89,7 +89,7 @@ class AFSPaginatedRollItems extends AppElement {
       // Firebase db ref based on coll
       _ref: {
         type: Object,
-        computed: '__computeRef(coll)'
+        computed: '__computeRef(coll, _db)'
       },
 
       // Last element in sub-sequence.
@@ -118,6 +118,14 @@ class AFSPaginatedRollItems extends AppElement {
   }
 
 
+  async connectedCallback() {
+
+    super.connectedCallback();
+
+    this._db = await initDb();
+  }
+
+
   disconnectedCallback() {
     super.disconnectedCallback();
 
@@ -135,9 +143,9 @@ class AFSPaginatedRollItems extends AppElement {
   }
 
 
-  __computeRef(coll) {
+  __computeRef(coll, db) {
 
-    if (!coll) { return; }
+    if (!coll || !db) { return; }
 
     // Will need to create an index in Firestore.
     // Only images and/or videos for camera-roll.
