@@ -31,14 +31,11 @@
 
 
 import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {firebase}         from '@longlost/app-core/boot/boot.js';
+import * as database      from '@longlost/app-core/services/db.js';
 import {isOnScreen}       from '@longlost/app-core/utils.js';
 import htmlString         from './afs-paginated-carousel.html';
 import '@longlost/app-carousels/app-carousel.js';
 import './afs-carousel-item.js';
-
-
-const db = firebase.firestore();
 
 
 class AFSPaginatedCarousel extends AppElement {
@@ -345,6 +342,7 @@ class AFSPaginatedCarousel extends AppElement {
 
     if (!start) { return; }
 
+    const db  = await database.init();
     const doc = await db.collection(this.coll).doc(start.uid).get();
 
     const page = 0;
@@ -443,7 +441,7 @@ class AFSPaginatedCarousel extends AppElement {
   }
 
 
-  __startSubscription(subscription, list) {
+  async __startSubscription(subscription, list) {
 
     const {page, startAfter, startAt, unsubscribe} = subscription;
 
@@ -519,6 +517,8 @@ class AFSPaginatedCarousel extends AppElement {
       console.error(error);
     };
 
+
+    const db = await database.init();
 
     const direction = list === '_afterItems' ? 'desc' : 'asc';
 
