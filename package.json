@@ -19,7 +19,7 @@
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@longlost/app-carousels": "^3.0.1",
-    "@longlost/app-core": "^2.0.0",
+    "@longlost/app-core": "^2.1.1",
     "@longlost/app-images": "^2.1.0",
     "@longlost/app-inputs": "^2.0.0",
     "@longlost/app-map": "^1.5.1",

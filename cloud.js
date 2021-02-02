@@ -1,14 +1,19 @@
 'use strict';
 
-const functions  = require('firebase-functions');
-const admin      = require('firebase-admin'); // Access Storage and Firestore.
-const os         = require('os');
-const fs         = require('fs');
-const path       = require('path');
-const crypto     = require('crypto');
-const mkdirp     = require('mkdirp');
-const spawn      = require('child-process-promise').spawn;
-const imgUtils   = require('@longlost/app-core/img-utils.js');
+const functions = require('firebase-functions');
+const admin     = require('firebase-admin'); // Access Storage and Firestore.
+const os        = require('os');
+const fs        = require('fs');
+const path      = require('path');
+const crypto    = require('crypto');
+const mkdirp    = require('mkdirp');
+const spawn     = require('child-process-promise').spawn;
+const imgUtils  = require('@longlost/app-core/img-utils.js');
+
+// The following packages are lazy loaded for improved cold startup performance:
+//
+//  '@ffmpeg-installer/ffmpeg'
+
 
 const OPTIM_RESIZE_FACTOR = '50%'; // Reduce original image size by half.
 const OPTIM_TARGET_KB     = 100;   // Ideal max jpeg file size.
