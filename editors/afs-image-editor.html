@@ -2,12 +2,12 @@
 <style>
 
   #overlay {
-    padding: 0px;
+    padding:          0px;
+    background-color: var(--app-body-color);
 
-    --overlay-background-color:         var(--app-body-color);
-    --overlay-toolbar-background-color: var(--app-primary-color);
-    --overlay-toolbar-color:            var(--app-primary-color-text);
-    --overlay-toolbar-vignette-opacity: 0;
+    --header-background-color: var(--app-primary-color);
+    --header-color:            var(--app-primary-color-text);
+    --header-vignette-opacity: 0;
   }
 
   paper-button {
@@ -24,12 +24,13 @@
     height:    64px;
     max-width: 414px;
     margin:    0px auto;
+
     --paper-tab-ink:                  var(--app-primary-color-text);
     --paper-tabs-selection-bar-color: var(--app-primary-color-text);
   }
 
   #pages {
-    overflow: unset; /* Don't break preview position: sticky; with an overflow setting. */
+    overflow:         unset; /* Don't break preview position: sticky; with an overflow setting. */
     background-color: var(--app-body-color);
   }
 
