@@ -43,6 +43,7 @@ const TOTAL_DEGREES = 90;
 
 
 class AFSRotationSlider extends AppElement {
+
   static get is() { return 'afs-rotation-slider'; }
 
   static get template() {
@@ -58,6 +59,9 @@ class AFSRotationSlider extends AppElement {
         computed: '__computeIncrement(_width)'
       },
 
+      // ResizeObserver instance.
+      _resizeObserver: Object,
+
      _width: Number
 
     };
@@ -65,6 +69,7 @@ class AFSRotationSlider extends AppElement {
 
 
   async connectedCallback() {
+
     super.connectedCallback();
 
     this.__measureWidth = this.__measureWidth.bind(this);
@@ -76,23 +81,29 @@ class AFSRotationSlider extends AppElement {
     // Center the scroller initially.
     this.center();
 
-    window.addEventListener('resize', this.__measureWidth);
+    this._resizeObserver = new window.ResizeObserver(this.__measureWidth);
+
+    this._resizeObserver.observe(this);
   }
 
 
   disconnectedCallback() {
+
     super.disconnectedCallback();
 
-    window.removeEventListener('resize', this.__measureWidth);
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = undefined;
   }
 
 
   __computeIncrement(width) {
+
     return typeof width === 'number' ? width / TOTAL_DEGREES : 1;
   }
 
 
   __measureWidth() {
+
     this._width  = this.$.scale.getBoundingClientRect().width;
     this._center = this._width / 2;
   }
@@ -102,7 +113,7 @@ class AFSRotationSlider extends AppElement {
 
     await schedule();
 
-    const dist = this.$.scroller.scrollLeft - this._center;
+    const dist    = this.$.scroller.scrollLeft - this._center;
     this._degrees = Math.round(dist / this._increment);
 
     this.fire('degrees-changed', {value: this._degrees});
@@ -110,6 +121,7 @@ class AFSRotationSlider extends AppElement {
 
 
   center() {
+
     this.$.scroller.scroll(this._center, 0);
   }
 
