@@ -1,6 +1,6 @@
 {
   "name": "@longlost/app-file-system",
-  "version": "2.5.4",
+  "version": "2.5.5",
   "description": "This custom element handles all aspects of handling files for an app. Processing, uploading, viewing and editing.",
   "main": "app-file-system.js",
   "scripts": {
@@ -18,8 +18,8 @@
   "homepage": "https://github.com/longlost/app-file-system#readme",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "@longlost/app-carousels": "^3.0.1",
-    "@longlost/app-core": "^2.2.2",
+    "@longlost/app-carousels": "^3.0.2",
+    "@longlost/app-core": "^2.4.0",
     "@longlost/app-images": "^2.1.1",
     "@longlost/app-inputs": "^2.0.2",
     "@longlost/app-map": "^1.5.3",
@@ -30,7 +30,7 @@
     "@longlost/lazy-video": "^2.5.1",
     "@longlost/paper-gauge": "^1.0.2",
     "@longlost/pinch-to-zoom": "^1.1.2",
-    "@longlost/tab-pages": "^1.2.2",
+    "@longlost/tab-pages": "^1.2.3",
     "@longlost/wasm-imagemagick": "^2.2.1",
     "@longlost/webgl-filter": "^1.0.0",
     "@polymer/app-storage": "^3.0.3",
@@ -51,12 +51,12 @@
     "@polymer/polymer": "^3.4.1",
     "child-process-promise": "^2.2.1",
     "comlink": "^4.3.0",
-    "cropperjs": "^1.5.10",
-    "mime-types": "^2.1.28",
+    "cropperjs": "^1.5.11",
+    "mime-types": "^2.1.29",
     "mkdirp": "^1.0.4",
     "multi-download": "^3.0.0",
     "nanoid": "^3.1.20",
-    "print-js": "^1.5.0"
+    "print-js": "^1.6.0"
   },
   "devDependencies": {
     "@polymer/iron-demo-helpers": "^3.1.0",
