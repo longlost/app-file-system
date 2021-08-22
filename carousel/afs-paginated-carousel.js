@@ -31,9 +31,23 @@
 
 
 import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {init as initDb}   from '@longlost/app-core/services/db.js';
-import {isOnScreen}       from '@longlost/app-core/utils.js';
-import htmlString         from './afs-paginated-carousel.html';
+
+import {
+  collection,
+  doc, 
+  getDoc, 
+  initDb,
+  limit,
+  onSnapshot,
+  orderBy,
+  queryColl,
+  startAfter,
+  startAt,
+  where
+} from '@longlost/app-core/services/services.js';
+
+import {isOnScreen} from '@longlost/app-core/utils.js';
+import htmlString   from './afs-paginated-carousel.html';
 import '@longlost/app-carousels/app-carousel.js';
 import './afs-carousel-item.js';
 
@@ -342,13 +356,13 @@ class AFSPaginatedCarousel extends AppElement {
 
     if (!start) { return; }
 
-    const db  = await initDb();
-    const doc = await db.collection(this.coll).doc(start.uid).get();
+    const db      = await initDb();
+    const docSnap = await getDoc(doc(db, this.coll, start.uid));
 
     const page = 0;
 
-    const afterSubscription  = {page, startAt:    doc};
-    const beforeSubscription = {page, startAfter: doc};
+    const afterSubscription  = {page, startAt:    docSnap};
+    const beforeSubscription = {page, startAfter: docSnap};
 
     this._afterSubscriptions[page]  = afterSubscription;
     this._beforeSubscriptions[page] = beforeSubscription;
@@ -441,23 +455,21 @@ class AFSPaginatedCarousel extends AppElement {
   }
 
 
-  async __startSubscription(subscription, list) {
-
-    const {page, startAfter, startAt, unsubscribe} = subscription;
+  async __startSubscription(sub, list) {
 
     // This page not ready to be fetched yet.
-    if (typeof page !== 'number') { return; }
+    if (typeof sub.page !== 'number') { return; }
 
-    // Must have at least one Firestore doc.
-    if (!startAfter && !startAt) { return; }
+    // Must have at least one Firestore docSnap.
+    if (!sub.startAfter && !sub.startAt) { return; }
 
-    if (unsubscribe) {
-      unsubscribe();
+    if (sub.unsubscribe) {
+      sub.unsubscribe();
     }
 
-    const start = page * this.limit;
+    const start = sub.page * this.limit;
 
-    const callback = (results, doc) => {
+    const callback = (results, docSnap) => {
 
       window.requestAnimationFrame(() => {        
 
@@ -466,31 +478,31 @@ class AFSPaginatedCarousel extends AppElement {
 
         if (list === '_afterItems') {
 
-          const nextSub = this._afterSubscriptions[page + 1] || {};
+          const nextSub = this._afterSubscriptions[sub.page + 1] || {};
 
           // Only start new subscriptions if the startAfter 
           // document has been changed.
-          if (nextSub.startAfter && nextSub.startAfter.id === doc.id) { return; }
+          if (nextSub.startAfter && nextSub.startAfter.id === docSnap.id) { return; }
 
-          const newSub = {...nextSub, startAfter: doc};
+          const newSub = {...nextSub, startAfter: docSnap};
 
-          // Add/update next page's startAfter doc ref.
-          this._afterSubscriptions[page + 1] = newSub;
+          // Add/update next page's startAfter docSnap ref.
+          this._afterSubscriptions[sub.page + 1] = newSub;
 
           this.__startSubscription(newSub, list);
         }
         else {
 
-          const nextSub = this._beforeSubscriptions[page + 1] || {};
+          const nextSub = this._beforeSubscriptions[sub.page + 1] || {};
 
           // Only start new subscriptions if the startAfter 
           // document has been changed.
-          if (nextSub.startAfter && nextSub.startAfter.id === doc.id) { return; }
+          if (nextSub.startAfter && nextSub.startAfter.id === docSnap.id) { return; }
 
-          const newSub = {...nextSub, startAfter: doc};
+          const newSub = {...nextSub, startAfter: docSnap};
 
-          // Add/update next page's startAfter doc ref.
-          this._beforeSubscriptions[page + 1] = newSub;
+          // Add/update next page's startAfter docSnap ref.
+          this._beforeSubscriptions[sub.page + 1] = newSub;
 
           this.__startSubscription(newSub, list);
         }
@@ -501,11 +513,11 @@ class AFSPaginatedCarousel extends AppElement {
     const errorCallback = error => {
 
       if (list === '_afterItems') {
-        this._afterSubscriptions[page] = undefined;
+        this._afterSubscriptions[sub.page] = undefined;
         this.splice('_afterItems', start, this.limit);
       }
       else {
-        this._beforeSubscriptions[page] = undefined;
+        this._beforeSubscriptions[sub.page] = undefined;
         this.splice('_beforeItems', start, this.limit);
       }
 
@@ -517,38 +529,41 @@ class AFSPaginatedCarousel extends AppElement {
       console.error(error);
     };
 
-
-    const db = await initDb();
-
+    const db        = await initDb();
+    const ref       = collection(db, this.coll);
     const direction = list === '_afterItems' ? 'desc' : 'asc';
 
-    let ref = db.collection(this.coll).
-                where('category', 'in', ['image', 'video']).
-                orderBy('timestamp', direction);
+    const constraints = [
+      where('category', 'in', ['image', 'video']),
+      orderBy('timestamp', direction)
+    ];                
 
-    // Only first page of '_afterItems' have a startAt doc.
-    if (startAt) {
-      ref = ref.startAt(startAt);
+    // Only first page of '_afterItems' have a startAt docSnap.
+    if (sub.startAt) {
+      constraints.push(startAt(sub.startAt));
     }
 
-    // Pagination doc.
-    if (startAfter) {
-      ref = ref.startAfter(startAfter);
+    // Pagination docSnap.
+    if (sub.startAfter) {
+      constraints.push(startAfter(sub.startAfter));
     }
 
+    constraints.push(limit(this.limit));
 
-    const newUnsubscribe = ref.limit(this.limit).onSnapshot(snapshot => {
+    const q = queryColl(ref, ...constraints);
+
+    const newUnsubscribe = onSnapshot(q, snapshot => {
 
       if (snapshot.exists || ('empty' in snapshot && snapshot.empty === false)) {
 
-        // Use the last doc to paginate next results.
-        const docs = snapshot.docs;
-        const doc  = docs[docs.length - 1];
-        const data = [];
+        // Use the last docSnap to paginate next results.
+        const docs    = snapshot.docs;
+        const docSnap = docs[docs.length - 1];
+        const data    = [];
 
         snapshot.forEach(doc => data.push(doc.data()));
 
-        callback(data, doc);
+        callback(data, docSnap);
       } 
       else {
         errorCallback({message: 'document does not exist'});
@@ -557,10 +572,10 @@ class AFSPaginatedCarousel extends AppElement {
 
 
     if (list === '_afterItems') {
-      this._afterSubscriptions[page].unsubscribe = newUnsubscribe;
+      this._afterSubscriptions[sub.page].unsubscribe = newUnsubscribe;
     }
     else {
-      this._beforeSubscriptions[page].unsubscribe = newUnsubscribe;
+      this._beforeSubscriptions[sub.page].unsubscribe = newUnsubscribe;
     }
   }
 

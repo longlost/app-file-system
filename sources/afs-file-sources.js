@@ -111,9 +111,16 @@ import {
   canProcess
 } from '@longlost/app-core/img-utils.js';
 
+import {
+  deleteDocument,
+  fileUpload,
+  setBatch,
+  set,
+  subscribe
+} from '@longlost/app-core/services/services.js';
+
 import mime          from 'mime-types';
 import descriptions  from './mime-descriptions.json';
-import services      from '@longlost/app-core/services/services.js';
 import processFiles  from './processing.js';
 import htmlString    from './afs-file-sources.html';
 import '@longlost/app-overlays/app-header-overlay.js';
@@ -135,6 +142,7 @@ const getMimeTypes = map(str => removeWildCards(str));
 
 
 class AFSFileSources extends AppElement {
+  
   static get is() { return 'afs-file-sources'; }
 
   static get template() {
@@ -377,7 +385,7 @@ class AFSFileSources extends AppElement {
       console.error(error);
     };
 
-    this._unsubscribe = await services.subscribe({
+    this._unsubscribe = await subscribe({
       callback,
       coll,
       errorCallback,
@@ -436,7 +444,7 @@ class AFSFileSources extends AppElement {
 
       this.fire('upload-done', {uid});
 
-      services.set({
+      set({
         coll: this.coll,
         doc:  uid,
         data: {original: url, path}
@@ -451,7 +459,7 @@ class AFSFileSources extends AppElement {
 
         warn('An error occured while uploading your file.');
 
-        services.deleteDocument({coll: this.coll, doc: uid});
+        deleteDocument({coll: this.coll, doc: uid});
       }
 
       this.fire('upload-done', {uid}); 
@@ -491,7 +499,7 @@ class AFSFileSources extends AppElement {
 
     const path = `${this.coll}/${uid}/${basename}`;
 
-    services.fileUpload({
+    fileUpload({
       controlsCallback:     controlsCallback,
       doneCallback:         doneCallback,
       errorCallback:        errorCallback, 
@@ -572,7 +580,7 @@ class AFSFileSources extends AppElement {
       }     
     }
 
-    await services.saveItems(items);
+    await setBatch(items);
 
     const dbItems = items.map(item => item.data);
 

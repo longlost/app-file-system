@@ -35,8 +35,8 @@ import {
   wait
 } from '@longlost/app-core/utils.js';
 
-import htmlString from './afs-list-icon-button.html';
-import services   from '@longlost/app-core/services/services.js';
+import {querySubscribe} from '@longlost/app-core/services/services.js';
+import htmlString       from './afs-list-icon-button.html';
 import '@longlost/app-core/app-icons.js';
 import '@longlost/badged-icon-button/badged-icon-button.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -44,6 +44,7 @@ import '../shared/afs-file-icons.js';
 
 
 class AFSListIconButton extends AppElement {
+  
   static get is() { return 'afs-list-icon-button'; }
 
   static get template() {
@@ -109,6 +110,7 @@ class AFSListIconButton extends AppElement {
 
 
   disconnectedCallback() {
+
     super.disconnectedCallback();
 
     this.__unsub();
@@ -116,11 +118,13 @@ class AFSListIconButton extends AppElement {
 
 
   __computeAnimateGear(optimizing, thumbnail) {
+
     return optimizing || thumbnail;
   }
 
 
   __computeIcon(list) {
+
     switch (list) {
       case 'files':
         return 'afs-file-icons:dashboard-90';
@@ -133,6 +137,7 @@ class AFSListIconButton extends AppElement {
 
 
   __computeShow(count) {
+
     return typeof count === 'number' && count > 0;
   }
 
@@ -153,12 +158,12 @@ class AFSListIconButton extends AppElement {
       this.__stopArrowAnimation();
     };
 
-    return services.querySubscribe({
+    return querySubscribe({
       callback,
       coll,
       errorCallback,
       limit: 1,      
-      query: {
+      constraints: {
         comparator: null, 
         field:     'original', 
         operator:  '=='
@@ -183,12 +188,12 @@ class AFSListIconButton extends AppElement {
       this._optimizing = false;
     };
 
-    return services.querySubscribe({
+    return querySubscribe({
       callback,
       coll,
       errorCallback,
       limit: 1,
-      query: [{
+      constraints: [{
         comparator: true, 
         field:     'isProcessable', 
         operator:  '=='
@@ -224,12 +229,12 @@ class AFSListIconButton extends AppElement {
       this._thumbail = false;
     };
 
-    return services.querySubscribe({
+    return querySubscribe({
       callback,
       coll,
       errorCallback,
       limit: 1,
-      query: [{
+      constraints: [{
         comparator: true, 
         field:     'isProcessable', 
         operator:  '=='
@@ -264,18 +269,21 @@ class AFSListIconButton extends AppElement {
 
 
   __startArrowAnimation() {
+
     this.$.arrow.classList.add('start-arrow');
     this.$.count.classList.add('start-count');
   }
 
 
   __stopArrowAnimation() {
+
     this.$.arrow.classList.remove('start-arrow');
     this.$.count.classList.remove('start-count');
   }
 
 
   async __startGearAnimation() {
+
     this.$.gear.classList.add('show-gear');
     await wait(450);
     this.$.gear.classList.add('start-gear');
@@ -283,6 +291,7 @@ class AFSListIconButton extends AppElement {
 
 
   async __stopGearAnimation() {
+
     this.$.gear.classList.remove('start-gear');
     await schedule();
     this.$.gear.classList.remove('show-gear');
@@ -290,6 +299,7 @@ class AFSListIconButton extends AppElement {
 
 
   __animateGearChanged(animate) {
+
     if (animate) {
       this.__startGearAnimation();
     }
@@ -300,6 +310,7 @@ class AFSListIconButton extends AppElement {
 
 
   __unsub() {
+
     if (this._uploadingUnsubscribe) {
       this._uploadingUnsubscribe();
       this._uploadingUnsubscribe = undefined;

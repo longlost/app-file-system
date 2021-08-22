@@ -27,13 +27,25 @@
 
 
 import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {init as initDb}   from '@longlost/app-core/services/db.js';
-import {isOnScreen}       from '@longlost/app-core/utils.js';
-import htmlString         from './afs-paginated-roll-items.html';
+
+import {
+  collection,
+  initDb,
+  limit,
+  onSnapshot,
+  orderBy,
+  queryColl,
+  startAfter,
+  where
+} from '@longlost/app-core/services/services.js';
+
+import {isOnScreen} from '@longlost/app-core/utils.js';
+import htmlString   from './afs-paginated-roll-items.html';
 import './afs-roll-item.js';
 
 
 class AFSPaginatedRollItems extends AppElement {
+  
   static get is() { return 'afs-paginated-roll-items'; }
 
   static get template() {
@@ -127,6 +139,7 @@ class AFSPaginatedRollItems extends AppElement {
 
 
   disconnectedCallback() {
+
     super.disconnectedCallback();
 
     this.__unsub();
@@ -134,6 +147,7 @@ class AFSPaginatedRollItems extends AppElement {
 
 
   __computeData(items) {
+
     if (!Array.isArray(items)) { return; }
 
     return items.reduce((accum, item) => {
@@ -149,9 +163,7 @@ class AFSPaginatedRollItems extends AppElement {
 
     // Will need to create an index in Firestore.
     // Only images and/or videos for camera-roll.
-    return db.collection(coll).
-             where('category', 'in', ['image', 'video']).
-             orderBy('timestamp', 'desc');
+    return collection(db, coll);
   }
 
   // Start a subscription to file data changes.
@@ -193,13 +205,21 @@ class AFSPaginatedRollItems extends AppElement {
       console.error(error);
     };
 
+
+    const constraints = [
+      where('category', 'in', ['image', 'video']),
+      orderBy('timestamp', 'desc')
+    ];
     
     if (pagination) {
-      ref = ref.startAfter(pagination);
+      constraints.push(startAfter(pagination));
     }
 
+    constraints.push(limit(this.limit));
 
-    this._unsubscribe = ref.limit(this.limit).onSnapshot(snapshot => {
+    const q = queryColl(ref, ...constraints);
+
+    this._unsubscribe = onSnapshot(q, snapshot => {
 
       if (snapshot.exists || ('empty' in snapshot && snapshot.empty === false)) {
 
@@ -220,6 +240,7 @@ class AFSPaginatedRollItems extends AppElement {
 
 
   __unsub() {
+
     if (this._unsubscribe) {
       this._unsubscribe();
       this._unsubscribe = undefined;
@@ -228,6 +249,7 @@ class AFSPaginatedRollItems extends AppElement {
 
 
   __dataChanged(data) {
+
     if (!data) { return; }
 
     this.fire('item-data-changed', {value: data});
@@ -235,6 +257,7 @@ class AFSPaginatedRollItems extends AppElement {
 
 
   async __triggerChanged(trigger) {
+
     try {
 
       if (!trigger) { return; }
