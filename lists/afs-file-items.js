@@ -42,8 +42,18 @@
   **/
 
 
-import {AppElement, html}        from '@longlost/app-core/app-element.js';
-import {init as initDb}          from '@longlost/app-core/services/db.js';
+import {AppElement, html} from '@longlost/app-core/app-element.js';
+
+import {
+  collection,
+  initDb,
+  limit,
+  onSnapshot,
+  orderBy,
+  queryColl,
+  startAfter
+} from '@longlost/app-core/services/services.js';
+
 import {hijackEvent, isOnScreen} from '@longlost/app-core/utils.js';
 import {ItemsMixin}              from './items-mixin.js';
 import htmlString                from './afs-file-items.html';
@@ -54,6 +64,7 @@ import '../shared/afs-file-icons.js';
 
 
 class AFSFileItems extends ItemsMixin(AppElement) {
+  
   static get is() { return 'afs-file-items'; }
 
   static get template() {
@@ -189,22 +200,20 @@ class AFSFileItems extends ItemsMixin(AppElement) {
   }
 
 
-  async __startSubscription(subscription) {
-
-    const {page, startAfter, unsubscribe} = subscription;
+  async __startSubscription(sub) {
 
     // This page not ready to be fetched yet.
-    if (typeof page !== 'number') { return; }
+    if (typeof sub.page !== 'number') { return; }
 
     // Previous page has not returned results yet.
-    if (page > 0 && !startAfter) { return; }
+    if (sub.page > 0 && !sub.startAfter) { return; }
 
-    if (unsubscribe) {
-      unsubscribe();
+    if (sub.unsubscribe) {
+      sub.unsubscribe();
     }
 
 
-    const start = page * this.limit;
+    const start = sub.page * this.limit;
 
 
     const callback = (results, doc) => {
@@ -212,7 +221,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
       this.__updateItems(start, results);
       this.__removeDeletedItems(start, results.length);
 
-      const nextSub = this._subscriptions[page + 1] || {};
+      const nextSub = this._subscriptions[sub.page + 1] || {};
 
       // Only start new subscriptions if the startAfter 
       // document has been changed.
@@ -221,7 +230,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
       const newSub = {...nextSub, startAfter: doc};
 
       // Add/update next page's startAfter doc ref.
-      this._subscriptions[page + 1] = newSub;
+      this._subscriptions[sub.page + 1] = newSub;
 
       this.__startSubscription(newSub);
     };
@@ -229,7 +238,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
 
     const errorCallback = error => {
 
-      this._subscriptions[page] = undefined;
+      this._subscriptions[sub.page] = undefined;
       this.splice('_items', start, this.limit);
 
       if (
@@ -241,18 +250,23 @@ class AFSFileItems extends ItemsMixin(AppElement) {
     };
     
 
-    const db = await initDb();
+    const db  = await initDb();
+    const ref = collection(db, this.coll);
 
-    let ref = db.collection(this.coll).
-                orderBy('index', 'asc').
-                orderBy('timestamp', 'asc');
+    const constraints = [
+      orderBy('index', 'asc'),
+      orderBy('timestamp', 'asc')
+    ];
 
-    if (startAfter) {
-      ref = ref.startAfter(startAfter);
+    if (sub.startAfter) {
+      constraints.push(startAfter(sub.startAfter));
     }
 
+    constraints.push(limit(this.limit));
 
-    const newUnsubscribe = ref.limit(this.limit).onSnapshot(snapshot => {
+    const q = queryColl(ref, ...constraints);
+
+    const newUnsubscribe = onSnapshot(q, snapshot => {
 
       if (snapshot.exists || ('empty' in snapshot && snapshot.empty === false)) {
 
@@ -271,7 +285,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
     }, errorCallback);
 
 
-    this._subscriptions[page].unsubscribe = newUnsubscribe;
+    this._subscriptions[sub.page].unsubscribe = newUnsubscribe;
   }
 
 

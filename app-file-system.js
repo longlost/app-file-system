@@ -153,10 +153,15 @@ import {
   warn
 } from '@longlost/app-core/utils.js';
 
+import {
+  deleteFile, 
+  deleteBatch,
+  setBatch
+} from '@longlost/app-core/services/services.js';
+
 import {isCloudProcessable} from '@longlost/app-core/img-utils.js';
 import {EventsMixin}        from './events-mixin.js';
 import path                 from 'path';
-import services             from '@longlost/app-core/services/services.js';
 import htmlString           from './app-file-system.html';
 import './sources/afs-file-sources.js';
 // Modals, app-spinner imports in events-mixin.js.
@@ -226,7 +231,7 @@ const getStorageDeletePaths = item => {
 const safeStorageDelete = async pathStr => {
 
   try {
-    await services.deleteFile(pathStr);
+    await deleteFile(pathStr);
   }
   catch (error) {
     if (error && error.message) {
@@ -448,7 +453,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
 
     const itemsToDelete = uids.map(uid => ({coll: this.coll, doc: uid}));
 
-    await services.deleteItems(itemsToDelete);
+    await deleteBatch(itemsToDelete);
 
     // Take remaining items, 
     // sort ascending by index, 
@@ -466,7 +471,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
                         }).
                         filter(obj => obj);
 
-    await services.saveItems(collapsed);
+    await setBatch(collapsed);
 
     this.fire('app-file-system-items-deleted', {uids});
   }

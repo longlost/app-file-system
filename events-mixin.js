@@ -13,7 +13,12 @@ import {
   warn
 } from '@longlost/app-core/utils.js';
 
-import services from '@longlost/app-core/services/services.js';
+import {
+	getMetadata,
+	setBatch,
+	set,
+	updateMetadata
+} from '@longlost/app-core/services/services.js';
 
 // Will NOT download multiple files in Chrome when dev tools is open!!
 import multiDownload from 'multi-download';
@@ -29,6 +34,7 @@ import './modals/afs-save-as-modal.js';
 
 // From items array/collection back to a Firestore data obj.
 const arrayToDbObj = array => {
+	
   return array.reduce((accum, obj) => {
     accum[obj.uid] = obj;
     return accum;
@@ -58,6 +64,7 @@ const getPrintable = item => {
 
 
 const getPrintType = type => {
+
   if (type.includes('image') || type.includes('video')) {
     return 'image';
   }
@@ -79,6 +86,7 @@ const getPrintType = type => {
 
 // Will NOT print pdf's in Chrome when dev tools is open!!
 const printItem = async item => {
+
   const {displayName, type} = item;
 
   const style = `.custom-h3 { 
@@ -122,6 +130,7 @@ const printImages = items => {
 
 
 export const EventsMixin = superClass => {
+
   return class EventsMixin extends superClass {
 
 
@@ -154,6 +163,7 @@ export const EventsMixin = superClass => {
 
 
 	  connectedCallback() {
+
 	    super.connectedCallback();
 
 	    this.__downloadItems 			= this.__downloadItems.bind(this);
@@ -230,6 +240,7 @@ export const EventsMixin = superClass => {
 
 
 	  disconnectedCallback() {
+
 	    super.disconnectedCallback();	    
 	    
 	    this.removeEventListener('download-items', 			 this.__downloadItems);
@@ -253,6 +264,7 @@ export const EventsMixin = superClass => {
 
 	  // So top level elements can receive real-time updates to item.
 	  __computeLiveItem(uid, data) {
+
 	  	if (!uid || !data) { return; }
 
 	  	return data[uid];
@@ -260,6 +272,7 @@ export const EventsMixin = superClass => {
 
 	  // Will NOT download multiple files in Chrome when dev tools is open!!
 	  async __downloadItems(event) {
+
 	  	hijackEvent(event);
 
 	  	try {
@@ -285,6 +298,7 @@ export const EventsMixin = superClass => {
 
 	  // From `file-items`
 	  __itemsChanged(event) {
+
 	  	hijackEvent(event);
 
 	  	const items = event.detail.value;
@@ -299,6 +313,7 @@ export const EventsMixin = superClass => {
 
 	  // From `paginated-roll-items`
 	  __itemDataChanged(event) {
+
 	  	hijackEvent(event);
 
 	  	// Merge incomming data with existing data.
@@ -308,6 +323,7 @@ export const EventsMixin = superClass => {
 	  // 'file-items-sorted' events from <file-items>
 	  // which is a child of <preview-lists>
 	  __itemsSorted(event) {
+
 	  	hijackEvent(event);
 
 	    // An array of uid's ordered by user
@@ -320,11 +336,12 @@ export const EventsMixin = superClass => {
       	data: {index: item.index}
 	    }));
 
-	    services.saveItems(newIndexes);
+	    setBatch(newIndexes);
 	  }
 
 
 	  __openSaveAsModal(event) {
+
 	  	hijackEvent(event);
 
 	  	this.$.saveAsModal.open(event.detail.files);
@@ -332,6 +349,7 @@ export const EventsMixin = superClass => {
 
 
 	  __saveAsModalSkip(event) {
+
 	  	hijackEvent(event);
 
 	  	this.$.sources.skipRenaming();
@@ -339,6 +357,7 @@ export const EventsMixin = superClass => {
 
 
 	  __saveAsModalUpdate(event) {
+
 	  	hijackEvent(event);
 
 	  	this.$.sources.uploadRenamed(event.detail.files);
@@ -346,6 +365,7 @@ export const EventsMixin = superClass => {
 
 	  // From <file-item> (image files only) and <roll-item>
 	  async __openCarousel(event) {
+
 	  	hijackEvent(event);
 
 	  	const {item, measurements} = event.detail;
@@ -362,6 +382,7 @@ export const EventsMixin = superClass => {
 	  
 	  // From `file-editor` and `photo-carousel` (image files only)
 	  async __openPhotoViewer(event) {
+
 	  	hijackEvent(event);
 
 	  	const {item, measurements} = event.detail;
@@ -378,6 +399,7 @@ export const EventsMixin = superClass => {
 
 	  // From `file-editor` (video files only)
 	  async __openVideoViewer(event) {
+
 	  	hijackEvent(event);
 
 	  	const {item} = event.detail;
@@ -394,6 +416,7 @@ export const EventsMixin = superClass => {
 
 	  // From <quick-options>, <file-item>
 	  async __editFile(event) {
+
 	  	hijackEvent(event);
 
 	  	const {item} 	= event.detail;
@@ -410,6 +433,7 @@ export const EventsMixin = superClass => {
 
 	  // From <photo-carousel>
 	  async __editImage(event) {
+
 	  	hijackEvent(event);
 
 	  	const {item} 	= event.detail;
@@ -432,6 +456,7 @@ export const EventsMixin = superClass => {
 
 
 	  async __saveImage(event) {
+
 	  	hijackEvent(event);
 
 	  	await this.add(event.detail.value);
@@ -441,6 +466,7 @@ export const EventsMixin = superClass => {
 
 
 	  __resumeCarousel(event) {
+
 	  	hijackEvent(event);
 
 	  	// Only call resume if the carousel 
@@ -454,6 +480,7 @@ export const EventsMixin = superClass => {
 
 
 	  async __printItem(event) {
+
 	  	hijackEvent(event);
 
 	    try {
@@ -476,6 +503,7 @@ export const EventsMixin = superClass => {
 
 
 	  async __printImages(event) {
+
 	  	hijackEvent(event);
 
 	    try {
@@ -518,6 +546,7 @@ export const EventsMixin = superClass => {
 
 
 	  async __requestDeleteItem(event) {
+
 	    hijackEvent(event);
 
 	    const {item} = event.detail;
@@ -532,6 +561,7 @@ export const EventsMixin = superClass => {
 
 
 	  async __requestDeleteItems(event) {
+
 	    hijackEvent(event);
 
 	    const {items} = event.detail;
@@ -547,6 +577,7 @@ export const EventsMixin = superClass => {
 
 
 	  async __deleteModalDelete(event) {
+
 	  	hijackEvent(event);
 
 	  	try { 		
@@ -586,6 +617,7 @@ export const EventsMixin = superClass => {
 
 
 	  __deleteModalCanceled(event) {
+
 	  	hijackEvent(event);
 
 	  	const uids = this._deleteItems.map(item => item.uid);
@@ -597,6 +629,7 @@ export const EventsMixin = superClass => {
 
 
 	  async __shareItem(event) {
+
 	  	hijackEvent(event);
 
 	  	const {item} 	= event.detail;
@@ -614,6 +647,7 @@ export const EventsMixin = superClass => {
 	  // Issue new file metadata so download 
 	  // filename reflects new displayName.
 	  async __updateContentDisposition(item) {
+
 	  	const {displayName, ext, path, uid} = item;
 	  	const currentItem = this._dbData[uid];
 
@@ -623,19 +657,20 @@ export const EventsMixin = superClass => {
 
 	  		await this.$.spinner.show('Updating file.');
 
-	  		const metadata = await services.getMetadata(path);
+	  		const metadata = await getMetadata(path);
 
         const newMetadata = {
         	...metadata, 
         	contentDisposition: `attachment; filename="${displayName}${ext}"`
         };
 
-        await services.updateMetadata(path, newMetadata);
+        await updateMetadata(path, newMetadata);
 	  	}
 	  }
 
 	  // From <share-modal>, <metadata-editor> and <image-editor>.
 	  async __updateItem(event) {
+
 	  	hijackEvent(event);
 
 	  	try {
@@ -644,7 +679,7 @@ export const EventsMixin = superClass => {
 		  	
 		  	await this.__updateContentDisposition(item);
 
-		  	await services.set({
+		  	await set({
 		      coll: this.coll,
 		      doc:  item.uid,
 		      data: item
@@ -662,6 +697,7 @@ export const EventsMixin = superClass => {
 	  // Open a modal that allows the user to confirm an item selection
 	  // when a list overlay is in selection mode.
 	  async __listOverlayConfirmSelectionHandler(event) {
+
 	    hijackEvent(event);
 
 	    const {item} = event.detail;
@@ -676,6 +712,7 @@ export const EventsMixin = superClass => {
 
 
 	  __confirmSelectionModalConfirmed(event) {
+
 	  	hijackEvent(event);
 
 	  	const id = this.list === 'files' ? '#fileList' : '#cameraRoll';
@@ -685,6 +722,7 @@ export const EventsMixin = superClass => {
 
 
 	  __confirmSelectionModalDismissed(event) {
+
 	  	hijackEvent(event);
 
 	  	const id = this.list === 'files' ? '#fileList' : '#cameraRoll';

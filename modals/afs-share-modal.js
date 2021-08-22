@@ -47,7 +47,13 @@ import {
   warn
 } from '@longlost/app-core/utils.js';
 
-import services   from '@longlost/app-core/services/services.js';
+import {
+  cloudFunction,
+  getDownloadUrl,
+  getMetadata,
+  updateMetadata
+} from '@longlost/app-core/services/services.js';
+
 import htmlString from './afs-share-modal.html';
 import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';
@@ -58,6 +64,7 @@ import '../shared/afs-file-icons.js';
 
 
 class AFSShareModal extends AppElement {
+  
   static get is() { return 'afs-share-modal'; }
 
   static get template() {
@@ -109,16 +116,16 @@ class AFSShareModal extends AppElement {
       if (sharePath) {
         if (shareable) {
 
-          this._shareLink = await services.getDownloadUrl(sharePath);
+          this._shareLink = await getDownloadUrl(sharePath);
 
           this.$.spinner.hide();          
         }
         else {
-          const metadata = await services.getMetadata(sharePath);
+          const metadata = await getMetadata(sharePath);
 
           const newMetadata = {...metadata, contentDisposition: 'inline'};
 
-          await services.updateMetadata(sharePath, newMetadata);
+          await updateMetadata(sharePath, newMetadata);
 
           this.fire('update-item', {item: {...item, shareable: true}});
         }
@@ -127,7 +134,7 @@ class AFSShareModal extends AppElement {
         this.$.spinner.show('Image processing.');
       }
       else {
-        services.cloudFunction({
+        cloudFunction({
           data: {
             path, 
             type,
