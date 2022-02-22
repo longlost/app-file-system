@@ -454,8 +454,8 @@ class AFSFileSources extends AppElement {
     const errorCallback = error => {
       // Use 'storage/canceled' to handle user canceled uploads.
 
-      if (error.code_ && error.code_ === 'storage/unknown') {
-        console.error('Upload error: ', error.code_);
+      if (error.code && error.code === 'storage/unknown') {
+        console.error('Upload error: ', error.code);
 
         warn('An error occured while uploading your file.');
 
