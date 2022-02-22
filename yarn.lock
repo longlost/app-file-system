@@ -1375,17 +1375,17 @@
     scroll-behavior-polyfill "^2.0.13"
     workbox-window "^6.4.2"
 
-"@longlost/app-core@^7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@longlost/app-core/-/app-core-7.0.2.tgz#9f2176bf13975de73c8440cbd66566c13546e885"
-  integrity sha512-xTjKg912uesolrdHqtxxQTdzoIFihARWWnZ1GCGk55jpIbh8UqQar0wMWrpjzGpBxEtaIzPAi5oEHTt1XNm1hQ==
+"@longlost/app-core@^7.0.3":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@longlost/app-core/-/app-core-7.0.3.tgz#f7e7918ae0a41772fcaaa487c57e9b75acd8aa45"
+  integrity sha512-EFH9y9R0NhMBgegIgqwvctUxEVf0672a1TWuQQdsMGOqKhh/UtWJ0ab6muNaYfQtJnyTR3cj3N2eoB7e40UH8g==
   dependencies:
     "@polymer/iron-iconset-svg" "^3.0.1"
     "@polymer/paper-styles" "^3.0.1"
     "@polymer/polymer" "^3.4.1"
     "@ungap/global-this" "^0.4.4"
     comlink "^4.3.1"
-    firebase "^9.6.6"
+    firebase "^9.6.7"
     firebaseui "^6.0.0"
     mime-types "^2.1.34"
     scroll-behavior-polyfill "^2.0.13"
@@ -2706,7 +2706,7 @@ firebase@^9.0.0-2021720181311:
     "@firebase/storage" "0.0.900-exp.8b4d7550f"
     "@firebase/storage-compat" "0.0.900-exp.8b4d7550f"
 
-firebase@^9.6.1, firebase@^9.6.6:
+firebase@^9.6.1, firebase@^9.6.7:
   version "9.6.7"
   resolved "https://registry.yarnpkg.com/firebase/-/firebase-9.6.7.tgz#fad619416c9c16f569cbfd2ba63a937bdc081e33"
   integrity sha512-WiqGC26cepwVy0CZ4n3ZrLSNpVj1RCPJTB6j1tZU4SadPOrGmuPAt71qcWwaLyqKtRzNTyOA9F5J4ygGDplchw==
