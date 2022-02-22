@@ -672,12 +672,33 @@ class AppFileSystem extends EventsMixin(AppElement) {
     return deepClone(this._dbData);
   }
 
+  // Must pass a file item object.
+  async openEditor(item) {
+
+    await this.__waitForTemplateToStamp();
+    
+    if (this.list === 'files') {
+
+
+      throw new Error('TODO: Directly opening the file editor has not been developed yet.');
+
+
+    }
+    else if (this.list === 'photos') {
+
+      return this.__openImageEditor(item); // events-mixin.js
+    }
+
+    throw new Error(`Cannot open the selector without the 'list' property being properly set.`);
+  }
+
 
   async openList() {
 
     await this.__waitForTemplateToStamp();
     
     if (this.list === 'files') {
+
       await import(
         /* webpackChunkName: 'afs-file-list' */ 
         './lists/afs-file-list.js'
@@ -686,6 +707,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
       return this.select('#fileList').open();
     }
     else if (this.list === 'photos') {
+
       await import(
         /* webpackChunkName: 'afs-camera-roll' */ 
         './lists/afs-camera-roll.js'
@@ -694,7 +716,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
       return this.select('#cameraRoll').open();
     }
 
-    throw new Error('Cannot open the overlay without the list property being properly set.');
+    throw new Error(`Cannot open the overlay without the 'list' property being properly set.`);
   }
 
   // Returns a promise that resolves to the selected file item object.
@@ -707,7 +729,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
     if (this.list === 'files') {
 
 
-      throw new Error('TODO list. File selector has not been developed yet.');
+      throw new Error('TODO: File selector has not been developed yet.');
 
 
       // await import(
@@ -718,6 +740,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
       // await this.select('#fileList').openSelector();
     }
     else if (this.list === 'photos') {
+
       await import(
         /* webpackChunkName: 'afs-camera-roll' */ 
         './lists/afs-camera-roll.js'
@@ -725,9 +748,8 @@ class AppFileSystem extends EventsMixin(AppElement) {
       
       return this.select('#cameraRoll').openSelector();
     }
-    else {
-      throw new Error('Cannot open the selector without the list property being properly set.');
-    }
+
+    throw new Error(`Cannot open the selector without the 'list' property being properly set.`);
   }
 
 

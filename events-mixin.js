@@ -431,13 +431,24 @@ export const EventsMixin = superClass => {
 	    this.select('#fileEditor').open();
 	  }
 
-	  // From <photo-carousel>
-	  async __editImage(event) {
 
-	  	hijackEvent(event);
+	  async __openImageEditor(item) {
 
-	  	const {item} 	= event.detail;
-	  	this._liveUid = item.uid;
+	  	const {uid} = item;
+
+	  	// If opened directly (list or carousel not opened prior),
+	  	// '_dbData' will still be undefined.
+	  	if (!this._dbData) {
+	  		this._dbData = {[uid]: item};
+	  	}
+
+	  	// Add the incoming image item to the list, if it's not 
+	  	// already part of the current entries.
+	  	if (!this._dbData[uid]) {
+	  		this._dbData[uid] = item;
+	  	}
+
+	  	this._liveUid = uid;
 
 	  	await schedule();
 	    await import(
@@ -446,12 +457,18 @@ export const EventsMixin = superClass => {
 	    );
 	    await this.select('#imageEditor').open();
 
-	    const carousel = this.select('#carousel');
-
 	    // Only available when list === 'photos'.
-	    if (carousel && carousel.stop) {
-	    	carousel.stop();
-	    }	    
+	    this.select('#carousel')?.stop?.();
+	  }
+
+	  // From <photo-carousel>
+	  __editImage(event) {
+
+	  	hijackEvent(event);
+
+	  	const {item} = event.detail;
+	  	
+	  	return this.__openImageEditor(item);
 	  }
 
 
