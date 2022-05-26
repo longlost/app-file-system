@@ -34,55 +34,58 @@
 
 
 import {AppElement, html} from '@longlost/app-core/app-element.js';
-import htmlString 				from './afs-image-editor-item.html';
-import '@longlost/app-core/app-shared-styles.js';
+import htmlString         from './afs-image-editor-item.html';
+import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
 import './afs-image-editor-icons.js';
 
 
 class AFSImageEditorItem extends AppElement {
-	static get is() { return 'afs-image-editor-item'; }
+  
+  static get is() { return 'afs-image-editor-item'; }
 
-	static get template() {
-		return html([htmlString]);
-	}
-
-
-	static get properties() {
-		return {
-
-			buttonDisabled: Boolean,
-
-			buttonIcon: String,
-
-			buttonLabel: String,
-
-			_icon: {
-				type: String,
-				computed: '__computeIcon(buttonIcon)'
-			}
-
-		};
-	}
+  static get template() {
+    return html([htmlString]);
+  }
 
 
-	__computeIcon(str) {
-		return `afs-image-editor-icons:${str}`;
-	}
+  static get properties() {
+    return {
+
+      buttonDisabled: Boolean,
+
+      buttonIcon: String,
+
+      buttonLabel: String,
+
+      _icon: {
+        type: String,
+        computed: '__computeIcon(buttonIcon)'
+      }
+
+    };
+  }
 
 
-	async __btnClicked() {
-		try {
-			await this.clicked();
+  __computeIcon(str) {
 
-			this.fire('image-editor-item-btn-clicked');
-		}
-		catch (error) {
-			if (error === 'click debounced') { return; }
-			console.error(error);
-		}
-	}
+    return `afs-image-editor-icons:${str}`;
+  }
+
+
+  async __btnClicked() {
+
+    try {
+      await this.clicked();
+
+      this.fire('image-editor-item-btn-clicked');
+    }
+    catch (error) {
+      if (error === 'click debounced') { return; }
+      console.error(error);
+    }
+  }
 
 }
 

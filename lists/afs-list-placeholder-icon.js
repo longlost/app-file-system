@@ -34,10 +34,11 @@
 import {AppElement, html}      from '@longlost/app-core/app-element.js';
 import {hijackEvent, schedule} from '@longlost/app-core/utils.js';
 import htmlString              from './afs-list-placeholder-icon.html';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 
 
 class AFSListPlaceholderIcon extends AppElement {
+  
   static get is() { return 'afs-list-placeholder-icon'; }
 
   static get template() {
@@ -79,6 +80,7 @@ class AFSListPlaceholderIcon extends AppElement {
 
 
   constructor() {
+
     super();
 
     this.__animateBlinking = this.__animateBlinking.bind(this);
@@ -87,6 +89,7 @@ class AFSListPlaceholderIcon extends AppElement {
 
 
   __playingChanged(playing) {
+
     if (playing) {
       this.__startAnimation();
     }
@@ -143,6 +146,7 @@ class AFSListPlaceholderIcon extends AppElement {
 
 
   __startAnimation() {
+
     this.__animateBlinking();
     this.__animateLooking();
 
@@ -152,6 +156,7 @@ class AFSListPlaceholderIcon extends AppElement {
 
 
   __stopAnimation() {
+
     this.$.wrapper.classList.remove(`wrapper-${this._currentLookClass}`);
     this.$.eyes.classList.remove(this._currentLookClass);
     this.$.eyesPath.classList.remove('blink');

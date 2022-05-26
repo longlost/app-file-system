@@ -47,13 +47,14 @@ import {
 } from '@longlost/app-core/utils.js';
 
 import htmlString from './afs-confirm-selection-modal.html';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 import '@longlost/app-overlays/app-modal.js';
 import '@polymer/paper-button/paper-button.js';
 import '../shared/afs-file-thumbnail.js';
 
 
 class AFSConfirmSelectionModal extends AppElement {
+  
   static get is() { return 'afs-confirm-selection-modal'; }
 
   static get template() {
@@ -71,6 +72,7 @@ class AFSConfirmSelectionModal extends AppElement {
 
 
   async __confirmBtnClicked(event) {
+
     hijackEvent(event);
 
     try {
@@ -89,6 +91,7 @@ class AFSConfirmSelectionModal extends AppElement {
 
 
   async __dismissBtnClicked(event) {
+
     hijackEvent(event);
 
     try {
@@ -107,6 +110,7 @@ class AFSConfirmSelectionModal extends AppElement {
 
 
   async open(item) {
+
     this._item = item;
 
     await schedule();

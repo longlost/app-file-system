@@ -18,12 +18,12 @@
   "homepage": "https://github.com/longlost/app-file-system#readme",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@longlost/app-carousels": "^3.0.3",
-    "@longlost/app-core": "^7.0.3",
-    "@longlost/app-images": "^2.2.2",
-    "@longlost/app-inputs": "^2.2.0",
-    "@longlost/app-map": "^1.5.4",
-    "@longlost/app-overlays": "^2.0.0",
+    "@longlost/app-carousels": "^3.0.5",
+    "@longlost/app-core": "^8.0.0",
+    "@longlost/app-images": "^2.2.3",
+    "@longlost/app-inputs": "^2.2.1",
+    "@longlost/app-map": "^1.5.5",
+    "@longlost/app-overlays": "^2.0.1",
     "@longlost/app-spinner": "^1.2.1",
     "@longlost/badged-icon-button": "^1.1.3",
     "@longlost/drag-drop-list": "^2.0.5",
@@ -48,14 +48,14 @@
     "@polymer/paper-progress": "^3.0.1",
     "@polymer/paper-slider": "^3.0.1",
     "@polymer/paper-tabs": "^3.1.0",
-    "@polymer/polymer": "^3.4.1",
+    "@polymer/polymer": "^3.5.0",
     "child-process-promise": "^2.2.1",
     "comlink": "^4.3.1",
     "cropperjs": "^1.5.12",
-    "mime-types": "^2.1.34",
+    "mime-types": "^2.1.35",
     "mkdirp": "^1.0.4",
     "multi-download": "^4.0.0",
-    "nanoid": "^3.3.1",
+    "nanoid": "^3.3.4",
     "print-js": "^1.6.0"
   },
   "devDependencies": {
@@ -63,7 +63,7 @@
     "@polymer/test-fixture": "^4.0.2",
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "chai": "^4.3.6",
-    "mocha": "^9.2.1",
+    "mocha": "^10.0.0",
     "wct-mocha": "^1.1.0"
   }
 }

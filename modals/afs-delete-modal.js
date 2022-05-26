@@ -48,13 +48,14 @@ import {
 } from '@longlost/app-core/utils.js';
 
 import htmlString from './afs-delete-modal.html';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 import '@longlost/app-overlays/app-modal.js';
 import '@polymer/paper-button/paper-button.js';
 import '../shared/afs-file-thumbnail.js';
 
 
 class AFSDeleteModal extends AppElement {
+
   static get is() { return 'afs-delete-modal'; }
 
   static get template() {
@@ -72,6 +73,7 @@ class AFSDeleteModal extends AppElement {
 
 
   async __deleteBtnClicked(event) {
+
     hijackEvent(event);
 
     try {
@@ -90,6 +92,7 @@ class AFSDeleteModal extends AppElement {
 
 
   async __dismissBtnClicked(event) {
+
     hijackEvent(event);
 
     try {
@@ -108,6 +111,7 @@ class AFSDeleteModal extends AppElement {
 
 
   async open(items) {
+    
     this._items = items;
 
     await listenOnce(this.$.repeater, 'dom-change');

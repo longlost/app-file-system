@@ -38,7 +38,7 @@
 
 import {AppElement, html} from '@longlost/app-core/app-element.js';
 import htmlString         from './afs-image-editor-save-modal.html';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/app-overlays/app-modal.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -47,6 +47,7 @@ import './afs-image-editor-icons.js';
 
 
 class AFSImageEditorSaveModal extends AppElement {
+  
   static get is() { return 'afs-image-editor-save-modal'; }
 
   static get template() {
@@ -75,11 +76,13 @@ class AFSImageEditorSaveModal extends AppElement {
 
 
   __computeDismissBtnLabel(unsaved) {
+
     return unsaved ? `DON'T SAVE` : 'DISMISS';
   }
 
 
   async __dismissBtnClicked() {
+
     try {
       await this.clicked();
       await this.$.modal.close();
@@ -97,6 +100,7 @@ class AFSImageEditorSaveModal extends AppElement {
 
 
   async __saveBtnClicked() {
+
     try {
 
       await this.clicked();
@@ -119,6 +123,7 @@ class AFSImageEditorSaveModal extends AppElement {
 
 
   open() {
+
     this._unsaved = false;
 
     return this.$.modal.open();
@@ -126,6 +131,7 @@ class AFSImageEditorSaveModal extends AppElement {
 
 
   openUnsaved() {
+
     this._unsaved = true;
 
     return this.$.modal.open();

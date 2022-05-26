@@ -38,7 +38,7 @@
 
 import {AppElement, html} from '@longlost/app-core/app-element.js';
 import htmlString         from './afs-image-editor-reset-modal.html';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 import '@longlost/app-overlays/app-modal.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
@@ -46,6 +46,7 @@ import './afs-image-editor-icons.js';
 
 
 class AFSImageEditorResetModal extends AppElement {
+  
   static get is() { return 'afs-image-editor-reset-modal'; }
 
   static get template() {
@@ -54,6 +55,7 @@ class AFSImageEditorResetModal extends AppElement {
 
 
   async __dismissBtnClicked() {
+
     try {
       await this.clicked();
 
@@ -67,6 +69,7 @@ class AFSImageEditorResetModal extends AppElement {
 
 
   async __resetBtnClicked() {
+
     try {
 
       await this.clicked();
@@ -81,11 +84,13 @@ class AFSImageEditorResetModal extends AppElement {
 
 
   close() {
+
     return this.$.modal.close();
   }
 
 
   open() {
+
     return this.$.modal.open();
   }
 
