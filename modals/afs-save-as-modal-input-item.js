@@ -39,12 +39,13 @@ import {AppElement, html} from '@longlost/app-core/app-element.js';
 import {hijackEvent}      from '@longlost/app-core/utils.js';
 import {stripExt}         from '@longlost/app-core/file-utils.js';
 import htmlString         from './afs-save-as-modal-input-item.html';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/paper-input/paper-input.js';
 import '../shared/afs-file-thumbnail.js';
 
 
 class AFSSaveAsModalInputItem extends AppElement {
+  
   static get is() { return 'afs-save-as-modal-input-item'; }
 
   static get template() {
@@ -62,6 +63,7 @@ class AFSSaveAsModalInputItem extends AppElement {
   
 
   __computePlaceholderName(name) {
+
     return stripExt(name);
   }
 
@@ -71,11 +73,13 @@ class AFSSaveAsModalInputItem extends AppElement {
   // Focus MUST be called immediately in a click
   // handler for this to work as intended.
   __thumbnailClicked() {
+
     this.$.input.focus();
   }
 
 
   __valueChanged(event) {
+
     hijackEvent(event);
     
     const {value} = event.detail;

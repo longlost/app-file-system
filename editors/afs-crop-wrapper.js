@@ -15,13 +15,12 @@
   **/
 
 import {AppElement, html}            from '@longlost/app-core/app-element.js';
-import {htmlLiteral}                 from '@polymer/polymer/lib/utils/html-tag.js';
 import {blobToFile}                  from '@longlost/app-core/lambda.js';
 import {hijackEvent, schedule, warn} from '@longlost/app-core/utils.js';
 import path                          from 'path';
 import mime                          from 'mime-types';
-import styles                        from 'cropperjs/dist/cropper.css';
 import Cropper                       from 'cropperjs';
+import 'cropperjs/dist/cropper.css';
 
 
 // Pull any src url params from end of extention.
@@ -60,12 +59,13 @@ const getRoundedCanvas = sourceCanvas => {
 
 
 class AFSCropWrapper extends AppElement {
+  
   static get is() { return 'afs-crop-wrapper'; }
 
   static get template() {
 
     return html`
-      <style>
+      <style include="cropper">
       
         :host {
           display:          block;
@@ -97,10 +97,6 @@ class AFSCropWrapper extends AppElement {
         #preview[hidden] {
           display: none;
         }
-
-
-        ${this.stylePartial}
-
 
         .cropper-view-box,
         .cropper-face {
@@ -147,11 +143,6 @@ class AFSCropWrapper extends AppElement {
       </div>
       
     `;
-  }
-
-
-  static get stylePartial() {
-    return htmlLiteral([styles.toString()]);
   }
 
 
@@ -251,16 +242,19 @@ class AFSCropWrapper extends AppElement {
   // using the cropper and the context menu
   // disrupts the workflow.
   __preventContextMenuOnCropper(event) {
+
     hijackEvent(event);
   }
 
 
   __active() {
+
     this.fire('crop-wrapper-active');
   }
 
 
   __error() {
+
     this.destroy();
     warn('The image failed to load.');
   }
@@ -407,12 +401,14 @@ class AFSCropWrapper extends AppElement {
   // Moves the canvas by relative offsets.
   // 'offsetY' optional.
   move(offsetX = 0, offsetY = 0) {
+
     this._cropper.move(offsetX, offsetY);
   }
 
   // Moves the canvas to a new postion given x, y coords.
   // 'y' optional.
   moveTo(x, y) {
+
     this._cropper.moveTo(x, y);
   }
 
@@ -424,6 +420,7 @@ class AFSCropWrapper extends AppElement {
   // the URLs of all related images. 
   // This can be used for applying filters.
   replace(url, hasSameSize = false) {
+
     this.isReady     = false;
     this._replacing  = hasSameSize ? 'same' : 'different';
     this._canvasData = this._cropper.getCanvasData();
@@ -434,6 +431,7 @@ class AFSCropWrapper extends AppElement {
 
   // Place image and crop area back to their initial positions.
   reset() {
+
     this._canvasData = undefined;
     this._boxData    = undefined;
     this._rotateTo   = 0;
@@ -450,11 +448,13 @@ class AFSCropWrapper extends AppElement {
 
   // Rotate the image with a relative degree.
   rotate(degree) {
+
     this._cropper.rotate(degree);
   }
 
   // Rotate the image to an absolute degree.
   rotateTo(degree) {
+
     this._rotateTo = degree;
     this._cropper.rotateTo(degree);
   }
@@ -465,27 +465,32 @@ class AFSCropWrapper extends AppElement {
   // call this method without arguments or pass
   // undefined to set the aspect as free.
   setAspectRatio(aspect = NaN) {
+
     this._cropper.setAspectRatio(aspect);
   }
 
   // Set crop area shape to be round or rectangular.
   setRound(bool) {
+
     this._round = bool;
   }
 
   // Zooms the canvas with a relative ratio.
   // ie. ratio === -0.1
   zoom(ratio = 0) {
+
     this._cropper.zoom(ratio);
   }
 
 
   zoomIn() {
+
     this.zoom(0.1);
   }
 
 
   zoomOut() {
+
     this.zoom(-0.1);
   }
 

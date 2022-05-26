@@ -67,13 +67,14 @@
 import {AppElement, html} from '@longlost/app-core/app-element.js';
 import {hijackEvent}      from '@longlost/app-core/utils.js';
 import htmlString         from './afs-device-file-card.html';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/paper-button/paper-button.js';
 import '../shared/afs-file-icons.js';
 import './afs-drop-zone.js';
 
 
 class AFSDeviceFileCard extends AppElement {
+  
   static get is() { return 'afs-device-file-card'; }
 
   static get template() {
@@ -110,12 +111,14 @@ class AFSDeviceFileCard extends AppElement {
   }
 
   // Cannot use 'await this.clicked()' here because of Safari.
-  __chooserBtnClicked() {    
+  __chooserBtnClicked() { 
+
     this.$.dropzone.openChooser();
   }
 
 
-  __dzFilesAdded(event) {    
+  __dzFilesAdded(event) { 
+
     hijackEvent(event);
 
     this.fire('files-added', {files: event.detail.files});
@@ -123,11 +126,13 @@ class AFSDeviceFileCard extends AppElement {
 
 
   clearFeedback() {
+
     this.$.dropzone.clearFeedback();
   }
 
 
   createFeedback(type) {
+
     this.$.dropzone.createFeedback(type);
   }
 

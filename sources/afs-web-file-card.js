@@ -51,7 +51,7 @@ import {fetchFile}  from '@longlost/app-core/file-utils.js';
 import path         from 'path'; // webpack includes this by default!
 import mime         from 'mime-types';
 import htmlString   from './afs-web-file-card.html';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-progress/paper-progress.js';
@@ -59,6 +59,7 @@ import '../shared/afs-file-icons.js';
 
 
 class AFSWebFileCard extends AppElement {
+  
   static get is() { return 'afs-web-file-card'; }
 
   static get template() {
@@ -126,6 +127,7 @@ class AFSWebFileCard extends AppElement {
 
 
   __computeValid(url, mimes) {
+
     if (!url || !mimes) { return false; }
 
     const type = mime.contentType(path.extname(url));
@@ -137,6 +139,7 @@ class AFSWebFileCard extends AppElement {
 
 
   async __cancelMimesAndTypeChanged(cancel, mimes, type) {
+
     if (!cancel || !mimes || !type) { return; }
 
     const shouldNotCancel = mimes.some(m => 
@@ -153,6 +156,7 @@ class AFSWebFileCard extends AppElement {
 
 
   __inputValueChanged(event) {
+
     const {value} = event.detail;
     this._url = value.trim();
   }

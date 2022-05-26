@@ -24,11 +24,12 @@
 
 import {AppElement, html} from '@longlost/app-core/app-element.js';
 import htmlString         from './afs-select-checkbox.html';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/paper-checkbox/paper-checkbox.js';
 
 
 class AFSSelectCheckbox extends AppElement {
+
   static get is() { return 'afs-select-checkbox'; }
 
   static get template() {
@@ -52,6 +53,7 @@ class AFSSelectCheckbox extends AppElement {
 
 
   connectedCallback() {
+
     super.connectedCallback();
 
     this.__clicked = this.__clicked.bind(this);
@@ -61,6 +63,7 @@ class AFSSelectCheckbox extends AppElement {
 
 
   disconnectedCallback() {
+
     super.connectedCallback();
 
     this.removeEventListener('click', this.__clicked);
@@ -68,6 +71,7 @@ class AFSSelectCheckbox extends AppElement {
 
 
   async __clicked() {
+    
     try {
 
       await this.clicked();

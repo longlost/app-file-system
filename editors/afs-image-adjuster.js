@@ -40,7 +40,7 @@ import {ImageEditorItemMixin}      from './image-editor-item-mixin.js';
 import {FilterMixin}               from './filter-mixin.js';
 import {imgFilterFile}             from '../shared/utils.js';
 import htmlString                  from './afs-image-adjuster.html';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-slider/paper-slider.js';
 import './afs-image-editor-icons.js';
@@ -48,6 +48,7 @@ import './afs-image-editor-item.js';
 
 
 class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
+  
   static get is() { return 'afs-image-adjuster'; }
 
   static get template() {
@@ -118,6 +119,7 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   connectedCallback() {
+
     super.connectedCallback();
 
     this._ctx = this.$.preview.getContext('2d');
@@ -128,11 +130,13 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __computeReadyForSource(filter, src) {
+
     return Boolean(filter && src);
   }
 
 
   __adjustmentsChanged(filter, source, brightness, contrast, saturation, hue, sharpness, blur) {
+
     if (!filter || !source) { return; }
 
     window.requestAnimationFrame(() => {
@@ -333,6 +337,7 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   async __clearClicked() {
+
     try {
       await this.clicked();
 
@@ -346,6 +351,7 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   async __applyClicked() {
+
     try {
 
       this.fire('image-adjuster-show-spinner', {text: 'Applying adjustments.'});

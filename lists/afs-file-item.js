@@ -18,12 +18,13 @@ import {FileInfoMixin}    from '../shared/file-info-mixin.js';
 import {ItemMixin}        from './item-mixin.js';
 import htmlString         from './afs-file-item.html';
 import '@longlost/app-core/app-icons.js';
-import '@longlost/app-core/app-shared-styles.js';
+import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import './afs-quick-options.js';
 
 
 class AFSFileItem extends ItemMixin(FileInfoMixin(AppElement)) {
+  
   static get is() { return 'afs-file-item'; }
 
   static get template() {
@@ -42,6 +43,7 @@ class AFSFileItem extends ItemMixin(FileInfoMixin(AppElement)) {
 
 
   __computeSortableClass(type) {
+
     if (type && type.includes('video')) {
       return 'video';
     }
@@ -50,6 +52,7 @@ class AFSFileItem extends ItemMixin(FileInfoMixin(AppElement)) {
 
 
   __computeStatsLine2(mimeExt, sizeStr) {
+
     if (!mimeExt) { return sizeStr; }
 
     return `${mimeExt} ● ${sizeStr}`;
@@ -68,6 +71,7 @@ class AFSFileItem extends ItemMixin(FileInfoMixin(AppElement)) {
 
   
   async __moreBtnClicked() {
+
     try {
       await this.clicked();
       
