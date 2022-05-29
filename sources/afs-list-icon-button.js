@@ -25,10 +25,7 @@
   *
   **/
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   schedule,
@@ -36,7 +33,8 @@ import {
 } from '@longlost/app-core/utils.js';
 
 import {querySubscribe} from '@longlost/app-core/services/services.js';
-import htmlString       from './afs-list-icon-button.html';
+
+import template from './afs-list-icon-button.html';
 import '@longlost/app-core/app-icons.js';
 import '@longlost/badged-icon-button/badged-icon-button.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -48,7 +46,7 @@ class AFSListIconButton extends AppElement {
   static get is() { return 'afs-list-icon-button'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

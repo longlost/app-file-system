@@ -51,6 +51,7 @@ export const ImageEditorItemMixin = superClass => {
 
 
 	  __computeName(displayName, type) {
+
 	  	if (!type) { return ''; }
 
 	    return displayName ? `${displayName}-${type}` : type;
@@ -84,6 +85,7 @@ export const ImageEditorItemMixin = superClass => {
 
 
 	  async __editedChanged(src) {
+	  	
   		this.__reset();
 
   		await schedule();

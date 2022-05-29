@@ -35,10 +35,7 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   hijackEvent,
@@ -48,17 +45,19 @@ import {
 } from '@longlost/app-core/utils.js';
 
 import {stripExt} from '@longlost/app-core/file-utils.js';
-import htmlString from './afs-save-as-modal.html';
+
+import template from './afs-save-as-modal.html';
 import '@longlost/app-overlays/app-modal.js';
 import '@polymer/paper-button/paper-button.js';
 import './afs-save-as-modal-input-item.js';
 
 
 class AFSSaveAsModal extends AppElement {
+
   static get is() { return 'afs-save-as-modal'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -85,11 +84,13 @@ class AFSSaveAsModal extends AppElement {
 
 
   __computeEditorType(list) {
+
     return list === 'files' ? 'file' : 'image';
   }
 
 
   __itemValueChanged(event) {
+
     hijackEvent(event);
     
     const {uid, value} = event.detail;
@@ -106,6 +107,7 @@ class AFSSaveAsModal extends AppElement {
 
 
   async __reset() {
+
     await schedule();       
     await this.$.modal.close();
 
@@ -115,6 +117,7 @@ class AFSSaveAsModal extends AppElement {
 
 
   async __skipButtonClicked(event) {
+
     try {
       hijackEvent(event);
 
@@ -132,6 +135,7 @@ class AFSSaveAsModal extends AppElement {
 
 
   async __updateButtonClicked(event) {
+
     try {
       hijackEvent(event);
 
@@ -167,6 +171,7 @@ class AFSSaveAsModal extends AppElement {
 
 
   async open(files) {
+    
     this._files = files;
 
     await listenOnce(this.$.repeater, 'dom-change');

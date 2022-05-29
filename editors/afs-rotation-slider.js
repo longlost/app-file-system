@@ -33,9 +33,9 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {schedule}         from '@longlost/app-core/utils.js';
-import htmlString         from './afs-rotation-slider.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import {schedule}   from '@longlost/app-core/utils.js';
+import template     from './afs-rotation-slider.html';
 
 
 // The total slider travel represents +/- 45 degrees.
@@ -47,7 +47,7 @@ class AFSRotationSlider extends AppElement {
   static get is() { return 'afs-rotation-slider'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

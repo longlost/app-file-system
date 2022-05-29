@@ -25,17 +25,18 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import htmlString         from './afs-action-buttons.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import template     from './afs-action-buttons.html';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/afs-file-icons.js';
 
 
 class AFSActionButtons extends AppElement {
+
   static get is() { return 'afs-action-buttons'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -73,21 +74,25 @@ class AFSActionButtons extends AppElement {
 
 
   __computeDisabled(item) {
+
     return !Boolean(item);
   }
 
 
   __computeDownloadBtnDisabledClass(item) {
+
     return !item || !item.original ? 'disabled' : '';
   }
 
 
   __computeDownloadUrl(original) {
+
     return original ? original : '#';
   }
 
 
   __computeHidePrintBtn(type) {
+
     const isPrintable = type && (
                           type.includes('html')  ||
                           type.includes('image') ||
@@ -101,6 +106,7 @@ class AFSActionButtons extends AppElement {
 
 
   async __optionBtnClicked(name) {
+
     try {
       await this.clicked();
 
@@ -114,21 +120,25 @@ class AFSActionButtons extends AppElement {
 
 
   __deleteBtnClicked() {
+
     this.__optionBtnClicked('request-delete-item');
   }
 
 
   __printBtnClicked() {
+
     this.__optionBtnClicked('print-item');
   }
 
 
   __shareBtnClicked() {
+
     this.__optionBtnClicked('share-item');
   }
 
 
   __editBtnClicked() {
+    
     this.__optionBtnClicked('edit-file');
   }
 

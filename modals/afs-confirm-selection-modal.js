@@ -36,17 +36,14 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   hijackEvent,
   schedule
 } from '@longlost/app-core/utils.js';
 
-import htmlString from './afs-confirm-selection-modal.html';
+import template from './afs-confirm-selection-modal.html';
 import '@longlost/app-core/app-shared-styles.css';
 import '@longlost/app-overlays/app-modal.js';
 import '@polymer/paper-button/paper-button.js';
@@ -58,7 +55,7 @@ class AFSConfirmSelectionModal extends AppElement {
   static get is() { return 'afs-confirm-selection-modal'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

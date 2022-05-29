@@ -33,18 +33,19 @@
   **/
 
 
-import {AppElement, html}     from '@longlost/app-core/app-element.js';
+import {AppElement}           from '@longlost/app-core/app-element.js';
 import {schedule, wait, warn} from '@longlost/app-core/utils.js';
 import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
 import {FilterMixin}          from './filter-mixin.js';
 import {imgFilterFile}        from '../shared/utils.js';
-import htmlString             from './afs-image-filters.html';
+import template               from './afs-image-filters.html';
 import '@polymer/iron-selector/iron-selector.js';
 import './afs-image-editor-item.js';
 import './afs-filter-item.js';
 
 
 const createFilter = (filter, source) => name => {
+
   filter.addFilter(name);
 
   const canvas = filter.apply(source);
@@ -56,10 +57,11 @@ const createFilter = (filter, source) => name => {
 
 
 class AFSImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
+
   static get is() { return 'afs-image-filters'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -109,6 +111,7 @@ class AFSImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __computeFilters(filter, loaded, source) {
+
     if (!filter || !loaded || !source) { return; }
 
     const creator = createFilter(filter, source);
@@ -127,6 +130,7 @@ class AFSImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __computePreviewSrc(filter, src) {
+
     if (filter && src) { return src; }
 
     return '#';
@@ -134,6 +138,7 @@ class AFSImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __computeThumbnail(item) {
+
     if (!item) { return '#'; }
 
     const {optimized, thumbnail} = item;
@@ -148,6 +153,7 @@ class AFSImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   // Wait for '_previewSrc' timing but use the 
   // smaller thumbnail file for the 'filter-item's.
   __previewSrcChanged(src) {
+
     this._loaded = false;
 
     if (!src || src === '#') {
@@ -181,17 +187,20 @@ class AFSImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   __filterSelected(event) {
+
     this._selectedFilter = event.detail.value;
   }
 
 
   __domChanged() {
+
     this.fire('image-filters-stamped');
   }
 
   // Called by image-editor-item-mixin
   // when the editedSrc is changed.
   __reset() {
+
     if (this._filter) {
       this._loaded = false;
     }
@@ -199,6 +208,7 @@ class AFSImageFilters extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
 
   async __applyClicked() {
+    
     try {
 
       this.fire('image-filters-show-spinner', {text: 'Applying filter.'});

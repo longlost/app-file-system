@@ -33,10 +33,10 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {AppElement}       from '@longlost/app-core/app-element.js';
 import {schedule, wait}   from '@longlost/app-core/utils.js';
 import {ListOverlayMixin} from './list-overlay-mixin.js';
-import htmlString         from './afs-camera-roll.html';
+import template           from './afs-camera-roll.html';
 import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-slider/paper-slider.js';
@@ -46,10 +46,11 @@ import '../shared/afs-progress-bar.js';
 
 
 class AFSCameraRoll extends ListOverlayMixin(AppElement) {
+
   static get is() { return 'afs-camera-roll'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -149,11 +150,13 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
 
 
   __localstorageDataChanged(event) {
+
     this._scale = event.detail.value;
   }
 
 
   __overlayTriggered(event) {
+
     const triggered = event.detail.value;
 
     // Noop on overlay initialization during first open.
@@ -169,31 +172,37 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
 
 
   __hideScale() {
+
     this.$.scale.classList.add('hide-scale');
   }
 
 
   __showScale() {
+
     this.$.scale.classList.remove('hide-scale');
   }
 
 
   __setupScale() {
+
     this.$.scale.style['display'] = 'flex';
   }
 
 
   __resetScale() {
+
     this.$.scale.style['display'] = 'none';
   }
 
 
   __sliderValChanged(event) {
+
     this._scale = event.detail.value;
   }
 
   // Overlay 'on-reset' handler.
   __reset() {
+
     this._canShowScale = false;
     this._opened       = false;
     this.__resetScale();
@@ -221,6 +230,7 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
 
 
   open() {
+
     this._isSelector = false;
 
     return this.__open();
@@ -228,6 +238,7 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
   
 
   openSelector() {
+    
     this._isSelector = true;
 
     return this.__open();

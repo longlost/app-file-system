@@ -34,10 +34,7 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   hijackEvent,
@@ -45,7 +42,7 @@ import {
   wait
 } from '@longlost/app-core/utils.js';
 
-import htmlString from './afs-photo-carousel.html';
+import template from './afs-photo-carousel.html';
 import '@longlost/app-images/flip-image.js';
 import '@longlost/app-overlays/app-header-overlay.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
@@ -55,10 +52,11 @@ import '../shared/afs-edit-photo-fab.js';
 
 
 class AFSPhotoCarousel extends AppElement {
+
   static get is() { return 'afs-photo-carousel'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -105,6 +103,7 @@ class AFSPhotoCarousel extends AppElement {
 
 
   __computeCurrentItem(disabled, centered) {
+
     if (disabled || !centered) { return; }
 
     return centered;
@@ -112,6 +111,7 @@ class AFSPhotoCarousel extends AppElement {
 
 
   __computePlaceholder(item) {
+
     if (!item) return '#';
 
     const {_tempUrl, thumbnail} = item;
@@ -121,11 +121,13 @@ class AFSPhotoCarousel extends AppElement {
 
 
   __computeTitle(displayName) {
+
     return displayName ? displayName : ' ';
   }
 
 
-  async __back() {    
+  async __back() {   
+
     this.__hideBackground();
 
     await schedule();
@@ -139,11 +141,13 @@ class AFSPhotoCarousel extends AppElement {
 
   // Overlay reset event handler.
   __reset() { 
+
     this.stop();
   }
 
 
   async __hideBackground() {
+
     this.$.background.style['opacity'] = '0';
 
     // Safari fix. Without waiting before seting display,
@@ -155,6 +159,7 @@ class AFSPhotoCarousel extends AppElement {
 
 
   async __showBackground() {
+
     this.$.background.style['display'] = 'block';
 
     await schedule();
@@ -197,6 +202,7 @@ class AFSPhotoCarousel extends AppElement {
 
 
   __centeredItemChanged(event) {
+
     hijackEvent(event);
 
     this._centeredItem = event.detail.value;
@@ -204,6 +210,7 @@ class AFSPhotoCarousel extends AppElement {
 
 
   __lastItemDeleted(event) {
+
     hijackEvent(event);
 
     // Overlay 'reset' method causes rendering issues.
@@ -212,6 +219,7 @@ class AFSPhotoCarousel extends AppElement {
 
 
   __photoSelected(event) {
+
     hijackEvent(event);
 
     this.fire('open-photo-viewer', event.detail);
@@ -252,6 +260,7 @@ class AFSPhotoCarousel extends AppElement {
 
   // Resume carousel updates once the image-editor is closed.
   resume() {
+    
     this._start  = this.item;
     this._opened = true;
   }

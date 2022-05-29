@@ -19,10 +19,7 @@
   *
   **/
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   schedule,
@@ -34,17 +31,18 @@ import {
   isCloudProcessable
 } from '@longlost/app-core/img-utils.js';
 
-import htmlString from './afs-processing-icon.html';
+import template from './afs-processing-icon.html';
 import '@longlost/app-core/app-icons.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '../shared/afs-file-icons.js';
 
 
 class AFSProcessingIcon extends AppElement {
+
   static get is() { return 'afs-processing-icon'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -71,6 +69,7 @@ class AFSProcessingIcon extends AppElement {
 
   // animate from upload through final processing
   __computeAnimate(item) {
+
     if (!item || !item.type) { return false; }
 
     // Animate during image processing as well.
@@ -96,6 +95,7 @@ class AFSProcessingIcon extends AppElement {
 
 
   async __startAnimation() {
+
     this.style['display'] = 'block';
 
     // Wait for <upload-controls> to hide.
@@ -107,6 +107,7 @@ class AFSProcessingIcon extends AppElement {
 
 
   async __stopAnimation() {
+    
     this.style['transform'] = 'scale(0, 0)';
     this.$.gear.classList.remove('rotate');
 

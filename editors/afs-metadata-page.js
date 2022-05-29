@@ -23,10 +23,7 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   compose,
@@ -34,15 +31,11 @@ import {
   split
 } from '@longlost/app-core/lambda.js';
 
-import {
-  isOnScreen
-} from '@longlost/app-core/utils.js';
+import {isOnScreen} from '@longlost/app-core/utils.js';
 
-import {
-  FileInfoMixin
-} from '../shared/file-info-mixin.js';
+import {FileInfoMixin} from '../shared/file-info-mixin.js';
 
-import htmlString from './afs-metadata-page.html';
+import template from './afs-metadata-page.html';
 import '@longlost/app-core/app-icons.js';
 import '@longlost/app-core/app-shared-styles.css';
 import '@longlost/app-inputs/app-textarea.js';
@@ -61,7 +54,7 @@ class AFSMetadataPage extends FileInfoMixin(AppElement) {
   static get is() { return 'afs-metadata-page'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

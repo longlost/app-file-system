@@ -22,8 +22,8 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import htmlString         from './afs-select-checkbox.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import template     from './afs-select-checkbox.html';
 import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/paper-checkbox/paper-checkbox.js';
 
@@ -33,7 +33,7 @@ class AFSSelectCheckbox extends AppElement {
   static get is() { return 'afs-select-checkbox'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

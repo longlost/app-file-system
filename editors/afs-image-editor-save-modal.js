@@ -36,8 +36,8 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import htmlString         from './afs-image-editor-save-modal.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import template     from './afs-image-editor-save-modal.html';
 import '@longlost/app-core/app-shared-styles.css';
 import '@longlost/app-images/lazy-image.js';
 import '@longlost/app-overlays/app-modal.js';
@@ -51,7 +51,7 @@ class AFSImageEditorSaveModal extends AppElement {
   static get is() { return 'afs-image-editor-save-modal'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

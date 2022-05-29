@@ -37,6 +37,7 @@ import {ImageEditorItemMixin} from './image-editor-item-mixin.js';
 
 
 class AFSImageMeta extends ImageEditorItemMixin(AppElement) {
+  
   static get is() { return 'afs-image-meta'; }
 
   static get template() {

@@ -14,19 +14,20 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {getBBox}          from '@longlost/app-core/utils.js';
-import {ItemMixin}        from './item-mixin.js';
-import htmlString         from './afs-roll-item.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import {getBBox}    from '@longlost/app-core/utils.js';
+import {ItemMixin}  from './item-mixin.js';
+import template     from './afs-roll-item.html';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-ripple/paper-ripple.js';
 
 
 class AFSRollItem extends ItemMixin(AppElement) {
+
   static get is() { return 'afs-roll-item'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -55,6 +56,7 @@ class AFSRollItem extends ItemMixin(AppElement) {
 
 
   connectedCallback() {
+
     super.connectedCallback();
 
     this.$.a11y.target = this.$.wrapper;
@@ -62,6 +64,7 @@ class AFSRollItem extends ItemMixin(AppElement) {
 
 
   __computeTabindex(hideCheckbox) {
+
     return hideCheckbox ? 0 : -1;
   }
 
@@ -91,6 +94,7 @@ class AFSRollItem extends ItemMixin(AppElement) {
 
 
   async __thumbnailClicked() {
+
     try {
       if (this._tabindex === -1) { return; }
 
@@ -107,6 +111,7 @@ class AFSRollItem extends ItemMixin(AppElement) {
 
 
   __rippleDone() {
+    
     this._rippled = true;
   }
 

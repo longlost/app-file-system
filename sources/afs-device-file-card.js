@@ -64,9 +64,9 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {hijackEvent}      from '@longlost/app-core/utils.js';
-import htmlString         from './afs-device-file-card.html';
+import {AppElement}  from '@longlost/app-core/app-element.js';
+import {hijackEvent} from '@longlost/app-core/utils.js';
+import template      from './afs-device-file-card.html';
 import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/paper-button/paper-button.js';
 import '../shared/afs-file-icons.js';
@@ -78,7 +78,7 @@ class AFSDeviceFileCard extends AppElement {
   static get is() { return 'afs-device-file-card'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

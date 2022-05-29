@@ -139,10 +139,7 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {deepClone} from '@longlost/app-core/lambda.js';
 
@@ -160,9 +157,11 @@ import {
 } from '@longlost/app-core/services/services.js';
 
 import {isCloudProcessable} from '@longlost/app-core/img-utils.js';
-import {EventsMixin}        from './events-mixin.js';
-import path                 from 'path';
-import htmlString           from './app-file-system.html';
+
+import {EventsMixin} from './events-mixin.js';
+
+import path     from 'path';
+import template from './app-file-system.html';
 import './sources/afs-file-sources.js';
 // Modals, app-spinner imports in events-mixin.js.
 
@@ -265,7 +264,7 @@ class AppFileSystem extends EventsMixin(AppElement) {
   static get is() { return 'app-file-system'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

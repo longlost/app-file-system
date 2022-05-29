@@ -35,10 +35,10 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {hijackEvent}      from '@longlost/app-core/utils.js';
-import {stripExt}         from '@longlost/app-core/file-utils.js';
-import htmlString         from './afs-save-as-modal-input-item.html';
+import {AppElement}  from '@longlost/app-core/app-element.js';
+import {hijackEvent} from '@longlost/app-core/utils.js';
+import {stripExt}    from '@longlost/app-core/file-utils.js';
+import template      from './afs-save-as-modal-input-item.html';
 import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/paper-input/paper-input.js';
 import '../shared/afs-file-thumbnail.js';
@@ -49,7 +49,7 @@ class AFSSaveAsModalInputItem extends AppElement {
   static get is() { return 'afs-save-as-modal-input-item'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

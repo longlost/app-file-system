@@ -81,10 +81,7 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   capitalize,
@@ -119,10 +116,10 @@ import {
   subscribe
 } from '@longlost/app-core/services/services.js';
 
-import mime          from 'mime-types';
-import descriptions  from './mime-descriptions.json';
-import processFiles  from './processing.js';
-import htmlString    from './afs-file-sources.html';
+import mime         from 'mime-types';
+import descriptions from './mime-descriptions.json';
+import processFiles from './processing.js';
+import template     from './afs-file-sources.html';
 import '@longlost/app-overlays/app-header-overlay.js';
 import '../shared/afs-progress-bar.js';
 import './afs-upload-actions-card.js';
@@ -146,7 +143,7 @@ class AFSFileSources extends AppElement {
   static get is() { return 'afs-file-sources'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -273,6 +270,7 @@ class AFSFileSources extends AppElement {
 
 
   disconnectedCallback() {
+
     super.disconnectedCallback();
 
     this.__unsub();
@@ -280,6 +278,7 @@ class AFSFileSources extends AppElement {
 
 
   __computeAcceptableTypes(mimes) {
+
     if (!mimes) { return ''; }
 
     const description = mimes.reduce((accum, m) => {
@@ -297,6 +296,7 @@ class AFSFileSources extends AppElement {
 
 
   __computeFilesToUploadQty(files) {
+
     if (!Array.isArray(files)) { return 0; }
 
     return files.length;
@@ -304,11 +304,13 @@ class AFSFileSources extends AppElement {
 
 
   __computeHideContent(dbCount) {
+
     return typeof dbCount !== 'number';
   }
 
 
   __computeMaxBytes(maxsize, unit) {
+
     if (!maxsize || !unit) { return; }
 
     const mulipliers = {
@@ -325,6 +327,7 @@ class AFSFileSources extends AppElement {
 
 
   __computeMimeTypes(accept) {
+
     if (!accept) { return; }
 
     // The comma seperated accept entries.
@@ -349,6 +352,7 @@ class AFSFileSources extends AppElement {
 
 
   __unsub() {
+
     if (this._unsubscribe) {
       this._unsubscribe();
       this._unsubscribe = undefined;
@@ -399,6 +403,7 @@ class AFSFileSources extends AppElement {
 
 
   __progressValuesChanged(reading, read, processing, processed) {
+
     this.fire('progress-changed', {
       processed,
       processing,
@@ -409,6 +414,7 @@ class AFSFileSources extends AppElement {
 
 
   async __listBtnClicked() {
+
     try {
       await this.clicked();
       this.fire('open-list');
@@ -761,6 +767,7 @@ class AFSFileSources extends AppElement {
 
 
   __uploadActionsGo(event) {
+
     hijackEvent(event);
 
     this._showingUploadActions = false;
@@ -770,6 +777,7 @@ class AFSFileSources extends AppElement {
 
 
   __uploadActionsRename(event) {
+
     hijackEvent(event);
 
     this._showingUploadActions = false;
@@ -779,13 +787,15 @@ class AFSFileSources extends AppElement {
 
 
   __webFileAdded(event) {
+
     hijackEvent(event);
 
     this.__filesAdded([event.detail.file]);
   }
 
 
-  __deviceFilesAdded(event) {    
+  __deviceFilesAdded(event) {   
+
     hijackEvent(event);
 
     this.__filesAdded(event.detail.files);
@@ -793,6 +803,7 @@ class AFSFileSources extends AppElement {
 
 
   async __showFeedback(type) {
+
     const cardEl = this.select('#deviceFileCard');
 
     // `afs-file-sources` can work without its light dom stamped.
@@ -805,6 +816,7 @@ class AFSFileSources extends AppElement {
 
 
   __handleMultipleFiles(files) {
+
     const array = [...files];
 
     if (this.maxfiles && array.length > this.maxfiles) {
@@ -831,6 +843,7 @@ class AFSFileSources extends AppElement {
 
 
   async __back() {
+
     try {
       await this.clicked();
 
@@ -849,6 +862,7 @@ class AFSFileSources extends AppElement {
 
 
   __reset() {
+
     this._stamp = false;
   }
 
@@ -868,6 +882,7 @@ class AFSFileSources extends AppElement {
 
 
   async open() {
+
     this._stamp = true;
 
     await listenOnce(this.$.stamper, 'dom-change');
@@ -879,6 +894,7 @@ class AFSFileSources extends AppElement {
   // Start uploading processed files as is,
   // without user editing file names.
   skipRenaming() {
+
     if (!Array.isArray(this._filesToUpload)) { return; }
 
     const files = this._filesToUpload.map(file => {
@@ -894,6 +910,7 @@ class AFSFileSources extends AppElement {
   // Start uploading processed files that have 
   // user edited/updated file names.
   uploadRenamed(files) {
+    
     this._filesToUpload = undefined;
 
     return this.__uploadFiles(files);

@@ -25,6 +25,7 @@ export const FilterMixin = superClass => {
 
 
 	  connectedCallback() {
+
 	  	super.connectedCallback();
 
 	  	this._filter = webglFilter();
@@ -32,6 +33,7 @@ export const FilterMixin = superClass => {
 
 
 	  __computeApplyBtnDisabled(item, filter, selectedFilter) {
+	  	
 	  	return !Boolean(item && filter && selectedFilter);
 	  }
 

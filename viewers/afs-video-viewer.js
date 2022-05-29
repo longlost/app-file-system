@@ -34,18 +34,19 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import htmlString         from './afs-video-viewer.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import template     from './afs-video-viewer.html';
 import '@longlost/app-core/app-icons.js';
 import '@longlost/app-overlays/app-overlay.js';
 import '@longlost/lazy-video/lazy-video.js';
 
 
 class AFSVideoViewer extends AppElement {
+
   static get is() { return 'afs-video-viewer'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -70,6 +71,7 @@ class AFSVideoViewer extends AppElement {
 
 
   __computeSrc(item, opened) {
+
     if (!item || !opened) { return '#'; }
 
     const {_tempUrl, original} = item;
@@ -79,11 +81,13 @@ class AFSVideoViewer extends AppElement {
 
 
   __reset() {
+
   	this._opened = false;
   }
 
 
   async __backBtnClicked() {
+
     try {
       await this.clicked();
 
@@ -96,7 +100,8 @@ class AFSVideoViewer extends AppElement {
   }
 
 
-  async open() {      
+  async open() {    
+    
     await this.$.overlay.open();
 
     this._opened = true;

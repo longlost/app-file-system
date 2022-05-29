@@ -13,10 +13,10 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {FileInfoMixin}    from '../shared/file-info-mixin.js';
-import {ItemMixin}        from './item-mixin.js';
-import htmlString         from './afs-file-item.html';
+import {AppElement}    from '@longlost/app-core/app-element.js';
+import {FileInfoMixin} from '../shared/file-info-mixin.js';
+import {ItemMixin}     from './item-mixin.js';
+import template        from './afs-file-item.html';
 import '@longlost/app-core/app-icons.js';
 import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/paper-icon-button/paper-icon-button.js';
@@ -28,7 +28,7 @@ class AFSFileItem extends ItemMixin(FileInfoMixin(AppElement)) {
   static get is() { return 'afs-file-item'; }
 
   static get template() {
-    return html([htmlString]);
+    return html([template]);
   }
 
 

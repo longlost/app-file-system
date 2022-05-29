@@ -33,10 +33,10 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {schedule, wait}   from '@longlost/app-core/utils.js';
-import {EditorMixin}      from './editor-mixin.js';
-import htmlString         from './afs-file-editor.html';
+import {AppElement}     from '@longlost/app-core/app-element.js';
+import {schedule, wait} from '@longlost/app-core/utils.js';
+import {EditorMixin}    from './editor-mixin.js';
+import template         from './afs-file-editor.html';
 import '../shared/afs-file-icons.js';
 import '../shared/afs-action-buttons.js';
 import '../shared/afs-edit-photo-fab.js';
@@ -44,10 +44,11 @@ import '../shared/afs-edit-photo-fab.js';
 
 
 class AFSFileEditor extends EditorMixin(AppElement) {
+
   static get is() { return 'afs-file-editor'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -82,16 +83,19 @@ class AFSFileEditor extends EditorMixin(AppElement) {
 
 
   __computeHeaderSize(isImg, isVid) {
+
     return isImg || isVid ? 5 : 2;
   }
 
 
   __computeHideLaunchBtn(isImg, isVid) {
+
     return !isImg && !isVid;
   }
 
 
   __computeHideLazyImg(isImg, isVid, poster) {
+
     if (isImg) { return false; }
 
     // Don't hide if there is a video poster present.
@@ -102,16 +106,19 @@ class AFSFileEditor extends EditorMixin(AppElement) {
 
 
   __computeHideLazyVideo(isVid, poster) {
+
     return !isVid || poster;
   }
 
 
   __computeSrc(imgSrc, poster) {
+
     return imgSrc ? imgSrc : poster;
   }
 
 
   async __launchBtnClicked() {
+
     try {
       await this.clicked();
 
@@ -130,6 +137,7 @@ class AFSFileEditor extends EditorMixin(AppElement) {
 
 
   async __back() {
+
     this.$.fab.exit();
 
     await wait(100);
@@ -147,12 +155,14 @@ class AFSFileEditor extends EditorMixin(AppElement) {
 
 
   async open() {
+
     await  this.$.overlay.open();
     return this.$.fab.enter();
   }
 
   // Used for confirmed delete actions.
   reset() {
+    
     return this.$.overlay.reset();
   }
 

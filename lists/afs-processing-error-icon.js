@@ -19,19 +19,20 @@
   *
   **/
 
-import {AppElement, html}   from '@longlost/app-core/app-element.js';
+import {AppElement}         from '@longlost/app-core/app-element.js';
 import {isCloudProcessable} from '@longlost/app-core/img-utils.js';
-import htmlString           from './afs-processing-error-icon.html';
+import template             from './afs-processing-error-icon.html';
 import '@longlost/app-core/app-icons.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-menu-button/paper-menu-button.js';
 
 
 class AFSProcessingErrorIcon extends AppElement {
+
   static get is() { return 'afs-processing-error-icon'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -63,6 +64,7 @@ class AFSProcessingErrorIcon extends AppElement {
 
 
   __computeErrors(item) {
+
     if (!item) { return; }
 
     const {optimizedError, posterError, thumbnailError, type} = item;
@@ -105,6 +107,7 @@ class AFSProcessingErrorIcon extends AppElement {
 
 
   async __dropdownClicked() {
+    
     try {
       await this.clicked();
 

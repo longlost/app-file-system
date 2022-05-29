@@ -23,18 +23,19 @@
   **/
 
 
-import {AppElement, html}  from '@longlost/app-core/app-element.js';
+import {AppElement}        from '@longlost/app-core/app-element.js';
 import {PhotoElementMixin} from '../shared/photo-element-mixin.js';
-import htmlString          from './afs-file-thumbnail.html';
+import template            from './afs-file-thumbnail.html';
 import '@polymer/iron-icon/iron-icon.js';
 import './afs-file-icons.js';
 
 
 class AFSFileThumbnail extends PhotoElementMixin(AppElement) {
+
   static get is() { return 'afs-file-thumbnail'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -69,6 +70,7 @@ class AFSFileThumbnail extends PhotoElementMixin(AppElement) {
   }
 
   __computeHideMovieIcon(type, presentation) {
+
     if (!type || presentation) { return true; }
 
     return !type.includes('video');
@@ -76,6 +78,7 @@ class AFSFileThumbnail extends PhotoElementMixin(AppElement) {
 
 
   __computeIcon(type) {
+    
     if (!type) { return false; }
 
     if (type.includes('image')) {

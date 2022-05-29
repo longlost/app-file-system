@@ -21,16 +21,17 @@
   **/
 
 
-import {AppElement, html}            from '@longlost/app-core/app-element.js';
+import {AppElement}                  from '@longlost/app-core/app-element.js';
 import {getBBox, naturals, schedule} from '@longlost/app-core/utils.js';
 import {PhotoElementMixin}           from '../shared/photo-element-mixin.js';
-import htmlString                    from './afs-carousel-item.html';
+import template                      from './afs-carousel-item.html';
 
 
 // Fault tolerance for failed thumbnail cloud processes.
 // Try the placeholder first, but if its not valid
 // attempt the src.
 const getNaturals = async (placeholder, src) => {
+
   try {
     const dimentions = await naturals(placeholder);
 
@@ -43,10 +44,11 @@ const getNaturals = async (placeholder, src) => {
 
 
 class AFSCarouselItem extends PhotoElementMixin(AppElement) {
+
   static get is() { return 'afs-carousel-item'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -84,6 +86,7 @@ class AFSCarouselItem extends PhotoElementMixin(AppElement) {
   // run over all elements in the template for every
   // change in the dom.
   __indexReverseChanged(index, reverse) {
+
     if (!index || !reverse) { return; }
 
     this.style['order'] = `-${index}`;
@@ -91,6 +94,7 @@ class AFSCarouselItem extends PhotoElementMixin(AppElement) {
 
   // Cache the image measurements to improve click handler speed.
   async __placeholderSrcChanged(placeholder, src) {
+
     this._naturals = undefined; // Clear cached val.
 
     if (placeholder || src) {      
@@ -100,6 +104,7 @@ class AFSCarouselItem extends PhotoElementMixin(AppElement) {
 
 
   async __imgClicked() {
+    
     try {
       await this.clicked();
 

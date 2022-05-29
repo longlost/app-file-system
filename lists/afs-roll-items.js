@@ -18,10 +18,10 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {scale}            from '@longlost/app-core/lambda.js';
-import {ItemsMixin}       from './items-mixin.js';
-import htmlString         from './afs-roll-items.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import {scale}      from '@longlost/app-core/lambda.js';
+import {ItemsMixin} from './items-mixin.js';
+import template     from './afs-roll-items.html';
 import './afs-paginated-roll-items.js';
 
 
@@ -30,10 +30,11 @@ const thumbnailScaler = scale(0, 100, 72, 148);
 
 
 class AFSRollItems extends ItemsMixin(AppElement) {
+
   static get is() { return 'afs-roll-items'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -55,6 +56,7 @@ class AFSRollItems extends ItemsMixin(AppElement) {
 
 
   __scaleChanged(scale) {
+    
     if (typeof scale !== 'number') { return; }
 
     const size = thumbnailScaler(scale);

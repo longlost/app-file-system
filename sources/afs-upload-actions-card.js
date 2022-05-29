@@ -10,18 +10,19 @@
   *
   **/
 
-import {AppElement, html}            from '@longlost/app-core/app-element.js';
+import {AppElement}                  from '@longlost/app-core/app-element.js';
 import {hijackEvent, schedule, wait} from '@longlost/app-core/utils.js';
-import htmlString                    from './afs-upload-actions-card.html';
+import template                      from './afs-upload-actions-card.html';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-card/paper-card.js';
 
 
 class AFSUploadActionsCard extends AppElement {
+
   static get is() { return 'afs-upload-actions-card'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -59,11 +60,13 @@ class AFSUploadActionsCard extends AppElement {
 
 
   __computeEditorType(list) {
+
     return list === 'files' ? 'file' : 'image';
   }
 
 
   __computeReadyQtyStr(qty) {
+
     if (typeof qty !== 'number' || qty < 1) { return ''; }
 
     return qty > 1 ? `${qty} files are` : 'Your file is';
@@ -71,6 +74,7 @@ class AFSUploadActionsCard extends AppElement {
 
 
   __computeRenameQtyStr(qty) {
+
     if (typeof qty !== 'number' || qty < 1) { return ''; }
 
     return qty > 1 ? 'any of these files' : 'this file'
@@ -78,6 +82,7 @@ class AFSUploadActionsCard extends AppElement {
 
 
   async __hide() {
+
     if (!this._shown) { return; }
 
     this.style['transform'] = 'translateY(100%)';
@@ -92,6 +97,7 @@ class AFSUploadActionsCard extends AppElement {
 
 
   async __renameBtnClicked(event) {
+
     hijackEvent(event);
 
     try {
@@ -108,6 +114,7 @@ class AFSUploadActionsCard extends AppElement {
 
 
   async __goBtnClicked(event) {
+
     hijackEvent(event);
 
     try {
@@ -124,6 +131,7 @@ class AFSUploadActionsCard extends AppElement {
 
 
   async nudge() {
+
     if (!this._shown) { return; }
 
     this.style['transform'] = 'translateY(-32px)';
@@ -135,6 +143,7 @@ class AFSUploadActionsCard extends AppElement {
 
 
   async show() {
+    
     if (this._shown) { return; }
 
     this._shown           = true;

@@ -36,8 +36,8 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import htmlString         from './afs-image-editor-reset-modal.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import template     from './afs-image-editor-reset-modal.html';
 import '@longlost/app-core/app-shared-styles.css';
 import '@longlost/app-overlays/app-modal.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -50,7 +50,7 @@ class AFSImageEditorResetModal extends AppElement {
   static get is() { return 'afs-image-editor-reset-modal'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

@@ -35,10 +35,7 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   message,
@@ -50,7 +47,7 @@ import {
 import {fetchFile}  from '@longlost/app-core/file-utils.js';
 import path         from 'path'; // webpack includes this by default!
 import mime         from 'mime-types';
-import htmlString   from './afs-web-file-card.html';
+import template     from './afs-web-file-card.html';
 import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
@@ -63,7 +60,7 @@ class AFSWebFileCard extends AppElement {
   static get is() { return 'afs-web-file-card'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

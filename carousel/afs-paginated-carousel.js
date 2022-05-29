@@ -30,7 +30,7 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   collection,
@@ -47,7 +47,8 @@ import {
 } from '@longlost/app-core/services/services.js';
 
 import {isOnScreen} from '@longlost/app-core/utils.js';
-import htmlString   from './afs-paginated-carousel.html';
+
+import template from './afs-paginated-carousel.html';
 import '@longlost/app-carousels/app-carousel.js';
 import './afs-carousel-item.js';
 
@@ -57,7 +58,7 @@ class AFSPaginatedCarousel extends AppElement {
   static get is() { return 'afs-paginated-carousel'; }
 
   static get template() {
-    return html([htmlString]);
+    return html([template]);
   }
 
 

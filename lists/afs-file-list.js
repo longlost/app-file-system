@@ -28,18 +28,19 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {AppElement}       from '@longlost/app-core/app-element.js';
 import {schedule}         from '@longlost/app-core/utils.js';
 import {ListOverlayMixin} from './list-overlay-mixin.js';
-import htmlString         from './afs-file-list.html';
+import template           from './afs-file-list.html';
 // 'afs-file-items' lazy loaded after open.
 
 
 class AFSFileList extends ListOverlayMixin(AppElement) {
+
   static get is() { return 'afs-file-list'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -57,6 +58,7 @@ class AFSFileList extends ListOverlayMixin(AppElement) {
 
   // Overlay 'on-reset' handler.
   __reset() {
+
     this._opened = false;
   }
 
@@ -77,6 +79,7 @@ class AFSFileList extends ListOverlayMixin(AppElement) {
 
 
   open() {
+
     this._isSelector = false;
 
     return this.__open();
@@ -84,6 +87,7 @@ class AFSFileList extends ListOverlayMixin(AppElement) {
   
 
   openSelector() {
+    
     this._isSelector = true;
 
     return this.__open();
