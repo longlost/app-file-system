@@ -33,10 +33,10 @@
   **/
 
 
-import {AppElement, html}       from '@longlost/app-core/app-element.js';
+import {AppElement}             from '@longlost/app-core/app-element.js';
 import {listenOnce, wait, warn} from '@longlost/app-core/utils.js';
 import {ImageEditorItemMixin}   from './image-editor-item-mixin.js';
-import htmlString               from './afs-image-cropper.html';
+import template                 from './afs-image-cropper.html';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-selector/iron-selector.js';
@@ -54,6 +54,7 @@ import './afs-rotation-slider.js';
 // to the appropriate number form
 // for crop-wrapper.
 const getRatio = name => {
+
   switch (name) {
     case 'free':
       return undefined;
@@ -72,10 +73,11 @@ const getRatio = name => {
 
 
 class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
+
   static get is() { return 'afs-image-cropper'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -134,6 +136,7 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
 
 
   connectedCallback() {
+
     super.connectedCallback();
 
     this.$.a11y.target = document.body;
@@ -147,6 +150,7 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
   // size of the file by ~ 5x, so limit the dimensions
   // of the output to compensate.
   __computeTransformFileType(type, ext, newExt) {
+
     if (!type || !ext || !newExt) { return false; }
 
     const originalExt = type.includes('video') ? '.jpeg' : ext;
@@ -180,16 +184,19 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
 
 
   __cropperActive() {
+
     this._cropBtnDisabled = false;
   }
 
 
   __cropperReady() {
+
     this.fire('image-cropper-loaded');
   }
 
 
   async __btnClicked(fn, ...args) {
+
     try {
 
       if (!this.$.cropper.isReady) { return; }
@@ -211,26 +218,31 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
 
 
   __zoomInClicked() {
+
     this.__btnClicked('zoomIn');
   }
 
 
   __zoomOutClicked() {
+
     this.__btnClicked('zoomOut');
   }
 
 
   __flipHorzClicked() {
+
     this.__btnClicked('flipHorz');
   }
 
 
   __flipVertClicked() {
+
     this.__btnClicked('flipVert');
   }
 
 
   __squareClicked() {
+
     this._selectedShape = 'square';
     this.__btnClicked('setRound', false);
 
@@ -239,6 +251,7 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
 
 
   __circleClicked() {   
+
     this._selectedShape = 'circle';
     this.__btnClicked('setRound', true);
 
@@ -247,6 +260,7 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
 
 
   __aspectRatioSelected(event) {
+
     if (!this.$.cropper.isReady) { return; }
 
     const {value: name} = event.detail;
@@ -258,6 +272,7 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
 
 
   __fineDegreesChanged(event) {
+
     if (!this.$.cropper.isReady) { return; }
 
     this._cropBtnDisabled = false;
@@ -276,6 +291,7 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
 
 
   async __centerSliderClicked() {
+
     try {
       await this.clicked();
 
@@ -298,31 +314,37 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
   // Not awaiting this.clicked here
   // because __reset uses it with __btnClicked.
   __clearClicked() {
+
     this.__reset();
   }
 
 
   __upClicked() {
+
     this.__btnClicked('move', 0, -10);
   }
 
 
   __leftClicked() {
+
     this.__btnClicked('move', -10, 0);
   }
 
 
   __rightClicked() {
+
     this.__btnClicked('move', 10, 0);
   }
 
 
   __downClicked() {
+
     this.__btnClicked('move', 0, 10);
   }
 
 
   async __cropClicked() {
+
     try {      
 
       this.fire('image-cropper-show-spinner', {text: 'Cropping image.'});
@@ -331,6 +353,7 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
       await wait(300);
 
       const process = async () => {
+
         const low = await this.__btnClicked('getCrop', this.ext, this._transformFileType);
 
         this.$.cropper.replace(this.highQuality);
@@ -364,6 +387,7 @@ class AFSImageCropper extends ImageEditorItemMixin(AppElement) {
   // Also called by image-editor-item-mixin
   // when the editedSrc is changed.
   async __reset() {  
+    
     this._degrees        = 0;
     this._fineDegrees    = 0;
     this._selectedAspect = 'free';

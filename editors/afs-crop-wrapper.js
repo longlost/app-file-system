@@ -14,12 +14,13 @@
   *
   **/
 
-import {AppElement, html}            from '@longlost/app-core/app-element.js';
+import {AppElement}                  from '@longlost/app-core/app-element.js';
 import {blobToFile}                  from '@longlost/app-core/lambda.js';
 import {hijackEvent, schedule, warn} from '@longlost/app-core/utils.js';
 import path                          from 'path';
 import mime                          from 'mime-types';
 import Cropper                       from 'cropperjs';
+import template                      from './afs-crop-wrapper.html';
 import 'cropperjs/dist/cropper.css';
 
 
@@ -32,6 +33,7 @@ const cleanExt = src => path.extname(src).split('?')[0];
 // Pulled from the source code from:
 //    https://fengyuanchen.github.io/cropper.js/examples/crop-a-round-image.html
 const getRoundedCanvas = sourceCanvas => {
+  
   const canvas  = document.createElement('canvas');
   const context = canvas.getContext('2d');
   const width   = sourceCanvas.width;
@@ -63,86 +65,7 @@ class AFSCropWrapper extends AppElement {
   static get is() { return 'afs-crop-wrapper'; }
 
   static get template() {
-
-    return html`
-      <style include="cropper">
-      
-        :host {
-          display:          block;
-          background-color: inherit;
-
-          --preview-mixin: {
-            height:     100px;
-            margin-top: 16px;
-          };
-
-          --crop-area-border-radius: 0px;
-          --crop-color: var(--app-primary-color);
-        }
-
-        #wrapper {
-          height: 100%;
-        }
-
-        #img {
-          display:   block;
-          max-width: 100%;
-        }        
-
-        #preview {
-          @apply --preview-mixin;
-          overflow: hidden;
-        }
-
-        #preview[hidden] {
-          display: none;
-        }
-
-        .cropper-view-box,
-        .cropper-face {
-          border-radius: var(--crop-area-border-radius);
-        }
-
-        .cropper-view-box {
-          outline: 1px solid var(--crop-color);
-        }
-
-        .cropper-line,
-        .cropper-point,
-        .cropper-point.point-se::before {
-          background-color: var(--crop-color);
-        }
-
-      </style>
-
-
-      <div id="wrapper" 
-           on-contextmenu="__preventContextMenuOnCropper">
-
-        <!-- 
-          MUST set crossorigin directly here for cropperjs to 
-          properly add this property to the cloned version of 
-          this element!
-        -->
-        
-        <img id="img"
-             alt="[[alt]]"
-             crossorigin="anonymous"
-             src="[[src]]"
-             on-cropstart="__active"
-             on-error="__error"
-             on-load="__loaded"
-             on-ready="__ready"
-             on-zoom="__active"/>
-
-      </div>
-
-
-      <div id="preview" 
-           hidden="[[!preview]]">
-      </div>
-      
-    `;
+    return template;
   }
 
 

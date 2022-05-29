@@ -32,18 +32,19 @@
   **/
 
 
-import {AppElement, html}  from '@longlost/app-core/app-element.js';
-import {schedule, wait}    from '@longlost/app-core/utils.js';
-import htmlString          from './afs-edit-photo-fab.html';
+import {AppElement}     from '@longlost/app-core/app-element.js';
+import {schedule, wait} from '@longlost/app-core/utils.js';
+import template         from './afs-edit-photo-fab.html';
 import '@polymer/paper-fab/paper-fab.js';
 import '../shared/afs-file-icons.js';
 
 
 class AFSEditPhotoFab extends AppElement {
+
   static get is() { return 'afs-edit-photo-fab'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -75,6 +76,7 @@ class AFSEditPhotoFab extends AppElement {
 
 
   __computeHidden(item) {
+
     if (!item || !item.type) { return true; }
 
     const {optimized, poster, thumbnail, type} = item;
@@ -98,6 +100,7 @@ class AFSEditPhotoFab extends AppElement {
 
 
   __hiddenChanged(hidden) {
+
     if (this.parentControls) { return; }
 
     if (hidden) {
@@ -110,6 +113,7 @@ class AFSEditPhotoFab extends AppElement {
 
 
   async __fabClicked() {
+
     try {
       await this.clicked();
 
@@ -123,6 +127,7 @@ class AFSEditPhotoFab extends AppElement {
 
 
   async enter() {
+
     if (this._hidden) { return; }
 
     this.style['display'] = 'inline-block';
@@ -136,6 +141,7 @@ class AFSEditPhotoFab extends AppElement {
 
  
   async exit() {
+
     if (this._hidden) { return; }
 
     this.$.fab.classList.remove('fab-animation');
@@ -147,6 +153,7 @@ class AFSEditPhotoFab extends AppElement {
 
 
   reset() {
+    
     this.$.fab.classList.remove('fab-animation');
     this.style['display'] = 'none';
   }

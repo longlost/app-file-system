@@ -36,10 +36,7 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   hijackEvent,
@@ -47,7 +44,7 @@ import {
   schedule
 } from '@longlost/app-core/utils.js';
 
-import htmlString from './afs-delete-modal.html';
+import template from './afs-delete-modal.html';
 import '@longlost/app-core/app-shared-styles.css';
 import '@longlost/app-overlays/app-modal.js';
 import '@polymer/paper-button/paper-button.js';
@@ -59,7 +56,7 @@ class AFSDeleteModal extends AppElement {
   static get is() { return 'afs-delete-modal'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

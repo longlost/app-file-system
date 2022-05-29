@@ -99,6 +99,7 @@ export const FileInfoMixin = superClass => {
 
 
 	  __computeDateTime(item) {
+
 	    if (!item) { return ''; }
 
 	    const {lastModified, timestamp} = item;
@@ -112,11 +113,13 @@ export const FileInfoMixin = superClass => {
 
 
 	  __computeDirName(p) {
+
 	  	return p ? path.dirname(p) : '';
 	  }
 
 
 	  __computeGPS(lat, lng) {
+
 	  	if (!lat || !lng) { return ''; }
 
 	  	if (typeof lat === 'number') { return `Lat ${lat}, Lng ${lng}`; }  	
@@ -126,11 +129,13 @@ export const FileInfoMixin = superClass => {
 
 
 	  __computeMimeExt(type) {
+
 	  	return type ? mime.extension(type) : '';
 	  }
 
 
 	  __computeOrder(index) {
+	  	
 	    return typeof index === 'number' ? `${index + 1}` : '';
 	  }
 

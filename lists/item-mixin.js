@@ -91,6 +91,7 @@ export const ItemMixin = superClass => {
 
   
 	  __hideCheckboxChanged(hide) {
+
 	    if (hide) {
 	      this.selected = false;
 	    }
@@ -100,6 +101,7 @@ export const ItemMixin = superClass => {
 	  // selected state if its item data
 	  // is that of a different item.
 	  __itemChanged(newItem, oldItem) {
+
 	  	if (!newItem) {
 	  		this.selected = false;	  		
 	  	}
@@ -111,6 +113,7 @@ export const ItemMixin = superClass => {
 
 
 	  __selectedChanged(selected) {
+
 	    this.fire('item-selected', {
 	      item: this.item, 
 	      selected
@@ -119,6 +122,7 @@ export const ItemMixin = superClass => {
 
 
 	  __computeUpload(uid, uploads) {
+
 	    if (!uid || !uploads) { return; }
 
 	    return uploads[uid];
@@ -157,6 +161,7 @@ export const ItemMixin = superClass => {
 
 
 	  __selectCheckboxValChanged(event) {
+	  	
 	    this.selected = event.detail.value;
 	  }
 

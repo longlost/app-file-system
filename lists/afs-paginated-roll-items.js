@@ -26,7 +26,7 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   collection,
@@ -40,7 +40,8 @@ import {
 } from '@longlost/app-core/services/services.js';
 
 import {isOnScreen} from '@longlost/app-core/utils.js';
-import htmlString   from './afs-paginated-roll-items.html';
+
+import template from './afs-paginated-roll-items.html';
 import './afs-roll-item.js';
 
 
@@ -49,7 +50,7 @@ class AFSPaginatedRollItems extends AppElement {
   static get is() { return 'afs-paginated-roll-items'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -194,6 +195,7 @@ class AFSPaginatedRollItems extends AppElement {
     };
 
     const errorCallback = error => {
+      
       this._items  = undefined;
       this._doc    = undefined;
 

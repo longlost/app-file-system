@@ -33,8 +33,8 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import htmlString         from './afs-image-editor-item.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import template     from './afs-image-editor-item.html';
 import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-button/paper-button.js';
@@ -46,7 +46,7 @@ class AFSImageEditorItem extends AppElement {
   static get is() { return 'afs-image-editor-item'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

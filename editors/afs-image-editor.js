@@ -33,10 +33,10 @@
   **/
 
 
-import {AppElement, html}           from '@longlost/app-core/app-element.js';
+import {AppElement}                 from '@longlost/app-core/app-element.js';
 import {listenOnce, schedule, wait} from '@longlost/app-core/utils.js';
 import {EditorMixin}                from './editor-mixin.js';
-import htmlString                   from './afs-image-editor.html';
+import template                     from './afs-image-editor.html';
 import '@longlost/app-spinner/app-spinner.js';
 import '@longlost/tab-pages/tab-pages.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -52,10 +52,11 @@ import './afs-image-meta.js';
 
 
 class AFSImageEditor extends EditorMixin(AppElement) {
+
   static get is() { return 'afs-image-editor'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -143,6 +144,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
   // as well as errors that occur when uploading
   // and cloud processing images larger than 10MB.
   __computeExt(type, ext, cropIsRound) {
+
     if (!type || !ext) { return; }
 
     // If this is a video, use the poster's extension, 
@@ -154,11 +156,13 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
 
   __computeHideMeta(list) {
+
     return list === 'files';
   }
 
 
   __computeHideToolbarBtns(edited) {
+
     return !Boolean(edited);
   }
 
@@ -208,6 +212,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
 
   async __showPageSpinner() {
+
     if (!this._selectedPage) { return; }
 
     this.$.pagesSpinner.show('Loading.');
@@ -268,6 +273,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
 
   async __resetBtnClicked() {
+
     try {
       await this.clicked();
 
@@ -286,6 +292,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
   
   async __saveBtnClicked() {
+
     try {
       await this.clicked();
 
@@ -304,16 +311,19 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
   // Paper tabs on-selected-changed handler.
   __selectedPageChanged(event) {
+
     this._selectedPage = event.detail.value;
   }
 
 
   __tabPageChanged(event) {
+
     this._currentPage = event.detail.value;
   }
 
 
   async __hideSpinner() {
+
     await schedule();
 
     this.$.spinner.hide();
@@ -321,12 +331,14 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
 
   __showSpinner(event) {
+
     const {text} = event.detail;
     this.$.spinner.show(text);
   }
 
 
   __filtered(event) {
+
     const {high, low}     = event.detail;
     this._editedFile      = low;
     this._highQualityFile = high;
@@ -334,6 +346,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
 
   __adjusted(event) {
+
     const {high, low}     = event.detail;
     this._editedFile      = low;
     this._highQualityFile = high;
@@ -341,6 +354,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
 
   __cropped(event) {
+
     const {high, low}     = event.detail;
     this._editedFile      = low;
     this._highQualityFile = high;
@@ -348,11 +362,13 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
 
   __cropRoundChanged(event) {
+
     this._cropIsRound = event.detail.value;
   }
 
 
   __cleanup() {
+
     if (this._highQualityUrl) {
       window.URL.revokeObjectURL(this._highQualityUrl);
       this._highQualityUrl  = undefined;
@@ -384,6 +400,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
   // Save modal when user chooses to not save edits.
   __close() {
+
     this.$.overlay.close();
   }
 
@@ -399,6 +416,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
 
   async __saveAndClose() {
+
     await this.__save();
 
     // Wait for app-file-system spinner entry.
@@ -431,6 +449,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
 
   saved() {
+    
     this.__cleanup();
   }
 

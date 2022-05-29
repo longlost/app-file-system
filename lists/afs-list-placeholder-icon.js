@@ -31,9 +31,9 @@
   **/
 
 
-import {AppElement, html}      from '@longlost/app-core/app-element.js';
+import {AppElement}            from '@longlost/app-core/app-element.js';
 import {hijackEvent, schedule} from '@longlost/app-core/utils.js';
-import htmlString              from './afs-list-placeholder-icon.html';
+import template                from './afs-list-placeholder-icon.html';
 import '@longlost/app-core/app-shared-styles.css';
 
 
@@ -42,7 +42,7 @@ class AFSListPlaceholderIcon extends AppElement {
   static get is() { return 'afs-list-placeholder-icon'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -105,7 +105,8 @@ class AFSListPlaceholderIcon extends AppElement {
       hijackEvent(event);
     }   
 
-    window.requestAnimationFrame(async () => {      
+    window.requestAnimationFrame(async () => {   
+
       const random = Math.min(Math.random() * 10, 6);
 
       this.$.eyesPath.classList.remove('blink');
@@ -124,7 +125,8 @@ class AFSListPlaceholderIcon extends AppElement {
       hijackEvent(event);
     } 
 
-    window.requestAnimationFrame(async () => {      
+    window.requestAnimationFrame(async () => {  
+        
       const randomDelay  = Math.max(Math.random() * 3, 0.8);
       const randomIndex  = Math.floor(Math.random() * 5);     
       const otherClasses = this._lookingClasses.filter(str => 

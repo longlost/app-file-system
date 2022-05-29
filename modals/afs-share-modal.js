@@ -36,10 +36,7 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   message,
@@ -54,7 +51,7 @@ import {
   updateMetadata
 } from '@longlost/app-core/services/services.js';
 
-import htmlString from './afs-share-modal.html';
+import template from './afs-share-modal.html';
 import '@longlost/app-overlays/app-modal.js';
 import '@longlost/app-spinner/app-spinner.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -68,7 +65,7 @@ class AFSShareModal extends AppElement {
   static get is() { return 'afs-share-modal'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -98,6 +95,7 @@ class AFSShareModal extends AppElement {
 
 
   connectedCallback() {
+
     super.connectedCallback();
 
     if ('clipboard' in navigator) {
@@ -107,6 +105,7 @@ class AFSShareModal extends AppElement {
 
 
   async __itemChanged(item, isOpen) {
+
     try {
 
       if (!isOpen) { return; }
@@ -153,6 +152,7 @@ class AFSShareModal extends AppElement {
 
 
   async __copyBtnClicked() {
+
     try {
 
       if (!this._shareLink) { return; }
@@ -173,6 +173,7 @@ class AFSShareModal extends AppElement {
 
 
   async __dismissBtnClicked() {
+
     try {
       await this.clicked();
       this.__close();
@@ -185,6 +186,7 @@ class AFSShareModal extends AppElement {
 
 
   __close() {
+
     this._isOpen = false;
     this.$.spinner.hide();
     this.$.modal.close();
@@ -192,6 +194,7 @@ class AFSShareModal extends AppElement {
 
 
   async open(item) {
+    
     this.$.spinner.show('Creating your link.');
     await schedule();
     await this.$.modal.open();

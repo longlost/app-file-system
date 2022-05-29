@@ -39,8 +39,8 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import htmlString         from './afs-multiselect-btns.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import template     from './afs-multiselect-btns.html';
 import '@longlost/app-core/app-icons.js';
 import '@longlost/badged-icon-button/badged-icon-button.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
@@ -48,10 +48,11 @@ import '../shared/afs-file-icons.js';
 
 
 class AFSMultiselectBtns extends AppElement {
+
   static get is() { return 'afs-multiselect-btns'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -156,31 +157,37 @@ class AFSMultiselectBtns extends AppElement {
 
 
   __computeAll(state) {
+
     return state === 'all';
   }
 
 
   __computeBtnDisabled(count) {
+
     return count < 1;
   }
 
 
   __computeBtnEnterClass(count) {
+
     return count > 0 ? 'enter' : '';
   }
 
 
   __computeCount(selected) {
+
     return Object.keys(selected).length;
   }
 
 
   __computeHideCheckboxes(state) {
+
     return state === 'none';
   }
 
 
   __computeHidePrintBtn(items) {
+
     if (!Array.isArray(items)) { return true; }
 
     // All images and videos which have a poster image.
@@ -194,11 +201,13 @@ class AFSMultiselectBtns extends AppElement {
 
 
   __computeHideSelectBtn(items) {
+
     return !Array.isArray(items) || items.length === 0;
   }
 
 
   __computeItems(data) {
+
     if (!data) { return; }
 
     return Object.values(data);
@@ -206,6 +215,7 @@ class AFSMultiselectBtns extends AppElement {
 
 
   __computeShowAllBadge(count, items) {
+
     if (!Array.isArray(items)) { return false; }
 
     return count === items.length;
@@ -213,21 +223,25 @@ class AFSMultiselectBtns extends AppElement {
 
 
   __computeShowCountBadge(count) {
+
     return count > 0;
   }
 
 
   __allChanged(value) {
+
     this.fire('all-changed', {value});
   }
 
 
   __hideCheckboxesChanged(value) {
+
     this.fire('hide-checkboxes-changed', {value});
   }
 
 
   async __btnClicked(name) {
+
     try {
       await this.clicked();
 
@@ -245,21 +259,25 @@ class AFSMultiselectBtns extends AppElement {
 
 
   __deleteBtnClicked() {
+
     this.__btnClicked('request-delete-items');
   }
 
 
   __downloadBtnClicked() {
+
     this.__btnClicked('download-items');
   }
 
 
   __printBtnClicked() {
+
     this.__btnClicked('print-images');
   }
 
 
   async __selectBtnClicked() {
+
     try {
       await this.clicked();
 
@@ -285,17 +303,20 @@ class AFSMultiselectBtns extends AppElement {
 
 
   delete() {
+
     this._selectedItems = {};
     this._state         = 'none';
   }
 
 
   selected(item) {
+
     this._selectedItems = {...this._selectedItems, [item.uid]: item};
   }
 
 
   unselected(item) {
+    
     delete this._selectedItems[item.uid];
     this._selectedItems = {...this._selectedItems};
   }

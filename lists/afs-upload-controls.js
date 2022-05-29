@@ -11,10 +11,7 @@
   **/
 
   
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   isDisplayed,
@@ -22,17 +19,18 @@ import {
   wait
 } from '@longlost/app-core/utils.js';
 
-import htmlString from './afs-upload-controls.html';
+import template from './afs-upload-controls.html';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-progress/paper-progress.js';
 import '../shared/afs-file-icons.js';
 
 
 class AFSUploadControls extends AppElement {
+
   static get is() { return 'afs-upload-controls'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -69,11 +67,13 @@ class AFSUploadControls extends AppElement {
 
 
   __computeHideBtns(upload) {
+
     return !Boolean(upload);
   }
 
 
   async __show() {
+
     if (isDisplayed(this)) { return; }
 
     await wait(800);
@@ -88,6 +88,7 @@ class AFSUploadControls extends AppElement {
 
 
   async __hide() {
+
     this.style['transform'] = 'translateY(100%)';
     await wait(350);
     this.style['display'] = 'none';
@@ -106,6 +107,7 @@ class AFSUploadControls extends AppElement {
 
 
   async __pauseUploadButtonClicked() {
+
     try {
       await this.clicked();
       this.pause();
@@ -118,6 +120,7 @@ class AFSUploadControls extends AppElement {
 
 
   async __resumeUploadButtonClicked() {    
+
     try {
       await this.clicked();
       this.resume();
@@ -130,6 +133,7 @@ class AFSUploadControls extends AppElement {
 
 
   cancel() {
+
     if (this.upload && this.upload.controls) {
       this.upload.controls.cancel();
     }
@@ -137,6 +141,7 @@ class AFSUploadControls extends AppElement {
 
 
   pause() {
+
     if (this.upload && this.upload.controls) {
       this._paused = true;
       this.upload.controls.pause();
@@ -145,6 +150,7 @@ class AFSUploadControls extends AppElement {
 
 
   resume() {
+    
     if (this.upload && this.upload.controls) {
       this._paused = false;
       this.upload.controls.resume();

@@ -10,18 +10,19 @@
   *
   **/
   
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {hijackEvent}      from '@longlost/app-core/utils.js';
-import htmlString         from './afs-drop-zone.html';
+import {AppElement}  from '@longlost/app-core/app-element.js';
+import {hijackEvent} from '@longlost/app-core/utils.js';
+import template      from './afs-drop-zone.html';
 import '@polymer/iron-icon/iron-icon.js';
 import '../shared/afs-file-icons.js';
 
 
 class AFSDropZone extends AppElement {
+
   static get is() { return 'afs-drop-zone'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -66,6 +67,7 @@ class AFSDropZone extends AppElement {
 
 
   __computeInputAccept(accept) {
+
     if (!accept || accept === 'image') { return 'image/*'; }
 
     if (accept === 'audio') { return 'audio/*'; } 
@@ -76,6 +78,7 @@ class AFSDropZone extends AppElement {
 
   
   __computeInstructions(multiple) {
+
     return multiple ? 'DROP FILES HERE' : 'DROP FILE HERE';
   }
 
@@ -89,16 +92,19 @@ class AFSDropZone extends AppElement {
 
 
   __highlight() {
+
     this.$.label.classList.add('highlight');
   }
 
 
   __unhighlight() {
+
     this.$.label.classList.remove('highlight');
   }
 
 
   __handleDragEnterAndOver(event) {
+
     hijackEvent(event);
 
     this.__highlight();
@@ -106,6 +112,7 @@ class AFSDropZone extends AppElement {
 
 
   __handleDragLeave(event) {
+
     hijackEvent(event);
 
     this.__unhighlight();
@@ -113,6 +120,7 @@ class AFSDropZone extends AppElement {
 
 
   __handleDrop(event) {
+
     hijackEvent(event);
 
     this.__unhighlight();
@@ -121,6 +129,7 @@ class AFSDropZone extends AppElement {
 
 
   __handleChange(event) {
+
     this.__handleFiles(event.target.files);
   }
 
@@ -134,11 +143,13 @@ class AFSDropZone extends AppElement {
 
 
   clearFeedback()  {
+
     this._feedbackText = '';
   }
 
 
   createFeedback(id) {
+    
     let text = this._feedbacks[id];
     text = text.replace(/\{maxsize\}/,  this.maxsize);
     text = text.replace(/\{maxfiles\}/, this.maxfiles);

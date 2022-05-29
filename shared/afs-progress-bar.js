@@ -10,18 +10,19 @@
   *
   **/
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {schedule, wait}   from '@longlost/app-core/utils.js';
-import htmlString         from './afs-progress-bar.html';
+import {AppElement}     from '@longlost/app-core/app-element.js';
+import {schedule, wait} from '@longlost/app-core/utils.js';
+import template         from './afs-progress-bar.html';
 import '@longlost/paper-gauge/paper-gauge.js';
 import '@polymer/paper-progress/paper-progress.js';
 
 
 class AFSProgressBar extends AppElement {
+
   static get is() { return 'afs-progress-bar'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -60,11 +61,13 @@ class AFSProgressBar extends AppElement {
 
 
   __computeNotUsedClass(max) {
+
     return max > 0 ? '' : 'not-used';
   }
 
 
   async hide() {
+
     if (!this._indeterminate) { return; } // Already hidden.
 
     this.style['transform'] = '';
@@ -79,6 +82,7 @@ class AFSProgressBar extends AppElement {
 
 
   async show() {
+    
     if (this._indeterminate) { return; } // Already shown.
 
     this._indeterminate   = true;

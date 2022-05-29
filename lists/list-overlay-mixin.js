@@ -114,6 +114,7 @@ export const ListOverlayMixin = superClass => {
 
 
 	  connectedCallback() {
+
 	    super.connectedCallback();
 
 	    this.__openCarouselHandler = this.__openCarouselHandler.bind(this);
@@ -125,6 +126,7 @@ export const ListOverlayMixin = superClass => {
 
 
 	  disconnectedCallback() {
+
 	    super.disconnectedCallback();
 
 	    this.removeEventListener('open-carousel', this.__openCarouselHandler);
@@ -133,6 +135,7 @@ export const ListOverlayMixin = superClass => {
 
 
 	  __computeDataEmpty(data) {
+
 	  	if (data && typeof data === 'object' && Object.keys(data).length > 0) {
 	  		return false;
 	  	}
@@ -142,11 +145,13 @@ export const ListOverlayMixin = superClass => {
 
 
 	  __computeHidePlaceholder(empty, opened) {
+
 	  	return !Boolean(empty && opened);
 	  }
 
 
 	  __computeTitle(title, isSelector) {
+
 	  	return isSelector ? 'Select' : title;
 	  }
 
@@ -155,6 +160,7 @@ export const ListOverlayMixin = superClass => {
 	  // otherwise, this will close the overlay each time
 	  // the user opens it, which is terrible.
 	  async __dataEmptyOpenedChanged(empty) {
+
 	  	if (!empty || !this._opened) {
 	  		return;
 	  	}
@@ -175,6 +181,7 @@ export const ListOverlayMixin = superClass => {
 	  // Control memory footprint by removing 
 	  // "heavy" elements when not in use.
 	  __openedChanged(opened) {
+
 	  	if (!opened) {
 
 	  		this.fire('list-overlay-closed', {item: this._selectedItem});
@@ -185,11 +192,13 @@ export const ListOverlayMixin = superClass => {
 
 
 	  __allChanged(event) {
+
 	    this._all = event.detail.value;
 	  }
 
 
 	  __hideCheckboxesChanged(event) {
+
 	    this._hideCheckboxes = event.detail.value;
 	  }
 
@@ -214,6 +223,7 @@ export const ListOverlayMixin = superClass => {
 
 
 	  __itemSelectedHandler(event) {
+
 	    hijackEvent(event);
 
 	    const {item, selected} = event.detail;
@@ -228,17 +238,20 @@ export const ListOverlayMixin = superClass => {
 
 
 	  clearSelected() {
+
 	  	this._selectedItem = undefined;
 	  }
 
 	  // Called when in selector mode and user confirms
 	  // a selection via the confirmation modal.
 	  close() {
+
 	  	return this.$.overlay.close();
 	  }
 
 
 	  delete() {
+	  	
 	    this.$.multi.delete();
 	  }
 

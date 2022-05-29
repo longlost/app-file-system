@@ -33,13 +33,13 @@
   **/
 
 
-import {AppElement, html}          from '@longlost/app-core/app-element.js';
+import {AppElement}                from '@longlost/app-core/app-element.js';
 import {scale}                     from '@longlost/app-core/lambda.js';
 import {getRootTarget, wait, warn} from '@longlost/app-core/utils.js';
 import {ImageEditorItemMixin}      from './image-editor-item-mixin.js';
 import {FilterMixin}               from './filter-mixin.js';
 import {imgFilterFile}             from '../shared/utils.js';
-import htmlString                  from './afs-image-adjuster.html';
+import template                    from './afs-image-adjuster.html';
 import '@longlost/app-core/app-shared-styles.css';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-slider/paper-slider.js';
@@ -52,7 +52,7 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   static get is() { return 'afs-image-adjuster'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

@@ -42,7 +42,7 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   collection,
@@ -54,9 +54,14 @@ import {
   startAfter
 } from '@longlost/app-core/services/services.js';
 
-import {hijackEvent, isOnScreen} from '@longlost/app-core/utils.js';
-import {ItemsMixin}              from './items-mixin.js';
-import htmlString                from './afs-file-items.html';
+import {
+  hijackEvent, 
+  isOnScreen
+} from '@longlost/app-core/utils.js';
+
+import {ItemsMixin} from './items-mixin.js';
+
+import template from './afs-file-items.html';
 import '@longlost/drag-drop-list/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';
 import './afs-file-item.js';
@@ -68,7 +73,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
   static get is() { return 'afs-file-items'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -118,13 +123,6 @@ class AFSFileItems extends ItemsMixin(AppElement) {
   }
 
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-
-    this.__reset();
-  }
-
-
   static get observers() {
     return [
       '__itemsChanged(_items.*)',
@@ -135,12 +133,22 @@ class AFSFileItems extends ItemsMixin(AppElement) {
   }
 
 
+  disconnectedCallback() {
+
+    super.disconnectedCallback();
+
+    this.__reset();
+  }
+
+
   __computeHideIcons(items) {
+
     return !items || items.length < 2;
   }
 
 
   __collChanged(newVal, oldVal) {
+
     if (!newVal || (oldVal && newVal !== oldVal)) {
       this.__reset();
     }
@@ -211,7 +219,6 @@ class AFSFileItems extends ItemsMixin(AppElement) {
     if (sub.unsubscribe) {
       sub.unsubscribe();
     }
-
 
     const start = sub.page * this.limit;
 
@@ -321,6 +328,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
 
 
   __reset() {
+
     this.__unsub();
     this._items     = [];
     this._page      = 0;
@@ -330,6 +338,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
 
 
   __itemsChanged(polymerObj) {
+
     if (!polymerObj || !polymerObj.base) { return; }
 
     this.fire('items-changed', {value: polymerObj.base});
@@ -337,6 +346,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
 
 
   async __handleSort(event) {
+
     hijackEvent(event);
 
     // Take a snapshot of current sequence 
@@ -369,6 +379,7 @@ class AFSFileItems extends ItemsMixin(AppElement) {
 
 
   async __triggerElementChanged(trigger) {
+    
     try {
 
       if (!trigger) { return; }

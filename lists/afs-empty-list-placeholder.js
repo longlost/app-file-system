@@ -31,17 +31,18 @@
   **/
 
 
-import {AppElement, html} from '@longlost/app-core/app-element.js';
-import {schedule}         from '@longlost/app-core/utils.js';
-import htmlString         from './afs-empty-list-placeholder.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+import {schedule}   from '@longlost/app-core/utils.js';
+import template     from './afs-empty-list-placeholder.html';
 import './afs-list-placeholder-icon.js';
 
 
 class AFSEmptyListPlaceholder extends AppElement {
+
   static get is() { return 'afs-empty-list-placeholder'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 

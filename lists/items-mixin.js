@@ -28,8 +28,6 @@
   **/
 
 
-
-
 export const ItemsMixin = superClass => {
   return class ItemsMixin extends superClass {    
 
@@ -65,6 +63,7 @@ export const ItemsMixin = superClass => {
 
 
 	  __newPaginationDoc(event) {
+      
 	    const {doc, index} = event.detail;
 
 	    // Add/replace current pagination 

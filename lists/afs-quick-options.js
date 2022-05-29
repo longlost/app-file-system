@@ -25,10 +25,7 @@
   **/
 
 
-import {
-  AppElement, 
-  html
-} from '@longlost/app-core/app-element.js';
+import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   isDisplayed, 
@@ -36,17 +33,18 @@ import {
   wait
 } from '@longlost/app-core/utils.js';
 
-import htmlString from './afs-quick-options.html';
+import template from './afs-quick-options.html';
 import '@longlost/app-core/app-icons.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/afs-action-buttons.js';
 
 
 class AFSQuickOptions extends AppElement {
+
   static get is() { return 'afs-quick-options'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -70,6 +68,7 @@ class AFSQuickOptions extends AppElement {
   // reuses elements, close when the data changes.
   // This happens during a delete or adding new files.
   __itemChanged(item) {
+
     if (!item) { return; }
 
     this.close();
@@ -77,6 +76,7 @@ class AFSQuickOptions extends AppElement {
 
 
   async __closeBtnClicked() {
+    
     try {
       await this.clicked();
 

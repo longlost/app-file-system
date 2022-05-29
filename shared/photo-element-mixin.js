@@ -75,6 +75,7 @@ export const PhotoElementMixin = superClass => {
 
 
 	  connectedCallback() {
+
 	  	super.connectedCallback();
 
 	  	this.__handleImageLoadedChanged = this.__handleImageLoadedChanged.bind(this);
@@ -86,6 +87,7 @@ export const PhotoElementMixin = superClass => {
 
 
 	  disconnectedCallback() {
+
 	  	super.disconnectedCallback();
 
 	  	this.removeEventListener('lazy-image-loaded-changed', this.__handleImageLoadedChanged);
@@ -94,16 +96,19 @@ export const PhotoElementMixin = superClass => {
 
 
 	  __computeIsImg(type) {
+
 	    return type && type.includes('image');
 	  }
 
 
 	  __computeIsVid(type) { 
+
 	    return type && type.includes('video');
 	  }
 
 
 	  __computeImgPlaceholder(thumbnail, temp, isImg, isThumbnail) {
+
 	    if (!isImg) { return; }	 
 
 	    // Allow the thumbnail url to be set as the 
@@ -120,6 +125,7 @@ export const PhotoElementMixin = superClass => {
 
 
 	  __computeImgSrc(original, optimized, thumbnail, isImg, isThumbnail) {
+
 	    if (!isImg) { return; }
 
 	    if (isThumbnail && thumbnail) { return thumbnail; }
@@ -131,6 +137,7 @@ export const PhotoElementMixin = superClass => {
 
 
 	  __computeVidPlaceholder(original, temp, isVid) {
+
 	    if (!isVid) { return; }
 
 	    return original ? original : temp;
@@ -138,6 +145,7 @@ export const PhotoElementMixin = superClass => {
 
 
 	  __computeVidPoster(poster, optimized, thumbnail, isVid, isThumbnail) {
+
 	    if (!isVid) { return; }
 
 	    if (isThumbnail && thumbnail) { return thumbnail; }
@@ -149,6 +157,7 @@ export const PhotoElementMixin = superClass => {
 
 
 	  __computeVidSrc(original, isVid) {
+
 	    if (!isVid) { return; }
 
 	    return original;
@@ -156,6 +165,7 @@ export const PhotoElementMixin = superClass => {
 
 	  // <lazy-image> 'lazy-image-loaded-changed' event handler.
 	  async __handleImageLoadedChanged(event) {
+
 	  	hijackEvent(event);
 
 	    if (!this.item) { return; }
@@ -175,6 +185,7 @@ export const PhotoElementMixin = superClass => {
 
 	  // <lazy-video> 'lazy-video-metadata-loaded' event handler.
 	  __handleMetadataLoaded(event) {
+	  	
 	  	hijackEvent(event);
 	  	
 	    const {_tempUrl} = this.item;

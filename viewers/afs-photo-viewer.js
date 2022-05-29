@@ -34,9 +34,9 @@
   **/
 
 
-import {AppElement, html}   from '@longlost/app-core/app-element.js';
+import {AppElement}         from '@longlost/app-core/app-element.js';
 import {naturals, schedule} from '@longlost/app-core/utils.js';
-import htmlString           from './afs-photo-viewer.html';
+import template             from './afs-photo-viewer.html';
 import '@longlost/app-core/app-icons.js';
 import '@longlost/app-images/flip-image.js';
 import '@longlost/app-images/lazy-image.js';
@@ -47,10 +47,11 @@ import '../shared/afs-file-icons.js';
 
 
 class AFSPhotoViewer extends AppElement {
+
   static get is() { return 'afs-photo-viewer'; }
 
   static get template() {
-    return html([htmlString]);
+    return template;
   }
 
 
@@ -75,6 +76,7 @@ class AFSPhotoViewer extends AppElement {
 
 
   __computePlaceholder(item) {
+
     if (!item) return '#';
 
     const {_tempUrl, optimized, original, poster} = item;
@@ -96,6 +98,7 @@ class AFSPhotoViewer extends AppElement {
 
 
   __computeSrc(item) {
+
     if (!item) { return '#'; }
 
     const {_tempUrl, original, poster} = item;
@@ -108,7 +111,8 @@ class AFSPhotoViewer extends AppElement {
   }
 
 
-  async __resetHintIcon() {    
+  async __resetHintIcon() {  
+
     this.$.hintIcon.style['display'] = 'none';
 
     await schedule();
@@ -118,6 +122,7 @@ class AFSPhotoViewer extends AppElement {
 
 
   __reset() {
+
     this.$.background.style['opacity']       = '0';
     this.$.content.style['background-color'] = 'transparent';
     this.$.img.style['opacity']              = '0';
@@ -133,6 +138,7 @@ class AFSPhotoViewer extends AppElement {
 
 
   async __backBtnClicked() {
+
     try {
       await this.clicked();
 
@@ -150,6 +156,7 @@ class AFSPhotoViewer extends AppElement {
 
 
   async __showBackground() {
+
     this.$.background.style['display'] = 'block';
 
     await schedule();
@@ -206,6 +213,7 @@ class AFSPhotoViewer extends AppElement {
 
 
   async __switchToImg() {
+    
     this.$.img.style['opacity'] = '1';
 
     await schedule(); // Improves reliability for iOS Safari.

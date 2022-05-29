@@ -1,0 +1,77 @@
+
+<style include="cropper">
+      
+  :host {
+    display:          block;
+    background-color: inherit;
+
+    --preview-mixin: {
+      height:     100px;
+      margin-top: 16px;
+    };
+
+    --crop-area-border-radius: 0px;
+    --crop-color: var(--app-primary-color);
+  }
+
+  #wrapper {
+    height: 100%;
+  }
+
+  #img {
+    display:   block;
+    max-width: 100%;
+  }        
+
+  #preview {
+    @apply --preview-mixin;
+    overflow: hidden;
+  }
+
+  #preview[hidden] {
+    display: none;
+  }
+
+  .cropper-view-box,
+  .cropper-face {
+    border-radius: var(--crop-area-border-radius);
+  }
+
+  .cropper-view-box {
+    outline: 1px solid var(--crop-color);
+  }
+
+  .cropper-line,
+  .cropper-point,
+  .cropper-point.point-se::before {
+    background-color: var(--crop-color);
+  }
+
+</style>
+
+
+<div id="wrapper" 
+     on-contextmenu="__preventContextMenuOnCropper">
+
+  <!-- 
+    MUST set crossorigin directly here for cropperjs to 
+    properly add this property to the cloned version of 
+    this element!
+  -->
+  
+  <img id="img"
+       alt="[[alt]]"
+       crossorigin="anonymous"
+       src="[[src]]"
+       on-cropstart="__active"
+       on-error="__error"
+       on-load="__loaded"
+       on-ready="__ready"
+       on-zoom="__active"/>
+
+</div>
+
+
+<div id="preview" 
+     hidden="[[!preview]]">
+</div>
