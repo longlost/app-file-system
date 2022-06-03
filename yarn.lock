@@ -685,10 +685,10 @@
     protobufjs "^6.9.0"
     yargs "^15.3.1"
 
-"@longlost/app-carousels@^3.0.6":
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/@longlost/app-carousels/-/app-carousels-3.0.6.tgz#8b463d079b3f9dca0266eb56cbdac42bb7d2f1e6"
-  integrity sha512-0NLFQXrMvFhu4D47BOpbhN4pa0MJ0tZRV8Xa3e3nPKQYroIHpqTI+T/mGP+Eoz53W7PPwhjLpeokj2W5YtLs8w==
+"@longlost/app-carousels@^3.0.7":
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/@longlost/app-carousels/-/app-carousels-3.0.7.tgz#c39ac3c195837d176bafc9bbdb573164488758b5"
+  integrity sha512-awkfCzHSB2sXOOwnMY1LDdfRFOXZITRRg81sRm6R5tcw9xUkHhaphJBdS7688C7LppekvG25cKVP8DISNiiVHA==
   dependencies:
     "@longlost/app-core" "^9.0.1"
     "@longlost/app-images" "^2.2.4"
