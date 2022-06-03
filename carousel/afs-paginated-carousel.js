@@ -58,7 +58,7 @@ class AFSPaginatedCarousel extends AppElement {
   static get is() { return 'afs-paginated-carousel'; }
 
   static get template() {
-    return html([template]);
+    return template;
   }
 
 

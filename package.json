@@ -1,6 +1,6 @@
 {
   "name": "@longlost/app-file-system",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "description": "This custom element handles all aspects of handling files for an app. Processing, uploading, viewing and editing.",
   "main": "app-file-system.js",
   "scripts": {
@@ -18,7 +18,7 @@
   "homepage": "https://github.com/longlost/app-file-system#readme",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@longlost/app-carousels": "^3.0.6",
+    "@longlost/app-carousels": "^3.0.7",
     "@longlost/app-core": "^9.0.1",
     "@longlost/app-images": "^2.2.4",
     "@longlost/app-inputs": "^2.2.2",
