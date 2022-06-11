@@ -1,6 +1,6 @@
 {
   "name": "@longlost/app-file-system",
-  "version": "2.6.4",
+  "version": "2.6.5",
   "description": "This custom element handles all aspects of handling files for an app. Processing, uploading, viewing and editing.",
   "main": "app-file-system.js",
   "scripts": {
@@ -19,10 +19,10 @@
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@longlost/app-carousels": "^3.0.7",
-    "@longlost/app-core": "^9.0.1",
+    "@longlost/app-core": "^9.0.4",
     "@longlost/app-images": "^2.2.4",
     "@longlost/app-inputs": "^2.2.2",
-    "@longlost/app-map": "^1.5.6",
+    "@longlost/app-map": "^1.5.7",
     "@longlost/app-overlays": "^2.0.2",
     "@longlost/app-spinner": "^1.2.2",
     "@longlost/badged-icon-button": "^1.1.4",
@@ -48,14 +48,14 @@
     "@polymer/paper-progress": "^3.0.1",
     "@polymer/paper-slider": "^3.0.1",
     "@polymer/paper-tabs": "^3.1.0",
-    "@polymer/polymer": "^3.5.0",
+    "@polymer/polymer": "^3.5.1",
     "child-process-promise": "^2.2.1",
     "comlink": "^4.3.1",
     "cropperjs": "^1.5.12",
     "mime-types": "^2.1.35",
     "mkdirp": "^1.0.4",
     "multi-download": "^4.0.0",
-    "nanoid": "^3.3.4",
+    "nanoid": "^4.0.0",
     "print-js": "^1.6.0"
   },
   "devDependencies": {

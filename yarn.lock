@@ -728,6 +728,21 @@
     mime-types "^2.1.35"
     workbox-window "^6.5.3"
 
+"@longlost/app-core@^9.0.4":
+  version "9.0.4"
+  resolved "https://registry.yarnpkg.com/@longlost/app-core/-/app-core-9.0.4.tgz#a36f0b74786062466bf08b0ed90d199e1231a941"
+  integrity sha512-nPg9UL3AoWSVZIWIgD9xQkI1K0NDbI7OKa/vTCEeNGKMl2eUOmqPGvhw3CIwGzURJh7LZrcFq4jy8421dvQ/+Q==
+  dependencies:
+    "@polymer/iron-iconset-svg" "^3.0.1"
+    "@polymer/paper-styles" "^3.0.1"
+    "@polymer/polymer" "^3.5.1"
+    "@ungap/global-this" "^0.4.4"
+    comlink "^4.3.1"
+    firebase "^9.8.2"
+    firebaseui "^6.0.1"
+    mime-types "^2.1.35"
+    workbox-window "^6.5.3"
+
 "@longlost/app-images@^2.2.4":
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-2.2.4.tgz#9d56add23bf2dc79ed3a7eb6afed504fd9d2a6fd"
@@ -771,19 +786,19 @@
     "@longlost/app-core" "^9.0.1"
     "@polymer/polymer" "^3.5.0"
 
-"@longlost/app-map@^1.5.6":
-  version "1.5.6"
-  resolved "https://registry.yarnpkg.com/@longlost/app-map/-/app-map-1.5.6.tgz#ec11aae1cc10152e27e00a83d2bb1dd94c46e70e"
-  integrity sha512-K6ei89eIFB3zTqmX+EqRQbd76duK2XByENL89MkKcDp7myKT6AnykW1kqAzGKPe3kkVaoDepOlukP30Ele8UoA==
+"@longlost/app-map@^1.5.7":
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/@longlost/app-map/-/app-map-1.5.7.tgz#6de0f3d335991bb4cc79acb766ef13f3d26f4f23"
+  integrity sha512-S/mhC8UbH2ewydTnzNSURs0pZC4mZp+Rg5bv1v4r8IkbqHXkDSe4MLa7C1HhcmHvJLvGm8qqdpBgJQ+GolUeHg==
   dependencies:
-    "@longlost/app-core" "^9.0.1"
+    "@longlost/app-core" "^9.0.4"
     "@longlost/app-inputs" "^2.2.2"
     "@longlost/app-overlays" "^2.0.2"
     "@longlost/app-spinner" "^1.2.2"
     "@polymer/iron-icon" "^3.0.1"
     "@polymer/iron-iconset-svg" "^3.0.1"
     "@polymer/paper-icon-button" "^3.0.2"
-    "@polymer/polymer" "^3.5.0"
+    "@polymer/polymer" "^3.5.1"
     leaflet "^1.8.0"
     leaflet.tilelayer.colorfilter "^1.2.5"
 
@@ -1387,6 +1402,13 @@
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/@polymer/polymer/-/polymer-3.5.0.tgz#e2f35c9e8a03137de38c7fb608498b05c004f3c6"
   integrity sha512-0OyN+LQ68tudbWYm7BeU4WELiqXvRn1HIpSnW0u7iFTdxJakJGLehh7PFgKL1noe9a0HHSKznQIfz+hMxzgBtA==
+  dependencies:
+    "@webcomponents/shadycss" "^1.9.1"
+
+"@polymer/polymer@^3.5.1":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@polymer/polymer/-/polymer-3.5.1.tgz#4b5234e43b8876441022bcb91313ab3c4a29f0c8"
+  integrity sha512-JlAHuy+1qIC6hL1ojEUfIVD58fzTpJAoCxFwV5yr0mYTXV1H8bz5zy0+rC963Cgr9iNXQ4T9ncSjC2fkF9BQfw==
   dependencies:
     "@webcomponents/shadycss" "^1.9.1"
 
@@ -2370,10 +2392,10 @@ nanoid@3.3.3:
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.3.tgz#fd8e8b7aa761fe807dba2d1b98fb7241bb724a25"
   integrity sha512-p1sjXuopFs0xg+fPASzQ28agW1oHD7xDsd9Xkf3T15H3c/cifrFHVwrh74PdoklAPi+i7MdRsE47vm2r6JoB+w==
 
-nanoid@^3.3.4:
-  version "3.3.4"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
-  integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
+nanoid@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-4.0.0.tgz#6e144dee117609232c3f415c34b0e550e64999a5"
+  integrity sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==
 
 node-fetch@2.6.1, node-fetch@^2.3.0:
   version "2.6.1"

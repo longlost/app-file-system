@@ -19,12 +19,7 @@ import {
 	set,
 	updateMetadata
 } from '@longlost/app-core/services/services.js';
-
-// Will NOT download multiple files in Chrome when dev tools is open!!
-import multiDownload from 'multi-download';
-
-// Will NOT print pdf's in Chrome when dev tools is open!!
-import printJS from 'print-js'; 
+ 
 import '@longlost/app-spinner/app-spinner.js';
 import './modals/afs-delete-modal.js';
 
@@ -84,7 +79,7 @@ const getPrintType = type => {
   throw new Error(`Cannot print this type of file. Type - ${type}`);
 };
 
-// Will NOT print pdf's in Chrome when dev tools is open!!
+
 const printItem = async item => {
 
   const {displayName, type} = item;
@@ -98,6 +93,11 @@ const printItem = async item => {
 	// Use temporary reference for files that are not done uploading.
   const printable = getPrintable(item);
   const printType = getPrintType(type);
+
+	const {default: printJS} = await import(
+		/* webpackChunkName: 'print-js' */
+		'print-js'
+	);
  
   return printJS({
     header,
@@ -107,12 +107,12 @@ const printItem = async item => {
   });
 };
 
-// Will NOT print pdf's in Chrome when dev tools is open!!
-const printImages = items => {
+
+const printImages = async items => {
 
   const someAreNotImages = items.some(item => 
-  													 (!item.type.includes('image') || 
-  													 	!item.type.includes('video')));
+  													 !(item.type.includes('image') || 
+  													 	 item.type.includes('video')));
 
   if (someAreNotImages) {
     throw new Error('Can only print multiple image files.');
@@ -120,6 +120,11 @@ const printImages = items => {
 
   // Use temporary file reference until file has been uploaded.
   const urls = items.map(getPrintable);
+
+  const {default: printJS} = await import(
+		/* webpackChunkName: 'print-js' */
+		'print-js'
+	);
   
   return printJS({
     imageStyle: 'display: inline-block; float: left; width: calc(50% - 16px); margin: 8px;',
@@ -282,6 +287,12 @@ export const EventsMixin = superClass => {
 
 	    	const urls = items.map(({original, _tempUrl}) => 
 	    							 	 original ? original : _tempUrl);
+
+	    	// Will NOT download multiple files in Chrome when dev tools is open!!
+				const {default: multiDownload} = await import(
+					/* webpackChunkName: 'multi-download' */ 
+					'multi-download'
+				);
 
 	      // Show the spinner for at least 1sec, 
 	      // but longer if downloading several files.
