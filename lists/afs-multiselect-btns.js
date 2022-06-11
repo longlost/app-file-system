@@ -2,7 +2,7 @@
 /**
   * `afs-multiselect-btns`
   * 
-  *   Shows file items in a rearrangeable list.
+  *   A set of action buttons that work with multiple selected file/image items.
   *
   *
   *
@@ -11,7 +11,7 @@
   *
   *
   *  
-  *    items - Collection of file data objects that drives the template repeater.
+  *    items - Collection of file data objects that drives the list's template repeater.
   *
   *  
   *
@@ -27,7 +27,7 @@
   *                             detail: {items} 
   *
   *
-  *    'pring-items' - Fired when user clicks the print btn.
+  *    'print-items' - Fired when user clicks the print btn.
   *                             detail: {items} 
   *
   *
@@ -40,7 +40,13 @@
 
 
 import {AppElement} from '@longlost/app-core/app-element.js';
-import template     from './afs-multiselect-btns.html';
+
+import {
+  push, 
+  removeOne
+} from '@longlost/app-core/lambda.js';
+
+import template from './afs-multiselect-btns.html';
 import '@longlost/app-core/app-icons.js';
 import '@longlost/badged-icon-button/badged-icon-button.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
@@ -121,9 +127,13 @@ class AFSMultiselectBtns extends AppElement {
       },
 
       // A cache of multi-selected items.
+      // Using an array so we can respect the order
+      // which the user made their selections.
+      // This allows the user to control print order,
+      // for example.
       _selectedItems: {
-        type: Object,
-        value: () => ({})
+        type: Array,
+        value: () => ([])
       },
 
       // Select icon button tri-state.
@@ -176,7 +186,7 @@ class AFSMultiselectBtns extends AppElement {
 
   __computeCount(selected) {
 
-    return Object.keys(selected).length;
+    return selected.length;
   }
 
 
@@ -243,13 +253,9 @@ class AFSMultiselectBtns extends AppElement {
   async __btnClicked(name) {
 
     try {
-      await this.clicked();
+      await this.clicked();      
 
-      const items = Object.
-                      values(this._selectedItems).
-                      sort((a, b) => a.index - b.index);
-
-      this.fire(name, {items});
+      this.fire(name, {items: this._selectedItems});
     }
     catch (error) {
       if (error === 'click debounced') { return; }
@@ -304,21 +310,24 @@ class AFSMultiselectBtns extends AppElement {
 
   delete() {
 
-    this._selectedItems = {};
+    this._selectedItems = [];
     this._state         = 'none';
   }
 
-
+  // Respect the order in which the user has made their selections.
+  // This allows them to control print order, etc.
   selected(item) {
 
-    this._selectedItems = {...this._selectedItems, [item.uid]: item};
+    this._selectedItems = push(this._selectedItems, item);
   }
 
 
   unselected(item) {
-    
-    delete this._selectedItems[item.uid];
-    this._selectedItems = {...this._selectedItems};
+
+    const index = this._selectedItems.findIndex(obj => 
+                    obj.uid === item.uid);
+
+    this._selectedItems = removeOne(index, this._selectedItems);
   }
 
 }

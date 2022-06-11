@@ -1,8 +1,18 @@
 
 
+import {
+	compose, 
+	split, 
+	tail
+} from '@longlost/app-core/lambda.js';
+
 import {formatTimestamp} from '@longlost/app-core/utils.js';
 import path 						 from 'path';
 import mime              from 'mime-types';
+
+
+// 'albums/asdgot3a903maH295/photos' --> 'photos'.
+const getSubCollection = compose(split('/'), tail);
 
 
 // const EXIF_TAGS = [
@@ -46,6 +56,11 @@ export const FileInfoMixin = superClass => {
 	      _dirName: {
 	      	type: String,
 	      	computed: '__computeDirName(item.path)'
+	      },
+
+	      _folder: {
+	      	type: String,
+	      	computed: '__computeFolder(item.coll)'
 	      },
 
 	      _gps: {
@@ -115,6 +130,12 @@ export const FileInfoMixin = superClass => {
 	  __computeDirName(p) {
 
 	  	return p ? path.dirname(p) : '';
+	  }
+
+	  // 'albums/asdgot3a903maH295/photos' --> 'photos'.
+	  __computeFolder(coll) {
+
+	  	return getSubCollection(coll);
 	  }
 
 
