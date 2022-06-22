@@ -19,12 +19,6 @@ import {
 	set,
 	updateMetadata
 } from '@longlost/app-core/services/services.js';
- 
-import '@longlost/app-spinner/app-spinner.js';
-import './modals/afs-delete-modal.js';
-
-// Not lazy loaded so that afs may work in the background.
-import './modals/afs-save-as-modal.js';
 
 
 // From items array/collection back to a Firestore data obj.
@@ -141,10 +135,6 @@ export const EventsMixin = superClass => {
 
     static get properties() {
       return {
-
-	      // An object version of the items returned from the database.
-	      // Used for quick and easy access to file items via uid.
-	      _dbData: Object,
 
 	      // When deleting an item with drag and drop,
 	      // or with item delete icon button,
@@ -281,7 +271,8 @@ export const EventsMixin = superClass => {
 	  	hijackEvent(event);
 
 	  	try {
-	      await this.$.spinner.show('Preparing downloads.');
+
+	      await this.__showSpinner('Preparing downloads.');
 
 	      const {items} = event.detail;
 
@@ -303,7 +294,7 @@ export const EventsMixin = superClass => {
 	      await warn('An error occured while trying to download your files.');
 	    }
 	    finally {
-	      this.$.spinner.hide();
+	      this.__hideSpinner();
 	    }	    
 	  }
 
@@ -351,19 +342,11 @@ export const EventsMixin = superClass => {
 	  }
 
 
-	  __openSaveAsModal(event) {
-
-	  	hijackEvent(event);
-
-	  	this.$.saveAsModal.open(event.detail.files);
-	  }
-
-
 	  __saveAsModalSkip(event) {
 
 	  	hijackEvent(event);
 
-	  	this.$.sources.skipRenaming();
+	  	this.__skipRenaming(); // tasks-mixin.js
 	  }
 
 
@@ -371,7 +354,7 @@ export const EventsMixin = superClass => {
 
 	  	hijackEvent(event);
 
-	  	this.$.sources.uploadRenamed(event.detail.files);
+	  	this.__uploadRenamed(event.detail.files); // tasks-mixin.js
 	  }
 
 	  // From <file-item> (image files only) and <roll-item>
@@ -387,6 +370,8 @@ export const EventsMixin = superClass => {
 	    	/* webpackChunkName: 'afs-photo-carousel' */ 
 	    	'./carousel/afs-photo-carousel.js'
 	    );
+
+	    await this.__waitForStamper(); // base-mixin.js
 
 	    this.select('#carousel').open(measurements);
 	  }
@@ -405,6 +390,8 @@ export const EventsMixin = superClass => {
 	    	'./viewers/afs-photo-viewer.js'
 	    );
 
+	    await this.__waitForStamper(); // base-mixin.js
+
 	    this.select('#photoViewer').open(measurements);
 	  }
 
@@ -422,6 +409,8 @@ export const EventsMixin = superClass => {
 	    	'./viewers/afs-video-viewer.js'
 	    );
 
+	    await this.__waitForStamper(); // base-mixin.js
+
 	    this.select('#videoViewer').open();
 	  }
 
@@ -434,10 +423,13 @@ export const EventsMixin = superClass => {
 	  	this._liveUid = item.uid;
 
 	  	await schedule();
+
 	    await import(
 	    	/* webpackChunkName: 'afs-file-editor' */ 
 	    	'./editors/afs-file-editor.js'
 	    );
+
+	    await this.__waitForStamper(); // base-mixin.js
 
 	    this.select('#fileEditor').open();
 	  }
@@ -462,10 +454,14 @@ export const EventsMixin = superClass => {
 	  	this._liveUid = uid;
 
 	  	await schedule();
+
 	    await import(
 	    	/* webpackChunkName: 'afs-image-editor' */ 
 	    	'./editors/afs-image-editor.js'
 	    );
+
+	    await this.__waitForStamper(); // base-mixin.js
+
 	    await this.select('#imageEditor').open();
 
 	    // Only available when list === 'photos'.
@@ -512,7 +508,8 @@ export const EventsMixin = superClass => {
 	  	hijackEvent(event);
 
 	    try {
-	      await this.$.spinner.show('Preparing file for printing.');
+
+	      await this.__showSpinner('Preparing file for printing.');
 
 	      const {item} = event.detail;
 
@@ -525,7 +522,7 @@ export const EventsMixin = superClass => {
 	      await warn('An error occured while trying to print your file.');
 	    }
 	    finally {
-	      this.$.spinner.hide();
+	      this.__hideSpinner();
 	    }
 	  }
 
@@ -535,7 +532,8 @@ export const EventsMixin = superClass => {
 	  	hijackEvent(event);
 
 	    try {
-	      await this.$.spinner.show('Preparing images for printing.');
+
+	      await this.__showSpinner('Preparing images for printing.');
 
 	      const {items} = event.detail;
 
@@ -548,7 +546,7 @@ export const EventsMixin = superClass => {
 	      await warn('An error occured while trying to print your images.');
 	    }
 	    finally {
-	      this.$.spinner.hide();
+	      this.__hideSpinner();
 	    }
 	  }
 
@@ -573,6 +571,19 @@ export const EventsMixin = superClass => {
 	  }
 
 
+	  async __openDeleteModal(items) {
+
+      await import(
+        /* webpackChunkName: 'afs-delete-modal' */ 
+        './modals/afs-delete-modal.js'
+      );
+
+      await this.__waitForStamper(); // base-mixin.js
+
+      this.select('#deleteModal').open(items);
+    }
+
+
 	  async __requestDeleteItem(event) {
 
 	    hijackEvent(event);
@@ -584,7 +595,7 @@ export const EventsMixin = superClass => {
 
 	    await schedule();
 
-	    this.$.deleteConfirmModal.open([item]);
+	    this.__openDeleteModal([item]);
 	  }
 
 
@@ -600,7 +611,7 @@ export const EventsMixin = superClass => {
 
 	    await schedule();
 
-	    this.$.deleteConfirmModal.open(items);
+	    this.__openDeleteModal(items);
 	  }
 
 
@@ -664,12 +675,15 @@ export const EventsMixin = superClass => {
 	  	this._liveUid = item.uid;
 
 	  	await schedule();
+
 	  	await import(
 	  		/* webpackChunkName: 'afs-share-modal' */ 
 	  		'./modals/afs-share-modal.js'
 	  	);
 
-	  	this.$.shareModal.open();
+	  	await this.__waitForStamper(); // base-mixin.js
+
+	  	this.select('#shareModal').open();
 	  }
 
 	  // Issue new file metadata so download 
@@ -683,7 +697,7 @@ export const EventsMixin = superClass => {
 	  	// an update to display name.
 	  	if (displayName !== currentItem.displayName) {
 
-	  		await this.$.spinner.show('Updating file.');
+	  		await this.__showSpinner('Updating file.');
 
 	  		const metadata = await getMetadata(path);
 
@@ -718,7 +732,7 @@ export const EventsMixin = superClass => {
 	  		await warn('An error occured while updating the file.');
 	  	}
 	  	finally {
-	  		this.$.spinner.hide();	  		
+	  		this.__hideSpinner();	  		
 	  	}
 	  }
 
@@ -733,9 +747,21 @@ export const EventsMixin = superClass => {
 	    await import(
         /* webpackChunkName: 'afs-confirm-selection-modal' */ 
         './modals/afs-confirm-selection-modal.js'
-      );    
+      );
+
+      await this.__waitForStamper(); // base-mixin.js
 
 	    this.select('#confirmSelectionModal').open(item);
+	  }
+
+	  
+	  __listOverlayClosedHandler(event) {
+
+	    hijackEvent(event);
+
+	    // When in "selector" mode, list overlays pass the selected
+	    // item as the event detail payload.
+	    this.fire('app-file-system-list-closed', event.detail);
 	  }
 
 
