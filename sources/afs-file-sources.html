@@ -92,83 +92,74 @@
 </style>
 
 
-<template id="stamper" 
-          is="dom-if" 
-          if="[[_stamp]]" 
-          restamp>
+<app-header-overlay id="overlay"
+                    header-size="1"
+                    parent-controls-exits
+                    prebuilt-animation="from-top"
+                    fixed-header
+                    title="Add Files"
+                    on-header-overlay-back="__back">
 
 
-  <app-header-overlay id="overlay"
-                      header-size="1"
-                      parent-controls-exits
-                      prebuilt-animation="from-top"
-                      fixed-header
-                      title="Add Files"
-                      on-header-overlay-back="__back"
-                      on-overlay-reset="__reset">
+  <div id="toolbar-background-container"
+       slot="header-background-slot">
+
+    <afs-progress-bar id="progress"
+                      processed="[[progress.processed]]"
+                      processing="[[progress.processing]]"
+                      read="[[progress.read]]"
+                      reading="[[progress.reading]]">
+    </afs-progress-bar>
+
+    <div id="toolbar-background"></div>
+  </div>
 
 
-    <div id="toolbar-background-container"
-         slot="header-background-slot">
-
-      <afs-progress-bar id="progress"
-                        processed="[[_processed]]"
-                        processing="[[_processing]]"
-                        read="[[_read]]"
-                        reading="[[_reading]]">
-      </afs-progress-bar>
-
-      <div id="toolbar-background"></div>
-    </div>
+  <afs-list-icon-button coll="[[coll]]"
+                        count="[[count]]"
+                        list="[[list]]"
+                        slot="top-toolbar-buttons-slot"
+                        on-click="__listBtnClicked">
+  </afs-list-icon-button>    
 
 
-    <afs-list-icon-button coll="[[coll]]"
-                          count="[[_dbCount]]"
-                          list="[[list]]"
-                          slot="top-toolbar-buttons-slot"
-                          on-click="__listBtnClicked">
-    </afs-list-icon-button>    
+  <div id="content"
+       hidden="[[_hideContent]]" 
+       slot="content">
+
+    <div id="types">Accepting [[_acceptableTypes]]</div>
 
 
-    <div id="content"
-         hidden="[[_hideContent]]" 
-         slot="content">
+    <div id="grid">
+      <afs-web-file-card class="vert-aligned"
+                         mimes="[[_mimes]]"
+                         on-file-added="__webFileAdded">
+      </afs-web-file-card>
 
-      <div id="types">Accepting [[_acceptableTypes]]</div>
-
-
-      <div id="grid">
-        <afs-web-file-card class="vert-aligned"
-                           mimes="[[_mimes]]"
-                           on-file-added="__webFileAdded">
-        </afs-web-file-card>
-
-        <div id="or" 
-             class="vert-aligned">
-          OR
-        </div>
-
-        <afs-device-file-card id="deviceFileCard"
-                              accept="[[accept]]"
-                              hide-dropzone="[[hideDropzone]]"
-                              maxfiles="[[maxfiles]]"
-                              maxsize="[[maxsize]]"
-                              multiple="[[multiple]]"
-                              unit="[[unit]]"
-                              on-files-added="__deviceFilesAdded">
-        </afs-device-file-card>
+      <div id="or" 
+           class="vert-aligned">
+        OR
       </div>
 
-
-      <afs-upload-actions-card id="actions"
-                               list="[[list]]"
-                               qty="[[_filesToUploadQty]]"
-                               on-go="__uploadActionsGo"
-                               on-rename="__uploadActionsRename">                                        
-      </afs-upload-actions-card>
-
+      <afs-device-file-card id="deviceFileCard"
+                            accept="[[accept]]"
+                            hide-dropzone="[[hideDropzone]]"
+                            maxfiles="[[maxfiles]]"
+                            maxsize="[[maxsize]]"
+                            multiple="[[multiple]]"
+                            unit="[[unit]]"
+                            on-files-added="__deviceFilesAdded">
+      </afs-device-file-card>
     </div>
 
-  </app-header-overlay>
 
-</template>
+    <afs-upload-actions-card id="actions"
+                             list="[[list]]"
+                             qty="[[uploadQty]]"
+                             on-go="__uploadActionsGo"
+                             on-rename="__uploadActionsRename">                                        
+    </afs-upload-actions-card>
+
+  </div>
+
+</app-header-overlay>

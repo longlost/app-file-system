@@ -1,0 +1,117 @@
+
+<style>
+
+  #spinner {
+    z-index: 2;
+  }
+
+</style>
+
+
+<!-- Control memory footprint by removing "heavy" elements when not in use. -->
+<template id="stamper"
+          is="dom-if"
+          if="[[_stamp]]"
+          restamp>
+
+
+  <afs-file-sources id="sources"
+                    accept="[[accept]]"
+                    coll="[[coll]]"
+                    data="[[_dbData]]"
+                    count="[[_dbCount]]"
+                    hide-dropzone="[[hideDropzone]]"
+                    list="[[list]]"
+                    maxfiles="[[maxfiles]]"
+                    maxsize="[[maxsize]]"
+                    multiple="[[multiple]]"
+                    no-upload-confirm="[[noUploadConfirm]]"
+                    progress="[[_progress]]"
+                    unit="[[unit]]"
+                    upload-qty="[[_uploadQty]]"
+                    on-files-added="__filesAddedHandler"
+                    on-open-list="openList"
+                    on-upload-actions-go="__uploadActionsGoHandler"
+                    on-upload-actions-rename="__uploadActionsRenameHandler">
+  </afs-file-sources>
+
+
+  <afs-file-list id="fileList"
+                 coll="[[coll]]"
+                 data="[[_dbData]]"
+                 hide-dropzone="[[hideDropzone]]"
+                 uploads="[[_uploads]]"
+                 on-list-confirm-selection="__listOverlayConfirmSelectionHandler"
+                 on-list-overlay-closed="__listOverlayClosedHandler">
+  </afs-file-list>
+
+
+  <afs-camera-roll id="cameraRoll"
+                   coll="[[coll]]"
+                   data="[[_dbData]]"
+                   progress="[[_progress]]"
+                   uploads="[[_uploads]]"
+                   on-list-confirm-selection="__listOverlayConfirmSelectionHandler"
+                   on-list-overlay-closed="__listOverlayClosedHandler">
+  </afs-camera-roll>
+
+
+  <afs-file-editor id="fileEditor"
+                   item="[[_liveItem]]"
+                   list="[[list]]">
+  </afs-file-editor>
+
+
+  <afs-photo-carousel id="carousel"
+                      coll="[[coll]]"
+                      item="[[_liveItem]]"
+                      list=[[list]]>
+  </afs-photo-carousel>
+
+
+  <afs-image-editor id="imageEditor"
+                    item="[[_liveItem]]"
+                    list="[[list]]">
+  </afs-image-editor>
+
+
+  <afs-video-viewer id="videoViewer"
+                    item="[[_liveItem]]">
+  </afs-video-viewer>
+
+
+  <afs-photo-viewer id="photoViewer"
+                    item="[[_liveItem]]">
+  </afs-photo-viewer>
+
+
+  <afs-confirm-selection-modal id="confirmSelectionModal"
+                               on-selection-confirmed="__confirmSelectionModalConfirmed"
+                               on-selection-dismissed="__confirmSelectionModalDismissed">
+  </afs-confirm-selection-modal>
+
+
+  <app-spinner id="spinner"
+               full-screen>
+  </app-spinner>
+
+
+  <afs-share-modal id="shareModal"
+                   item="[[_liveItem]]">
+  </afs-share-modal>
+
+
+  <afs-delete-modal id="deleteModal"
+                    on-delete="__deleteModalDelete"
+                    on-canceled="__deleteModalCanceled">                                
+  </afs-delete-modal>
+
+
+  <afs-save-as-modal id="saveAsModal"
+                     list="[[list]]"
+                     on-skip="__saveAsModalSkip"
+                     on-update="__saveAsModalUpdate">                                 
+  </afs-save-as-modal>
+
+
+</template>
