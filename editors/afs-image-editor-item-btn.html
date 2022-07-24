@@ -1,0 +1,173 @@
+
+<style include="app-shared-styles">
+
+  :host {
+    display: contents;
+
+    /* Not public. Do NOT use as part of api. */
+    --btn-label-width: 56px;
+  }
+
+  paper-button {
+    width:            100%;
+    max-width:        414px;
+    margin:           0px;
+    background-color: var(--app-secondary-color);
+    color:            var(--app-secondary-color-text);
+  }
+
+  :host([animated]) paper-button {
+    height:        48px;   
+    width:         48px;
+    max-width:     unset;
+    min-width:     unset; /* paper-button host styles override. */
+    position:      absolute;
+    right:         16px;
+    bottom:        16px;
+    border-radius: 24px;
+    padding:       0px;
+  }
+
+  paper-button[disabled] {
+    background-color: var(--app-disabled-color);
+    color:            var(--app-disabled-text);
+  }
+
+  .btn {    
+    transform: scale(0, 0) rotate(90deg);
+  }
+
+  .hide-btn {
+    animation-name:            hide-btn;
+    animation-duration:        600ms;
+    animation-timing-function: var(--app-custom-ease);
+  }
+
+  @keyframes hide-btn {
+
+    0% {
+      transform: scale(1, 1) rotate(0deg); /* Hold styles during animation delay. */
+    }
+
+    25% {
+      transform: scale(1, 1) rotate(0deg);
+    }
+
+    40% {
+      transform: scale(1.1, 1.1) rotate(0deg);
+    }
+
+    100% {
+      transform: scale(0, 0) rotate(0deg);
+    }
+
+  }
+
+  .show-btn {
+    transform:  scale(1, 1) rotate(0deg);
+    transition: transform 500ms var(--app-custom-ease);
+  }
+
+  /*
+    For some reason, the border-radius won't properly clip a circle
+    when transforming the element. So must change this dynamically
+    for the styles to actually take effect with the browser.
+  */
+  .allow-overflow {
+    overflow:           visible;
+    -webkit-mask-image: unset;
+  }
+
+  .static-icon {
+    margin-right: 4px;
+  }
+
+  .animatable {    
+    display:          flex;
+    justify-content:  center;
+    align-items:      center;
+    position:         absolute;
+    width:            48px;
+    height:           48px;
+    background-color: var(--app-secondary-color);
+  }
+
+  .center-rectangle {
+    width:            var(--btn-label-width);
+    right:            24px;    
+    transition:       transform 150ms var(--app-custom-ease) 50ms;
+    transform-origin: right center;
+    transform:        scale(0, 1);
+  }
+
+  .rectangle-enter {
+    transition: transform 250ms var(--app-custom-ease);
+    transform:  scale(1, 1);
+  }
+
+  .left-circle {
+    border-radius: 48px;
+    overflow:      hidden;
+    transition:    transform 150ms var(--app-custom-ease) 50ms;
+    transform:     unset;
+  }
+
+  .circle-enter {
+    transition: transform 250ms var(--app-custom-ease);
+    transform:  translate(calc(var(--btn-label-width) * -1), 0px);
+  }
+
+  .label {
+    position:   absolute;
+    right:      16px;
+    transition: opacity 100ms ease-in;
+    opacity:    0;
+    z-index:    1;
+  }
+
+  .show-label {
+    transition: opacity 150ms ease-in 200ms;
+    opacity:    1;
+  }
+
+  *[hidden] {
+    display: none;
+  }
+
+</style>
+
+
+<paper-button id="over-preview-btn"
+              class$="shared-paper-button-with-icon shared-border-radius-mask [[_btnClass]] [[_btnAnimationClass]] [[_overflowClass]]"
+              disabled="[[_disabled]]"
+              on-animationcancel="__onAnimationHandler"
+              on-animationend="__onAnimationHandler"
+              on-transitioncancel="__onTransitionHandler"
+              on-transitionend="__onTransitionHandler">
+
+  <!-- Basic, static button contents. -->
+  <iron-icon class="static-icon shared-paper-button-with-icon"
+             hidden="[[animated]]"
+             icon="[[_icon]]">
+  </iron-icon>
+  <span hidden="[[animated]]">[[label]]</span>
+
+  
+  <!-- Animatable contents. -->
+  <div class$="animatable center-rectangle [[_rectangleClass]]"
+       hidden="[[!animated]]">
+  </div>
+
+  <div class$="animatable left-circle [[_circleClass]]"
+       hidden="[[!animated]]">
+    <iron-icon class="shared-paper-button-with-icon"
+               icon="[[_icon]]">
+    </iron-icon>
+  </div>
+
+  <span class$="label [[_labelClass]]"
+        hidden="[[!animated]]">
+    [[label]]
+  </span>
+
+</paper-button>

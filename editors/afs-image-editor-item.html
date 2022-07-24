@@ -33,19 +33,10 @@
 		padding: 				 48px 16px;
 	}
 
-	#btn {
-		width: 		 100%;
-		max-width: 414px;
-		margin: 	 0px;
-		background-color: var(--app-secondary-color);
-		color: 						var(--app-secondary-color-text);
+	afs-image-editor-item-btn[hidden],
+	#btn-wrapper[hidden] {
+		display: none;
 	}
-
-	#btn[disabled] {
-		background-color: var(--app-disabled-color);
-		color: 						var(--app-disabled-text);
-	}
-
 
   @media (min-width: 568px) {
 
@@ -72,7 +63,17 @@
 
 <div id="preview" 
 		 class="shared-card-shadow">
+		 
 	<slot id="preview-slot" name="preview"></slot>
+
+	<afs-image-editor-item-btn animated
+														 disabled="[[buttonDisabled]]"
+														 hidden="[[!_hideAfterContentButton]]"
+														 icon="[[buttonIcon]]"
+														 label="[[buttonLabel]]"
+														 on-click="__btnClicked">
+	</afs-image-editor-item-btn>
+
 </div>
 
 
@@ -81,16 +82,15 @@
 	<slot></slot>
 
 	<div id="btn-wrapper" 
-			 class="shared-divider">
-		<paper-button id="btn"
-									class="shared-paper-button-with-icon"
-									disabled="[[buttonDisabled]]"
-									on-click="__btnClicked">
-			<iron-icon class="shared-paper-button-with-icon" 
-								 icon="[[_icon]]">
-			</iron-icon>
-			[[buttonLabel]]
-		</paper-button>
+			 class="shared-divider"
+			 hidden="[[_hideAfterContentButton]]">
+
+		<afs-image-editor-item-btn disabled="[[buttonDisabled]]"
+															 icon="[[buttonIcon]]"
+															 label="[[buttonLabel]]"
+															 on-click="__btnClicked">
+		</afs-image-editor-item-btn>
+		
 	</div>
 
 </div>

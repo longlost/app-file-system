@@ -367,15 +367,11 @@ class AFSMain extends EventsMixin(TasksMixin(BaseMixin(AppElement))) {
 
     if (this.list === 'files') {
 
-      if (this.select('#fileList').delete) {
-        this.select('#fileList').delete();
-      }
+      this.select('#fileList')?.delete?.();
     }
     else if (this.list === 'photos') {
 
-      if (this.select('#cameraRoll').delete) {
-        this.select('#cameraRoll').delete();
-      }
+      this.select('#cameraRoll')?.delete?.();
     }
   }
 
