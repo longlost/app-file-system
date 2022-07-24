@@ -332,7 +332,8 @@ class AppFileSystem extends AppElement {
     // DO NOT consume or hijack this event, 
     // as it is part of the public API.
 
-    this._saves -= event.detail.files.length;
+    // No longer raw "files". Now db "items".
+    this._saves -= event.detail.items.length; 
   }
 
 

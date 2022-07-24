@@ -36,9 +36,8 @@
 import {AppElement} from '@longlost/app-core/app-element.js';
 import template     from './afs-image-editor-item.html';
 import '@longlost/app-core/app-shared-styles.css';
-import '@polymer/iron-icon/iron-icon.js';
-import '@polymer/paper-button/paper-button.js';
 import './afs-image-editor-icons.js';
+import './afs-image-editor-item-btn.js';
 
 
 class AFSImageEditorItem extends AppElement {
@@ -59,18 +58,24 @@ class AFSImageEditorItem extends AppElement {
 
       buttonLabel: String,
 
-      _icon: {
+      buttonPlacement: {
         type: String,
-        computed: '__computeIcon(buttonIcon)'
+        value: 'over-preview' // Or 'after-content'
+      },
+
+      _hideAfterContentButton: {
+        type: Boolean,
+        value: true,
+        computed: '__computeHideAfterContentButton(buttonPlacement)'
       }
 
     };
   }
 
 
-  __computeIcon(str) {
+  __computeHideAfterContentButton(placement) {
 
-    return `afs-image-editor-icons:${str}`;
+    return placement !== 'after-content';
   }
 
 

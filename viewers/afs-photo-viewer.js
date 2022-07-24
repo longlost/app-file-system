@@ -211,6 +211,39 @@ class AFSPhotoViewer extends AppElement {
     }
   }
 
+  // Avoid FOUC by waiting, if necessary, for the 
+  // hi-res img to load in, before switching to it.
+  async __waitForImgLoad() {
+
+    if (
+      this.$.img.placeholderError  || 
+      this.$.img.error             ||
+      this.$.img.placeholderLoaded || 
+      this.$.img.loaded
+    ) { 
+      return;
+    }
+
+    let resolver;
+
+    const raceImgLoadEvents = () => new Promise(resolve => {
+
+      resolver = resolve;
+
+      this.$.img.addEventListener('lazy-image-error-changed',             resolver);
+      this.$.img.addEventListener('lazy-image-loaded-changed',            resolver);
+      this.$.img.addEventListener('lazy-image-placeholder-changed',       resolver);
+      this.$.img.addEventListener('lazy-image-placeholder-error-changed', resolver);
+    });
+
+    await raceImgLoadEvents();
+
+    this.$.img.removeEventListener('lazy-image-error-changed',             resolver);
+    this.$.img.removeEventListener('lazy-image-loaded-changed',            resolver);
+    this.$.img.removeEventListener('lazy-image-placeholder-changed',       resolver);
+    this.$.img.removeEventListener('lazy-image-placeholder-error-changed', resolver);
+  }
+
 
   async __switchToImg() {
     
@@ -245,6 +278,8 @@ class AFSPhotoViewer extends AppElement {
       this.__setImgSize();
 
       await schedule();
+
+      await this.__waitForImgLoad();
 
       await this.__switchToImg();      
     }

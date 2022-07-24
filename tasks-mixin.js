@@ -470,7 +470,7 @@ export const TasksMixin = superClass => {
 
       // May not be stamped currently.
       // AFS can work in the background without active DOM.
-      this.select('#sources')?.clearFeedback();
+      this.select('#sources')?.clearFeedback?.();
     }
 
 
@@ -507,10 +507,10 @@ export const TasksMixin = superClass => {
       try {
 
         // AFS can work in the background without its light dom stamped.
-        this.select('#sources')?.clearFeedback();
+        this.select('#sources')?.clearFeedback?.();
 
         // Show queue tracker ui.
-        this.select('#sources')?.showProgress();
+        this.select('#sources')?.showProgress?.();
 
         // Updates "read" gauge ui when invoked.
         // This happens after a uid has been issued
@@ -551,7 +551,7 @@ export const TasksMixin = superClass => {
 
           // Checking that 'afs-file-sources' still exists, since AFS can 
           // work in the background without its light dom stamped.
-          this.select('#sources')?.hideProgress();
+          this.select('#sources')?.hideProgress?.();
         } 
 
         await warn('An error occured while gathering your files.');
@@ -573,14 +573,14 @@ export const TasksMixin = superClass => {
         ) { return; }
         
         // Give time for `paper-gauge` final count animation to finish.
-        if (this.select('#sources')) {
+        if (this.select('#sources')?.isShown?.()) {
           await wait(1200); 
         }
 
         // `afs-file-sources` may or may not be stamped.
         // Check read vals again, user may have added more.
         if (
-          this.select('#sources') && 
+          this.select('#sources')?.hideProgress && 
           this._read      === this._reading && 
           this._processed === this._processing
         ) {
@@ -614,7 +614,7 @@ export const TasksMixin = superClass => {
         
         // If the user is not currently viewing '#sources', 
         // then show the less intrusive fsToast instead.
-        if (this.select('#sources')?.isShown()) {
+        if (this.select('#sources')?.isShown?.()) {
           this.select('#sources').showActions();
         }  
         else {  
@@ -674,7 +674,7 @@ export const TasksMixin = superClass => {
     __showFeedback(type) {
 
       // May or may not be stamped.
-      this.select('#sources')?.showFeedback(type);
+      this.select('#sources')?.showFeedback?.(type);
 
       return warn('Could not add those files.');
     }

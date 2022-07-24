@@ -905,10 +905,10 @@
     "@ungap/global-this" "^0.4.3"
     wasm-imagemagick "^1.2.8"
 
-"@longlost/webgl-filter@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@longlost/webgl-filter/-/webgl-filter-1.0.0.tgz#200d28f8b50d93b02d491626c27feab853978f74"
-  integrity sha512-OSJ3nfQvNx4r4dcdAwTKlpebLyI7ggwySGTGzYUj1KV9JQpayR70QY4jl2eYhSDXTX8wKNfK/Oez4+UF1NfvRQ==
+"@longlost/webgl-filter@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@longlost/webgl-filter/-/webgl-filter-1.0.1.tgz#b78838822f4174548a3b871ec2b5a388c7c3b594"
+  integrity sha512-7a6tYuWJ2dDjk7IS9agADpMQwjlU++cj1d4eTExw+UALrJo8gbWeOAVGcXRG+3zaePiOKoxYrqBtqgVNJsuXfw==
 
 "@polymer/app-layout@^3.1.0":
   version "3.1.0"

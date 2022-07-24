@@ -627,13 +627,8 @@ export const EventsMixin = superClass => {
 	      const fileEditor 	= this.select('#fileEditor');
 	      const imageEditor = this.select('#imageEditor');
 
-	      if (fileEditor && fileEditor.reset) {
-	      	fileEditor.reset();
-	      }
-
-	      if (imageEditor && imageEditor.reset) {
-	      	imageEditor.reset();
-	      }
+	      fileEditor?.reset?.();
+	      imageEditor?.reset?.();
 
 	      // Delete methods show different spinner messages.
 	      if (this._deleteItems.length > 1) {
