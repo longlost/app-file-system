@@ -62,7 +62,7 @@ import {
 import {ItemsMixin} from './items-mixin.js';
 
 import template from './afs-file-items.html';
-import '@longlost/drag-drop-list/drag-drop-list.js';
+import '@longlost/app-lists/drag-drop-list.js';
 import '@polymer/iron-icon/iron-icon.js';
 import './afs-file-item.js';
 import '../shared/afs-file-icons.js';

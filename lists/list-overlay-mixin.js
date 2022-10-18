@@ -33,6 +33,7 @@
 
 
 import {hijackEvent, listenOnce} from '@longlost/app-core/utils.js';
+import '@longlost/app-overlays/app-header-overlay.js';
 import './afs-multiselect-btns.js';
 import './afs-empty-list-placeholder.js';
 

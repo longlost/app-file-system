@@ -14,6 +14,16 @@
 		padding: 							 16px;
 	}
 
+	.label {
+		display: 		 		 flex;
+		justify-content: center;
+		align-items: 		 center;
+	}
+
+	.label iron-icon {
+		margin-right: 8px;
+	}
+
 	.wrapper {
 		margin-bottom: 		24px;
 		padding: 			 		16px 0px;
@@ -23,16 +33,6 @@
 
 	.shared-paper-slider {
 		width: 100%;
-	}
-
-	.label {
-		display: 		 		 flex;
-		justify-content: center;
-		align-items: 		 center;
-	}
-
-	.label iron-icon {
-		margin-right: 8px;
 	}
 
 	#clear {
@@ -67,20 +67,24 @@
 	<div id="content">
 
 		<div class="wrapper">
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:brightness-4"></iron-icon>
+				<span>Brightness</span>
+			</div>
 			<paper-slider class="shared-paper-slider"
 										max="100"
 										min="0" 
 										pin
 										value="[[_centeredVal]]"
 										on-immediate-value-changed="__brightnessChanged">
-			</paper-slider>
-			<div class="label">		
-				<iron-icon icon="afs-image-editor-icons:brightness-4"></iron-icon>
-				<span>Brightness</span>
-			</div>
+			</paper-slider>			
 		</div>
 
 		<div class="wrapper">
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:exposure"></iron-icon>
+				<span>Contrast</span>
+			</div>
 			<paper-slider class="shared-paper-slider"
 										max="100"
 										min="0" 
@@ -88,13 +92,13 @@
 										value="[[_centeredVal]]"
 										on-immediate-value-changed="__contrastChanged">
 			</paper-slider>
-			<div class="label">		
-				<iron-icon icon="afs-image-editor-icons:exposure"></iron-icon>
-				<span>Contrast</span>
-			</div>
 		</div>
 
 		<div class="wrapper">
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:tonality"></iron-icon>
+				<span>Saturation</span>
+			</div>
 			<paper-slider class="shared-paper-slider"
 										max="100"
 										min="0" 
@@ -102,13 +106,13 @@
 										value="[[_centeredVal]]"
 										on-immediate-value-changed="__saturationChanged">
 			</paper-slider>
-			<div class="label">		
-				<iron-icon icon="afs-image-editor-icons:tonality"></iron-icon>
-				<span>Saturation</span>
-			</div>
 		</div>
 
 		<div class="wrapper">
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:palette"></iron-icon>
+				<span>Hue</span>
+			</div>
 			<paper-slider class="shared-paper-slider"
 										max="360"
 										min="0" 
@@ -116,13 +120,13 @@
 										value="[[_zeroedVal]]"
 										on-immediate-value-changed="__hueChanged">
 			</paper-slider>
-			<div class="label">		
-				<iron-icon icon="afs-image-editor-icons:palette"></iron-icon>
-				<span>Hue</span>
-			</div>
 		</div>
 
 		<div class="wrapper">
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:texture"></iron-icon>
+				<span>Sharpness</span>
+			</div>
 			<paper-slider class="shared-paper-slider"
 										max="100"
 										min="0" 
@@ -130,13 +134,13 @@
 										value="[[_zeroedVal]]"
 										on-immediate-value-changed="__sharpenChanged">
 			</paper-slider>
-			<div class="label">		
-				<iron-icon icon="afs-image-editor-icons:texture"></iron-icon>
-				<span>Sharpness</span>
-			</div>
 		</div>
 
 		<div class="wrapper">
+			<div class="label">		
+				<iron-icon icon="afs-image-editor-icons:blur-on"></iron-icon>
+				<span>Blur</span>
+			</div>
 			<paper-slider class="shared-paper-slider"
 										max="100"
 										min="0" 
@@ -144,10 +148,20 @@
 										value="[[_zeroedVal]]"
 										on-immediate-value-changed="__blurChanged">
 			</paper-slider>
+		</div>
+
+		<div class="wrapper">
 			<div class="label">		
-				<iron-icon icon="afs-image-editor-icons:blur-on"></iron-icon>
-				<span>Blur</span>
+				<iron-icon icon="afs-image-editor-icons:grain"></iron-icon>
+				<span>Pixelate</span>
 			</div>
+			<paper-slider class="shared-paper-slider"
+										max="100"
+										min="0" 
+										pin
+										value="[[_zeroedVal]]"
+										on-immediate-value-changed="__pixelateChanged">
+			</paper-slider>
 		</div>
 
 	</div>
