@@ -28,7 +28,7 @@ class AFSFileItem extends ItemMixin(FileInfoMixin(AppElement)) {
   static get is() { return 'afs-file-item'; }
 
   static get template() {
-    return html([template]);
+    return template;
   }
 
 

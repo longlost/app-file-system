@@ -75,6 +75,8 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
       _hue: Number,
 
+      _pixelate: Number,
+
       _ready: Boolean,
 
       _readyForSource: {
@@ -112,7 +114,7 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
 
   static get observers() {
     return [
-      '__adjustmentsChanged(_filter, _source, _brightness, _contrast, _saturation, _hue, _sharpness, _blur)',
+      '__adjustmentsChanged(_filter, _source, _brightness, _contrast, _saturation, _hue, _sharpness, _blur, _pixelate)',
       '__readySrcChanged(_ready, _src)'
     ];
   }
@@ -135,7 +137,7 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
   }
 
 
-  __adjustmentsChanged(filter, source, brightness, contrast, saturation, hue, sharpness, blur) {
+  __adjustmentsChanged(filter, source, brightness, contrast, saturation, hue, sharpness, blur, pixelate) {
 
     if (!filter || !source) { return; }
 
@@ -149,6 +151,7 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
       filter.addFilter('hue',        hue        || 0);
       filter.addFilter('sharpen',    sharpness  || 0);
       filter.addFilter('blur',       blur       || 0);
+      filter.addFilter('pixelate',   pixelate   || 1); // Zero values produce a solid gray image.
 
       const canvas = filter.apply(source);
 
@@ -161,7 +164,8 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
         saturation === undefined && 
         hue        === undefined && 
         sharpness  === undefined && 
-        blur       === undefined
+        blur       === undefined &&
+        pixelate   === undefined
       ) { return; }
 
       // Enable 'Apply' button.
@@ -245,6 +249,7 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     this._hue        = undefined;
     this._sharpness  = undefined; 
     this._blur       = undefined;
+    this._pixelate   = undefined;
 
     // Force an update to reset sliders.
     this._centeredVal = 50;
@@ -332,6 +337,20 @@ class AFSImageAdjuster extends FilterMixin(ImageEditorItemMixin(AppElement)) {
     window.requestAnimationFrame(() => {
       const {value} = event.detail;
       this._blur    = value / 2;
+    });
+  }
+
+
+  __pixelateChanged(event) {
+
+    const {focused} = getRootTarget(event);
+
+    // Ignore if not by human interaction.
+    if (!focused) { return; }
+
+    window.requestAnimationFrame(() => {
+      const {value}  = event.detail;
+      this._pixelate = value;
     });
   }
 
