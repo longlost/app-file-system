@@ -2,42 +2,60 @@
 <style>
 
   :host {
+
     /*
+      NOT part of the public API for this element.
+
       Scales between 72px to 148px. 110px is the midpoint.
+      
       This equates to having 4 photos across on smallest 
       supported phone screen and two across on large phone sizes.
     */
-    --thumbnail-size:      110px; 
+    --thumbnail-size: 110px; 
+  }
+
+  lite-list {
     display:               grid;
     grid-template-columns: repeat(auto-fit, minmax(var(--thumbnail-size), 1fr));
+
     /*
-      Grid gap must be an odd number for css width and height % calculations to not be off by 1px.
+      Grid gap must be an odd number for css width and height % 
+      calculations to not be off by 1px.
+
       The browser cannot center an element by half pixel values.
       This becomes especially visible with rotated orientation images.
     */
-    grid-gap:  3px;
-    max-width: 768px;
-    margin:    0px auto;
-    padding:   3px 0px;
+    grid-gap: 3px;
+
+    /*
+      Collapse the grid area for camera rolls with less than a page of photos.
+    */
+    align-content: start; 
+    max-width:     768px;
+    margin:        0px auto;
+    padding:       3px 0px;
   }
 
 </style>
 
 
-<template is="dom-repeat" 
-          items="[[_paginations]]"
-          as="pagination"
-          strip-whitespace>
-          
-  <afs-paginated-roll-items class="item"
-                            all="[[all]]"
-                            coll="[[coll]]"
-                            hide-checkboxes="[[hideCheckboxes]]"
-                            index="[[index]]"
-                            opened="[[opened]]"
-                            pagination="[[pagination]]"
-                            uploads="[[uploads]]"
-                            on-new-pagination-doc="__newPaginationDoc">
-  </afs-paginated-roll-items>
+<lite-list items="[[_items]]"
+           on-lite-list-current-items-changed="__currentItemsChangedHandler"
+           on-lite-list-max-containers-changed="__maxContainersChangedHandler"
+           on-lite-list-pagination-changed="__paginationChangedHandler">
 
-</template>
+  <template is="dom-repeat" 
+            items="[[_currentItems]]"
+            strip-whitespace
+            on-dom-change="__domChangeHandler">
+            
+    <afs-roll-item hide-checkbox="[[hideCheckboxes]]"
+                   item="[[item.data]]"
+                   selected="[[all]]"
+                   slot$="slot-[[index]]"
+                   uploads="[[uploads]]">
+    </afs-roll-item>
+
+  </template>
+
+</lite-list>

@@ -93,6 +93,7 @@ export const ItemMixin = superClass => {
 	  __hideCheckboxChanged(hide) {
 
 	    if (hide) {
+
 	      this.selected = false;
 	    }
 	  }
@@ -102,11 +103,14 @@ export const ItemMixin = superClass => {
 	  // is that of a different item.
 	  __itemChanged(newItem, oldItem) {
 
-	  	if (!newItem) {
-	  		this.selected = false;	  		
+	  	if (!newItem) {	 
+	  	 		
+	  		this.selected = false;
+	  		return;  		
 	  	}
 
 	  	if (oldItem && (oldItem.uid !== newItem.uid)) {
+
 	  		this.selected = false;
 	  	}
 	  }
@@ -134,8 +138,8 @@ export const ItemMixin = superClass => {
 
 	    if (!upload) {
 
-	      this._progress = 0;
-	      this._state    = '';
+	      this._progress 				 = 0;
+	      this._state    				 = '';
 	      this.__computeProgress = null;
 	      this.__computeState    = null;
 
