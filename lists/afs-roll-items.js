@@ -32,6 +32,7 @@ import {
 
 import {
   collection,
+  endAt,
   initDb,
   limit,
   onSnapshot,
@@ -72,7 +73,7 @@ class AFSRollItems extends ItemsMixin(AppElement) {
 
       _data: {
         type: Object,
-        computed: '__computeData(_items)'
+        computed: '__computeData(_items.*)'
       },
 
       // Firestore reference.
@@ -89,7 +90,7 @@ class AFSRollItems extends ItemsMixin(AppElement) {
 
       _index: {
         type: Number,
-        computed: '__computeIndex(_max, _lag, _pagination)'
+        computed: '__computeIndex(_lag, _pagination.start)'
       },
 
       _items: Array, // Initializing as undefined is required.
@@ -175,7 +176,9 @@ class AFSRollItems extends ItemsMixin(AppElement) {
   }
 
 
-  __computeData(items) {
+  __computeData(polymerObj) {
+
+    const items = polymerObj?.base;
 
     if (!Array.isArray(items)) { return; }
 
@@ -190,30 +193,23 @@ class AFSRollItems extends ItemsMixin(AppElement) {
   }
 
 
-  __computeIndex(max, lag, pagination) {
+  __computeIndex(lag, start) {
 
-    if (
-      typeof max !== 'number' || 
-      typeof lag !== 'number' || 
-      !pagination 
-    ) { return; }
+    if (typeof lag !== 'number' || typeof start !== 'number') { return; }
 
-    const {direction, start} = pagination;
-
-    if (typeof start !== 'number') { return; }
-
-    const index = direction === 'forward' ? start : start - max;
-
-    return Math.max(0, (index + lag));
+    return Math.max(0, start + lag);
   }
 
   
-  __computeLag(direction, count = 0) {
+  __computeLag(direction = 'forward', count = 0) {
 
     const scalar = Math.ceil(count / 2);
 
     // Lag opposes current scroll direction.
-    return direction === 'forward' ? (scalar * -1) : scalar;
+    //
+    // Lag in 'reverse' includes an offset 
+    // of visible items count.
+    return direction === 'forward' ? scalar * -1 : scalar + count;
   }
 
 
@@ -222,11 +218,12 @@ class AFSRollItems extends ItemsMixin(AppElement) {
     if (!coll || !db) { return; }
 
     // Will need to create an index in Firestore.
-    // Only images and/or videos for camera-roll.
     return collection(db, coll);
   }
 
-
+  // Represents the number of times the current db subscription
+  // is shifted as the user scrolls, relative to the maximum
+  // number of DOM elements.
   __computeResolution(max = 0) {
 
     return Math.ceil(max / 4);    
@@ -255,7 +252,7 @@ class AFSRollItems extends ItemsMixin(AppElement) {
 
   __resultsCountChanged(newCount, oldCount) {
 
-    if (newCount < oldCount) {
+    if (newCount < oldCount && this._pagination?.direction === 'forward') {
 
       this._endDetected = true;
     }
@@ -288,15 +285,13 @@ class AFSRollItems extends ItemsMixin(AppElement) {
   // that are being subscribed to (1 max total), and 
   // one set of stale items before (1 max), and one 
   // set after (1 max), the current visible/live set.
-  __garbageCollect(index) {
+  __garbageCollect(index, direction) {
 
-    if (!this._pagination) { return; }
-
-    const {direction} = this._pagination;
+    if (!this._pagination || this._max <= this._min) { return; }
 
     const garbageIndex = direction === 'forward' ?
                            index - this._max :
-                           index + (this._max * 2);
+                           index + this._max;
 
     const totalGarbage = direction === 'forward' ? 
                            garbageIndex : 
@@ -304,7 +299,6 @@ class AFSRollItems extends ItemsMixin(AppElement) {
 
     // Only GC between 0 and this._max items at a time.
     const count = clamp(0, this._max, totalGarbage);
-
     const clear = Array(count).fill(undefined);
 
     // Do not force and update with 'this.splice()', as these
@@ -313,7 +307,7 @@ class AFSRollItems extends ItemsMixin(AppElement) {
   }
 
 
-  __getQueryConstraints(index) {
+  __getQueryConstraints(index, direction) {
 
     const constraints = [
       where('category', 'in', ['image', 'video']),
@@ -324,7 +318,12 @@ class AFSRollItems extends ItemsMixin(AppElement) {
 
       const {doc} = this._items.at(index);
 
-      constraints.push(startAt(doc));
+      if (direction === 'reverse') {
+        constraints.push(endAt(doc));
+      }
+      else {
+        constraints.push(startAt(doc));
+      }
     }
 
     constraints.push(limit(Math.max(this._min, this._max)));
@@ -336,7 +335,10 @@ class AFSRollItems extends ItemsMixin(AppElement) {
   // Start a subscription to file data changes.
   __updateItems(opened, ref, index) {
 
-    if (!ref) { return; } 
+    if (
+      !ref ||
+      (index > 0 && !this._items.at(index)) // Validate index is in range.
+    ) { return; } 
     
     // Cancel previous subscription.
     this.__unsub();
@@ -346,7 +348,11 @@ class AFSRollItems extends ItemsMixin(AppElement) {
 
     this._busy = true;
 
-    this.__garbageCollect(index);
+    // Cache this value to guarantee it's accurate for 
+    // this particular set of results.
+    const direction = this._pagination?.direction;
+
+    this.__garbageCollect(index, direction);
 
 
     const callback = results => {
@@ -359,12 +365,23 @@ class AFSRollItems extends ItemsMixin(AppElement) {
       const validResults = results.filter(obj => obj.data.uid);
       this._resultsCount = validResults.length; // Used to detect the end of db entries.
 
+      // Add/replace current range of results into the main '_items' array.
       if (Array.isArray(this._items)) {
 
-        // Add/replace current range of results into the main '_items' array.
-        this.splice('_items', index, validResults.length, ...validResults);
+        // Reverse pagination uses 'endAt' db function to fetch
+        // items that come before the current index.
+        if (direction === 'reverse') {
+
+          const start = index - (validResults.length - 1);
+
+          this.splice('_items', start, validResults.length, ...validResults);
+        }
+        else {
+        
+          this.splice('_items', index, validResults.length, ...validResults);
+        }
       }
-      else {
+      else { // Initialization.
 
         this.set('_items', validResults);
       }
@@ -391,7 +408,7 @@ class AFSRollItems extends ItemsMixin(AppElement) {
     };
 
 
-    const constraints = this.__getQueryConstraints(index);
+    const constraints = this.__getQueryConstraints(index, direction);
     const q           = queryColl(ref, ...constraints);
 
     this._unsubscribe = onSnapshot(q, snapshot => {
@@ -439,7 +456,8 @@ class AFSRollItems extends ItemsMixin(AppElement) {
 
   __maxContainersChangedHandler(event) {
 
-    // NOTE! Cannot hijack this event, it's used by '__paginationChangedHandler'.
+    // NOTE! Cannot hijack this event, it's also 
+    // used by '__paginationChangedHandler'.
 
     this._max = event.detail.value;
   }
