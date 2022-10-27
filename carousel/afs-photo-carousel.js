@@ -55,9 +55,7 @@ class AFSPhotoCarousel extends AppElement {
 
   static get is() { return 'afs-photo-carousel'; }
 
-  static get template() {
-    return template;
-  }
+  static get template() { return template; }
 
 
   static get properties() {
@@ -150,7 +148,7 @@ class AFSPhotoCarousel extends AppElement {
 
     this.$.background.style['opacity'] = '0';
 
-    // Safari fix. Without waiting before seting display,
+    // Safari fix. Without waiting before setting display,
     // the next iteration will not respect the transition.
     await schedule();
 
@@ -191,7 +189,7 @@ class AFSPhotoCarousel extends AppElement {
     this.removeEventListener('lazy-video-poster-loaded-changed',      resolver);
 
     // Wait for current image/poster to fade-in.
-    await wait(350);
+    await wait(500);
 
     this.$.carousel.style['opacity'] = '1';
     this._carouselDisabled           = false;
@@ -239,7 +237,7 @@ class AFSPhotoCarousel extends AppElement {
 
     await this.__showBackground();
 
-    // Fail gracefully incase there is an issue 
+    // Fail gracefully in case there is an issue 
     // with the thumbnail placeholder.
     const safeFlip = async () => {
       try {
