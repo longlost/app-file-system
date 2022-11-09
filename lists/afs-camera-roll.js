@@ -205,6 +205,7 @@ class AFSCameraRoll extends ListOverlayMixin(AppElement) {
 
     this._canShowScale = false;
     this._opened       = false;
+
     this.__resetScale();
   }
 
