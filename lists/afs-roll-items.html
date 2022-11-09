@@ -39,13 +39,10 @@
 </style>
 
 
-<lite-list items="[[_items]]"
-           on-lite-list-current-items-changed="__currentItemsChangedHandler"
-           on-lite-list-max-containers-changed="__maxContainersChangedHandler"
-           on-lite-list-pagination-changed="__paginationChangedHandler">
+<lite-list items="[[_listItems]]">
 
   <template is="dom-repeat" 
-            items="[[_currentItems]]"
+            items="[[_repeaterItems]]"
             strip-whitespace
             on-dom-change="__domChangeHandler">
             
