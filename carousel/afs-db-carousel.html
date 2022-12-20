@@ -1,0 +1,51 @@
+
+<style>
+
+  :host {
+    display:          block;
+    position:         absolute;
+    top:              0px;
+    left:             0px;
+    height:           100vh;
+    width:            100vw;
+    background-color: black;
+  }
+
+  lite-carousel {
+    height:           100%;
+    width:            100%;
+    background-color: inherit;
+  }
+
+  afs-carousel-item {
+    height:       100%;
+    width:        100vw;
+    max-width:    var(--carousel-max-width);
+    margin-right: 8px;
+  }
+
+</style>
+
+
+<lite-carousel id="carousel"  
+               aspect="fill"
+               disabled="[[disabled]]"
+               items="[[_listItems]]"
+               margin="10"
+               nav="[[_nav]]"
+               position="start"
+               on-lite-carousel-centered-changed="__carouselCenteredChanged">
+
+  <template id="repeater"
+            is="dom-repeat" 
+            items="[[_repeaterItems]]"
+            strip-whitespace>
+
+    <afs-carousel-item index="[[index]]"
+                       item="[[item.data]]"
+                       slot$="slot-[[index]]">
+    </afs-carousel-item>
+
+  </template>
+  
+</lite-carousel>

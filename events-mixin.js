@@ -362,7 +362,7 @@ export const EventsMixin = superClass => {
 
 	  	hijackEvent(event);
 
-	  	const {item, measurements} = event.detail;
+	  	const {item, ...rest} = event.detail;
 
 	  	this._liveUid = item.uid;
 
@@ -373,7 +373,7 @@ export const EventsMixin = superClass => {
 
 	    await this.__waitForStamper(); // base-mixin.js
 
-	    this.select('#carousel').open(measurements);
+	    this.select('#carousel').open(rest);
 	  }
 	  
 	  // From `file-editor` and `photo-carousel` (image files only)

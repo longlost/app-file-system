@@ -26,13 +26,14 @@ class AFSRollItem extends ItemMixin(AppElement) {
 
   static get is() { return 'afs-roll-item'; }
 
-  static get template() {
-    return template;
-  }
+  static get template() { return template; }
 
 
   static get properties() {
     return {
+
+      // This items current index.
+      index: Number,
 
       _clicked: Boolean,
 
@@ -72,7 +73,8 @@ class AFSRollItem extends ItemMixin(AppElement) {
   __clickedRippledChanged(clicked, rippled) {
 
     if (clicked && rippled) {
-      this.fire('open-carousel', {
+      this.fire('afs-roll-item-open-carousel', {
+        index:        this.index,
         item:         this.item, 
         measurements: getBBox(this)
       });
