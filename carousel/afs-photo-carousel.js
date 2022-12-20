@@ -38,6 +38,7 @@ import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
   hijackEvent,
+  listenOnce,
   schedule, 
   wait
 } from '@longlost/app-core/utils.js';
@@ -47,7 +48,7 @@ import '@longlost/app-images/flip-image.js';
 import '@longlost/app-overlays/app-header-overlay.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../shared/afs-action-buttons.js';
-import './afs-paginated-carousel.js';
+import './afs-db-carousel.js';
 import '../shared/afs-edit-photo-fab.js';
 
 
@@ -67,6 +68,19 @@ class AFSPhotoCarousel extends AppElement {
       // Used for entry animation and inital setup.
       item: Object,
 
+      // The selected index in relation to '_cachedItems'.
+      _cachedIndex: Number,
+
+      // These items are cached for use with 
+      // 'stop' and 'resume' public methods.
+      //
+      // 'afs-db-carousel' fires these as they change
+      // to keep the cached values here updated.
+      // 
+      // In 'resume' they are used to reinitialize 
+      // 'db-carousel' where it was previously stopped.
+      _cachedItems: Array,
+
       _carouselDisabled: {
         type: Boolean,
         value: true
@@ -77,8 +91,13 @@ class AFSPhotoCarousel extends AppElement {
 
       _currentItem: {
         type: Object,
-        computed: '__computeCurrentItem(_carouselDisabled, _centeredItem)'
+        computed: '__computeCurrentItem(_carouselDisabled, _centeredItem.data)'
       },
+
+      // 'db-carousel' starting index.
+      _index: Number,
+
+      _measurements: Object,
 
       _opened: Boolean,
 
@@ -87,8 +106,17 @@ class AFSPhotoCarousel extends AppElement {
         computed: '__computePlaceholder(item)'
       },
 
-      // paginated-carousel starting item.
-      _start: Object,
+      // Drives template 'dom-if'.
+      _stamp: Boolean,
+
+      // Only cache values if the carousel will be resumed later.
+      _stopped: Boolean,
+
+      // The selected index in relation to '_tempItems'.
+      _tempIndex: Number,
+
+      // 'db-carousel' temporary inital db items.
+      _tempItems: Array,
 
       _title: {
         type: String,
@@ -130,17 +158,44 @@ class AFSPhotoCarousel extends AppElement {
 
     await schedule();
 
-    this.$.fab.exit();
+    this.select('#fab').exit();
 
     await wait(100);
 
-    this.$.overlay.back();
+    this.select('#overlay').back();
   }
 
   // Overlay reset event handler.
-  __reset() { 
+  __reset() {
 
-    this.stop();
+    // Cache current state for resume.
+    if (this._stopped && this._centeredItem) {
+
+      const {uid} = this._centeredItem.data;
+
+      this._stopped     = false;
+      this._cachedItems = this.select('#carousel').getRepeaterItems();
+      this._cachedIndex = this._cachedItems.findIndex(item => 
+                            item.data.uid === uid);
+    }
+    else {
+
+      // Cleanup.
+      this._cachedItems = undefined;
+      this._cachedIndex = undefined;
+    }
+
+    this._carouselDisabled = true;
+    this._opened           = false; 
+
+    this.select('#fab').reset();
+
+    // Setup the transition for a fade-in after the `image-editor`
+    // closes and the carousel is ready again.
+    this.select('#carousel').style['transition'] = 'opacity 0.3s ease-out';
+    this.select('#carousel').style['opacity']    = '0';
+  
+    this._stamp = false;
   }
 
 
@@ -177,6 +232,18 @@ class AFSPhotoCarousel extends AppElement {
       resolver = resolve;
     });
 
+
+
+
+
+    // TODO:
+    //
+    //      After updating 'lazy-image', rework these listeners
+    //      and the subsequent 'wait(500)'. 
+
+
+
+
     this.addEventListener('lazy-image-placeholder-loaded-changed', resolver);
     this.addEventListener('lazy-image-loaded-changed',             resolver);
     this.addEventListener('lazy-video-poster-loaded-changed',      resolver);
@@ -191,8 +258,8 @@ class AFSPhotoCarousel extends AppElement {
     // Wait for current image/poster to fade-in.
     await wait(500);
 
-    this.$.carousel.style['opacity'] = '1';
-    this._carouselDisabled           = false;
+    this._carouselDisabled                    = false;
+    this.select('#carousel').style['opacity'] = '1';
 
     this.$.flipWrapper.style['display'] = 'none';
     this.$.flip.reset();
@@ -212,7 +279,7 @@ class AFSPhotoCarousel extends AppElement {
     hijackEvent(event);
 
     // Overlay 'reset' method causes rendering issues.
-    this.$.overlay.close();
+    this.select('#overlay').close();
   }
 
 
@@ -224,15 +291,32 @@ class AFSPhotoCarousel extends AppElement {
   }
 
 
-  async open(measurements) {
+  __waitForStamper() {
 
+    if (this._stamp) { 
+      return Promise.resolve(); 
+    }
+
+    this._stamp = true;
+
+    return listenOnce(this.$.stamper, 'dom-change');
+  }
+
+
+  async open({index, tempIndex, tempItems, measurements}) {
+
+    // Order here is important. Set '_tempIndex' and '_tempItems' 
+    // before '_index'. This is because 'db-carousel' observes
+    // '_index', not the others.
+    this._tempIndex    = tempIndex;
+    this._tempItems    = tempItems;
+    this._index        = index;
     this._measurements = measurements;
 
-    // Avoid infinite loops by setting this once per open.
-    this._start = this.item;
+    await this.__waitForStamper();
 
     // No fade transition from FLIP to carousel "slight of hand".
-    this.$.carousel.style['transition'] = 'unset'; 
+    this.select('#carousel').style['transition'] = 'unset'; 
     this.$.flipWrapper.style['display'] = 'flex';
 
     await this.__showBackground();
@@ -250,16 +334,28 @@ class AFSPhotoCarousel extends AppElement {
 
     await Promise.all([
       safeFlip(), 
-      this.$.overlay.open()
+      this.select('#overlay').open()
     ]);
 
     this._opened = true;
   }
 
   // Resume carousel updates once the image-editor is closed.
-  resume() {
-    
-    this._start  = this.item;
+  async resume() {
+
+    const {index} = this._centeredItem;
+
+    // Order here is important. Set '_tempIndex' and '_tempItems' 
+    // before '_index'. This is because 'db-carousel' observes
+    // '_index', not the others.
+    this._tempIndex = this._cachedIndex;
+    this._tempItems = this._cachedItems;
+    this._index     = index;
+
+    await this.__waitForStamper();
+
+    await this.select('#overlay').open();
+
     this._opened = true;
   }
 
@@ -267,16 +363,10 @@ class AFSPhotoCarousel extends AppElement {
   // and when the `image-editor` is opened over this element.
   stop() {
 
-    // Setup the transition for a fade-in after the `image-editor`
-    // closes and the carousel is ready again.
-    this.$.carousel.style['transition'] = 'opacity 0.3s ease-out';
-    this.$.carousel.style['opacity']    = '0';
+    // Values from 'db-carousel' will be cached for 'resume()'.
+    this._stopped = true; 
 
-    this._carouselDisabled = true;
-    this._opened           = false;       
-    this._start            = undefined;
-
-    this.$.fab.reset();
+    this.select('#overlay').reset(); // Triggers '__reset()'.
   }
 
 }

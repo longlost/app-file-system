@@ -47,17 +47,13 @@ class AFSCarouselItem extends PhotoElementMixin(AppElement) {
 
   static get is() { return 'afs-carousel-item'; }
 
-  static get template() {
-    return template;
-  }
+  static get template() { return template; }
 
 
   static get properties() {
     return {
 
       index: Number,
-
-      reverse: Boolean,
 
       _naturals: Object,
 
@@ -72,24 +68,8 @@ class AFSCarouselItem extends PhotoElementMixin(AppElement) {
 
   static get observers() {
     return [
-      '__indexReverseChanged(index, reverse)',
       '__placeholderSrcChanged(_imgPlaceholder, _imgSrc)'
     ];
-  }
-
-  // Reverses the css flex order so added/removed
-  // items are automatically right-to-left order.
-  //
-  // This is a performance enhancment compared to
-  // using a sort function on the parent dom-repeat 
-  // template since such a function would have to 
-  // run over all elements in the template for every
-  // change in the dom.
-  __indexReverseChanged(index, reverse) {
-
-    if (!index || !reverse) { return; }
-
-    this.style['order'] = `-${index}`;
   }
 
   // Cache the image measurements to improve click handler speed.
@@ -117,17 +97,7 @@ class AFSCarouselItem extends PhotoElementMixin(AppElement) {
       // Improves reliability.
       await schedule();
 
-      const raw = getBBox(this);
-
-      // Adjust for the fact that the carousel is offset 4px left and right.
-      const bbox = {
-        ...raw,
-        left:  raw.left  + 4, 
-        right: raw.right - 4,
-        width: raw.width - 8,
-        x:     raw.x     + 4
-      };
-
+      const bbox      = getBBox(this);
       const imgAspect = naturalWidth / naturalHeight;
 
 

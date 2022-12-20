@@ -47,10 +47,13 @@
             on-dom-change="__domChangeHandler">
             
     <afs-roll-item hide-checkbox="[[hideCheckboxes]]"
+                   doc="[[item.doc]]"
+                   index="[[index]]"
                    item="[[item.data]]"
                    selected="[[all]]"
                    slot$="slot-[[index]]"
-                   uploads="[[uploads]]">
+                   uploads="[[uploads]]"
+                   on-afs-roll-item-open-carousel="__openCarouselHandler">
     </afs-roll-item>
 
   </template>

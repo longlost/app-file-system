@@ -90,49 +90,59 @@
 </div>
 
 
-<app-header-overlay id="overlay"
-                    disable-background-effects
-                    fixed-header
-                    header-size="1"
-                    parent-controls-exits
-                    prebuilt-animation="from-top"
-                    reset-scroll
-                    title="[[_title]]"
-                    top-title
-                    on-header-overlay-back="__back"
-                    on-overlay-reset="__reset">
+<template id="stamper"
+          if="[[_stamp]]"
+          is="dom-if"
+          restamp>
+
+  <app-header-overlay id="overlay"
+                      disable-background-effects
+                      fixed-header
+                      header-size="1"
+                      parent-controls-exits
+                      prebuilt-animation="from-top"
+                      reset-scroll
+                      title="[[_title]]"
+                      top-title
+                      on-header-overlay-back="__back"
+                      on-overlay-reset="__reset">
 
 
-  <div id="header-color-background"
-       slot="header-background-slot">
-  </div>
+    <div id="header-color-background"
+         slot="header-background-slot">
+    </div>
 
 
-  <div id="top-toolbar-btns"
-       slot="top-toolbar-buttons-slot">
+    <div id="top-toolbar-btns"
+         slot="top-toolbar-buttons-slot">
 
-    <afs-action-buttons item="[[_currentItem]]"></afs-action-buttons>
+      <afs-action-buttons item="[[_currentItem]]"></afs-action-buttons>
 
-  </div>
-
-    
-  <afs-paginated-carousel id="carousel"
-                          coll="[[coll]]"
-                          disabled="[[_carouselDisabled]]"
-                          opened="[[_opened]]"
-                          start="[[_start]]"
-                          slot="content"
-                          on-carousel-ready="__carouselReady"
-                          on-centered-item-changed="__centeredItemChanged"
-                          on-last-item-deleted="__lastItemDeleted"
-                          on-photo-selected="__photoSelected">
-  </afs-paginated-carousel>
+    </div>
 
 
-  <afs-edit-photo-fab id="fab"
-                      item="[[_currentItem]]"
-                      slot="content">
-  </afs-edit-photo-fab>
+    <afs-db-carousel id="carousel"
+                     coll="[[coll]]"
+                     disabled="[[_carouselDisabled]]"
+                     index="[[_index]]"
+                     layout="horizontal"
+                     slot="content"
+                     temp-index="[[_tempIndex]]"
+                     temp-items="[[_tempItems]]"
+                     visible="[[_opened]]"
+                     on-carousel-ready="__carouselReady"
+                     on-centered-item-changed="__centeredItemChanged"
+                     on-last-item-deleted="__lastItemDeleted"
+                     on-photo-selected="__photoSelected">
+    </afs-db-carousel>
 
 
-</app-header-overlay>
+    <afs-edit-photo-fab id="fab"
+                        item="[[_currentItem]]"
+                        slot="content">
+    </afs-edit-photo-fab>
+
+
+  </app-header-overlay>
+  
+</template>

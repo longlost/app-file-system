@@ -80,6 +80,11 @@ class AFSRollItems extends DbListMixin(AppElement) {
       where('category', 'in', ['image', 'video']),
       orderBy('timestamp', 'desc')
     ];
+
+    this.reverseConstraints = [
+      where('category', 'in', ['image', 'video']),
+      orderBy('timestamp', 'asc')
+    ];
   }
 
 
@@ -124,6 +129,39 @@ class AFSRollItems extends DbListMixin(AppElement) {
 
     // Inform 'list-overlay-mixin' of change.
     this.fire('app-file-system-list-items-dom-changed');
+  }
+
+  // Add items to the detail payload then forward the event.
+  __openCarouselHandler(event) {
+
+    hijackEvent(event);
+
+    const {index: tempIndex, item} = event.detail;
+    const uid                      = item?.uid;
+
+    if (!uid) { return; } // Erroneous item.
+
+    // Remember, '_repeaterItems' is a subset of '_listItems', so 
+    // find the proper index, which is relative to '_listItems.
+    //
+    // Find the index of the item from the master list.
+    const index = this._listItems.findIndex(item => item.data.uid === uid);
+
+    if (typeof index !== 'number') { return; } // Index not found.
+
+    this.fire('open-carousel', {
+      ...event.detail, 
+
+      // The selected index relation to '_listItems'.
+      // Overwrite the detail's 'index'.
+      index, 
+
+      // The renamed selected item's index, in realation to '_repeaterItems'.
+      tempIndex,
+
+      // Only send the subset of 'live', currently displayed items.
+      tempItems: this._repeaterItems
+    });
   }
 
 }

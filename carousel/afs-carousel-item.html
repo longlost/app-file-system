@@ -4,64 +4,49 @@
   :host {
     display:     flex;
     align-items: center;
+    position:    relative;
     overflow:    hidden; 
-
-    /*
-      Margin will NOT work on iOS Safari,
-      initial positioning is off by a factor
-      of margin for each added item.
-    */
-    padding: 0px 4px;
-
-    /*
-      Safari wordaround for dynamic 
-      slotted scroll-snap elements.
-    */
-    height:    100%;
-    width:     calc(100% - 8px);
-    min-width: calc(100% - 8px);
-
-    scroll-snap-align: center;
   }
 
   .item {
-    width:            100%;
     background-color: black;
+  }
+
+  .item[hidden] {
+
+    /* 
+      Move unused elements offscreen so they cannot be interacted with. 
+
+      Do not use attrs like 'diplay: none;', 'pointer-events: none;' or 
+      'z-index: -1;' here so we don't cause re-layout jank.
+    */
+    transform: translateY(100vh); 
+  }
+
+  lazy-video {
+    position: absolute;
+    left:     0px;
+    width:    100%;
   }
 
 </style>
 
 
-<template is="dom-if"
-          if="[[_isImg]]">
-  <!-- 
-    Adjusted 'trigger' to start loading the 
-    image before it becomes visible, but
-    closest to a scroll-snap point. 
-  -->
-  <lazy-image class="item"
-              alt="[[item.displayName]]"
-              icon=""
-              placeholder="[[_imgPlaceholder]]"
-              src="[[_imgSrc]]"
-              sizing="contain"
-              trigger="[[_trigger]]"
-              on-click="__imgClicked">
-  </lazy-image>  
-</template>
+<lazy-image class="item"
+            alt="[[item.displayName]]"
+            hidden="[[_isVid]]"
+            icon=""
+            placeholder="[[_imgPlaceholder]]"
+            src="[[_imgSrc]]"
+            sizing="contain"
+            trigger="[[_trigger]]"
+            on-click="__imgClicked">
+</lazy-image> 
 
-
-<template is="dom-if"
-          if="[[_isVid]]">
-  <!-- 
-    Video controls have their own 
-    fullscreen mode button, so no
-    on-click handler here.
-  -->
-  <lazy-video class="item"
-              aspect-ratio="landscape"
-              placeholder="[[_vidPlaceholder]]"
-              poster="[[_vidPoster]]"
-              src="[[_vidSrc]]">
-  </lazy-video>
-</template>
+<lazy-video class="item"
+            aspect-ratio="landscape"
+            hidden="[[_isImg]]"
+            placeholder="[[_vidPlaceholder]]"
+            poster="[[_vidPoster]]"
+            src="[[_vidSrc]]">
+</lazy-video>
