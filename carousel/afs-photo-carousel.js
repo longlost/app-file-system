@@ -37,6 +37,7 @@
 import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
+  getBBox,
   hijackEvent,
   listenOnce,
   schedule, 
@@ -303,7 +304,7 @@ class AFSPhotoCarousel extends AppElement {
   }
 
 
-  async open({index, tempIndex, tempItems, measurements}) {
+  async open({index, measurements, resume, tempIndex, tempItems}) {
 
     // Order here is important. Set '_tempIndex' and '_tempItems' 
     // before '_index'. This is because 'db-carousel' observes
@@ -317,7 +318,16 @@ class AFSPhotoCarousel extends AppElement {
 
     // No fade transition from FLIP to carousel "slight of hand".
     this.select('#carousel').style['transition'] = 'unset'; 
-    this.$.flipWrapper.style['display'] = 'flex';
+    this.$.flipWrapper.style['transition']       = 'unset';
+    this.$.flipWrapper.style['display']          = 'flex';
+
+    // Fade in while resuming.
+    if (resume) {
+      this.$.flipWrapper.style['opacity'] = '0';
+    }
+    else {
+      this.$.flipWrapper.style['opacity'] = '1';
+    }
 
     await this.__showBackground();
 
@@ -325,6 +335,11 @@ class AFSPhotoCarousel extends AppElement {
     // with the thumbnail placeholder.
     const safeFlip = async () => {
       try {
+
+        // Fade in when resuming.
+        this.$.flipWrapper.style['transition'] = 'opacity 200ms ease-in 300ms';
+        this.$.flipWrapper.style['opacity']    = '1';
+
         await this.$.flip.play();
       }
       catch (_) {
@@ -337,26 +352,25 @@ class AFSPhotoCarousel extends AppElement {
       this.select('#overlay').open()
     ]);
 
+    // Setup for 'stop'/'resume' entry animation.
+    // This creates a simple shrink/fade-in transition.
+    this._measurements = getBBox(this.select('#carousel'));
+
     this._opened = true;
   }
 
-  // Resume carousel updates once the image-editor is closed.
-  async resume() {
+  // Open and resume the carousel once the image-editor is closed.
+  resume() {
 
     const {index} = this._centeredItem;
 
-    // Order here is important. Set '_tempIndex' and '_tempItems' 
-    // before '_index'. This is because 'db-carousel' observes
-    // '_index', not the others.
-    this._tempIndex = this._cachedIndex;
-    this._tempItems = this._cachedItems;
-    this._index     = index;
-
-    await this.__waitForStamper();
-
-    await this.select('#overlay').open();
-
-    this._opened = true;
+    return this.open({
+      index, 
+      measurements: this._measurements,
+      resume:       true,
+      tempIndex:    this._cachedIndex, 
+      tempItems:    this._cachedItems
+    });
   }
 
   // Stop carousel db updates when this overlay is closed
