@@ -21,10 +21,17 @@
   **/
 
 
-import {AppElement}                  from '@longlost/app-core/app-element.js';
-import {getBBox, naturals, schedule} from '@longlost/app-core/utils.js';
-import {PhotoElementMixin}           from '../shared/photo-element-mixin.js';
-import template                      from './afs-carousel-item.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+
+import {
+  getBBox, 
+  naturals, 
+  schedule
+} from '@longlost/app-core/utils.js';
+
+import {PhotoElementMixin} from '../shared/photo-element-mixin.js';
+
+import template from './afs-carousel-item.html';
 
 
 // Fault tolerance for failed thumbnail cloud processes.
@@ -55,12 +62,7 @@ class AFSCarouselItem extends PhotoElementMixin(AppElement) {
 
       index: Number,
 
-      _naturals: Object,
-
-      _trigger: {
-        type: Number,
-        value: 6
-      }
+      _naturals: Object
 
     };
   }
@@ -75,11 +77,15 @@ class AFSCarouselItem extends PhotoElementMixin(AppElement) {
   // Cache the image measurements to improve click handler speed.
   async __placeholderSrcChanged(placeholder, src) {
 
-    this._naturals = undefined; // Clear cached val.
+    try {
 
-    if (placeholder || src) {      
-      this._naturals = await getNaturals(placeholder, src);
+      this._naturals = undefined; // Clear cached val.
+
+      if (placeholder || src) {      
+        this._naturals = await getNaturals(placeholder, src);
+      }
     }
+    catch (_) { return; } // Silence image loading errors. No op.
   }
 
 

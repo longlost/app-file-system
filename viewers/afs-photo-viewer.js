@@ -50,9 +50,7 @@ class AFSPhotoViewer extends AppElement {
 
   static get is() { return 'afs-photo-viewer'; }
 
-  static get template() {
-    return template;
-  }
+  static get template() { return template; }
 
 
   static get properties() {
@@ -213,35 +211,34 @@ class AFSPhotoViewer extends AppElement {
 
   // Avoid FOUC by waiting, if necessary, for the 
   // hi-res img to load in, before switching to it.
-  async __waitForImgLoad() {
+  async __waitForImg() {
 
     if (
-      this.$.img.placeholderError  || 
-      this.$.img.error             ||
-      this.$.img.placeholderLoaded || 
-      this.$.img.loaded
+      this.$.img.placeholderError   || 
+      this.$.img.error              ||
+      this.$.img.placeholderFadedIn || 
+      this.$.img.fadedIn
     ) { 
-      return;
+      return Promise.resolve(); 
     }
 
-    let resolver;
+    return new Promise(resolve => {
 
-    const raceImgLoadEvents = () => new Promise(resolve => {
+      const handler = event => {
 
-      resolver = resolve;
+        if (event?.detail?.value === false) { return; }
+        
+        this.$.img.removeEventListener('lazy-image-error-changed',        handler);
+        this.$.img.removeEventListener('lazy-image-faded-in',             handler);
+        this.$.img.removeEventListener('lazy-image-placeholder-faded-in', handler);
 
-      this.$.img.addEventListener('lazy-image-error-changed',             resolver);
-      this.$.img.addEventListener('lazy-image-loaded-changed',            resolver);
-      this.$.img.addEventListener('lazy-image-placeholder-changed',       resolver);
-      this.$.img.addEventListener('lazy-image-placeholder-error-changed', resolver);
+        resolve();
+      };
+
+      this.$.img.addEventListener('lazy-image-error-changed',        handler);
+      this.$.img.addEventListener('lazy-image-faded-in',             handler);
+      this.$.img.addEventListener('lazy-image-placeholder-faded-in', handler);
     });
-
-    await raceImgLoadEvents();
-
-    this.$.img.removeEventListener('lazy-image-error-changed',             resolver);
-    this.$.img.removeEventListener('lazy-image-loaded-changed',            resolver);
-    this.$.img.removeEventListener('lazy-image-placeholder-changed',       resolver);
-    this.$.img.removeEventListener('lazy-image-placeholder-error-changed', resolver);
   }
 
 
@@ -266,20 +263,26 @@ class AFSPhotoViewer extends AppElement {
 
       this._measurements = measurements;
 
-      await this.$.flip.play();
+      const openingSequence = async () => {
 
-      // Fade a faux background in for a smooth
-      // entry effect for cropped images with a 
-      // transparent background.
-      await this.__showBackground();
-      
-      await this.$.overlay.open();
+        await this.$.flip.play();
 
-      this.__setImgSize();
+        // Fade a faux background in for a smooth
+        // entry effect for cropped images with a 
+        // transparent background.
+        await this.__showBackground();
+        
+        await this.$.overlay.open();
 
-      await schedule();
+        this.__setImgSize();
 
-      await this.__waitForImgLoad();
+        return schedule();
+      };
+
+      await Promise.all([
+        openingSequence(),
+        this.__waitForImg()
+      ]);
 
       await this.__switchToImg();      
     }
