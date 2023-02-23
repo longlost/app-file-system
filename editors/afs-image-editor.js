@@ -33,10 +33,17 @@
   **/
 
 
-import {AppElement}                 from '@longlost/app-core/app-element.js';
-import {listenOnce, schedule, wait} from '@longlost/app-core/utils.js';
-import {EditorMixin}                from './editor-mixin.js';
-import template                     from './afs-image-editor.html';
+import {AppElement} from '@longlost/app-core/app-element.js';
+
+import {
+  listenOnce, 
+  schedule, 
+  wait
+} from '@longlost/app-core/utils.js';
+
+import {EditorMixin} from './editor-mixin.js';
+
+import template from './afs-image-editor.html';
 import '@longlost/app-spinner/app-spinner.js';
 import '@longlost/tab-pages/tab-pages.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -55,9 +62,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
   static get is() { return 'afs-image-editor'; }
 
-  static get template() {
-    return template;
-  }
+  static get template() { return template; }
 
 
   static get properties() {
@@ -66,6 +71,12 @@ class AFSImageEditor extends EditorMixin(AppElement) {
       item: {
         type: Object,
         observer: '__itemChanged'
+      },
+
+      // This page value is saved for "reopens".
+      _cachedPage: {
+        type: String,
+        value: 'filters'
       },
 
       _cropIsRound: Boolean,
@@ -119,10 +130,7 @@ class AFSImageEditor extends EditorMixin(AppElement) {
         value: false
       },
 
-      _selectedPage: {
-        type: String,
-        value: 'filters'
-      },
+      _selectedPage: String,
 
       // Only used for initialization of paper-tabs
       // once all pages have been lazy-loaded.
@@ -213,19 +221,20 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
   async __showPageSpinner() {
 
-    if (!this._selectedPage) { return; }
+    if (!this._cachedPage) { return; }
 
     this.$.pagesSpinner.show('Loading.');
 
-    if (this._selectedPage === 'filters') {
+    if (this._cachedPage === 'filters') {
+
       await listenOnce(this, 'image-filters-loaded');
     }
+    else if (this._cachedPage === 'adjust') {
 
-    if (this._selectedPage === 'adjust') {
       await listenOnce(this, 'image-adjuster-loaded');
     }
-
-    if (this._selectedPage === 'crop') {
+    else if (this._cachedPage === 'crop') {
+      
       await listenOnce(this, 'image-cropper-loaded');
     }
 
@@ -240,9 +249,18 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
     // A different image was selected to open editor.
     if (newVal.uid !== oldVal.uid) {
+
       this.__cleanup();
 
-      this.__showPageSpinner();
+      // Resolves a major issue with app scrolling
+      // being disabled by the spinner.
+      // 
+      // This would occur when the item changed while
+      // the editor is closed.
+      if (this._opened) {
+
+        this.__showPageSpinner();
+      }
     }
   }
 
@@ -312,7 +330,10 @@ class AFSImageEditor extends EditorMixin(AppElement) {
   // Paper tabs on-selected-changed handler.
   __selectedPageChanged(event) {
 
-    this._selectedPage = event.detail.value;
+    const {value} = event.detail;
+
+    this._selectedPage = value;
+    this._cachedPage   = value; // Save for later "reopens".
   }
 
 
@@ -370,13 +391,17 @@ class AFSImageEditor extends EditorMixin(AppElement) {
   __cleanup() {
 
     if (this._highQualityUrl) {
+
       window.URL.revokeObjectURL(this._highQualityUrl);
+
       this._highQualityUrl  = undefined;
       this._highQualityFile = undefined;
     }
 
     if (this._edited) {
+
       window.URL.revokeObjectURL(this._edited);
+
       this._edited     = undefined;
       this._editedFile = undefined;
     }
@@ -424,27 +449,27 @@ class AFSImageEditor extends EditorMixin(AppElement) {
 
     this.$.overlay.reset();
   }
-  
+
 
   async open() {
 
+    this._selectedTab  = undefined;
+    this._selectedPage = undefined;
+
+    // Give filters time to process on initialization
+    // before revealing them.
+    this.__showPageSpinner(); // NOT awaiting this promise.
+
     await this.$.overlay.open();
     await schedule();
-
-    // Give filters time to process on initialization.
-    await this.$.pagesSpinner.show('Loading.');
 
     this._opened = true;
 
     await listenOnce(this, 'image-filters-stamped');
 
-    if (!this._selectedTab) {
-      this._selectedTab = 'filters';
-    }  
-
-    await schedule();
-
-    this.$.pagesSpinner.hide();
+    // Set the tab/page to whatever was used last.
+    this._selectedTab  = this._cachedPage;
+    this._selectedPage = this._cachedPage;
   }
 
 

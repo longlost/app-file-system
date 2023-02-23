@@ -141,16 +141,17 @@ class AFSDbCarousel extends DbListMixin(AppElement) {
     if (disabled || typeof length !== 'number') { return; }
 
     if (length === 0) {
+
       this.fire('last-item-deleted');
     }
   }
-
 
   // All initial data, dom nodes and shifting done.
   // Ready to render the carousel.
   __readyChanged(ready) {
 
     if (ready) {
+
       this.fire('carousel-ready');
     }
   }
@@ -216,6 +217,7 @@ class AFSDbCarousel extends DbListMixin(AppElement) {
   __stopNavMediaQuery() {
 
     if (this._navMediaQuery) {
+
       this._navMediaQuery.removeListener(this._navMediaQueryCallback);
 
       this._navMediaQuery         = undefined;
@@ -250,7 +252,9 @@ class AFSDbCarousel extends DbListMixin(AppElement) {
       !visible                           || 
       typeof this.tempIndex !== 'number' ||
       !Array.isArray(this.tempItems)
-    ) { return; }
+    ) { 
+      return; 
+    }
 
     this.moveTo(index, this.tempIndex, this.tempItems);
   }

@@ -826,14 +826,14 @@
     protobufjs "^6.11.3"
     yargs "^16.2.0"
 
-"@longlost/app-carousels@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@longlost/app-carousels/-/app-carousels-4.1.1.tgz#9b1052363ea0fa9de8ec12f4b60f761c8408fd6d"
-  integrity sha512-sh90ZuEvC7eOvc3dk78s9y/Lq7Mp0uZCf4TMxNjKIaaGrBU4W0hedhRIzdNLvqFX9s3PQTQ/HkbBVPKhiE0lOg==
+"@longlost/app-carousels@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@longlost/app-carousels/-/app-carousels-4.1.2.tgz#2e435eace1f680c5c174c3c5ec8e819f1678767f"
+  integrity sha512-D/Djt2dHYil0D840fth1DtbS60FP9IFBimPDmkR5VkOoJCpeG0Hjcpf69GFWIDGclKGe6Dnf7qAvqfnwKQSOew==
   dependencies:
     "@longlost/app-core" "^9.0.5"
-    "@longlost/app-images" "^2.2.4"
-    "@longlost/app-lists" "^3.4.0"
+    "@longlost/app-images" "^2.3.0"
+    "@longlost/app-lists" "^3.4.1"
     "@polymer/iron-icon" "^3.0.1"
     "@polymer/iron-iconset-svg" "^3.0.1"
     "@polymer/paper-icon-button" "^3.0.2"
@@ -884,21 +884,20 @@
     mime-types "^2.1.35"
     workbox-window "^6.5.4"
 
-"@longlost/app-images@^2.2.4":
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-2.2.4.tgz#9d56add23bf2dc79ed3a7eb6afed504fd9d2a6fd"
-  integrity sha512-xom+VbDA7odwNxdfkX3WBUG4ZrEELq2uNzYzLZwHQMs8XHZ6NHEP+/1IpyqoGWnRMLGsNmb/LxPep1aP+UjvDA==
-  dependencies:
-    "@longlost/app-core" "^9.0.1"
-    "@polymer/iron-icon" "^3.0.1"
-    "@polymer/iron-iconset-svg" "^3.0.1"
-    "@polymer/iron-image" "^3.0.2"
-    "@polymer/paper-button" "^3.0.1"
-
 "@longlost/app-images@^2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-2.3.0.tgz#6d8caaf8759155109f9bf3fdcef176c63d2269aa"
   integrity sha512-UoSZR0VHwhjZi9ZtADvL+uuk00kNKaiwGf1LfJgXgWOcPw+81AWBrRbZdWrsn3E4LW/jWj+jLRFs1QIML1WQHw==
+  dependencies:
+    "@longlost/app-core" "^9.0.5"
+    "@polymer/iron-icon" "^3.0.1"
+    "@polymer/iron-iconset-svg" "^3.0.1"
+    "@polymer/paper-button" "^3.0.1"
+
+"@longlost/app-images@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@longlost/app-images/-/app-images-2.3.1.tgz#09768f2b37de8ce1d155b7423ad23b938692b51f"
+  integrity sha512-qKFISmMZ78ueX8envV1rxvr0uEIVj3gGlA/WKfj/X046Tf2w6cpeuvbtYcqW2qOngdeLnWqy/MBawIsbe/w3HA==
   dependencies:
     "@longlost/app-core" "^9.0.5"
     "@polymer/iron-icon" "^3.0.1"
@@ -929,10 +928,10 @@
     "@polymer/paper-ripple" "^3.0.2"
     "@polymer/polymer" "^3.5.0"
 
-"@longlost/app-lists@^3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@longlost/app-lists/-/app-lists-3.4.0.tgz#83b088b8cdb3fa18ea50251f10bf39f76b7d9bc8"
-  integrity sha512-vXSk4FRgC8dujx9vAMwZGrfXfhXBPPpsjgx1IHmJ2sngPjE4FG0iUvg70dXxKoVX2J34/uy+nrrqRxYhrSEYhg==
+"@longlost/app-lists@^3.4.1", "@longlost/app-lists@^3.4.2":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@longlost/app-lists/-/app-lists-3.4.2.tgz#71e965ac3e0ea537dc48ce9c1317682d2d670434"
+  integrity sha512-pDLDMWv7jgoMgWAaHHGumkJwKIr5zWVkEULlLyfYu3tnQ8x+JYRTNOtgXD+Rx6jz8LZZKFEq1WaIVRa91vVL5A==
   dependencies:
     "@longlost/app-core" "^9.0.5"
     "@polymer/polymer" "^3.5.1"
@@ -1204,7 +1203,7 @@
     "@polymer/iron-meta" "^3.0.0-pre.26"
     "@polymer/polymer" "^3.0.0"
 
-"@polymer/iron-image@^3.0.0-pre.26", "@polymer/iron-image@^3.0.2":
+"@polymer/iron-image@^3.0.0-pre.26":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@polymer/iron-image/-/iron-image-3.0.2.tgz#425ee6269634e024dbea726a91a61724ae4402b6"
   integrity sha512-VyYtnewGozDb5sUeoLR1OvKzlt5WAL6b8Od7fPpio5oYL+9t061/nTV8+ZMrpMgF2WgB0zqM/3K53o3pbK5v8Q==
@@ -1822,6 +1821,11 @@ comlink@^4.3.1:
   resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.3.1.tgz#0c6b9d69bcd293715c907c33fe8fc45aecad13c5"
   integrity sha512-+YbhUdNrpBZggBAHWcgQMLPLH1KDF3wJpeqrCKieWQ8RL7atmgsgTQko1XEBK6PsecfopWNntopJ+ByYG1lRaA==
 
+comlink@^4.4.1:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.4.1.tgz#e568b8e86410b809e8600eb2cf40c189371ef981"
+  integrity sha512-+1dlx0aY5Jo1vHy/tSsIGpSkN4tS9rZSW8FIhG0JH/crs9wwweswIo/POr451r7bZww3hFbPAKnTpimzL/mm4Q==
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -2310,10 +2314,10 @@ nanoid@3.3.3:
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.3.tgz#fd8e8b7aa761fe807dba2d1b98fb7241bb724a25"
   integrity sha512-p1sjXuopFs0xg+fPASzQ28agW1oHD7xDsd9Xkf3T15H3c/cifrFHVwrh74PdoklAPi+i7MdRsE47vm2r6JoB+w==
 
-nanoid@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-4.0.0.tgz#6e144dee117609232c3f415c34b0e550e64999a5"
-  integrity sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==
+nanoid@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-4.0.1.tgz#398d7ccfdbf9faf2231b2ca7e8fff5dbca6a509b"
+  integrity sha512-udKGtCCUafD3nQtJg9wBhRP3KMbPglUsgV5JVsXhvyBs/oefqb4sqMEhKBBgqZncYowu58p1prsZQBYvAj/Gww==
 
 node-fetch@2.6.7:
   version "2.6.7"

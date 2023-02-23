@@ -39,10 +39,10 @@ import {naturals, schedule} from '@longlost/app-core/utils.js';
 import template             from './afs-photo-viewer.html';
 import '@longlost/app-core/app-icons.js';
 import '@longlost/app-images/flip-image.js';
-import '@longlost/app-images/lazy-image.js';
 import '@longlost/app-overlays/app-overlay.js';
 import '@longlost/pinch-to-zoom/pinch-to-zoom.js';
 import '@polymer/iron-icon/iron-icon.js';
+import '@polymer/iron-image/iron-image.js';
 import '../shared/afs-file-icons.js';
 
 
@@ -209,38 +209,6 @@ class AFSPhotoViewer extends AppElement {
     }
   }
 
-  // Avoid FOUC by waiting, if necessary, for the 
-  // hi-res img to load in, before switching to it.
-  async __waitForImg() {
-
-    if (
-      this.$.img.placeholderError   || 
-      this.$.img.error              ||
-      this.$.img.placeholderFadedIn || 
-      this.$.img.fadedIn
-    ) { 
-      return Promise.resolve(); 
-    }
-
-    return new Promise(resolve => {
-
-      const handler = event => {
-
-        if (event?.detail?.value === false) { return; }
-        
-        this.$.img.removeEventListener('lazy-image-error-changed',        handler);
-        this.$.img.removeEventListener('lazy-image-faded-in',             handler);
-        this.$.img.removeEventListener('lazy-image-placeholder-faded-in', handler);
-
-        resolve();
-      };
-
-      this.$.img.addEventListener('lazy-image-error-changed',        handler);
-      this.$.img.addEventListener('lazy-image-faded-in',             handler);
-      this.$.img.addEventListener('lazy-image-placeholder-faded-in', handler);
-    });
-  }
-
 
   async __switchToImg() {
     
@@ -265,6 +233,10 @@ class AFSPhotoViewer extends AppElement {
 
       const openingSequence = async () => {
 
+        this.__setImgSize();
+
+        await schedule();
+
         await this.$.flip.play();
 
         // Fade a faux background in for a smooth
@@ -272,17 +244,10 @@ class AFSPhotoViewer extends AppElement {
         // transparent background.
         await this.__showBackground();
         
-        await this.$.overlay.open();
-
-        this.__setImgSize();
-
-        return schedule();
+        return this.$.overlay.open();
       };
 
-      await Promise.all([
-        openingSequence(),
-        this.__waitForImg()
-      ]);
+      await openingSequence();
 
       await this.__switchToImg();      
     }

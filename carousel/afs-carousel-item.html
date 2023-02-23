@@ -20,7 +20,7 @@
       Do not use attrs like 'diplay: none;', 'pointer-events: none;' or 
       'z-index: -1;' here so we don't cause re-layout jank.
     */
-    transform: translateY(100vh); 
+    transform: scale(0, 0);
   }
 
   lazy-video {
@@ -39,7 +39,9 @@
             placeholder="[[_imgPlaceholder]]"
             src="[[_imgSrc]]"
             sizing="contain"
-            on-click="__imgClicked">
+            on-click="__imgClicked"
+            on-lazy-image-error-changed="__lazyImageErrorChangedHandler"
+            on-lazy-image-placeholder-error-changed="__lazyImagePlaceholderErrorChangedHandler">
 </lazy-image> 
 
 <lazy-video class="item"
@@ -47,5 +49,7 @@
             hidden="[[_isImg]]"
             placeholder="[[_vidPlaceholder]]"
             poster="[[_vidPoster]]"
-            src="[[_vidSrc]]">
+            src="[[_vidSrc]]"
+            on-lazy-video-error-changed="__lazyVideoErrorChangedHandler"
+            on-lazy-video-poster-error-changed="__lazyVideoPlaceholderErrorChangedHandler">
 </lazy-video>

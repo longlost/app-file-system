@@ -194,6 +194,8 @@ class AFSPhotoCarousel extends AppElement {
 
     // Setup the transition for a fade-in after the `image-editor`
     // closes and the carousel is ready again.
+    this.$.overlay.style['opacity']              = '0';
+    this.$.overlay.style['transition']           = 'opacity 300ms ease-out';
     this.select('#carousel').style['transition'] = 'opacity 300ms ease-out';
     this.select('#carousel').style['opacity']    = '0';
   
@@ -297,6 +299,7 @@ class AFSPhotoCarousel extends AppElement {
   __waitForStamper() {
 
     if (this._stamp) { 
+
       return Promise.resolve(); 
     }
 
@@ -318,17 +321,20 @@ class AFSPhotoCarousel extends AppElement {
 
     await this.__waitForStamper();
 
-    // No fade transition from FLIP to carousel "slight of hand".
-    this.select('#carousel').style['transition'] = 'unset'; 
-    this.$.flipWrapper.style['transition']       = 'unset';
-    this.$.flipWrapper.style['display']          = 'flex';
+    this.$.flipWrapper.style['transition'] = 'unset';
+    this.$.flipWrapper.style['display']    = 'flex';
 
     // Fade in while resuming.
     if (resume) {
+
       this.$.flipWrapper.style['opacity'] = '0';
     }
     else {
-      this.$.flipWrapper.style['opacity'] = '1';
+
+      // No fade transition from FLIP to carousel "slight of hand".
+      this.$.overlay.style['transition']           = 'unset';
+      this.select('#carousel').style['transition'] = 'unset'; 
+      this.$.flipWrapper.style['opacity']          = '1';
     }
 
     await this.__showBackground();
@@ -336,6 +342,7 @@ class AFSPhotoCarousel extends AppElement {
     // Fail gracefully in case there is an issue 
     // with the thumbnail placeholder.
     const safeFlip = async () => {
+
       try {
 
         // Fade in when resuming.
@@ -345,14 +352,26 @@ class AFSPhotoCarousel extends AppElement {
         await this.$.flip.play();
       }
       catch (_) {
+
         this.$.flipWrapper.style['display'] = 'none';
       }  
     };
 
-    await Promise.all([
-      safeFlip(), 
-      this.select('#overlay').open()
-    ]);
+    if (resume) {
+
+      await safeFlip();
+
+
+      this.$.overlay.style['opacity'] = '1';
+
+    }
+    else {
+
+      await Promise.all([
+        safeFlip(), 
+        this.select('#overlay').open()
+      ]);
+    }
 
     // Setup for 'stop'/'resume' entry animation.
     // This creates a simple shrink/fade-in transition.
@@ -382,7 +401,7 @@ class AFSPhotoCarousel extends AppElement {
     // Values from 'db-carousel' will be cached for 'resume()'.
     this._stopped = true; 
 
-    this.select('#overlay').reset(); // Triggers '__reset()'.
+    this.__reset();
   }
 
 }
