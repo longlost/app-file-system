@@ -2,6 +2,7 @@
 <style>
 
   :host {
+    display: block;
 
     /*
       NOT part of the public API for this element.
@@ -25,7 +26,7 @@
       The browser cannot center an element by half pixel values.
       This becomes especially visible with rotated orientation images.
     */
-    grid-gap: 3px;
+    column-gap: 3px;
 
     /*
       Collapse the grid area for camera rolls with less than a page of photos.
@@ -34,6 +35,14 @@
     max-width:     768px;
     margin:        0px auto;
     padding:       3px 0px;
+  }
+
+  /*
+    'lite-list' items must include their spacing to get accurate 
+    measurements from el.getBoundingClientRect().
+  */
+  afs-roll-item {
+    margin-bottom: 3px;
   }
 
 </style>

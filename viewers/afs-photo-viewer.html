@@ -39,7 +39,8 @@
     min-height: 100%;
   }
 
-  lazy-image {
+  iron-image {
+    display:          block;
     height:           100%;   
     background-color: transparent;
     opacity:          0;
@@ -115,14 +116,15 @@
 
   <div id="content">
 
+
     <pinch-to-zoom id="zoom">
 
-      <lazy-image id="img"
+      <iron-image id="img"
                   alt="[[item.displayName]]"
                   placeholder="[[_placeholder]]" 
                   sizing="contain" 
                   src="[[_src]]">
-      </lazy-image>
+      </iron-image>
 
     </pinch-to-zoom>
 
@@ -137,6 +139,7 @@
                on-animationend="__resetHintIcon"
                on-animationcancel="__resetHintIcon">
     </iron-icon>
+    
 
   </div>
 

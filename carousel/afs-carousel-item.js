@@ -24,7 +24,8 @@
 import {AppElement} from '@longlost/app-core/app-element.js';
 
 import {
-  getBBox, 
+  getBBox,
+  hijackEvent,
   naturals, 
   schedule
 } from '@longlost/app-core/utils.js';
@@ -195,6 +196,42 @@ class AFSCarouselItem extends PhotoElementMixin(AppElement) {
     catch (error) {
       if (error === 'click debounced') { return; }
       console.error(error);
+    }
+  }
+
+  // Squelsh errors from the unused element.
+  __lazyImageErrorChangedHandler(event) {
+
+    if (this._isVid) {
+
+      hijackEvent(event);
+    }
+  }
+
+  // Squelsh errors from the unused element.
+  __lazyImagePlaceholderErrorChangedHandler(event) {
+
+    if (this._isVid) {
+
+      hijackEvent(event);
+    }
+  }
+
+  // Squelsh errors from the unused element.
+  __lazyVideoErrorChangedHandler(event) {
+
+    if (this._isImg) {
+
+      hijackEvent(event);
+    }
+  }
+
+  // Squelsh errors from the unused element.
+  __lazyVideoPlaceholderErrorChangedHandler(event) {
+
+    if (this._isImg) {
+
+      hijackEvent(event);
     }
   }
 
