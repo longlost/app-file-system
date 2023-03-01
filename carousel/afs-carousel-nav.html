@@ -1,0 +1,43 @@
+
+<style>
+
+  :host {
+    display:  block;
+    position: fixed;
+    right:    0px;
+    bottom:   0px;
+    left:     0px;
+    padding:  2px 0px;
+  }
+
+  lite-carousel {
+    width: 100%;
+  }
+
+</style>
+
+
+<lite-carousel aspect="fill"
+               disabled="[[disabled]]"
+               items="[[listItems]]"
+               margin="10"
+               position="center"
+               tabindex="0"
+               on-blur="__blurFocusHandler"
+               on-focus="__blurFocusHandler"
+               on-lite-carousel-centered-changed="__carouselCenteredChangedHandler"
+               on-lite-carousel-current-items-changed="__currentItemsChangedHandler">
+
+  <template is="dom-repeat" 
+            items="[[_repeaterItems]]"
+            strip-whitespace>
+
+    <afs-nav-item index="[[index]]"
+                  item="[[item.data]]"
+                  slot$="slot-[[index]]"
+                  on-item-selected="__itemSelectedHandler">
+    </afs-nav-item>
+
+  </template>
+  
+</lite-carousel>
