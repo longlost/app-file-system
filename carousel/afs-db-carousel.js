@@ -37,6 +37,7 @@ import {DbListMixin}    from '@longlost/app-lists/db-list-mixin.js';
 import template         from './afs-db-carousel.html';
 import '@longlost/app-carousels/lite-carousel.js';
 import './afs-carousel-item.js';
+import './afs-carousel-nav.js';
 
 
 class AFSDbCarousel extends DbListMixin(AppElement) {
@@ -280,6 +281,16 @@ class AFSDbCarousel extends DbListMixin(AppElement) {
     const value = {index: carouselIndex, ...item};
 
     this.fire('centered-item-changed', {value});
+  }
+
+
+  __navCenteredChangedHandler(event) {
+
+    hijackEvent(event);
+
+    const {carouselIndex} = event.detail.value;
+
+    this.$.carousel.moveToSection(carouselIndex);
   }
 
 

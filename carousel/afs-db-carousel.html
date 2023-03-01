@@ -42,7 +42,8 @@
             items="[[_repeaterItems]]"
             strip-whitespace>
 
-    <afs-carousel-item index="[[index]]"
+    <afs-carousel-item class="carousel-item" 
+                       index="[[index]]"
                        item="[[item.data]]"
                        slot$="slot-[[index]]">
     </afs-carousel-item>
@@ -50,3 +51,12 @@
   </template>
   
 </lite-carousel>
+
+
+<afs-carousel-nav carousel-ready="[[_ready]]"
+                  disabled="[[disabled]]"
+                  index="[[index]]"
+                  list-items="[[_listItems]]"
+                  visible="[[visible]]"
+                  on-carousel-nav-centered-changed="__navCenteredChangedHandler">
+</afs-carousel-nav>

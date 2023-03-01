@@ -1,0 +1,34 @@
+
+<style>
+
+  :host {
+
+    --nav-item-scale:  11;
+    --nav-item-height: calc(100vh / var(--nav-item-scale));
+    --nav-item-width:  calc(100vw / var(--nav-item-scale));
+
+    display: block;
+    height:  calc(var(--nav-item-height) - 2px);
+    width:   calc(var(--nav-item-width)  - 2px);
+    padding: 0px 1px;
+  }
+
+  iron-image {
+    height: 100%;
+    width:  100%;
+    background-color: black;
+  }
+
+</style>
+
+
+<iron-image alt="[[item.displayName]]"
+            fade
+            preload
+            src="[[_src]]"
+            sizing="cover"
+            tabindex="-1"
+            on-click="__imgClicked"
+            on-error-changed="__errorChangedHandler"
+            on-src-changed="__srcChangedHandler">
+</iron-image>

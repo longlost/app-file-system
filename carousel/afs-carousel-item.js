@@ -41,9 +41,9 @@ import template from './afs-carousel-item.html';
 const getNaturals = async (placeholder, src) => {
 
   try {
-    const dimentions = await naturals(placeholder);
+    const dimensions = await naturals(placeholder);
 
-    return dimentions;
+    return dimensions;
   }
   catch (_) {
     return naturals(src);

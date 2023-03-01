@@ -46,6 +46,7 @@ import {
 } from '@longlost/app-core/utils.js';
 
 import template from './afs-photo-carousel.html';
+
 import '@longlost/app-images/flip-image.js';
 import '@longlost/app-overlays/app-header-overlay.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
@@ -160,10 +161,8 @@ class AFSPhotoCarousel extends AppElement {
 
     await schedule();
 
+    // Start animations, but no need to await them.
     this.select('#fab').exit();
-
-    await wait(100);
-
     this.select('#overlay').back();
   }
 
@@ -227,15 +226,19 @@ class AFSPhotoCarousel extends AppElement {
 
   async __carouselReady() {
 
-    // NOT using `listenOnce` here since there 
-    // is no way to remove the attached event listener
-    // for the promise of the two that never resolves.
+    // NOT using `listenOnce` here since there is no 
+    // way to remove the attached event listeners
+    // for the other events than never fire.
     const raceImgEvents = () => new Promise(resolve => {
 
+      let errorOccured;
+
       const handler = event => {
+
+        const {detail, type} = event;
         
         // Ignore events fired for value changes to false.
-        if (event?.detail?.value === false) { return; }
+        if (detail?.value === false) { return; }
 
         const target = getRootTarget(event);
         const uid    = target?.parentNode?.host?.item?.uid;
@@ -244,20 +247,33 @@ class AFSPhotoCarousel extends AppElement {
         // currently "centered" element.
         if (uid !== this._centeredItem?.data?.uid) { return; }
 
-        this.removeEventListener('lazy-image-error-changed',         handler);
-        this.removeEventListener('lazy-image-faded-in',              handler);
-        this.removeEventListener('lazy-image-placeholder-faded-in',  handler);
-        this.removeEventListener('lazy-video-poster-error-changed',  handler);
-        this.removeEventListener('lazy-video-poster-loaded-changed', handler);
+        const isImgError = type.includes('image') && type.includes('error');
+
+        // Ignore any first image error to allow the 
+        // remaining image type to load successfully.
+        if (isImgError && !errorOccured) {
+
+          errorOccured = true;
+
+          return;
+        }
+
+        this.removeEventListener('lazy-image-error-changed',             handler);
+        this.removeEventListener('lazy-image-placeholder-error-changed', handler);
+        this.removeEventListener('lazy-image-faded-in',                  handler);
+        this.removeEventListener('lazy-image-placeholder-faded-in',      handler);
+        this.removeEventListener('lazy-video-poster-error-changed',      handler);
+        this.removeEventListener('lazy-video-poster-loaded-changed',     handler);
 
         resolve();
       };
 
-      this.addEventListener('lazy-image-error-changed',         handler);
-      this.addEventListener('lazy-image-faded-in',              handler);
-      this.addEventListener('lazy-image-placeholder-faded-in',  handler);
-      this.addEventListener('lazy-video-poster-error-changed',  handler);
-      this.addEventListener('lazy-video-poster-loaded-changed', handler);
+      this.addEventListener('lazy-image-error-changed',             handler);
+      this.addEventListener('lazy-image-placeholder-error-changed', handler);
+      this.addEventListener('lazy-image-faded-in',                  handler);
+      this.addEventListener('lazy-image-placeholder-faded-in',      handler);
+      this.addEventListener('lazy-video-poster-error-changed',      handler);
+      this.addEventListener('lazy-video-poster-loaded-changed',     handler);
     });
 
     // Wait for current image/poster to fade-in/load.
